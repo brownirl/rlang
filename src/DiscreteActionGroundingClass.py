@@ -4,15 +4,14 @@
     date: August 2020
 '''
 
-from GroundingClass import Grounding
+from ActionGroundingClass import ActionGrounding
 
-class DiscreteActionGrounding(Grounding):
-    counter = 0
+class DiscreteActionGrounding(ActionGrounding):
+
     def __init__(self, mdp_action, name=None):
         if (name is None):
-            name = "action-" + str(DiscreteActionGrounding.counter)
-        Grounding.__init__(self, name )
-        DiscreteActionGrounding.counter += 1
+            name = "discrete-action-" + str(ActionGrounding.counter)
+        ActionGrounding.__init__(self, name )
         self.__mdp_action = mdp_action
 
     def __call__(self, *args):
@@ -20,5 +19,6 @@ class DiscreteActionGrounding(Grounding):
 
 
 if __name__ == "__main__":
-    up = DiscreteActionGrounding("up", name="up")
-    print(f"action up: {up()}")
+    down = DiscreteActionGrounding("down")
+    up = DiscreteActionGrounding("up")
+    print(f"action {up.name}: {up()}")
