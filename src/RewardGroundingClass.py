@@ -6,7 +6,7 @@
 from GroundingClass import Grounding
 class RewardGrounding(Grounding):
     id = 0
-    def __init__(self, symbols_rewards, name=None):
+    def __init__(self, symbols_rewards=[], name=None):
         '''
             Args:
                 symbols_rewards: iterable of pairs of (symbols, reward)
@@ -28,6 +28,15 @@ class RewardGrounding(Grounding):
         if len(r) == 1:
             return r[0]
         return r
+    
+    def add(self, symbol, reward):
+        '''
+            Add a reward to the dictionary. Overrides if it already exists.        
+            Args:
+                - symbol 
+                - reward
+        '''
+        self.__rewards[symbol] = reward
 
 
 if __name__ == "__main__":
