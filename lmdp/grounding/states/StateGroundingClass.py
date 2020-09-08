@@ -4,8 +4,8 @@
     Date: August 2020
 """
 
-from GroundingClass import Grounding
-from BooleanFunClass import BooleanFun
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.BooleanFunClass import BooleanFun
 from simple_rl.mdp.StateClass import State
 import numpy as np
 

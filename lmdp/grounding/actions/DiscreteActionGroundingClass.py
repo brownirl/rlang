@@ -4,7 +4,7 @@
     date: August 2020
 '''
 
-from ActionGroundingClass import ActionGrounding
+from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 
 class DiscreteActionGrounding(ActionGrounding):
 

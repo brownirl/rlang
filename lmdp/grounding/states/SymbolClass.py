@@ -3,7 +3,7 @@
     author: Rafael Rodriguez-Sanchez
     date: August 2020
 '''
-from GroundingClass import Grounding
+from lmdp.grounding.GroundingClass import Grounding
 
 class Symbol(Grounding):
     counter = 0

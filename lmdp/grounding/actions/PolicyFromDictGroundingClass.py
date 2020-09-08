@@ -1,5 +1,5 @@
-from PolicyGroundingClass import PolicyGrounding
-from PolicyFromDictClass import PolicyFromDict
+from lmdp.grounding.actions.PolicyGroundingClass import PolicyGrounding
+from lmdp.grounding.actions.PolicyFromDictClass import PolicyFromDict
 
 class PolicyFromDictGrounding(PolicyGrounding):
     def __init__(self, policy=[]):

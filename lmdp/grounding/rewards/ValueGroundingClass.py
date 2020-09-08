@@ -4,7 +4,7 @@
     date: August 2020
 '''
 
-from lmdp.grounding import Grounding
+from lmdp.grounding.GroundingClass import Grounding
 
 class ValueGrounding(Grounding):
     id = 0

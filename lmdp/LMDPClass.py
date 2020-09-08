@@ -161,9 +161,7 @@ class LMDP:
         self.__mdp.end_of_instance()
 
 if __name__=='__main__':
-    from StateGroundingClass import StateGrounding
-    from SymbolClass import Symbol
-    from DiscreteActionGroundingClass import DiscreteActionGrounding
+    from lmdp.grounding import *
     
     import numpy as np
     from simple_rl.tasks import GridWorldMDP

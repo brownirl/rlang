@@ -3,7 +3,7 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: August 2020
 '''
-from GroundingClass import Grounding
+from lmdp.grounding.GroundingClass import Grounding
 from collections import defaultdict
 
 class TransitionGrounding(Grounding):
