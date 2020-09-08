@@ -1,6 +1,5 @@
 '''
-    Policy Grounding Class:
-     - Distribution over a discrete action space
+    Policy Grounding Class
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: August 2020
 '''

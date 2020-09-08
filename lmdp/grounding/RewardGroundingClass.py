@@ -4,6 +4,7 @@
     date: August 2020
 '''
 from GroundingClass import Grounding
+
 class RewardGrounding(Grounding):
     id = 0
     def __init__(self, symbols_rewards=[], name=None):

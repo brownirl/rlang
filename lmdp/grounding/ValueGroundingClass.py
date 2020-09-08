@@ -1,3 +1,9 @@
+'''
+    Grounding for symbols to Rewards
+    author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
+    date: August 2020
+'''
+
 from lmdp.grounding import Grounding
 
 class ValueGrounding(Grounding):
@@ -20,10 +26,10 @@ class ValueGrounding(Grounding):
                 - list of rewards for all symbol matches
         '''
         symbols = [s for s in self.__values.keys() if s(state)]
-        r = [self.__values[s] for s in symbols]
-        if len(r) == 1:
-            return r[0]
-        return r
+        v = [self.__values[s] for s in symbols]
+        if len(v) == 1: # return scalar if only one value available.
+            return v[0]
+        return v
     
     def add(self, symbol, value):
         '''
