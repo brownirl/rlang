@@ -9,13 +9,11 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: September 2020
 '''
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
+from lmdp.grounding import *
 from simple_rl.mdp.MDPClass import MDP
-
-from RewardGroundingClass import RewardGrounding
-from TransitionGroundingClass import TransitionGrounding
-from PolicyGroundingClass import PolicyGrounding
-
 from collections import defaultdict
 from collections.abc import Iterable
 
@@ -23,10 +21,11 @@ class LMDP:
 
     def __init__(self, mdp):
         self.__mdp = mdp
-        self.__reward = lambda **args: None
-        self.__transition = lambda **args : None
+        self.__reward = lambda *args: None
+        self.__value_function = lambda *args: None
+        self.__transition = lambda *args : None
         self.__symbols = defaultdict(lambda: None)
-        self.__policy = lambda **args: None
+        self.__policy = lambda *args: None
         self.__subpolicies = defaultdict(lambda: None)
         self.__actions = defaultdict(lambda: None)
         self.__state_groundings = defaultdict(lambda : None)
@@ -41,6 +40,18 @@ class LMDP:
             self.__reward = reward_grounding
         else:
             raise "Argument must be a RewardGrounding instance"
+    
+    @property
+    def value(self):
+        return self.__value_function
+
+    @value.setter  
+    def value(self, value_grounding):
+        if (isinstance(value_grounding, ValueGrounding)):
+            self.__value_function = value_grounding
+        else:
+            raise "Argument must be a RewardGrounding instance"
+    
 
     @property
     def transition(self):
@@ -174,7 +185,6 @@ if __name__=='__main__':
     left = DiscreteActionGrounding("left", "left")
     
     # transitions (deterministic)
-    #up_state = Symbol(x == x(s) & y == y(s))
     transition = TransitionGrounding()
 
     # rewards
@@ -185,7 +195,7 @@ if __name__=='__main__':
 
     lmdp = LMDP(GridWorldMDP(10, 10, goal_locs=[(10, 10)]))
     lmdp.symbol = position # adds symbol to lmdp
-    lmdp.symbols([diagonal, goal]) # symbols to lmdp
+    lmdp.symbols([diagonal, goal]) # register symbols to lmdp
 
     lmdp.reward = reward
     lmdp.transition = transition
