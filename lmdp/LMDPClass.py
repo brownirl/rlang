@@ -171,14 +171,14 @@ if __name__=='__main__':
     x = StateGrounding(0, "x")
     y = StateGrounding(1, "y")
     position = StateGrounding([0, 1], "position")
-    diagonal = Symbol(x == y, "diagonal")
+    diagonal = Symbol(x + 1 == y, "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))
 
 
     # Actions in gridworld
     up = DiscreteActionGrounding("up", "up")
-    down = DiscreteActionGrounding("up", "up")
+    down = DiscreteActionGrounding("down", "down")
     right = DiscreteActionGrounding("right", 'right')
     left = DiscreteActionGrounding("left", "left")
     
@@ -187,7 +187,7 @@ if __name__=='__main__':
 
     # rewards
     reward = RewardGrounding([(goal, 1), (not_goal, -0.01)])
-
+    
     # policy 
     policy = PolicyGrounding(lambda *args: "up")
 

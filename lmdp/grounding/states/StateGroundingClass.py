@@ -9,6 +9,9 @@ from lmdp.grounding.BooleanFunClass import BooleanFun
 from simple_rl.mdp.StateClass import State
 import numpy as np
 
+
+
+
 class StateGrounding(Grounding):
     counter = 0
     def __init__(self, feature_positions, name=None):
@@ -23,7 +26,7 @@ class StateGrounding(Grounding):
         Grounding.__init__(self, name)
         StateGrounding.counter += 1
     
-    def __number_of_features(self):
+    def number_of_features(self):
         return len(self.__feature_positions)
 
     def __call__(self, *args):
@@ -43,180 +46,197 @@ class StateGrounding(Grounding):
 
     def __add__(self, other):
         if (isinstance(other, StateGrounding)):
-            if(other.__number_of_features() == self.__number_of_features()):
-                return lambda *args: self.__call__(*args) + other(*args)
+            if(other.number_of_features() == self.number_of_features()):
+                f = lambda *args: self.__call__(*args) + other(*args)
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
-            return lambda *args: self.__call__(*args) + other
+            f = lambda *args: self.__call__(*args) + other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.__number_of_features(),)):
-                return lambda *args: self.__call__(*args) + other
+            if(other.shape == (self.number_of_features(),)):
+                f = lambda *args: self.__call__(*args) + other
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplemented
+            raise NotImplementedError
+
+        return DerivedStateGrounding(f, self.number_of_features())
 
     def __sub__(self, other):
         if (isinstance(other, StateGrounding)):
-            if(other.__number_of_features() == self.__number_of_features()):
-                return lambda *args: self.__call__(*args) - other(*args)
+            if(other.number_of_features() == self.number_of_features()):
+                f = lambda *args: self.__call__(*args) - other(*args)
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
-            return lambda *args: self.__call__(*args) - other
+            f = lambda *args: self.__call__(*args) - other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.__number_of_features(),)):
-                return lambda *args: self.__call__(*args) - other
+            if(other.shape == (self.number_of_features(),)):
+                f = lambda *args: self.__call__(*args) - other
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplemented
+            raise NotImplementedError
+        return DerivedStateGrounding(f, self.number_of_features())
 
     def __mul__(self, other):
         if (isinstance(other, StateGrounding)):
-            if(other.__number_of_features() == self.__number_of_features()):
-                return lambda *args: self.__call__(*args) * other(*args)
+            if(other.number_of_features() == self.number_of_features()):
+                f = lambda *args: self.__call__(*args) * other(*args)
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
-            return lambda *args: self.__call__(*args) * other
+            f = lambda *args: self.__call__(*args) * other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.__number_of_features(),)):
-                return lambda *args: self.__call__(*args) *  other
+            if(other.shape == (self.number_of_features(),)):
+                f = lambda *args: self.__call__(*args) *  other
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplemented
+            raise NotImplementedError
+        return DerivedStateGrounding(f, self.number_of_features())
 
     def __truediv__(self, other):
         if (isinstance(other, StateGrounding)):
-            if(other.__number_of_features() == self.__number_of_features()):
-                return lambda *args: self.__call__(*args) / other(*args)
+            if(other.number_of_features() == self.number_of_features()):
+                f = lambda *args: self.__call__(*args) / other(*args)
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
-            return lambda *args: self.__call__(*args) / other
+            f =  lambda *args: self.__call__(*args) / other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.__number_of_features(),)):
-                return lambda *args: self.__call__(*args) / other
+            if(other.shape == (self.number_of_features(),)):
+                f = lambda *args: self.__call__(*args) / other
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplemented
+            raise NotImplementedError
+        return DerivedStateGrounding(f, self.number_of_features())
 
     def __lt__(self, other):
-        if (self.__number_of_features() == 1):
+        if (self.number_of_features() == 1):
             if (isinstance(other, StateGrounding)):
-                if(other.__number_of_features() == self.__number_of_features()):
+                if(other.number_of_features() == self.number_of_features()):
                     return BooleanFun(lambda *args: self.__call__(*args) < other(*args))
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanFun(lambda *args: self.__call__(*args) < other)
             else:
-                raise NotImplemented
+                raise NotImplementedError
         else:
             raise "Comparison not defined for vector groundings"
+        return DerivedStateGrounding(f, self.number_of_features())
 
     def __le__(self, other):
-        if (self.__number_of_features() == 1):
+        if (self.number_of_features() == 1):
             if (isinstance(other, StateGrounding)):
-                if(other.__number_of_features() == self.__number_of_features()):
+                if(other.number_of_features() == self.number_of_features()):
                     return BooleanFun(lambda *args: self.__call__(*args) <= other(*args))
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanFun(lambda *args: self.__call__(*args) <= other)
             else:
-                raise NotImplemented
+                raise NotImplementedError
         else:
             raise "Comparison not defined for vector groundings"
 
     def __eq__(self, other):
         if (isinstance(other, StateGrounding)):
-            if(other.__number_of_features() == self.__number_of_features()):
+            if(other.number_of_features() == self.number_of_features()):
                 return BooleanFun(lambda *args: np.array_equal(self.__call__(*args), other(*args)))
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
-            if (self.__number_of_features() == 1):
+            if (self.number_of_features() == 1):
                 return BooleanFun(lambda *args: self.__call__(*args) == other)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.__number_of_features(),)):
+            if(other.shape == (self.number_of_features(),)):
                 return BooleanFun(lambda *args: np.array_equal(self.__call__(*args), other))
             else:
                 raise "Length must be equal"
         else:
-            raise NotImplemented
+            raise NotImplementedError
 
     def __ne__(self, other):
         if (isinstance(other, StateGrounding)):
-            if(other.__number_of_features() == self.__number_of_features()):
+            if(other.number_of_features() == self.number_of_features()):
                 return BooleanFun(lambda *args: not np.array_equal(self.__call__(*args), other(*args)))
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
-            if (self.__number_of_features() == 1):
+            if (self.number_of_features() == 1):
                 return BooleanFun(lambda *args: self.__call__(*args) == other)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.__number_of_features(),)):
+            if(other.shape == (self.number_of_features(),)):
                 return BooleanFun(lambda *args: not np.array_equal(self.__call__(*args), other))
             else:
                 raise "Length must be equal"
         else:
-            raise NotImplemented
+            raise NotImplementedError
 
     def __gt__(self, other):
-        if (self.__number_of_features() == 1):
+        if (self.number_of_features() == 1):
             if (isinstance(other, StateGrounding)):
-                if(other.__number_of_features() == self.__number_of_features()):
+                if(other.number_of_features() == self.number_of_features()):
                     return BooleanFun(lambda *args: self.__call__(*args) > other(*args))
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanFun(lambda *args: self.__call__(*args) > other)
             else:
-                raise NotImplemented
+                raise NotImplementedError
         else:
             raise "Comparison not defined for vector groundings"
 
     def __ge__(self, other):
-        if (self.__number_of_features() == 1):
+        if (self.number_of_features() == 1):
             if (isinstance(other, StateGrounding)):
-                if(other.__number_of_features() == self.__number_of_features()):
+                if(other.number_of_features() == self.number_of_features()):
                     return BooleanFun(lambda *args: self.__call__(*args) >= other(*args))
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanFun(lambda *args: self.__call__(*args) >= other)
             else:
-                raise NotImplemented
+                raise NotImplementedError
         else:
             raise "Comparison not defined for vector groundings"
     
     def __floordiv__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __mod__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __divmod__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __pow__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __lshift__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __rshift__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __and__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __xor__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
     def __or__(self, other):
-        raise NotImplemented
+        raise NotImplementedError
+
+class DerivedStateGrounding(StateGrounding):
+    def __init__(self, function, number_of_features):
+        self.__function = function
+        self.number_features = number_of_features
+    
+    def __call__(self, *args):
+        return self.__function(*args)
+    
+    def number_of_features(self):
+        return self.number_features
 
 
 if __name__ == '__main__':
