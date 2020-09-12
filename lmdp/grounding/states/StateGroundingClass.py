@@ -10,8 +10,6 @@ from simple_rl.mdp.StateClass import State
 import numpy as np
 
 
-
-
 class StateGrounding(Grounding):
     counter = 0
     def __init__(self, feature_positions, name=None):
@@ -25,6 +23,7 @@ class StateGrounding(Grounding):
         self.__feature_positions = feature_positions
         Grounding.__init__(self, name)
         StateGrounding.counter += 1
+        self._rest = None
     
     def number_of_features(self):
         return len(self.__feature_positions)
@@ -43,6 +42,12 @@ class StateGrounding(Grounding):
             return args[0].features()[self.__feature_positions]
         else:
             raise "First argument must be MDP State Class"
+
+    def rest(self, state_dim):
+        if (self._rest is None):
+            feature_positions = [i for i in range(state_dim) if i not in self.__feature_positions]
+            self._rest = StateGrounding(feature_positions, name=self.name + "-rest") # cache it
+        return self._rest
 
     def __add__(self, other):
         if (isinstance(other, StateGrounding)):

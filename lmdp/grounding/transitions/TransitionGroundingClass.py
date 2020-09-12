@@ -1,5 +1,5 @@
 '''
-    Grounding for Transitions 
+    Grounding for (deterministic) Transitions specifications
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: August 2020
 '''

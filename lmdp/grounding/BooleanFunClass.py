@@ -25,7 +25,5 @@ class BooleanFun:
             raise other.__name__() + " must be a Boolean Fun or bool"
     
     def __invert__(self):
-        if(isinstance(other, BooleanFun)):
-            return lambda *args: not self.__call__(*args)
-        else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+        return lambda *args: not self.__call__(*args)
+        

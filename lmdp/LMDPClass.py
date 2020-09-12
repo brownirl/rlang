@@ -172,7 +172,6 @@ if __name__=='__main__':
     import numpy as np
     from simple_rl.tasks import GridWorldMDP
     from simple_rl.tasks import GridWorldState
-    
     #test
     s1 = GridWorldState(1, 1)
     s2 = GridWorldState(0, 1)
@@ -185,7 +184,6 @@ if __name__=='__main__':
     diagonal = Symbol(x + 1 == y, "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))
-    anywhere = Symbol(lambda *args: True)
 
 
     # Actions in gridworld
@@ -195,24 +193,20 @@ if __name__=='__main__':
     left = DiscreteActionGrounding("left", "left")
     
     lmdp = LMDP(GridWorldMDP(10, 10, goal_locs=[(10, 10)]))
-    lmdp.symbol = anywhere # adds symbol to lmdp
+    lmdp.symbol = Any # adds symbol to lmdp
     lmdp.symbols([diagonal, goal]) # register symbols to lmdp
     lmdp.actions([up, down, right, left])
 
     # transitions (deterministic)
     up_effect = NextSymbol((next_state(y) == y + 1) & (x == next_state(x)))
-    lmdp.transition.add(anywhere, up, up_effect)
+    lmdp.transition.add(Any, up, up_effect)
     print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))(s1, s1_up)}")
     
     # rewards
-    lmdp.reward.add(anywhere, -0.01)
+    lmdp.reward.add(Any, -0.01)
     
     # policy 
     lmdp.policy.update_policy(lambda *args: "up")
-
-  
-    
-    
 
     print(f"s1 in diagonal: {lmdp.symbol['diagonal'](s1)}")
     print(f"s1 is goal state: {lmdp.symbol['goal'](s1)}")

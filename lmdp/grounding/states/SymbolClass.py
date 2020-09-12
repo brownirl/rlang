@@ -22,6 +22,31 @@ class Symbol(Grounding):
                 - bool: state belongs to the symbol (set)
         '''
         return self.__symbol(args[0])
+    
+    def __and__(self, other):
+        if(isinstance(other, Symbol)):
+            return lambda *args: self.__call__(*args) and other(*args)
+        elif (isinstance(other, bool)):
+            return lambda *args: self.__call__(*args) and other 
+        else:
+            raise other.__name__() + " must be a Boolean Fun or bool"
+   
+    def __or__(self, other):
+        if(isinstance(other, Symbol)):
+            return lambda *args: self.__call__(*args) or other(*args)
+        elif (isinstance(other, bool)):
+            return lambda *args: self.__call__(*args) or other 
+        else:
+            raise other.__name__() + " must be a Boolean Fun or bool"
+    
+    def __invert__(self):
+        return lambda *args: not self.__call__(*args)
+    
+
+
+Any = Symbol(lambda *args: True, name='any-symbol') 
+None_ = Symbol(lambda  *args: False, name='none-symbol')
+
         
 if __name__ == "__main__":
     import numpy as np
