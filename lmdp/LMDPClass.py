@@ -1,10 +1,11 @@
 '''
     LMDP (Language-MDP) class.
-    Wrapper class for MDPs that holds prior information on:
+    Wrapper class for MDPs that holds prior (deterministic) informationon:
         - Policy/Sub-policies
         - Rewards/Values
         - Dynamics
         - State Abstractions (symbols)
+    For Discrete MDPs
 
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: September 2020
@@ -16,16 +17,17 @@ from lmdp.grounding import *
 from simple_rl.mdp.MDPClass import MDP
 from collections import defaultdict
 from collections.abc import Iterable
+import random 
 
 class LMDP:
 
     def __init__(self, mdp):
         self.__mdp = mdp
-        self.__reward = lambda *args: None
-        self.__value_function = lambda *args: None
-        self.__transition = lambda *args : None
+        self.__reward = RewardGrounding()
+        self.__value_function = ValueGrounding()
+        self.__transition = TransitionGrounding()
         self.__symbols = defaultdict(lambda: None)
-        self.__policy = lambda *args: None
+        self.__policy = PolicyGrounding(lambda *args: random.choice(mdp.get_actions()))
         self.__subpolicies = defaultdict(lambda: None)
         self.__actions = defaultdict(lambda: None)
         self.__state_groundings = defaultdict(lambda : None)
@@ -90,7 +92,11 @@ class LMDP:
         return self.__subpolicies[name]
     
     def action(self, name):
-        return self.__action[name]
+        return self.__actions[name]
+    
+    def actions(self, actions_list):
+        for a in actions_list:
+            self.__actions[a.name] = a
 
     # ----- In case of unknown method for a more specialized MDP class
     
@@ -167,6 +173,11 @@ if __name__=='__main__':
     from simple_rl.tasks import GridWorldMDP
     from simple_rl.tasks import GridWorldState
     
+    #test
+    s1 = GridWorldState(1, 1)
+    s2 = GridWorldState(0, 1)
+    s1_up = GridWorldState(1, 2)
+
     # 2-dimension state vector in gridworld
     x = StateGrounding(0, "x")
     y = StateGrounding(1, "y")
@@ -174,6 +185,7 @@ if __name__=='__main__':
     diagonal = Symbol(x + 1 == y, "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))
+    anywhere = Symbol(lambda *args: True)
 
 
     # Actions in gridworld
@@ -182,26 +194,25 @@ if __name__=='__main__':
     right = DiscreteActionGrounding("right", 'right')
     left = DiscreteActionGrounding("left", "left")
     
-    # transitions (deterministic)
-    transition = TransitionGrounding()
+    lmdp = LMDP(GridWorldMDP(10, 10, goal_locs=[(10, 10)]))
+    lmdp.symbol = anywhere # adds symbol to lmdp
+    lmdp.symbols([diagonal, goal]) # register symbols to lmdp
+    lmdp.actions([up, down, right, left])
 
+    # transitions (deterministic)
+    up_effect = NextSymbol((next_state(y) == y + 1) & (x == next_state(x)))
+    lmdp.transition.add(anywhere, up, up_effect)
+    print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))(s1, s1_up)}")
+    
     # rewards
-    reward = RewardGrounding([(goal, 1), (not_goal, -0.01)])
+    lmdp.reward.add(anywhere, -0.01)
     
     # policy 
-    policy = PolicyGrounding(lambda *args: "up")
+    lmdp.policy.update_policy(lambda *args: "up")
 
-    lmdp = LMDP(GridWorldMDP(10, 10, goal_locs=[(10, 10)]))
-    lmdp.symbol = position # adds symbol to lmdp
-    lmdp.symbols([diagonal, goal]) # register symbols to lmdp
-
-    lmdp.reward = reward
-    lmdp.transition = transition
-    lmdp.policy = policy
-
-    #test
-    s1 = GridWorldState(1, 1)
-    s2 = GridWorldState(0, 1)
+  
+    
+    
 
     print(f"s1 in diagonal: {lmdp.symbol['diagonal'](s1)}")
     print(f"s1 is goal state: {lmdp.symbol['goal'](s1)}")

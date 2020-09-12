@@ -1,5 +1,13 @@
-from lmdp.grounding.states.StateGroundingClass import StateGrounding
+'''
+    Next State Grounding class
+        - Wrapper for State Grounding that allows to specify that value 
+        must be taken from next state vector in order to allow expressions 
+        that include both current and next state vectors.
+    author: Rafael Rodriguez-Sanchez
+    date: September 2020
+'''
 
+from lmdp.grounding.states.StateGroundingClass import StateGrounding
 
 class NextStateGrounding(StateGrounding):
     def __init__(self, state_grounding):

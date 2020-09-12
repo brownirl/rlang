@@ -19,3 +19,6 @@ class PolicyGrounding(Grounding):
                 - probabilities over the action space
         '''
         return self.__policy_fun(args[0])
+    
+    def update_policy(self, function):
+        self.__policy_fun = function

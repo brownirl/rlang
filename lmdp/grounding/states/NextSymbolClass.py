@@ -1,7 +1,13 @@
-import sys, os
-sys.path.append(os.path.abspath("./"))
+'''
+    Next Symbol class 
+        - This class defines a set of states parameterized by another state
+          vector.
+    author: Rafael Rodriguez-Sanchez
+    date: September 2020
+'''
 
-from lmdp.grounding import Symbol
+
+from lmdp.grounding.states.SymbolClass import Symbol
 
 class NextSymbol(Symbol):
     def __init__(self, boolean_fun, name=None, current_state=None):
@@ -44,9 +50,7 @@ if __name__ == '__main__':
     s = State(data=np.array([1,0]))
     s_prime = State(data= np.array([2,1]))
     s_prime_1 = State(data=np.array([1, 1]))
-
-
+    
     up = NextSymbol(next_state(x) == x + 1)
     up.current_state = s
-
     print(up(s_prime))

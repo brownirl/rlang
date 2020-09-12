@@ -26,6 +26,8 @@ class TransitionGrounding(Grounding):
         next_symbols = []
         for s in [symbol for symbol in self.__transitions.keys() if symbol(state)]:
             next_symbols.append(self.__transitions[s][action])
+        if (len(next_symbols) == 1):
+            next_symbols = next_symbols[0]
         return next_symbols
 
     
@@ -35,7 +37,7 @@ class TransitionGrounding(Grounding):
             Args:
                 - symbol (starting symbol)
                 - action 
-                - symbol (next state symbol)
+                - symbol (next-state symbol)
         '''
         self.__transitions[symbol][action] = symbol_next
 

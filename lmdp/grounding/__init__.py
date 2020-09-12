@@ -5,5 +5,7 @@ from lmdp.grounding.actions.PolicyGroundingClass import PolicyGrounding
 from lmdp.grounding.rewards.ValueGroundingClass import ValueGrounding
 from lmdp.grounding.actions.PolicyFromDictGroundingClass import PolicyFromDictGrounding
 from lmdp.grounding.states.StateGroundingClass import StateGrounding
+from lmdp.grounding.states.NextStateGroundingClass import next_state
+from lmdp.grounding.states.NextSymbolClass import NextSymbol
 from lmdp.grounding.states.SymbolClass import Symbol
 from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
