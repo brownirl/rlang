@@ -8,11 +8,12 @@ from lmdp.grounding.GroundingClass import Grounding
 
 class ActionGrounding(Grounding):
     counter = 0
-    def __init__(self, name=None):
+    def __init__(self, action_function, name=None):
         if (name is None):
             name = "action-" + str(ActionGrounding.counter)
         Grounding.__init__(self, name)
         ActionGrounding.counter += 1
+        self.action_function = action_function
 
     def __call__(self, *args):
-        pass
+        return self.action_function(*args)

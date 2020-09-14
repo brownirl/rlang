@@ -1,12 +1,14 @@
 from lmdp.grounding.actions.PolicyGroundingClass import PolicyGrounding
 from lmdp.grounding.actions.PolicyFromDictClass import PolicyFromDict
 
+
+
 class PolicyFromDictGrounding(PolicyGrounding):
     def __init__(self, policy=[]):
         self.policy_dict = PolicyFromDict(policy)
         PolicyGrounding.__init__(self, self.policy_dict)
 
-    def update(self, symbol, action):
+    def add(self, symbol, action):
         self.policy_dict.update(symbol, action)
 
 

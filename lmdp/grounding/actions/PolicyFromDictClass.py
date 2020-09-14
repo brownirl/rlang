@@ -1,3 +1,10 @@
+'''
+    Policy function based on Dictionary
+
+    author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
+    date: September 2020
+'''
+
 from collections.abc import Iterable
 class PolicyFromDict:
 
@@ -22,7 +29,7 @@ class PolicyFromDict:
             actions.append(self.__policy[s])
         return actions
 
-    def update(self, symbol, action):
+    def add(self, symbol, action):
         '''
             updates the action of a symbol. 
             It adds it if the symbol is in the dict

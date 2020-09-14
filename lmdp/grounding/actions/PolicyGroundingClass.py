@@ -8,7 +8,7 @@ from lmdp.grounding.GroundingClass import Grounding
 class PolicyGrounding(Grounding):
 
     def __init__(self, policy, name="policy"):
-        self.__policy_fun = policy
+        self.policy_fun = policy
         Grounding.__init__(self, name=name)
     
     def __call__(self, *args):
@@ -18,7 +18,7 @@ class PolicyGrounding(Grounding):
             return:
                 - probabilities over the action space
         '''
-        return self.__policy_fun(args[0])
+        return self.policy_fun(args[0])
     
     def update_policy(self, function):
-        self.__policy_fun = function
+        self.policy_fun = function
