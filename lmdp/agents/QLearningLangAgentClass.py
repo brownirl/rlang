@@ -1,5 +1,5 @@
 '''
-    Language-informed Sarsa Agent
+    Language-informed Q-Learning Agent
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: September 2020
 '''
