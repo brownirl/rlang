@@ -8,7 +8,7 @@ class BooleanFun:
     def __call__(self, *args):
         return self.__fun(*args)
         
-    def __and__(self, other):
+    def and_(self, other):
         if(isinstance(other, BooleanFun)):
             return lambda *args: self.__call__(*args) and other(*args)
         elif (isinstance(other, bool)):
@@ -16,7 +16,7 @@ class BooleanFun:
         else:
             raise other.__name__() + " must be a Boolean Fun or bool"
    
-    def __or__(self, other):
+    def or_(self, other):
         if(isinstance(other, BooleanFun)):
             return lambda *args: self.__call__(*args) or other(*args)
         elif (isinstance(other, bool)):
@@ -24,6 +24,6 @@ class BooleanFun:
         else:
             raise other.__name__() + " must be a Boolean Fun or bool"
     
-    def __invert__(self):
+    def not_(self):
         return lambda *args: not self.__call__(*args)
         

@@ -23,7 +23,7 @@ class Symbol(Grounding):
         '''
         return self.__symbol(args[0])
     
-    def __and__(self, other):
+    def and_(self, other):
         if(isinstance(other, Symbol)):
             return lambda *args: self.__call__(*args) and other(*args)
         elif (isinstance(other, bool)):
@@ -31,7 +31,7 @@ class Symbol(Grounding):
         else:
             raise other.__name__() + " must be a Boolean Fun or bool"
    
-    def __or__(self, other):
+    def or_(self, other):
         if(isinstance(other, Symbol)):
             return lambda *args: self.__call__(*args) or other(*args)
         elif (isinstance(other, bool)):
@@ -39,7 +39,7 @@ class Symbol(Grounding):
         else:
             raise other.__name__() + " must be a Boolean Fun or bool"
     
-    def __invert__(self):
+    def not_(self):
         return lambda *args: not self.__call__(*args)
     
 

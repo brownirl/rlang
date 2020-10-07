@@ -4,11 +4,12 @@
     Date: August 2020
 """
 
+import numpy as np
+from simple_rl.mdp.StateClass import State
+from functools import reduce
+
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.BooleanFunClass import BooleanFun
-from simple_rl.mdp.StateClass import State
-import numpy as np
-
 
 class StateGrounding(Grounding):
     counter = 0
@@ -20,13 +21,16 @@ class StateGrounding(Grounding):
             name = "state-var-" + str(StateGrounding.counter)
         if (isinstance(feature_positions, int)):
             feature_positions = [feature_positions, ]
-        self.__feature_positions = feature_positions
+        self.feature_positions = feature_positions
         Grounding.__init__(self, name)
         StateGrounding.counter += 1
         self._rest = None
     
     def number_of_features(self):
-        return len(self.__feature_positions)
+        return len(self.feature_positions)
+    
+    def variables(self):
+        return [self,]
 
     def __call__(self, *args):
         '''
@@ -39,20 +43,29 @@ class StateGrounding(Grounding):
             raise "State from MDP is needed"
 
         if (isinstance(args[0], State)):
-            return args[0].features()[self.__feature_positions]
+            return args[0].features()[self.feature_positions]
         else:
             raise "First argument must be MDP State Class"
 
     def rest(self, state_dim):
         if (self._rest is None):
-            feature_positions = [i for i in range(state_dim) if i not in self.__feature_positions]
+            feature_positions = [i for i in range(state_dim) if i not in self.feature_positions]
             self._rest = StateGrounding(feature_positions, name=self.name + "-rest") # cache it
         return self._rest
+    
+    def concat(self, *others, name=None):
+        if name is None:
+            names = list(map(lambda x: x.name, others))
+            name = '(' + self.name +',' + ','.join(names) + ')'
+        feature_positions = set(self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
+        return StateGrounding(sorted(list(feature_positions)), name=name)
 
     def __add__(self, other):
+        variables = []
         if (isinstance(other, StateGrounding)):
             if(other.number_of_features() == self.number_of_features()):
                 f = lambda *args: self.__call__(*args) + other(*args)
+                variables = other.variables()
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
@@ -64,13 +77,15 @@ class StateGrounding(Grounding):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-
-        return DerivedStateGrounding(f, self.number_of_features())
+        variables += self.variables()
+        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __sub__(self, other):
+        variables = []
         if (isinstance(other, StateGrounding)):
             if(other.number_of_features() == self.number_of_features()):
                 f = lambda *args: self.__call__(*args) - other(*args)
+                variables = other.variables()
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
@@ -82,12 +97,15 @@ class StateGrounding(Grounding):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return DerivedStateGrounding(f, self.number_of_features())
+        variables += self.variables()
+        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __mul__(self, other):
+        variables = []
         if (isinstance(other, StateGrounding)):
             if(other.number_of_features() == self.number_of_features()):
                 f = lambda *args: self.__call__(*args) * other(*args)
+                variables = other.variables()
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
@@ -99,12 +117,15 @@ class StateGrounding(Grounding):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return DerivedStateGrounding(f, self.number_of_features())
+        variables += self.variables()
+        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __truediv__(self, other):
+        variables = []
         if (isinstance(other, StateGrounding)):
             if(other.number_of_features() == self.number_of_features()):
                 f = lambda *args: self.__call__(*args) / other(*args)
+                variables = other.variables()
             else:
                 raise "Shapes are not compatible"
         elif (isinstance(other, float) or isinstance(other, int)):
@@ -116,7 +137,8 @@ class StateGrounding(Grounding):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return DerivedStateGrounding(f, self.number_of_features())
+        variables += self.variables()
+        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __lt__(self, other):
         if (self.number_of_features() == 1):
@@ -131,7 +153,6 @@ class StateGrounding(Grounding):
                 raise NotImplementedError
         else:
             raise "Comparison not defined for vector groundings"
-        return DerivedStateGrounding(f, self.number_of_features())
 
     def __le__(self, other):
         if (self.number_of_features() == 1):
@@ -231,9 +252,12 @@ class StateGrounding(Grounding):
         raise NotImplementedError
     def __or__(self, other):
         raise NotImplementedError
+    def __matmul__(self, other):
+        raise NotImplementedError
 
 class DerivedStateGrounding(StateGrounding):
-    def __init__(self, function, number_of_features):
+    def __init__(self, function, number_of_features, variables):
+        self._variables = variables
         self.__function = function
         self.number_features = number_of_features
     
@@ -242,6 +266,9 @@ class DerivedStateGrounding(StateGrounding):
     
     def number_of_features(self):
         return self.number_features
+    
+    def variables(self):
+        return self._variables
 
 
 if __name__ == '__main__':

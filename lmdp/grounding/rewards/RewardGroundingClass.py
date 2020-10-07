@@ -30,6 +30,9 @@ class RewardGrounding(Grounding):
             return r[0]
         return r
     
+    def __matmul__(self, state):
+        return self.__call__(state)
+    
     def add(self, symbol, reward):
         '''
             Add a reward to the dictionary. Overrides if it already exists.        

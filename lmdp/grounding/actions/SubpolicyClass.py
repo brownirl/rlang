@@ -18,25 +18,28 @@ class Subpolicy(ActionGrounding):
         if (name is None):
             name = "Subpolicy-" + str(Subpolicy.id)
         Subpolicy.id += 1
-        self.__init = init_symbol
-        self.__termination = termination_symbol
+        self._init = init_symbol
+        self._termination = termination_symbol
         self.__executing = False
         ActionGrounding.__init__(self, policy_fun, name=name)
-
-    
+ 
     def __call__(self, *args):
-        if (not self.__executing and self.__init(*args)):
+        if (not self.__executing and self._init(*args)):
             self.__executing = True
             return super().__call__(*args)
-        elif (self.__executing and not self.__termination(*args)):
+        elif (self.__executing and not self._termination(*args)):
             return super().__call__(*args)
-        elif (self.__termination(*args)):
+        elif (self._termination(*args)):
             self.__executing = False
             return None
 
     def is_executing(self):
         return self.__executing
 
+    def __rshift__(self, subpolicy):
+        if (isinstance(subpolicy, SubpolicyChain)):
+            return SubpolicyChain([self, subpolicy.subpolicies])
+        return SubpolicyChain([self, subpolicy])
 
 
 class SubpolicyFromOption(Subpolicy):
@@ -57,6 +60,42 @@ class GoalSubpolicy(SubpolicyFromOption):
             name = 'goal-subpolicy-' + str(GoalSubpolicy.id)
         GoalSubpolicy.id += 1
         SubpolicyFromOption.__init__(self, Any, policy_fun, goal_symbol, name=name)
+
+class SubpolicyChain(Subpolicy):
+    def __init__(self, subpolicies):
+        self.subpolicies = subpolicies
+        self.executing_policy = None
+        self._init = subpolicies[0]._init
+        self._termination = subpolicies[-1]._termination
+
+    def __call__(self, *args):
+        if (not self.is_executing):
+            if (self._init(*args)):
+                self.executing_policy = self.subpolicies[0]
+                self.current_policy_idx = 0
+                return self.executing_policy(*args)
+        else:
+            if (self.executing_policy.is_executing()):
+                return self.executing_policy(*args)
+            else:
+                self.current_policy_idx += 1
+                if (self.current_policy_idx > len(self.subpolicies)):
+                    self.executing_policy = None
+                    return None
+                self.executing_policy = self.subpolicies[self.current_policy_idx]
+                if (not self._termination(*args) and self.executing_policy._init(*args)):
+                    return self.executing_policy(*args)
+                else:
+                    self.executing_policy = None
+        return None
+    
+    def is_executing(self):
+        return self.executing_policy is None
+
+    def __rshift__(self, subpolicy):
+        if (isinstance(subpolicy, SubpolicyChain)):
+            return SubpolicyChain(self.subpolicies + subpolicy.subpolicies)
+        return SubpolicyChain(self.subpolicies + [subpolicy])
 
 
 if __name__== "__main__":
@@ -86,8 +125,11 @@ if __name__== "__main__":
     p = PolicyFromDict()
     p.add(diagonal, up)
 
-    goal = Subpolicy(Any, p, goal)
-    
+    subgoal1 = Subpolicy(Any, p, goal)
+    subgoal2 = Subpolicy(Any, p, goal)
+    subpolicy = subgoal1 >> subgoal2
+    subpolicy2 = subgoal1 >> subpolicy
+
     print(f"{goal.name}: {goal(s1)}")
 
 
