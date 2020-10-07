@@ -90,9 +90,12 @@ class LMDP:
         else:
             self.__symbols[symbol_object.name] = symbol_object
 
-    def symbols(self, symbols_iterable):
+    def add_symbols(self, symbols_iterable):
         for symbol in symbols_iterable:
             self.__symbols[symbol.name] = symbol
+    
+    def get_symbols(self):
+        return list(self.__symbols.values())
 
     def subpolicy(self, name):
         return self.__subpolicies[name]
