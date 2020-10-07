@@ -149,7 +149,7 @@ if __name__=='__main__':
     # transitions (deterministic)
     up_effect = NextSymbol((next_state(lmdp.state("y")) == lmdp.state("y") + 1).and_(lmdp.state("x") == next_state(lmdp.state("x"))) )
     lmdp.transition.add(Any, lmdp.action("up"), up_effect)
-    print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))(s1, s1_up)}")
+    print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))(s1_up)}")
     
     # rewards
     lmdp.reward.add(Any, -0.01)

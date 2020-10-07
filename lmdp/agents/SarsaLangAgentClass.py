@@ -20,7 +20,12 @@ class SarsaLangAgent(LangAgent):
 
     def lang_q_func(self, state, action):
         '''
-            Priority-based implementation: 1. value for (s,a) specified; 2. Reward for (s,a) specified 3. action specified.
+            Priority-based implementation: 
+            1. value for (s,a) specified; 
+            2. Reward for (s,a) specified;
+            3. action specified.
+
+            returns the average value over the symbols the state belongs to.
         '''
 
         value = self._lmdp.value(state)
