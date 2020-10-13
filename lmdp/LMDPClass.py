@@ -35,6 +35,42 @@ class LMDP:
         self.__policy = PolicyGrounding(lambda *args: random.choice(self.__actions.keys()))
         self.__subpolicies = defaultdict(lambda: None)
         
+    def state(self, name):
+        return self.__state_groundings[name]
+    
+    def add_state_var(self, state_grounding):
+        self.__state_groundings[state_grounding.name] = state_grounding
+    def symbol(self, name):
+        return self.__symbols[name]
+        
+    def add_symbol(self, symbol_object):
+        if (isinstance(symbol_object, Iterable)):
+            self.add_symbols(symbol_object)
+        else:
+            self.__symbols[symbol_object.name] = symbol_object
+
+    def add_symbols(self, symbols_iterable):
+        for symbol in symbols_iterable:
+            self.__symbols[symbol.name] = symbol
+    
+    def get_symbols(self):
+        return list(self.__symbols.values())
+
+    def subpolicy(self, name):
+        return self.__subpolicies[name]
+
+    def get_subpolicies(self):
+        return list(self.__subpolicies.values())
+    
+    def action(self, name):
+        return self.__actions[name]
+    
+    def add_actions(self, actions_list):
+        for a in actions_list:
+            self.__actions[a.name] = a
+    
+    def get_actions(self):
+        return list(self.__actions.values())
 
     @property
     def reward(self):
@@ -80,45 +116,14 @@ class LMDP:
             self.__policy = policy_grounding
         else:
             raise "Argument must be a PolicyGrounding instance"
-    
-    def symbol(self, name):
-        return self.__symbols[name]
-        
-    def add_symbol(self, symbol_object):
-        if (isinstance(symbol_object, Iterable)):
-            self.symbols(symbol_object)
-        else:
-            self.__symbols[symbol_object.name] = symbol_object
 
-    def add_symbols(self, symbols_iterable):
-        for symbol in symbols_iterable:
-            self.__symbols[symbol.name] = symbol
-    
-    def get_symbols(self):
-        return list(self.__symbols.values())
-
-    def subpolicy(self, name):
-        return self.__subpolicies[name]
-    
-    def action(self, name):
-        return self.__actions[name]
-    
-    def actions(self, actions_list):
-        for a in actions_list:
-            self.__actions[a.name] = a
-
-    def state(self, name):
-        return self.__state_groundings[name]
-    
-    def add_state_var(self, state_grounding):
-        self.__state_groundings[state_grounding.name] = state_grounding
     
     def state_groundings(self, state_groundings_list):
         for state in state_groundings_list:
             self.__state_groundings[state.name] = state
 
     def bind(self, mdp, state_names=None):
-        self.actions(list(map(lambda a: DiscreteActionGrounding(a, name=str(a)), mdp.get_actions())))
+        self.add_actions(list(map(lambda a: DiscreteActionGrounding(a, name=str(a)), mdp.get_actions())))
         state_seq = list(range(mdp.get_num_state_feats()))
         if state_names is None:
             state_names = list(map(lambda state: "state-var-" + str(state), state_seq))

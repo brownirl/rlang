@@ -24,13 +24,13 @@ class QLearningLangAgent(LangAgent):
             TODO: abstract this function away from the class to allow easy integration with an "interpreter"
         '''
 
-        value = self._lmdp.value(state)
-        reward = self._lmdp.reward(state)
-        rec_action = self._lmdp.policy(state)
+        value = self.lmdp.value(state)
+        reward = self.lmdp.reward(state)
+        rec_action = self.lmdp.policy(state)
 
-        if value is not None:
+        if len(value) > 0:
             return sum(value)/len(value) # mean value.
-        elif reward is not None:
+        elif len(reward) > 0:
             return sum(reward)/len(reward) # mean reward.
         elif action is not None and rec_action == action:
             return QLearningLangAgent.MAX_Q
@@ -38,4 +38,4 @@ class QLearningLangAgent(LangAgent):
             return QLearningLangAgent.DEFAULT_Q
             
     def update_from_language(self):
-        self._base_agent.q_func = defaultdict(lambda state: defaultdict(lambda action: self.lang_q_func(state, action)))
+        self.base_agent.q_func = defaultdict(lambda state: defaultdict(lambda action: self.lang_q_func(state, action)))

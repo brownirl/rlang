@@ -26,8 +26,8 @@ class RewardGrounding(Grounding):
         '''
         symbols = [s for s in self.__rewards.keys() if s(state)]
         r = [self.__rewards[s] for s in symbols]
-        if len(r) == 1:
-            return r[0]
+        # if len(r) == 1:
+        #     return r[0]
         return r
     
     def __matmul__(self, state):

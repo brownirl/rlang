@@ -7,20 +7,24 @@ from simple_rl.agents.AgentClass import Agent
 
 class LangAgent(object):
 
-    def __init__(self, base_agent=None, lmdp=None):
-        self._lmdp = lmdp
-        self._base_agent = base_agent
+    def __init__(self, base_agent, lmdp):
+        self.lmdp = lmdp
+        self.base_agent = base_agent
 
     def __getattr__(self, method_name):
         def method(*args, **kwargs):
-            return getattr(self._base_agent, method_name)(*args, **kwargs)
+            return getattr(self.base_agent, method_name)(*args, **kwargs)
         return method
 
     def set_lmdp(self, lmdp):
-        self._lmdp = lmdp
+        self.lmdp = lmdp
     
-    def str(self):
-        return self.get_name + f"[{self._lmdp.name}]"
+    def __str__(self):
+        return self.get_name()
+    
+    @property
+    def name(self):
+        return str(self)
 
 
     # def _init_from_lmdp(self):

@@ -28,13 +28,13 @@ class SarsaLangAgent(LangAgent):
             returns the average value over the symbols the state belongs to.
         '''
 
-        value = self._lmdp.value(state)
-        reward = self._lmdp.reward(state)
-        rec_action = self._lmdp.policy(state)
+        value = self.lmdp.value(state)
+        reward = self.lmdp.reward(state)
+        rec_action = self.lmdp.policy(state)
 
-        if value is not None:
+        if len(value) > 0:
             return sum(value)/len(value)
-        elif reward is not None:
+        elif len(reward) > 0:
             return sum(reward)/len(reward)
         elif action is not None and rec_action == action:
             return SarsaLangAgent.MAX_Q
@@ -42,4 +42,4 @@ class SarsaLangAgent(LangAgent):
             return SarsaLangAgent.DEFAULT_Q
             
     def update_from_language(self):
-        self._base_agent.q_func = defaultdict(lambda state: defaultdict(lambda action: self.lang_q_func(state, action)))
+        self.base_agent.q_func = defaultdict(lambda state: defaultdict(lambda action: self.lang_q_func(state, action)))

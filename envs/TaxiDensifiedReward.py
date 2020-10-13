@@ -24,8 +24,7 @@ class TaxiDense(TaxiOOMDP):
         # If agent is dropping off.
         agent = state.get_first_obj_of_class("agent")
         # Stacked if statements for efficiency.
-        if action == "dropoff":
-           
+        if action == "dropoff": 
 
             # Check to see if all passengers at destination.
             if agent.get_attribute("has_passenger"):
