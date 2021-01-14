@@ -6,12 +6,15 @@
     Date: August 2020
 """
 
+import sys, os
+sys.path.append(os.path.abspath("./"))
+
 import numpy as np
 from simple_rl.mdp.StateClass import State
 from functools import reduce
 
 from lmdp.grounding.GroundingClass import Grounding
-from lmdp.grounding.BooleanFunClass import BooleanFun
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from lmdp.grounding.real.RealExpressionClass import RealExpression
 
 class StateFactor(Grounding):
@@ -72,7 +75,7 @@ class StateFactor(Grounding):
             f = self.real_expression() + other.real_expression()
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression)):
+        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() + other
         else:
             raise NotImplementedError
@@ -84,7 +87,7 @@ class StateFactor(Grounding):
             f = self.real_expression() - other.real_expression()
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression)):
+        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() - other
         else:
             raise NotImplementedError
@@ -95,7 +98,7 @@ class StateFactor(Grounding):
             f = self.real_expression() * other.real_expression()
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression)):
+        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() * other
         else:
             raise NotImplementedError
@@ -106,7 +109,7 @@ class StateFactor(Grounding):
             f = self.real_expression() / other.real_expression()
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression)):
+        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() / other
         else:
             raise NotImplementedError
@@ -197,9 +200,9 @@ if __name__ == '__main__':
     x_0 = x == 0 
     x_1 = x + 1
 
-    print(f"s1 in diag: {diag(s1)}")
-    print(f"s2 in diag: {diag(s2)}")
-    print(f"s1 in x_0: {x_0(s1)}")
-    print(f"s2 in x_0: {x_0(s2)}")
-    print(f"s1.x + 1:  {x_1(s1)}")
-    print(f"s2.x + 1:  {x_1(s2)}")
+    print(f"s1 in diag: {diag(s1)} == True")
+    print(f"s2 in diag: {diag(s2)} == False")
+    print(f"s1 in x_0: {x_0(s1)} == False")
+    print(f"s2 in x_0: {x_0(s2)} == True")
+    print(f"s1.x + 1:  {x_1(s1)} == 2")
+    print(f"s2.x + 1:  {x_1(s2)} == 1")

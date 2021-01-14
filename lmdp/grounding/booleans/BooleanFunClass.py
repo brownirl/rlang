@@ -1,29 +1,31 @@
 '''
-    Boolean Fun class 
+    Boolean Expression Class
+        Boolean Functions 
+    author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
+    date: January 2021
 '''
-class BooleanExpression:
-    def __init__(self, fun):
-        self._fun = fun
 
-    def __call__(self, *args):
-        return self._fun(*args)
+from lmdp.grounding.ExpressionsClass import Expression
+
+class BooleanExpression(Expression):
+    def __init__(self, fun, domain):
+        Expression.__init__(self, fun, domain=domain, codomain=["Boolean"])
         
     def and_(self, other):
         if(isinstance(other, BooleanExpression)):
-            return lambda *args: self.__call__(*args) and other(*args)
+            return BooleanExpression(lambda *args: self.__call__(*args) and other(*args), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return lambda *args: self.__call__(*args) and other 
+            return BooleanExpression(lambda *args: self.__call__(*args) or other, domain=self.domain()) 
         else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+            raise other.__name__() + " must be a Boolean Expression or bool"
    
     def or_(self, other):
         if(isinstance(other, BooleanExpression)):
-            return lambda *args: self.__call__(*args) or other(*args)
+            return BooleanExpression(lambda *args: self.__call__(*args) or other(*args), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return lambda *args: self.__call__(*args) or other 
+            return BooleanExpression(lambda *args: self.__call__(*args) or other, domain=self.domain())
         else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+            raise other.__name__() + " must be a Boolean Expression or bool"
     
     def not_(self):
-        return lambda *args: not self.__call__(*args)
-        
+         return BooleanExpression(lambda *args: not self.__call__(*args), domain=self.domain())

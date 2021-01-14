@@ -6,7 +6,7 @@
 
 class Domain:
     DOMAINS = {0: "State", 1: "Action", 2: "Next State"}
-    INV_DOMAINS = dict(DOMAINS.values(), DOMAINS.keys())
+    INV_DOMAINS = dict(zip(DOMAINS.values(), DOMAINS.keys()))
     def __init__(self, domain):
         self._domain = set([Domain.INV_DOMAINS[d] for d in domain])
 
@@ -16,6 +16,10 @@ class Domain:
         else:
             d = [Domain.DOMAINS[d] for d in sorted(list(self._domain))]
             return ",".join(d)
+
+    def domain(self):
+        return [Domain.DOMAINS[d] for d in self._domain]
+
 
 
 class Grounding(object):

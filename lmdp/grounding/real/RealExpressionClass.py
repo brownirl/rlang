@@ -1,15 +1,26 @@
+'''
+    Real Expression:
+        Real Vector Functions 
+    author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
+    date: January 2021
+'''
+
 import numpy as np
 from lmdp.grounding.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanFun
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+
 class RealExpression(Expression):
     def __init__(self, expression_fun, dimension=1, domain=[], codomain=["Real"]):
-        domain.append(expression_fun.get_domain())
+        if(isinstance(expression_fun, Expression)):
+            domain.append(expression_fun.domain())
         self._dim = dimension
-        Expression.__init__(self, domain, codomain)
+        Expression.__init__(self, expression_fun, domain, codomain)
 
     def __add__(self, other):
+        domain = self.domain()
         if (isinstance(other, RealExpression)):
             if(other._dim == self._dim):
+                domain += other.domain()
                 f = lambda *args: self.__call__(*args) + other(*args)
             else:
                 raise "Shapes are not compatible"
@@ -22,11 +33,13 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return RealExpression(f, dimension=self._dim())
+        return RealExpression(f, dimension=self._dim(), domain=domain)
 
     def __sub__(self, other):
+        domain = self.domain()
         if (isinstance(other, RealExpression)):
             if(other.dim() == self._dim()):
+                domain += other.domain()
                 f = lambda *args: self.__call__(*args) - other(*args)
             else:
                 raise "Shapes are not compatible"
@@ -39,11 +52,13 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return RealExpression(f, self._dim())
+        return RealExpression(f, self._dim(), domain=domain)
 
     def __mul__(self, other):
+        domain = self.domain()
         if (isinstance(other, RealExpression)):
             if(other._dim() == self._dim()):
+                domain += other.domain()
                 f = lambda *args: self.__call__(*args) * other(*args)
             else:
                 raise "Shapes are not compatible"
@@ -56,11 +71,13 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return RealExpression(f, self._dim())
+        return RealExpression(f, self._dim(), domain=domain)
 
     def __truediv__(self, other):
+        domain = self.domain()
         if (isinstance(other, RealExpression)):
             if(other._dim() == self._dim()):
+                domain += other.domain()
                 f = lambda *args: self.__call__(*args) / other(*args)
             else:
                 raise "Shapes are not compatible"
@@ -73,17 +90,17 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             raise NotImplementedError
-        return RealExpression(f, self._dim())
+        return RealExpression(f, self._dim(), domain=domain)
 
     def __lt__(self, other):
         if (self._dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other._dim() == self._dim()):
-                    return BooleanFun(lambda *args: self.__call__(*args) < other(*args))
+                    return BooleanExpression(lambda *args: self.__call__(*args) < other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) < other)
+                return BooleanExpression(lambda *args: self.__call__(*args) < other, domain=self.domain())
             else:
                 raise NotImplementedError
         else:
@@ -93,11 +110,11 @@ class RealExpression(Expression):
         if (self._dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other._dim() == self._dim()):
-                    return BooleanFun(lambda *args: self.__call__(*args) <= other(*args))
+                    return BooleanExpression(lambda *args: self.__call__(*args) <= other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) <= other)
+                return BooleanExpression(lambda *args: self.__call__(*args) <= other, domain=self.domain())
             else:
                 raise NotImplementedError
         else:
@@ -106,17 +123,17 @@ class RealExpression(Expression):
     def __eq__(self, other):
         if (isinstance(other, RealExpression)):
             if(other._dim() == self._dim()):
-                return BooleanFun(lambda *args: np.array_equal(self.__call__(*args), other(*args)))
+                return BooleanExpression(lambda *args: np.array_equal(self.__call__(*args), other(*args)), domain=self.domain()+other.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
             if (self._dim() == 1):
-                return BooleanFun(lambda *args: self.__call__(*args) == other)
+                return BooleanExpression(lambda *args: self.__call__(*args) == other, domain=self.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self._dim(),)):
-                return BooleanFun(lambda *args: np.array_equal(self.__call__(*args), other))
+                return BooleanExpression(lambda *args: np.array_equal(self.__call__(*args), other), domain=self.domain)
             else:
                 raise "Length must be equal"
         else:
@@ -125,17 +142,17 @@ class RealExpression(Expression):
     def __ne__(self, other):
         if (isinstance(other, RealExpression)):
             if(other._dim() == self._dim()):
-                return BooleanFun(lambda *args: not np.array_equal(self.__call__(*args), other(*args)))
+                return BooleanExpression(lambda *args: not np.array_equal(self.__call__(*args), other(*args)), domain=self.domain()+other.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
             if (self._dim() == 1):
-                return BooleanFun(lambda *args: self.__call__(*args) == other)
+                return BooleanExpression(lambda *args: self.__call__(*args) == other, domain=self.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self._dim(),)):
-                return BooleanFun(lambda *args: not np.array_equal(self.__call__(*args), other))
+                return BooleanExpression(lambda *args: not np.array_equal(self.__call__(*args), other), domain=self.domain())
             else:
                 raise "Length must be equal"
         else:
@@ -145,11 +162,11 @@ class RealExpression(Expression):
         if (self._dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other._dim() == self._dim()):
-                    return BooleanFun(lambda *args: self.__call__(*args) > other(*args))
+                    return BooleanExpression(lambda *args: self.__call__(*args) > other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) > other)
+                return BooleanExpression(lambda *args: self.__call__(*args) > other, domain=self.domain())
             else:
                 raise NotImplementedError
         else:
@@ -159,11 +176,11 @@ class RealExpression(Expression):
         if (self._dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other._dim() == self._dim()):
-                    return BooleanFun(lambda *args: self.__call__(*args) >= other(*args))
+                    return BooleanExpression(lambda *args: self.__call__(*args) >= other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) >= other)
+                return BooleanExpression(lambda *args: self.__call__(*args) >= other, domain=self.domain())
             else:
                 raise NotImplementedError
         else:
