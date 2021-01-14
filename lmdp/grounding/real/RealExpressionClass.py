@@ -136,7 +136,7 @@ class RealExpression(Expression):
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self._dim(),)):
-                return BooleanExpression(lambda *args: np.array_equal(self.__call__(*args), other), domain=self.domain)
+                return BooleanExpression(lambda *args: np.array_equal(self.__call__(*args), other), domain=self.domain())
             else:
                 raise "Length must be equal"
         else:

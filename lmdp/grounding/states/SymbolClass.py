@@ -3,8 +3,9 @@
     author: Rafael Rodriguez-Sanchez
     date: August 2020
 '''
-from lmdp.grounding.GroundingClass import Grounding
 
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 class Symbol(Grounding):
     counter = 0
     def __init__(self, boolean_fun, name=None):
@@ -23,24 +24,27 @@ class Symbol(Grounding):
         '''
         return self.__symbol(args[0])
     
+    def _boolean_expression(self):
+        return BooleanExpression(self.__symbol, domain=self._domain.domain())
+    
     def and_(self, other):
         if(isinstance(other, Symbol)):
-            return lambda *args: self.__call__(*args) and other(*args)
+            return Symbol(self._boolean_expression().and_(other._boolean_expression()))
         elif (isinstance(other, bool)):
-            return lambda *args: self.__call__(*args) and other 
+            return self._boolean_expression().and_(other)
         else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+            return NotImplemented
    
     def or_(self, other):
         if(isinstance(other, Symbol)):
-            return lambda *args: self.__call__(*args) or other(*args)
+            return Symbol(self._boolean_expression().and_(other._boolean_expression()))
         elif (isinstance(other, bool)):
-            return lambda *args: self.__call__(*args) or other 
+            return self._boolean_expression().or_(other)
         else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+            return NotImplemented
     
     def not_(self):
-        return lambda *args: not self.__call__(*args)
+        return Symbol(self._boolean_expression().not_())
     
 
 
@@ -61,11 +65,11 @@ if __name__ == "__main__":
     start = Symbol(s == np.array([0,0]))
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")
-    print(f"s1 belongs to {diag.name}: {diag(s1)}")
-    print(f"s2 belongs to {diag.name}: {diag(s2)}")
+    print(f"s1 belongs to {diag.name}: {diag(s1)} == True")
+    print(f"s2 belongs to {diag.name}: {diag(s2)} == False")
     x_0 = x == 0 
     x_1 = x + 1
-    print(f"z is start: {start(State(data=np.array([0,0])))}")
-    print(f"s1 is start: {start(s1)}")
-    print(f"s2 is not goal: {not_goal(s2)}")
-    print(f"s1 is not goal: {not_goal(s1)}")
+    print(f"z is start: {start(State(data=np.array([0,0])))} == True")
+    print(f"s1 is start: {start(s1)} == False")
+    print(f"s2 is not goal: {not_goal(s2)} == True")
+    print(f"s1 is not goal: {not_goal(s1)} == False")

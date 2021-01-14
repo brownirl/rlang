@@ -126,54 +126,48 @@ class StateFactor(Grounding):
         return self.__truediv__(other)
 
     def __lt__(self, other):
-        if (self.number_of_features() == 1):
-            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-                return self.real_expression() < other.real_expression()
-            return self.real_expression() < other
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            return self.real_expression() < other.real_expression()
+        return self.real_expression() < other
 
     def __rlt__(self, other):
         return self.__lt__(other)
 
     def __le__(self, other):
-        if (self.number_of_features() == 1):
-            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-                return self.real_expression() <= other.real_expression()
-            return self.real_expression() <= other
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            return self.real_expression() <= other.real_expression()
+        return self.real_expression() <= other
 
     def __rle__(self, other):
         return self.__le__(other)
 
     def __eq__(self, other):
-        if (self.number_of_features() == 1):
-            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-                return self.real_expression() == other.real_expression()
-            return self.real_expression() == other
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            return self.real_expression() == other.real_expression()
+        return self.real_expression() == other
 
     def __req__(self, other):
         return self.__eq__(other)
 
     def __ne__(self, other):
-        if (self.number_of_features() == 1):
-            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-                return self.real_expression() != other.real_expression()
-            return self.real_expression() != other
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            return self.real_expression() != other.real_expression()
+        return self.real_expression() != other
 
     def __rne__(self, other):
         return self.__ne__(other)
 
     def __gt__(self, other):
-        if (self.number_of_features() == 1):
-            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-                return self.real_expression() > other.real_expression()
-            return self.real_expression() > other
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            return self.real_expression() > other.real_expression()
+        return self.real_expression() > other
     def __rgt__(self, other):
         return self.__gt__(other)
 
     def __ge__(self, other):
-        if (self.number_of_features() == 1):
-            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-                return self.real_expression() >= other.real_expression()
-            return self.real_expression() >= other
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            return self.real_expression() >= other.real_expression()
+        return self.real_expression() >= other
 
     def __rge__(self, other):
         return self.__rge__(other)

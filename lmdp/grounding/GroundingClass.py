@@ -25,7 +25,7 @@ class Domain:
 class Grounding(object):
     def __init__(self, name=None, domain=[]):
         self._name = name
-        self._domain = set(domain)
+        self._domain = Domain(domain)
 
     @property
     def name(self):
