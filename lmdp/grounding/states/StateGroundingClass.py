@@ -67,7 +67,7 @@ class StateFactor(Grounding):
         return StateFactor(sorted(list(feature_positions)), name=name)
 
     def real_expression(self):
-        return RealExpression(self, dimension=self.number_of_features, domain=["State"])    
+        return RealExpression(self, dimension=self.number_of_features(), domain=["State"])    
 
     def __add__(self, other):
         variables = []
@@ -78,8 +78,10 @@ class StateFactor(Grounding):
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() + other
         else:
-            raise NotImplementedError
-        
+            return NotImplemented
+    
+    def __radd__(self, other):
+        return self.__add__(other)
 
     def __sub__(self, other):
         variables = []
@@ -90,7 +92,10 @@ class StateFactor(Grounding):
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() - other
         else:
-            raise NotImplementedError
+            return NotImplemented
+
+    def __rsub__(self, other):
+        return self.__sub__(other)
 
     def __mul__(self, other):
         variables = []
@@ -101,7 +106,10 @@ class StateFactor(Grounding):
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() * other
         else:
-            raise NotImplementedError
+            return NotImplemented
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
     def __truediv__(self, other):
         variables = []
@@ -112,7 +120,10 @@ class StateFactor(Grounding):
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
             return self.real_expression() / other
         else:
-            raise NotImplementedError
+            return NotImplemented
+
+    def __rtruediv__(self, other):
+        return self.__truediv__(other)
 
     def __lt__(self, other):
         if (self.number_of_features() == 1):
@@ -120,12 +131,17 @@ class StateFactor(Grounding):
                 return self.real_expression() < other.real_expression()
             return self.real_expression() < other
 
+    def __rlt__(self, other):
+        return self.__lt__(other)
+
     def __le__(self, other):
         if (self.number_of_features() == 1):
             if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
                 return self.real_expression() <= other.real_expression()
             return self.real_expression() <= other
 
+    def __rle__(self, other):
+        return self.__le__(other)
 
     def __eq__(self, other):
         if (self.number_of_features() == 1):
@@ -133,6 +149,8 @@ class StateFactor(Grounding):
                 return self.real_expression() == other.real_expression()
             return self.real_expression() == other
 
+    def __req__(self, other):
+        return self.__eq__(other)
 
     def __ne__(self, other):
         if (self.number_of_features() == 1):
@@ -140,13 +158,16 @@ class StateFactor(Grounding):
                 return self.real_expression() != other.real_expression()
             return self.real_expression() != other
 
+    def __rne__(self, other):
+        return self.__ne__(other)
 
     def __gt__(self, other):
         if (self.number_of_features() == 1):
             if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
                 return self.real_expression() > other.real_expression()
             return self.real_expression() > other
-
+    def __rgt__(self, other):
+        return self.__gt__(other)
 
     def __ge__(self, other):
         if (self.number_of_features() == 1):
@@ -154,6 +175,8 @@ class StateFactor(Grounding):
                 return self.real_expression() >= other.real_expression()
             return self.real_expression() >= other
 
+    def __rge__(self, other):
+        return self.__rge__(other)
     
     def __floordiv__(self, other):
         raise NotImplementedError

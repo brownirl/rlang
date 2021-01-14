@@ -13,8 +13,11 @@ class RealExpression(Expression):
     def __init__(self, expression_fun, dimension=1, domain=[], codomain=["Real"]):
         if(isinstance(expression_fun, Expression)):
             domain.append(expression_fun.domain())
-        self._dim = dimension
+        self.__dim = dimension
         Expression.__init__(self, expression_fun, domain, codomain)
+
+    def _dim(self):
+        return self.__dim
 
     def __add__(self, other):
         domain = self.domain()
@@ -32,7 +35,7 @@ class RealExpression(Expression):
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplementedError
+            return NotImplemented
         return RealExpression(f, dimension=self._dim(), domain=domain)
 
     def __sub__(self, other):
@@ -51,7 +54,7 @@ class RealExpression(Expression):
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplementedError
+            return NotImplemented
         return RealExpression(f, self._dim(), domain=domain)
 
     def __mul__(self, other):
@@ -70,7 +73,7 @@ class RealExpression(Expression):
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplementedError
+            return NotImplemented
         return RealExpression(f, self._dim(), domain=domain)
 
     def __truediv__(self, other):
@@ -89,7 +92,7 @@ class RealExpression(Expression):
             else:
                 raise "Shapes are not compatible"
         else:
-            raise NotImplementedError
+            return NotImplemented
         return RealExpression(f, self._dim(), domain=domain)
 
     def __lt__(self, other):
@@ -102,7 +105,7 @@ class RealExpression(Expression):
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanExpression(lambda *args: self.__call__(*args) < other, domain=self.domain())
             else:
-                raise NotImplementedError
+                return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
 
@@ -116,7 +119,7 @@ class RealExpression(Expression):
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanExpression(lambda *args: self.__call__(*args) <= other, domain=self.domain())
             else:
-                raise NotImplementedError
+                return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
 
@@ -137,7 +140,7 @@ class RealExpression(Expression):
             else:
                 raise "Length must be equal"
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __ne__(self, other):
         if (isinstance(other, RealExpression)):
@@ -156,7 +159,7 @@ class RealExpression(Expression):
             else:
                 raise "Length must be equal"
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __gt__(self, other):
         if (self._dim() == 1):
@@ -168,7 +171,7 @@ class RealExpression(Expression):
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanExpression(lambda *args: self.__call__(*args) > other, domain=self.domain())
             else:
-                raise NotImplementedError
+                return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
 
@@ -182,7 +185,7 @@ class RealExpression(Expression):
             elif (isinstance(other, float) or isinstance(other, int)):
                 return BooleanExpression(lambda *args: self.__call__(*args) >= other, domain=self.domain())
             else:
-                raise NotImplementedError
+                return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
     

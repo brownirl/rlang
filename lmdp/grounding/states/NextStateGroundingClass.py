@@ -5,8 +5,11 @@
     author: Rafael Rodriguez-Sanchez
     date: January 2021
 '''
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding.states.StateGroundingClass import StateFactor
+from lmdp.grounding.real.RealExpressionClass import RealExpression
 
 class NextStateGrounding(StateFactor):
     def __init__(self, state_grounding):
@@ -22,6 +25,9 @@ class NextStateGrounding(StateFactor):
 
     def number_of_features(self):
         return self.__state_grounding.number_of_features()
+    
+    def real_expression(self):
+        return RealExpression(self, dimension=self.number_of_features(), domain=["Next State"])
 
 
 def next_state(state_grounding):
