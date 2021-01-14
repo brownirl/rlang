@@ -109,9 +109,9 @@ if __name__== "__main__":
     s1_up = GridWorldState(1, 2)
 
     # 2-dimension state vector in gridworld
-    x = StateGrounding(0, "x")
-    y = StateGrounding(1, "y")
-    position = StateGrounding([0, 1], "position")
+    x = StateFactor(0, "x")
+    y = StateFactor(1, "y")
+    position = StateFactor([0, 1], "position")
     diagonal = Symbol(x + 1 == y, "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))

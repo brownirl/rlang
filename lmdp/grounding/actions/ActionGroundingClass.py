@@ -11,7 +11,7 @@ class ActionGrounding(Grounding):
     def __init__(self, action_function, name=None):
         if (name is None):
             name = "action-" + str(ActionGrounding.counter)
-        Grounding.__init__(self, name)
+        Grounding.__init__(self, name, domain=["Action"])
         ActionGrounding.counter += 1
         self.action_function = action_function
 

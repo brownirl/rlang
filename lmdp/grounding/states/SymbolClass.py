@@ -10,7 +10,7 @@ class Symbol(Grounding):
     def __init__(self, boolean_fun, name=None):
         if (name is None):
             name = "symbol-" + str(Symbol.counter)
-        Grounding.__init__(self, name)
+        Grounding.__init__(self, name, domain=["State"])
         self.__symbol = boolean_fun
 
     def __call__(self, *args):
@@ -51,13 +51,13 @@ None_ = Symbol(lambda  *args: False, name='none-symbol')
 if __name__ == "__main__":
     import numpy as np
     from simple_rl.mdp.StateClass import State
-    from StateGroundingClass import StateGrounding
+    from StateGroundingClass import StateFactor
     
     s1 = State(data=np.array([1, 1]))
     s2 = State(data=np.array([0, 1]))
-    x = StateGrounding(0, "x")
-    y = StateGrounding(1, "y")
-    s = StateGrounding([0,1], "s1")
+    x = StateFactor(0, "x")
+    y = StateFactor(1, "y")
+    s = StateFactor([0,1], "s1")
     start = Symbol(s == np.array([0,0]))
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")

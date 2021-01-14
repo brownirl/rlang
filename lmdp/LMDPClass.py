@@ -127,7 +127,7 @@ class LMDP:
         state_seq = list(range(mdp.get_num_state_feats()))
         if state_names is None:
             state_names = list(map(lambda state: "state-var-" + str(state), state_seq))
-        self.state_groundings(list(map(lambda i: StateGrounding(i, state_names[i]), state_seq)))
+        self.state_groundings(list(map(lambda i: StateFactor(i, state_names[i]), state_seq)))
         
 
 
@@ -146,7 +146,7 @@ if __name__=='__main__':
     lmdp = LMDP(mdp, state_names=["x", "y"])
 
     # 2-dimension state vector in gridworld
-    position = StateGrounding([0, 1], "position")
+    position = StateFactor([0, 1], "position")
     lmdp.add_state_var(position)
 
     diagonal = Symbol(lmdp.state('x') + 1 == lmdp.state('y'), "diagonal")

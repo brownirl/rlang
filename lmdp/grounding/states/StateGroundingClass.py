@@ -1,5 +1,7 @@
 """
-    State Variables Grounding
+    State Functions:
+        - State Factor
+        - State Features
     Author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     Date: August 2020
 """
@@ -10,20 +12,21 @@ from functools import reduce
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.BooleanFunClass import BooleanFun
+from lmdp.grounding.real.RealExpressionClass import RealExpression
 
-class StateGrounding(Grounding):
+class StateFactor(Grounding):
     counter = 0
     def __init__(self, feature_positions, name=None):
         '''
             Args: feature_positions is an array-like of indices (list or np.array)
         '''
         if(name is None):
-            name = "state-var-" + str(StateGrounding.counter)
+            name = "state-feature-" + str(StateFactor.counter)
         if (isinstance(feature_positions, int)):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
-        Grounding.__init__(self, name)
-        StateGrounding.counter += 1
+        Grounding.__init__(self, name, domain=["State"])
+        StateFactor.counter += 1
         self._rest = None
     
     def number_of_features(self):
@@ -50,7 +53,7 @@ class StateGrounding(Grounding):
     def rest(self, state_dim):
         if (self._rest is None):
             feature_positions = [i for i in range(state_dim) if i not in self.feature_positions]
-            self._rest = StateGrounding(feature_positions, name=self.name + "-rest") # cache it
+            self._rest = StateFactor(feature_positions, name=self.name + "-rest") # cache it
         return self._rest
     
     def concat(self, *others, name=None):
@@ -58,181 +61,96 @@ class StateGrounding(Grounding):
             names = list(map(lambda x: x.name, others))
             name = '(' + self.name +',' + ','.join(names) + ')'
         feature_positions = set(self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
-        return StateGrounding(sorted(list(feature_positions)), name=name)
+        return StateFactor(sorted(list(feature_positions)), name=name)
+
+    def real_expression(self):
+        return RealExpression(self, dimension=self.number_of_features, domain=["State"])    
 
     def __add__(self, other):
         variables = []
-        if (isinstance(other, StateGrounding)):
-            if(other.number_of_features() == self.number_of_features()):
-                f = lambda *args: self.__call__(*args) + other(*args)
-                variables = other.variables()
-            else:
-                raise "Shapes are not compatible"
-        elif (isinstance(other, float) or isinstance(other, int)):
-            f = lambda *args: self.__call__(*args) + other
-        elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.number_of_features(),)):
-                f = lambda *args: self.__call__(*args) + other
-            else:
-                raise "Shapes are not compatible"
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            f = self.real_expression() + other.real_expression()
+            variables = other.variables() + self.variables()
+            return StateFeature(f, self.number_of_features(), variables)
+        elif(isinstance(other, RealExpression)):
+            return self.real_expression() + other
         else:
             raise NotImplementedError
-        variables += self.variables()
-        return DerivedStateGrounding(f, self.number_of_features(), variables)
+        
 
     def __sub__(self, other):
         variables = []
-        if (isinstance(other, StateGrounding)):
-            if(other.number_of_features() == self.number_of_features()):
-                f = lambda *args: self.__call__(*args) - other(*args)
-                variables = other.variables()
-            else:
-                raise "Shapes are not compatible"
-        elif (isinstance(other, float) or isinstance(other, int)):
-            f = lambda *args: self.__call__(*args) - other
-        elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.number_of_features(),)):
-                f = lambda *args: self.__call__(*args) - other
-            else:
-                raise "Shapes are not compatible"
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            f = self.real_expression() - other.real_expression()
+            variables = other.variables() + self.variables()
+            return StateFeature(f, self.number_of_features(), variables)
+        elif(isinstance(other, RealExpression)):
+            return self.real_expression() - other
         else:
             raise NotImplementedError
-        variables += self.variables()
-        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __mul__(self, other):
         variables = []
-        if (isinstance(other, StateGrounding)):
-            if(other.number_of_features() == self.number_of_features()):
-                f = lambda *args: self.__call__(*args) * other(*args)
-                variables = other.variables()
-            else:
-                raise "Shapes are not compatible"
-        elif (isinstance(other, float) or isinstance(other, int)):
-            f = lambda *args: self.__call__(*args) * other
-        elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.number_of_features(),)):
-                f = lambda *args: self.__call__(*args) *  other
-            else:
-                raise "Shapes are not compatible"
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            f = self.real_expression() * other.real_expression()
+            variables = other.variables() + self.variables()
+            return StateFeature(f, self.number_of_features(), variables)
+        elif(isinstance(other, RealExpression)):
+            return self.real_expression() * other
         else:
             raise NotImplementedError
-        variables += self.variables()
-        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __truediv__(self, other):
         variables = []
-        if (isinstance(other, StateGrounding)):
-            if(other.number_of_features() == self.number_of_features()):
-                f = lambda *args: self.__call__(*args) / other(*args)
-                variables = other.variables()
-            else:
-                raise "Shapes are not compatible"
-        elif (isinstance(other, float) or isinstance(other, int)):
-            f =  lambda *args: self.__call__(*args) / other
-        elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.number_of_features(),)):
-                f = lambda *args: self.__call__(*args) / other
-            else:
-                raise "Shapes are not compatible"
+        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+            f = self.real_expression() / other.real_expression()
+            variables = other.variables() + self.variables()
+            return StateFeature(f, self.number_of_features(), variables)
+        elif(isinstance(other, RealExpression)):
+            return self.real_expression() / other
         else:
             raise NotImplementedError
-        variables += self.variables()
-        return DerivedStateGrounding(f, self.number_of_features(), variables)
 
     def __lt__(self, other):
         if (self.number_of_features() == 1):
-            if (isinstance(other, StateGrounding)):
-                if(other.number_of_features() == self.number_of_features()):
-                    return BooleanFun(lambda *args: self.__call__(*args) < other(*args))
-                else:
-                    raise "Comparison not defined"
-            elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) < other)
-            else:
-                raise NotImplementedError
-        else:
-            raise "Comparison not defined for vector groundings"
+            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+                return self.real_expression() < other.real_expression()
+            return self.real_expression() < other
 
     def __le__(self, other):
         if (self.number_of_features() == 1):
-            if (isinstance(other, StateGrounding)):
-                if(other.number_of_features() == self.number_of_features()):
-                    return BooleanFun(lambda *args: self.__call__(*args) <= other(*args))
-                else:
-                    raise "Comparison not defined"
-            elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) <= other)
-            else:
-                raise NotImplementedError
-        else:
-            raise "Comparison not defined for vector groundings"
+            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+                return self.real_expression() <= other.real_expression()
+            return self.real_expression() <= other
+
 
     def __eq__(self, other):
-        if (isinstance(other, StateGrounding)):
-            if(other.number_of_features() == self.number_of_features()):
-                return BooleanFun(lambda *args: np.array_equal(self.__call__(*args), other(*args)))
-            else:
-                raise "Length must be equal"
-        elif (isinstance(other, float) or isinstance(other, int)):
-            if (self.number_of_features() == 1):
-                return BooleanFun(lambda *args: self.__call__(*args) == other)
-            else:
-                raise "Length must be equal"
-        elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.number_of_features(),)):
-                return BooleanFun(lambda *args: np.array_equal(self.__call__(*args), other))
-            else:
-                raise "Length must be equal"
-        else:
-            raise NotImplementedError
+        if (self.number_of_features() == 1):
+            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+                return self.real_expression() == other.real_expression()
+            return self.real_expression() == other
+
 
     def __ne__(self, other):
-        if (isinstance(other, StateGrounding)):
-            if(other.number_of_features() == self.number_of_features()):
-                return BooleanFun(lambda *args: not np.array_equal(self.__call__(*args), other(*args)))
-            else:
-                raise "Length must be equal"
-        elif (isinstance(other, float) or isinstance(other, int)):
-            if (self.number_of_features() == 1):
-                return BooleanFun(lambda *args: self.__call__(*args) == other)
-            else:
-                raise "Length must be equal"
-        elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.number_of_features(),)):
-                return BooleanFun(lambda *args: not np.array_equal(self.__call__(*args), other))
-            else:
-                raise "Length must be equal"
-        else:
-            raise NotImplementedError
+        if (self.number_of_features() == 1):
+            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+                return self.real_expression() != other.real_expression()
+            return self.real_expression() != other
+
 
     def __gt__(self, other):
         if (self.number_of_features() == 1):
-            if (isinstance(other, StateGrounding)):
-                if(other.number_of_features() == self.number_of_features()):
-                    return BooleanFun(lambda *args: self.__call__(*args) > other(*args))
-                else:
-                    raise "Comparison not defined"
-            elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) > other)
-            else:
-                raise NotImplementedError
-        else:
-            raise "Comparison not defined for vector groundings"
+            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+                return self.real_expression() > other.real_expression()
+            return self.real_expression() > other
+
 
     def __ge__(self, other):
         if (self.number_of_features() == 1):
-            if (isinstance(other, StateGrounding)):
-                if(other.number_of_features() == self.number_of_features()):
-                    return BooleanFun(lambda *args: self.__call__(*args) >= other(*args))
-                else:
-                    raise "Comparison not defined"
-            elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanFun(lambda *args: self.__call__(*args) >= other)
-            else:
-                raise NotImplementedError
-        else:
-            raise "Comparison not defined for vector groundings"
+            if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+                return self.real_expression() >= other.real_expression()
+            return self.real_expression() >= other
+
     
     def __floordiv__(self, other):
         raise NotImplementedError
@@ -255,7 +173,7 @@ class StateGrounding(Grounding):
     def __matmul__(self, other):
         raise NotImplementedError
 
-class DerivedStateGrounding(StateGrounding):
+class StateFeature(StateFactor):
     def __init__(self, function, number_of_features, variables):
         self._variables = variables
         self.__function = function
@@ -263,10 +181,8 @@ class DerivedStateGrounding(StateGrounding):
     
     def __call__(self, *args):
         return self.__function(*args)
-    
     def number_of_features(self):
         return self.number_features
-    
     def variables(self):
         return self._variables
 
@@ -275,8 +191,8 @@ if __name__ == '__main__':
     import numpy as np
     s1 = State(data=np.array([1, 1]))
     s2 = State(data=np.array([0, 1]))
-    x = StateGrounding(0, "x")
-    y = StateGrounding(1, "y")
+    x = StateFactor(0, "x")
+    y = StateFactor(1, "y")
     diag = x == y
     x_0 = x == 0 
     x_1 = x + 1

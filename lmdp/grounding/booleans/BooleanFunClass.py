@@ -1,15 +1,15 @@
 '''
     Boolean Fun class 
 '''
-class BooleanFun:
+class BooleanExpression:
     def __init__(self, fun):
-        self.__fun = fun
+        self._fun = fun
 
     def __call__(self, *args):
-        return self.__fun(*args)
+        return self._fun(*args)
         
     def and_(self, other):
-        if(isinstance(other, BooleanFun)):
+        if(isinstance(other, BooleanExpression)):
             return lambda *args: self.__call__(*args) and other(*args)
         elif (isinstance(other, bool)):
             return lambda *args: self.__call__(*args) and other 
@@ -17,7 +17,7 @@ class BooleanFun:
             raise other.__name__() + " must be a Boolean Fun or bool"
    
     def or_(self, other):
-        if(isinstance(other, BooleanFun)):
+        if(isinstance(other, BooleanExpression)):
             return lambda *args: self.__call__(*args) or other(*args)
         elif (isinstance(other, bool)):
             return lambda *args: self.__call__(*args) or other 
