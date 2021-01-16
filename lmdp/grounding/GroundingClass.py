@@ -17,10 +17,23 @@ class Domain:
             d = [Domain.DOMAINS[d] for d in sorted(list(self._domain))]
             return ",".join(d)
 
-    def domain(self):
+    def __call__(self):
         return [Domain.DOMAINS[d] for d in self._domain]
 
+    def is_sa(self):
+        return 0 in self._domain and 1 in self._domain and 2 not in self._domain
 
+    def is_sas(self):
+        return 0 in self._domain and 1 in self._domain and 2 in self._domain
+
+    def is_s(self):
+        return 0 in self._domain and 1 not in self._domain and 2 not in self._domain
+
+    def is_a(self):
+        return 0 not in self._domain and 1 in self._domain and 2 not in self._domain
+
+    def is_ss(self):
+        return 0 in self._domain and 1 not in self._domain and 2 in self._domain
 
 class Grounding(object):
     def __init__(self, name=None, domain=[]):

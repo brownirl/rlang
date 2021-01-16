@@ -36,8 +36,9 @@ class Expression:
         # if(not self.is_in_domain(args)):
         #     raise "Error: Wrong Arguments. Domain: " + str(self._domain)
         return self._fun(*args)
+    @property
     def domain(self):
-        return self._domain.domain()
+        return self._domain
 
     def codomain(self):
         return self._codomain()
