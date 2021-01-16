@@ -1,5 +1,5 @@
 '''
-    Next Symbol class 
+    Effect Symbol class 
         - This class defines a set of states parameterized by another state
           vector.
     author: Rafael Rodriguez-Sanchez

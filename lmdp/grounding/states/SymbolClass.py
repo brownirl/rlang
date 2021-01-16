@@ -6,6 +6,7 @@
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+
 class Symbol(Grounding):
     counter = 0
     def __init__(self, boolean_fun, name=None):
