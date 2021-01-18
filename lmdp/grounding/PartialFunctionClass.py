@@ -23,9 +23,9 @@ class PartialFunction:
         return r
 
     def add_specification(self, boolean_cond, function):
-        if (self.domain == boolean_cond.domain and self.codomain == function.codomain and self.domain == function.domain):
+        if (boolean_cond.domain <= self.domain  and self.codomain == function.codomain and function.domain <= self.domain):
             self.specification.append((boolean_cond, function))
         elif (self.domain == boolean_cond.domain):
             raise "Domains are not compatible: " + str(self.domain) + "~=" + str(boolean_cond.domain)
         else:
-            raise "Codomains are not compatible: " + str(self.codomain) + "~=" + str(boolean_cond.codomain) " or " + str(self.codomain) + "~=" + str(function.codomain)
+            raise "Codomains are not compatible: " + str(self.codomain) + "~=" + str(boolean_cond.codomain) + " or " + str(self.codomain) + "~=" + str(function.codomain)
