@@ -17,7 +17,7 @@ class Domain:
             return (self._domain <= other._domain) and (other._domain <= self._domain)
         return NotImplemented
 
-    def __leq__(self, other):
+    def __le__(self, other):
         if (isinstance(other, Domain)):
             return (self._domain <= other._domain)
         return NotImplemented
@@ -89,3 +89,4 @@ if __name__ == "__main__":
 
     assert (d2 == d3)
     assert not d2 == d1
+    assert d1 <= d2
