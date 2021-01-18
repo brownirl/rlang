@@ -4,25 +4,26 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: January 2021
 '''
-
+import sys, os
+sys.path.append(os.path.abspath("./"))
 import numpy as np
-from lmdp.grounding.ExpressionsClass import Expression
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 
 class RealExpression(Expression):
     def __init__(self, expression_fun, dimension=1, domain=[], codomain=["Real"]):
-        if(isinstance(expression_fun, Expression)):
-            domain.append(expression_fun.domain())
+        # if(isinstance(expression_fun, Expression)):
+        #     domain.append(expression_fun.domain())
         self.__dim = dimension
         Expression.__init__(self, expression_fun, domain, codomain)
 
-    def _dim(self):
+    def dim(self):
         return self.__dim
 
     def __add__(self, other):
         domain = self.domain()
         if (isinstance(other, RealExpression)):
-            if(other._dim == self._dim):
+            if(other.dim == self.dim):
                 domain += other.domain()
                 f = lambda *args: self.__call__(*args) + other(*args)
             else:
@@ -30,18 +31,18 @@ class RealExpression(Expression):
         elif (isinstance(other, float) or isinstance(other, int)):
             f = lambda *args: self.__call__(*args) + other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self._dim,)):
+            if(other.shape == (self.dim,)):
                 f = lambda *args: self.__call__(*args) + other
             else:
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, dimension=self._dim(), domain=domain)
+        return RealExpression(f, dimension=self.dim(), domain=domain)
 
     def __sub__(self, other):
         domain = self.domain()
         if (isinstance(other, RealExpression)):
-            if(other.dim() == self._dim()):
+            if(other.dim() == self.dim()):
                 domain += other.domain()
                 f = lambda *args: self.__call__(*args) - other(*args)
             else:
@@ -49,18 +50,18 @@ class RealExpression(Expression):
         elif (isinstance(other, float) or isinstance(other, int)):
             f = lambda *args: self.__call__(*args) - other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self._dim(),)):
+            if(other.shape == (self.dim(),)):
                 f = lambda *args: self.__call__(*args) - other
             else:
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, self._dim(), domain=domain)
+        return RealExpression(f, self.dim(), domain=domain)
 
     def __mul__(self, other):
         domain = self.domain()
         if (isinstance(other, RealExpression)):
-            if(other._dim() == self._dim()):
+            if(other.dim() == self.dim()):
                 domain += other.domain()
                 f = lambda *args: self.__call__(*args) * other(*args)
             else:
@@ -68,18 +69,18 @@ class RealExpression(Expression):
         elif (isinstance(other, float) or isinstance(other, int)):
             f = lambda *args: self.__call__(*args) * other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self._dim(),)):
+            if(other.shape == (self.dim(),)):
                 f = lambda *args: self.__call__(*args) *  other
             else:
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, self._dim(), domain=domain)
+        return RealExpression(f, self.dim(), domain=domain)
 
     def __truediv__(self, other):
         domain = self.domain()
         if (isinstance(other, RealExpression)):
-            if(other._dim() == self._dim()):
+            if(other.dim() == self.dim()):
                 domain += other.domain()
                 f = lambda *args: self.__call__(*args) / other(*args)
             else:
@@ -87,18 +88,18 @@ class RealExpression(Expression):
         elif (isinstance(other, float) or isinstance(other, int)):
             f =  lambda *args: self.__call__(*args) / other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self._dim(),)):
+            if(other.shape == (self.dim(),)):
                 f = lambda *args: self.__call__(*args) / other
             else:
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, self._dim(), domain=domain)
+        return RealExpression(f, self.dim(), domain=domain)
 
     def __lt__(self, other):
-        if (self._dim() == 1):
+        if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
-                if(other._dim() == self._dim()):
+                if(other.dim() == self.dim()):
                     return BooleanExpression(lambda *args: self.__call__(*args) < other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
@@ -110,9 +111,9 @@ class RealExpression(Expression):
             raise "Comparison not defined for vector groundings"
 
     def __le__(self, other):
-        if (self._dim() == 1):
+        if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
-                if(other._dim() == self._dim()):
+                if(other.dim() == self.dim()):
                     return BooleanExpression(lambda *args: self.__call__(*args) <= other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
@@ -125,17 +126,17 @@ class RealExpression(Expression):
 
     def __eq__(self, other):
         if (isinstance(other, RealExpression)):
-            if(other._dim() == self._dim()):
+            if(other.dim() == self.dim()):
                 return BooleanExpression(lambda *args: np.array_equal(self.__call__(*args), other(*args)), domain=self.domain()+other.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
-            if (self._dim() == 1):
+            if (self.dim() == 1):
                 return BooleanExpression(lambda *args: self.__call__(*args) == other, domain=self.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self._dim(),)):
+            if(other.shape == (self.dim(),)):
                 return BooleanExpression(lambda *args: np.array_equal(self.__call__(*args), other), domain=self.domain())
             else:
                 raise "Length must be equal"
@@ -144,17 +145,17 @@ class RealExpression(Expression):
 
     def __ne__(self, other):
         if (isinstance(other, RealExpression)):
-            if(other._dim() == self._dim()):
+            if(other.dim() == self.dim()):
                 return BooleanExpression(lambda *args: not np.array_equal(self.__call__(*args), other(*args)), domain=self.domain()+other.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
-            if (self._dim() == 1):
+            if (self.dim() == 1):
                 return BooleanExpression(lambda *args: self.__call__(*args) == other, domain=self.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self._dim(),)):
+            if(other.shape == (self.dim(),)):
                 return BooleanExpression(lambda *args: not np.array_equal(self.__call__(*args), other), domain=self.domain())
             else:
                 raise "Length must be equal"
@@ -162,9 +163,9 @@ class RealExpression(Expression):
             return NotImplemented
 
     def __gt__(self, other):
-        if (self._dim() == 1):
+        if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
-                if(other._dim() == self._dim()):
+                if(other.dim() == self.dim()):
                     return BooleanExpression(lambda *args: self.__call__(*args) > other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
@@ -176,9 +177,9 @@ class RealExpression(Expression):
             raise "Comparison not defined for vector groundings"
 
     def __ge__(self, other):
-        if (self._dim() == 1):
+        if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
-                if(other._dim() == self._dim()):
+                if(other.dim() == self.dim()):
                     return BooleanExpression(lambda *args: self.__call__(*args) >= other(*args), domain=self.domain()+other.domain())
                 else:
                     raise "Comparison not defined"
@@ -209,3 +210,7 @@ class RealExpression(Expression):
         raise NotImplementedError
     def __matmul__(self, other):
         raise NotImplementedError
+
+if __name__ == "__main__":
+    constant = RealExpression(lambda *args: 1.0)
+    print(f"{constant()} == 1.0")

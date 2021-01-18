@@ -11,7 +11,7 @@ from lmdp.utils.expression_utils import Domain, Codomain
 class PartialFunction:
 
     def __init__(self, domain=[], codomain=[]):
-        self.specification = [] # list of (boolean, function) specification
+        self.specification = [] # list of (boolean, expression) specification
         self.domain = Domain(domain)
         self.codomain = Codomain(codomain)
 
@@ -19,7 +19,7 @@ class PartialFunction:
         r = []
         for spec in self.specification:
             if spec[0](*args):
-                r.append(spec[2](*args))
+                r.append(spec[1](*args))
         return r
 
     def add_specification(self, boolean_cond, function):
