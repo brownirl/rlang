@@ -1,7 +1,8 @@
 '''
     Grounding for symbols to Rewards
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    date: August 2020
+    date: v0 August 2020
+          v1 January 2021 (Partial Function)
 '''
 import sys, os
 sys.path.append(os.path.abspath("./"))
