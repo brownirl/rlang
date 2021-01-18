@@ -1,51 +1,41 @@
 '''
     Symbol Base Class
     author: Rafael Rodriguez-Sanchez
-    date: August 2020
+    date: v0 August 2020
+          v1 January 2021 
 '''
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 
-class Symbol(Grounding):
+class Symbol(Grounding, BooleanExpression):
     counter = 0
     def __init__(self, boolean_fun, name=None):
         if (name is None):
             name = "symbol-" + str(Symbol.counter)
-        Grounding.__init__(self, name, domain=["State"])
-        self.__symbol = boolean_fun
-
-    def __call__(self, *args):
-        '''
-            This takes in the state from MDP.
-            Args:
-                - args[0] must be the state from MDP
-            return:
-                - bool: state belongs to the symbol (set)
-        '''
-        return self.__symbol(args[0])
-    
-    def _boolean_expression(self):
-        return BooleanExpression(self.__symbol, domain=self._domain.domain())
+        Grounding.__init__(self, name)
+        BooleanExpression.__init__(self, boolean_fun, domain=["State"])
     
     def and_(self, other):
         if(isinstance(other, Symbol)):
-            return Symbol(self._boolean_expression().and_(other._boolean_expression()))
+            return Symbol(super().and_(other))
         elif (isinstance(other, bool)):
-            return self._boolean_expression().and_(other)
+            return super().and_(other)
         else:
             return NotImplemented
    
     def or_(self, other):
         if(isinstance(other, Symbol)):
-            return Symbol(self._boolean_expression().and_(other._boolean_expression()))
+            return Symbol(super().or_(other))
         elif (isinstance(other, bool)):
-            return self._boolean_expression().or_(other)
+            return super().or_(other)
         else:
             return NotImplemented
     
     def not_(self):
-        return Symbol(self._boolean_expression().not_())
+        return Symbol(super().not_())
     
 
 
@@ -66,6 +56,9 @@ if __name__ == "__main__":
     start = Symbol(s == np.array([0,0]))
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")
+    diag_not_start = start.not_().and_(diag)
+    print(f"Boolean ops: True == {diag_not_start(s1)}")
+    print(f"Boolean ops: False == {diag_not_start(s2)}")
     print(f"s1 belongs to {diag.name}: {diag(s1)} == True")
     print(f"s2 belongs to {diag.name}: {diag(s2)} == False")
     x_0 = x == 0 

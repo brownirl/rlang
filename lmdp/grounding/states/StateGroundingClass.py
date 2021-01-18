@@ -17,7 +17,7 @@ from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from lmdp.grounding.real.RealExpressionClass import RealExpression
 
-class StateFactor(Grounding):
+class StateFactor(Grounding, RealExpression):
     counter = 0
     def __init__(self, feature_positions, name=None):
         '''
@@ -28,7 +28,8 @@ class StateFactor(Grounding):
         if (isinstance(feature_positions, int)):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
-        Grounding.__init__(self, name, domain=["State"])
+        Grounding.__init__(self, name)
+        RealExpression.__init__(self, self, len(self.feature_positions), domain=["State"])
         StateFactor.counter += 1
         self._rest = None
     
@@ -67,16 +68,15 @@ class StateFactor(Grounding):
         return StateFactor(sorted(list(feature_positions)), name=name)
 
     def real_expression(self):
-        return RealExpression(self, dimension=self.number_of_features(), domain=["State"])    
+        return self
 
     def __add__(self, other):
         variables = []
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            f = self.real_expression() + other.real_expression()
             variables = other.variables() + self.variables()
-            return StateFeature(f, self.number_of_features(), variables)
+            return StateFeature(super().__add__(other), self.number_of_features(), variables)
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
-            return self.real_expression() + other
+            return super().__add__(other)
         else:
             return NotImplemented
     
@@ -86,11 +86,11 @@ class StateFactor(Grounding):
     def __sub__(self, other):
         variables = []
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            f = self.real_expression() - other.real_expression()
+            f = super().__sub__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
-            return self.real_expression() - other
+            return super().__sub__(other)
         else:
             return NotImplemented
 
@@ -100,11 +100,11 @@ class StateFactor(Grounding):
     def __mul__(self, other):
         variables = []
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            f = self.real_expression() * other.real_expression()
+            f = super().__mul__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
-            return self.real_expression() * other
+            return super().__mul__(other)
         else:
             return NotImplemented
 
@@ -114,84 +114,84 @@ class StateFactor(Grounding):
     def __truediv__(self, other):
         variables = []
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            f = self.real_expression() / other.real_expression()
+            f = super().__truediv__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
         elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
-            return self.real_expression() / other
+            return super().__truediv__(other)
         else:
             return NotImplemented
 
     def __rtruediv__(self, other):
         return self.__truediv__(other)
 
-    def __lt__(self, other):
-        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            return self.real_expression() < other.real_expression()
-        return self.real_expression() < other
+    # def __lt__(self, other):
+    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+    #         return self.real_expression() < other.real_expression()
+    #     return self.real_expression() < other
 
-    def __rlt__(self, other):
-        return self.__lt__(other)
+    # def __rlt__(self, other):
+    #     return self.__lt__(other)
 
-    def __le__(self, other):
-        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            return self.real_expression() <= other.real_expression()
-        return self.real_expression() <= other
+    # def __le__(self, other):
+    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+    #         return self.real_expression() <= other.real_expression()
+    #     return self.real_expression() <= other
 
-    def __rle__(self, other):
-        return self.__le__(other)
+    # def __rle__(self, other):
+    #     return self.__le__(other)
 
-    def __eq__(self, other):
-        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            return self.real_expression() == other.real_expression()
-        return self.real_expression() == other
+    # def __eq__(self, other):
+    #     # if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+    #     #     return self.real_expression() == other.real_expression()
+    #     return self.real_expression() == other
 
-    def __req__(self, other):
-        return self.__eq__(other)
+    # def __req__(self, other):
+    #     return self.__eq__(other)
 
-    def __ne__(self, other):
-        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            return self.real_expression() != other.real_expression()
-        return self.real_expression() != other
+    # def __ne__(self, other):
+    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+    #         return self.real_expression() != other.real_expression()
+    #     return self.real_expression() != other
 
-    def __rne__(self, other):
-        return self.__ne__(other)
+    # def __rne__(self, other):
+    #     return self.__ne__(other)
 
-    def __gt__(self, other):
-        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            return self.real_expression() > other.real_expression()
-        return self.real_expression() > other
-    def __rgt__(self, other):
-        return self.__gt__(other)
+    # def __gt__(self, other):
+    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+    #         return self.real_expression() > other.real_expression()
+    #     return self.real_expression() > other
+    # def __rgt__(self, other):
+    #     return self.__gt__(other)
 
-    def __ge__(self, other):
-        if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-            return self.real_expression() >= other.real_expression()
-        return self.real_expression() >= other
+    # def __ge__(self, other):
+    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
+    #         return self.real_expression() >= other.real_expression()
+    #     return self.real_expression() >= other
 
-    def __rge__(self, other):
-        return self.__rge__(other)
+    # def __rge__(self, other):
+    #     return self.__rge__(other)
     
-    def __floordiv__(self, other):
-        raise NotImplementedError
-    def __mod__(self, other):
-        raise NotImplementedError
-    def __divmod__(self, other):
-        raise NotImplementedError
-    def __pow__(self, other):
-        raise NotImplementedError
-    def __lshift__(self, other):
-        raise NotImplementedError
-    def __rshift__(self, other):
-        raise NotImplementedError
-    def __and__(self, other):
-        raise NotImplementedError
-    def __xor__(self, other):
-        raise NotImplementedError
-    def __or__(self, other):
-        raise NotImplementedError
-    def __matmul__(self, other):
-        raise NotImplementedError
+    # def __floordiv__(self, other):
+    #     raise NotImplementedError
+    # def __mod__(self, other):
+    #     raise NotImplementedError
+    # def __divmod__(self, other):
+    #     raise NotImplementedError
+    # def __pow__(self, other):
+    #     raise NotImplementedError
+    # def __lshift__(self, other):
+    #     raise NotImplementedError
+    # def __rshift__(self, other):
+    #     raise NotImplementedError
+    # def __and__(self, other):
+    #     raise NotImplementedError
+    # def __xor__(self, other):
+    #     raise NotImplementedError
+    # def __or__(self, other):
+    #     raise NotImplementedError
+    # def __matmul__(self, other):
+    #     raise NotImplementedError
 
 class StateFeature(StateFactor):
     def __init__(self, function, number_of_features, variables):
