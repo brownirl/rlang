@@ -5,7 +5,7 @@
     date: January 2021
 '''
 
-from lmdp.grounding.ExpressionsClass import Expression
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 
 class BooleanExpression(Expression):
     def __init__(self, fun, domain):
@@ -29,3 +29,12 @@ class BooleanExpression(Expression):
     
     def not_(self):
          return BooleanExpression(lambda *args: not self.__call__(*args), domain=self.domain())
+
+    def __and__(self, other):
+        return self.and_(other)
+    
+    def __or__(self, other):
+        return self.or_(other)
+    
+    def __not__(self, other):
+        return self.not_
