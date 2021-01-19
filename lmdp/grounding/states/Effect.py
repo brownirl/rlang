@@ -11,8 +11,7 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: January 2021
 '''
-import sys, os
-sys.path.append(os.path.abspath("./"))
+
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
@@ -49,13 +48,12 @@ if __name__=="__main__":
     from simple_rl.mdp.StateClass import State
     from lmdp.grounding.states.NextStateGroundingClass import next_state
     from lmdp.grounding import StateFactor
-
+    from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
     import numpy as np
-    any_state = BooleanExpression(lambda **args: True, domain=["state", "action"])
     x = StateFactor(0, "x")
     s = State(data=np.array([1,0]))
     s_prime = State(data= np.array([2,1]))
     s_prime_1 = State(data=np.array([1, 1]))
-    up = Effect(any_state, next_state(x) == x + 1)
+    up = Effect(any_state and any_action, next_state(x) == x + 1)
     # up = EffectSymbol(next_state(x) == x + 1)(s, "up")
     print(f"{up(s, 'up')(s_prime)} == True")

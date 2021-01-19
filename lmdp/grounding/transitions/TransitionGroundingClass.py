@@ -3,6 +3,10 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: August 2020
 '''
+
+import sys, os
+sys.path.append(os.path.abspath("./"))
+
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.PartialFunctionClass import PartialFunction
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
@@ -18,7 +22,7 @@ class TransitionGrounding(Grounding, PartialFunction):
         if (name is None):
             name = 'transitions'
         Grounding.__init__(self, name)
-        PartialFunction.__init__(self, domain=["State", "Action"], codomain=["Set of States"])
+        PartialFunction.__init__(self, domain=["state", "action"], codomain=["set_of_states"])
         for t in transitions:
             self.add(*t)        # initialize transitions
     
@@ -39,10 +43,27 @@ class TransitionGrounding(Grounding, PartialFunction):
                 - Effect Symbol
         '''
 
-        boolean_cond = BooleanExpression(lambda *args: symbol(*args) and args[1] == action, domain=["State", "Action"])
+        boolean_cond = BooleanExpression(lambda **args: symbol(**args) and args["action"] == action, domain=["state", "action"])
         self.add_specification(boolean_cond, effect)
 
-    def __create_dict(self, transitions):
-        self.__transitions = defaultdict(lambda: defaultdict())
-        for (symbol, action, symbol_next) in transitions:
-            self.__transitions[symbol][action] = symbol_next
+    # def __create_dict(self, transitions):
+    #     self.__transitions = defaultdict(lambda: defaultdict())
+    #     for (symbol, action, symbol_next) in transitions:
+    #         self.__transitions[symbol][action] = symbol_next
+
+if __name__=="__main__":
+    from simple_rl.mdp.StateClass import State
+    from lmdp.grounding.states.NextStateGroundingClass import next_state
+    from lmdp.grounding import StateFactor
+    from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
+    from lmdp.grounding.states.Effect import Effect
+    import numpy as np
+    x = StateFactor(0, "x")
+    s = State(data=np.array([1,0]))
+    s_prime = State(data= np.array([2,1]))
+    s_prime_1 = State(data=np.array([1, 1]))
+    up = Effect(any_state and any_action, next_state(x) == x + 1)
+
+    transition = TransitionGrounding([(any_state,'up', up)])
+
+    print(f"{transition(s, 'up')[0](s_prime)} == True")
