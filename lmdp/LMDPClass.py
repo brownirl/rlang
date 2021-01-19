@@ -34,6 +34,7 @@ class LMDP:
         self.__transition = TransitionGrounding()
         self.__policy = PolicyGrounding(lambda *args: random.choice(self.__actions.keys()))
         self.__subpolicies = defaultdict(lambda: None)
+        self.__goals = []
         
     def state(self, name):
         return self.__state_groundings[name]
@@ -117,7 +118,15 @@ class LMDP:
         else:
             raise "Argument must be a PolicyGrounding instance"
 
-    
+    def goal(self, symbol):
+        if(isinstance(symbol, str)):
+            if(symbol in self.__symbols):
+                self.__goals.append(symbol)
+            else:
+                raise "Symbol " + symbol + " not defined"
+        elif(isinstance(symbol, Symbol)):
+            self.__goals.append(symbol)
+
     def state_groundings(self, state_groundings_list):
         for state in state_groundings_list:
             self.__state_groundings[state.name] = state
@@ -155,7 +164,7 @@ if __name__=='__main__':
     lmdp.add_symbol([diagonal, goal, not_goal])
     
     # transitions (deterministic)
-    up_effect = NextSymbol((next_state(lmdp.state("y")) == lmdp.state("y") + 1).and_(lmdp.state("x") == next_state(lmdp.state("x"))) )
+    up_effect = EffectSymbol((next_state(lmdp.state("y")) == lmdp.state("y") + 1).and_(lmdp.state("x") == next_state(lmdp.state("x"))) )
     lmdp.transition.add(Any, lmdp.action("up"), up_effect)
     print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))(s1_up)}")
     

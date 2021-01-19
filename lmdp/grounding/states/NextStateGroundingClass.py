@@ -7,27 +7,36 @@
 '''
 import sys, os
 sys.path.append(os.path.abspath("./"))
-
+from lmdp.utils.expression_utils import Domain
 from lmdp.grounding.states.StateGroundingClass import StateFactor
 from lmdp.grounding.real.RealExpressionClass import RealExpression
 
-class NextStateGrounding(StateFactor):
+class NextStateGrounding(StateFactor, RealExpression):
     def __init__(self, state_grounding):
+        self._domain = Domain(["next_state"])
         self.__state_grounding = state_grounding 
-    
-    def __call__(self, *args):
-        if (len(args) < 2):
-            raise "Error: Arguments must (s, s') or you should set current state"
-        else:
-            next_state = args[1] # second argument must be s'
+        RealExpression.__init__(self, self.executor, domain=["next_state"])
+
+    def executor(self, next_state):
+        # if (len(args) < 2):
+        #     raise "Error: Arguments must (s, s') or you should set current state"
+        # else:
+        #     next_state = args[1] # second argument must be s'
         
         return self.__state_grounding(next_state)
 
     def number_of_features(self):
         return self.__state_grounding.number_of_features()
+
+    def dim(self):
+        return self.__state_grounding.dim()
+
+    @property
+    def domain(self):
+        return self._domain
     
     def real_expression(self):
-        return RealExpression(self, dimension=self.number_of_features(), domain=["Next State"])
+        return RealExpression(self, dimension=self.number_of_features(), domain=["next_state"])
 
 
 def next_state(state_grounding):

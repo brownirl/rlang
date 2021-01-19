@@ -11,4 +11,4 @@ from lmdp.grounding.real.RealExpressionClass import RealExpression
 class MarkovFeature(RealExpression):
 
     def __init__(self, function, dimension=1):
-        RealExpression.__init__(self, function, dimension=dimension, domain=["State", "Action", "Next State"])
+        RealExpression.__init__(self, function, dimension=dimension, domain=["state", "action", "next_state"])

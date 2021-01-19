@@ -9,26 +9,26 @@ from lmdp.grounding.expressions.ExpressionsClass import Expression
 
 class BooleanExpression(Expression):
     def __init__(self, fun, domain):
-        Expression.__init__(self, fun, domain=domain, codomain=["Boolean"])
+        Expression.__init__(self, fun, domain=domain, codomain=["boolean"])
         
     def and_(self, other):
         if(isinstance(other, BooleanExpression)):
-            return BooleanExpression(lambda *args: self.__call__(*args) and other(*args), domain=self.domain() + other.domain())
+            return BooleanExpression(lambda **args: self.__call__(**args) and other(**args), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return BooleanExpression(lambda *args: self.__call__(*args) or other, domain=self.domain()) 
+            return BooleanExpression(lambda **args: self.__call__(**args) or other, domain=self.domain()) 
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
    
     def or_(self, other):
         if(isinstance(other, BooleanExpression)):
-            return BooleanExpression(lambda *args: self.__call__(*args) or other(*args), domain=self.domain() + other.domain())
+            return BooleanExpression(lambda **args: self.__call__(**args) or other(**args), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return BooleanExpression(lambda *args: self.__call__(*args) or other, domain=self.domain())
+            return BooleanExpression(lambda **args: self.__call__(**args) or other, domain=self.domain())
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
     
     def not_(self):
-         return BooleanExpression(lambda *args: not self.__call__(*args), domain=self.domain())
+         return BooleanExpression(lambda **args: not self.__call__(**args), domain=self.domain())
 
     def __and__(self, other):
         return self.and_(other)
@@ -38,3 +38,7 @@ class BooleanExpression(Expression):
     
     def __not__(self, other):
         return self.not_
+
+any_state = BooleanExpression(lambda state: True, domain=["state"])
+any_action = BooleanExpression(lambda action: True, domain=["action"])
+any_next_state = BooleanExpression(lambda next_state: True, domain=["next_state"])

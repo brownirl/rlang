@@ -1,24 +1,30 @@
 '''
     Effect Symbol class 
-        - This class defines a set of states parameterized by another state
-          vector.
+        - This class defines a set of states parameterized by a (state, action)
+          pair.
     author: Rafael Rodriguez-Sanchez
-    date: September 2020
+    date: v0 September 2020
+          v1 January 2021
 '''
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding.states.SymbolClass import Symbol
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import partial
 
-class EffectSymbol(Symbol):
-    def __init__(self, boolean_fun, name=None, current_state=None):
-        if (name is None):
-            name = "effect-symbol-" + str(Symbol.counter)
-        Symbol.__init__(self, boolean_fun, name)
-        self.__fun = boolean_fun
-    
+class EffectSymbol(Expression):
+    def __init__(self, boolean_fun):
+        # if (name is None):
+        #     name = "effect-symbol-" + str(Symbol.counter)
+        # Symbol.__init__(self, boolean_fun, name)
+        # self.__fun = boolean_fun  
+        self._boolean_fun = boolean_fun
+        Expression.__init__(self, self.executor, domain=["state", "action", "next_state"], codomain=["boolean"])
 
-    def __call__(self, curr_state):
-        return partial(self.__fun, curr_state)
+
+    def executor(self, state, action):
+        return partial(self._boolean_fun, state, action)
 
 
 if __name__ == '__main__':
@@ -28,10 +34,10 @@ if __name__ == '__main__':
 
     import numpy as np
     
-    x = StateFactor(0, "x")
-    s = State(data=np.array([1,0]))
-    s_prime = State(data= np.array([2,1]))
-    s_prime_1 = State(data=np.array([1, 1]))
+    # x = StateFactor(0, "x")
+    # s = State(data=np.array([1,0]))
+    # s_prime = State(data= np.array([2,1]))
+    # s_prime_1 = State(data=np.array([1, 1]))
     
-    up = EffectSymbol(next_state(x) == x + 1)(s)
-    print(up(s_prime))
+    # up = EffectSymbol(next_state(x) == x + 1)(s, "up")
+    # print(f"{up(s_prime)} == True")

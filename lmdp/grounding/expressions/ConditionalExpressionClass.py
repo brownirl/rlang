@@ -47,4 +47,4 @@ class ConditionalExpression(Expression):
         pass
 
     def value(self, sa_expression=None):
-        pas
+        pass

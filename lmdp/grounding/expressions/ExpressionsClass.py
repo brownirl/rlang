@@ -6,10 +6,15 @@ class Expression:
         self._fun = fun
         self._domain = Domain(domain)
         self._codomain = Codomain(codomain)    
-    def __call__(self, *args):
+    
+    def __call__(self, *args, **kwargs):
         # if(not self.is_in_domain(args)):
         #     raise "Error: Wrong Arguments. Domain: " + str(self._domain)
-        return self._fun(*args)
+        if(len(kwargs) != 0):
+            fun_args = dict([(d, kwargs[d]) for d in self.domain()])
+        else:
+            fun_args = dict(zip(self.domain(), args))
+        return self._fun(**fun_args)
     
     @property
     def domain(self):

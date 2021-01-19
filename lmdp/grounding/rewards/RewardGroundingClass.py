@@ -20,7 +20,7 @@ class RewardGrounding(Grounding, PartialFunction):
         if (name is None):
             name = "reward-" + str(RewardGrounding.id)
         Grounding.__init__(self, name)
-        PartialFunction.__init__(self, domain=["State", "Action", "Next State"], codomain=["Real"])
+        PartialFunction.__init__(self, domain=["state", "action", "next_state"], codomain=["real"])
         for p in symbols_rewards:
             self.add(*p)
 

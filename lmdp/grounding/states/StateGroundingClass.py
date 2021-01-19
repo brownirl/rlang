@@ -29,7 +29,7 @@ class StateFactor(Grounding, RealExpression):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
         Grounding.__init__(self, name)
-        RealExpression.__init__(self, self, len(self.feature_positions), domain=["State"])
+        RealExpression.__init__(self, self.executor, len(self.feature_positions), domain=["state"])
         StateFactor.counter += 1
         self._rest = None
     
@@ -39,18 +39,16 @@ class StateFactor(Grounding, RealExpression):
     def variables(self):
         return [self,]
 
-    def __call__(self, *args):
+    def executor(self, state):
         '''
             This takes in the state from MDP and returns the value of the
             state variable to which is grounded
             Args:
                 - args[0] must be the state from MDP
         '''
-        if (len(args) < 1):
-            raise "State from MDP is needed"
 
-        if (isinstance(args[0], State)):
-            return args[0].features()[self.feature_positions]
+        if (isinstance(state, State)):
+            return state.features()[self.feature_positions]
         else:
             raise "First argument must be MDP State Class"
 
@@ -199,8 +197,8 @@ class StateFeature(StateFactor):
         self.__function = function
         self.number_features = number_of_features
     
-    def __call__(self, *args):
-        return self.__function(*args)
+    def executor(self, state):
+        return self.__function(state)
     def number_of_features(self):
         return self.number_features
     def variables(self):

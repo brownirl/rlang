@@ -20,7 +20,7 @@ class ValueGrounding(Grounding, PartialFunction):
         if (name is None):
             name = "value-" + str(ValueGrounding.id)
         Grounding.__init__(self, name)
-        PartialFunction.__init__(self, domain=["State"], codomain=["Real"])
+        PartialFunction.__init__(self, domain=["state"], codomain=["real"])
         for spec in symbols_values:
             self.add(*spec)
 
