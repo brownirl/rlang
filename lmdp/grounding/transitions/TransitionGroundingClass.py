@@ -4,9 +4,6 @@
     date: August 2020
 '''
 
-import sys, os
-sys.path.append(os.path.abspath("./"))
-
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.PartialFunctionClass import PartialFunction
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression

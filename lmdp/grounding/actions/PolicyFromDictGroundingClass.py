@@ -1,30 +1,40 @@
+'''
+    Policy Grounding Class
+        based on Partial Functions.
+    author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
+    date: January 2021
+'''
+import sys, os
+sys.path.append(os.path.abspath("./"))
+
 from lmdp.grounding.actions.PolicyGroundingClass import PolicyGrounding
 from lmdp.grounding.actions.PolicyFromDictClass import PolicyFromDict
+from lmdp.grounding.PartialFunctionClass import PartialFunction
 
 
-
-class PolicyFromDictGrounding(PolicyGrounding):
+class PolicyElements(PartialFunction):
     def __init__(self, policy=[]):
-        self.policy_dict = PolicyFromDict(policy)
-        PolicyGrounding.__init__(self, self.policy_dict)
+        PartialFunction.__init__(self, domain=["state"], codomain=["action"])
+        for p in policy:
+            self.add(p[0], p[1])
 
     def add(self, symbol, action):
-        self.policy_dict.update(symbol, action)
+        self.add_specification(symbol, action)
 
 
 if __name__ == "__main__":
-    from StateGroundingClass import StateGrounding
-    from SymbolClass import Symbol
-    from DiscreteActionGroundingClass import DiscreteActionGrounding
+    from lmdp.grounding.states.StateGroundingClass import StateFactor
+    from lmdp.grounding.states.SymbolClass import Symbol
+    from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
     
     import numpy as np
     from simple_rl.tasks import GridWorldMDP
     from simple_rl.tasks import GridWorldState
     
     # 2-dimension state vector in gridworld
-    x = StateGrounding(0, "x")
-    y = StateGrounding(1, "y")
-    position = StateGrounding([0, 1], "position")
+    x = StateFactor(0, "x")
+    y = StateFactor(1, "y")
+    position = StateFactor([0, 1], "position")
     diagonal = Symbol(x == y, "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))
@@ -36,12 +46,10 @@ if __name__ == "__main__":
     right = DiscreteActionGrounding("right", 'right')
     left = DiscreteActionGrounding("left", "left")
 
-    policy = PolicyFromDictGrounding([(not_goal, up)])
-    policy.update(diagonal, up)
-
+    policy = PolicyElements([(not_goal, up)])
+    policy.add(diagonal, up)
 
     s1 = GridWorldState(1, 1)
     s2 = GridWorldState(0, 1)
 
-    print(policy.name)
-    print( list(map(lambda a: a.name, policy(s1))))
+    print(f"{policy(s1)} == 'up'")

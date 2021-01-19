@@ -38,7 +38,7 @@ class Subpolicy(ActionGrounding):
 
     def __rshift__(self, subpolicy):
         if (isinstance(subpolicy, SubpolicyChain)):
-            return SubpolicyChain([self, subpolicy.subpolicies])
+            return SubpolicyChain([self,] + subpolicy.subpolicies)
         return SubpolicyChain([self, subpolicy])
 
 
@@ -129,7 +129,5 @@ if __name__== "__main__":
     subgoal2 = Subpolicy(Any, p, goal)
     subpolicy = subgoal1 >> subgoal2
     subpolicy2 = subgoal1 >> subpolicy
-
-    print(f"{goal.name}: {goal(s1)}")
 
 
