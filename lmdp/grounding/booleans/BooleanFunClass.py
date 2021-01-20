@@ -37,7 +37,7 @@ class BooleanExpression(Expression):
         return self.or_(other)
     
     def __not__(self, other):
-        return self.not_
+        return self.not_()
 
 any_state = BooleanExpression(lambda state: True, domain=["state"])
 any_action = BooleanExpression(lambda action: True, domain=["action"])

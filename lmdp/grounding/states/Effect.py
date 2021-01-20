@@ -50,6 +50,7 @@ if __name__=="__main__":
     from lmdp.grounding import StateFactor
     from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
     import numpy as np
+    
     x = StateFactor(0, "x")
     s = State(data=np.array([1,0]))
     s_prime = State(data= np.array([2,1]))

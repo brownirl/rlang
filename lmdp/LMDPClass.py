@@ -14,6 +14,7 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding import *
+from lmdp.grounding.expressions.ConditionalExpressionClass import Conditional
 from simple_rl.mdp.MDPClass import MDP
 from collections import defaultdict
 from collections.abc import Iterable
@@ -138,7 +139,8 @@ class LMDP:
             state_names = list(map(lambda state: "state-var-" + str(state), state_seq))
         self.state_groundings(list(map(lambda i: StateFactor(i, state_names[i]), state_seq)))
         
-
+    def when(self, boolean_expression):
+        return Conditional(boolean_expression, self)
 
 if __name__=='__main__':
     from lmdp.grounding import *
