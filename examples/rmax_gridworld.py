@@ -15,7 +15,7 @@ from lmdp.experiment_runner import run_agents
 
 mdp = GridWorldMDP(width=5, height=5, walls=[(3, 1)], lava_locs=[(3,2)], goal_locs=[(5,1)])
 
-glmdp = rlang.LMDP(mdp, state_names=["x", "y"])
+glmdp = rlang.LMDP(mdp, factor_names=["x", "y"])
 goal = rlang.Symbol((glmdp.state("x") == 5).and_(glmdp.state("y") == 1))
 wall = rlang.Symbol((glmdp.state("x") == 3).and_(glmdp.state("y") == 1))
 goal_row = rlang.Symbol(glmdp.state("y") == 5)

@@ -87,7 +87,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__sub__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
+        elif(isinstance(other, (float, int, np.ndarray, RealExpression))):
             return super().__sub__(other)
         else:
             return NotImplemented

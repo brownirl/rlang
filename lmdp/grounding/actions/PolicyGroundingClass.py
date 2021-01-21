@@ -5,12 +5,16 @@
           v1 January 2021
 '''
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 
-class PolicyGrounding(ActionGrounding):
+
+class PolicyGrounding(Grounding, Expression):
 
     def __init__(self, policy, name="policy"):
         self.policy_fun = policy
-        ActionGrounding.__init__(self, self.policy_fun, policy)
+        Grounding.__init__(self, name=name)
+        Expression.__init__(self, self.policy_fun, domain=["state"], codomain=["action"])
         
     # def __call__(self, *args):
     #     '''

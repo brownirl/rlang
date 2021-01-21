@@ -24,11 +24,11 @@ import random
 
 class LMDP:
 
-    def __init__(self, mdp=None, state_names=None):
+    def __init__(self, mdp=None, factor_names=None):
         self._vocabulary = Vocabulary()
 
         if(mdp is not None):
-            self.bind(mdp, state_names=state_names)
+            self.bind(mdp, factor_names=factor_names)
         
         self.__reward = RewardGrounding()
         self.__value_function = ValueGrounding()
@@ -72,7 +72,7 @@ class LMDP:
         return list(self._vocabulary._subpolicies.values())
     
     def add_subpolicy(self, subpolicy):
-        self.__call__(subpolicy)
+        self.add(subpolicy)
     
     def action(self, name):
         return self.__call__(name)
@@ -142,12 +142,12 @@ class LMDP:
         for state in state_groundings_list:
             self.add(state)
 
-    def bind(self, mdp, state_names=None):
+    def bind(self, mdp, factor_names=None):
         self.add_actions(list(map(lambda a: DiscreteActionGrounding(a, name=str(a)), mdp.get_actions())))
         state_seq = list(range(mdp.get_num_state_feats()))
-        if state_names is None:
-            state_names = list(map(lambda state: "state-var-" + str(state), state_seq))
-        self.state_groundings(list(map(lambda i: StateFactor(i, state_names[i]), state_seq)))
+        if factor_names is None:
+            factor_names = list(map(lambda state: "state-var-" + str(state), state_seq))
+        self.state_groundings(list(map(lambda i: StateFactor(i, factor_names[i]), state_seq)))
         
     def when(self, boolean_expression):
         return Conditional(boolean_expression, self)
@@ -165,7 +165,7 @@ if __name__=='__main__':
     s1_up = GridWorldState(1, 2)
     mdp = GridWorldMDP(10, 10, goal_locs=[(10, 10)])
     
-    lmdp = LMDP(mdp, state_names=["x", "y"])
+    lmdp = LMDP(mdp, factor_names=["x", "y"])
 
     # 2-dimension state vector in gridworld
     position = StateFactor([0, 1], "position")

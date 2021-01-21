@@ -7,12 +7,12 @@
 import sys, os
 sys.path.append(os.path.abspath("./"))
 
-from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
+from lmdp.grounding.actions.PolicyGroundingClass import PolicyGrounding
 from lmdp.grounding.states.SymbolClass import Any
 from simple_rl.abstraction.action_abs.PredicateClass import Predicate
 from simple_rl.abstraction.action_abs.OptionClass import Option
 
-class Subpolicy(ActionGrounding):
+class Subpolicy(PolicyGrounding):
     id = 0
     def __init__(self, init_symbol, policy_fun, termination_symbol, name=None):
         if (name is None):
@@ -21,18 +21,21 @@ class Subpolicy(ActionGrounding):
         self._init = init_symbol
         self._termination = termination_symbol
         self.__executing = False
-        ActionGrounding.__init__(self, policy_fun, name=name)
+        PolicyGrounding.__init__(self, policy_fun, name=name)
  
-    def __call__(self, *args):
-        if (not self.__executing and self._init(*args)):
+    def __call__(self, state):
+        if (not self.__executing and self._init(state)):
             self.__executing = True
-            return super().__call__(*args)
-        elif (self.__executing and not self._termination(*args)):
-            return super().__call__(*args)
-        elif (self._termination(*args)):
+            return super().__call__(state)
+        elif (self.__executing and not self._termination(state)):
+            return super().__call__(state)
+        elif (self._termination(state)):
             self.__executing = False
             return None
 
+    def is_executable(self, state):
+        return self._init(state)
+        
     def is_executing(self):
         return self.__executing
 
