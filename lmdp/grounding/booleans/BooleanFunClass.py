@@ -12,7 +12,7 @@ class BooleanExpression(Expression):
         Expression.__init__(self, fun, domain=domain, codomain=["boolean"])
         
     def and_(self, other):
-        if(isinstance(other, BooleanExpression)):
+        if(isinstance(other, BooleanExpression) or isinstance(other, Expression)):
             return BooleanExpression(lambda **args: self.__call__(**args) and other(**args), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
             return BooleanExpression(lambda **args: self.__call__(**args) or other, domain=self.domain()) 
@@ -39,6 +39,6 @@ class BooleanExpression(Expression):
     def __not__(self, other):
         return self.not_()
 
-any_state = BooleanExpression(lambda state: True, domain=["state"])
-any_action = BooleanExpression(lambda action: True, domain=["action"])
-any_next_state = BooleanExpression(lambda next_state: True, domain=["next_state"])
+any_state = BooleanExpression(lambda **args: True, domain=["state"])
+any_action = BooleanExpression(lambda **args: True, domain=["action"])
+any_next_state = BooleanExpression(lambda **args: True, domain=["next_state"])

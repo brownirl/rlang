@@ -31,7 +31,7 @@ class TransitionGrounding(Grounding, PartialFunction):
         return super().__call__(state, action)
 
     
-    def add(self, symbol, action, effect):
+    def add(self, boolean_expression_sa, action=None, effect=None):
         '''
             add a new transition
             Args:
@@ -39,9 +39,15 @@ class TransitionGrounding(Grounding, PartialFunction):
                 - action 
                 - Effect Symbol
         '''
-
-        boolean_cond = BooleanExpression(lambda **args: symbol(**args) and args["action"] == action, domain=["state", "action"])
+        if(effect is None):
+            raise "Effect must be specified"
+        if (action is not None):
+            boolean_cond = BooleanExpression(lambda **args: boolean_expression_sa(**args) and args["action"] == action, domain=["state", "action"])
+        else:
+            boolean_cond = boolean_expression_sa
         self.add_specification(boolean_cond, effect)
+
+
 
     # def __create_dict(self, transitions):
     #     self.__transitions = defaultdict(lambda: defaultdict())

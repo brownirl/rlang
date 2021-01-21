@@ -8,13 +8,15 @@
     For Discrete MDPs
 
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    date: September 2020
+    date: v0 September 2020
+          v1 January 2021
 '''
 import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding import *
 from lmdp.grounding.expressions.ConditionalExpressionClass import Conditional
+from lmdp.grounding.VocabularyClass import Vocabulary
 from simple_rl.mdp.MDPClass import MDP
 from collections import defaultdict
 from collections.abc import Iterable
@@ -23,9 +25,7 @@ import random
 class LMDP:
 
     def __init__(self, mdp=None, state_names=None):
-        self.__actions = defaultdict(lambda: None)
-        self.__symbols = defaultdict(lambda: None)
-        self.__state_groundings = defaultdict(lambda : None)
+        self._vocabulary = Vocabulary()
 
         if(mdp is not None):
             self.bind(mdp, state_names=state_names)
@@ -33,96 +33,106 @@ class LMDP:
         self.__reward = RewardGrounding()
         self.__value_function = ValueGrounding()
         self.__transition = TransitionGrounding()
-        self.__policy = PolicyGrounding(lambda *args: random.choice(self.__actions.keys()))
-        self.__subpolicies = defaultdict(lambda: None)
+        self.__policy = PolicyElements()
         self.__goals = []
-        
+
+    def __call__(self, name):
+        return self._vocabulary(name)
+
+    def add(self, element):
+        self._vocabulary.add(element.name, element)
+
     def state(self, name):
-        return self.__state_groundings[name]
+        return self.__call__(name)
     
-    def add_state_var(self, state_grounding):
-        self.__state_groundings[state_grounding.name] = state_grounding
+    def add_state_feature(self, state_grounding):
+        self.add(state_grounding)
+
     def symbol(self, name):
-        return self.__symbols[name]
+        return self._vocabulary(name)
         
     def add_symbol(self, symbol_object):
         if (isinstance(symbol_object, Iterable)):
-            self.add_symbols(symbol_object)
+            for s in symbol_object:
+                self.add(s)
         else:
-            self.__symbols[symbol_object.name] = symbol_object
+            self.add(symbol_object)
 
-    def add_symbols(self, symbols_iterable):
-        for symbol in symbols_iterable:
-            self.__symbols[symbol.name] = symbol
+    # def add_symbols(self, symbols_iterable):
+    #     for symbol in symbols_iterable:
+    #         self.__symbols[symbol.name] = symbol
     
     def get_symbols(self):
-        return list(self.__symbols.values())
+        return list(self._vocabulary._symbols.values())
 
     def subpolicy(self, name):
-        return self.__subpolicies[name]
+        return self.__call__(name)
 
     def get_subpolicies(self):
-        return list(self.__subpolicies.values())
+        return list(self._vocabulary._subpolicies.values())
+    
+    def add_subpolicy(self, subpolicy):
+        self.__call__(subpolicy)
     
     def action(self, name):
-        return self.__actions[name]
-    
+        return self.__call__(name)
+
     def add_actions(self, actions_list):
         for a in actions_list:
-            self.__actions[a.name] = a
+            self.add(a)
     
     def get_actions(self):
-        return list(self.__actions.values())
+        return list(self._vocabulary._actions.values())
 
     @property
     def reward(self):
         return self.__reward
 
-    @reward.setter
-    def reward(self, reward_grounding):
-        if (isinstance(reward_grounding, RewardGrounding)):
-            self.__reward = reward_grounding
-        else:
-            raise "Argument must be a RewardGrounding instance"
+    # @reward.setter
+    # def reward(self, reward_grounding):
+    #     if (isinstance(reward_grounding, RewardGrounding)):
+    #         self.__reward = reward_grounding
+    #     else:
+    #         raise "Argument must be a RewardGrounding instance"
     
     @property
     def value(self):
         return self.__value_function
 
-    @value.setter  
-    def value(self, value_grounding):
-        if (isinstance(value_grounding, ValueGrounding)):
-            self.__value_function = value_grounding
-        else:
-            raise "Argument must be a RewardGrounding instance"
+    # @value.setter  
+    # def value(self, value_grounding):
+    #     if (isinstance(value_grounding, ValueGrounding)):
+    #         self.__value_function = value_grounding
+    #     else:
+    #         raise "Argument must be a RewardGrounding instance"
     
 
     @property
     def transition(self):
         return self.__transition
 
-    @transition.setter
-    def transition(self, transition_grounding):
-        if (isinstance(transition_grounding, TransitionGrounding)):
-            self.__transition = transition_grounding
-        else:
-            raise "Argument must be a TransitionGrounding instance"
+    # @transition.setter
+    # def transition(self, transition_grounding):
+    #     if (isinstance(transition_grounding, TransitionGrounding)):
+    #         self.__transition = transition_grounding
+    #     else:
+    #         raise "Argument must be a TransitionGrounding instance"
 
     @property
     def policy(self):
         return self.__policy
     
-    @policy.setter
-    def policy(self, policy_grounding):
-        if (isinstance(policy_grounding, PolicyGrounding)):
-            self.__policy = policy_grounding
-        else:
-            raise "Argument must be a PolicyGrounding instance"
+    # @policy.setter
+    # def policy(self, policy_grounding):
+    #     if (isinstance(policy_grounding, PolicyGrounding)):
+    #         self.__policy = policy_grounding
+    #     else:
+    #         raise "Argument must be a PolicyGrounding instance"
 
     def goal(self, symbol):
         if(isinstance(symbol, str)):
-            if(symbol in self.__symbols):
-                self.__goals.append(symbol)
+            if(symbol in self._vocabulary):
+                self.__goals.append(self.__call__(symbol))
             else:
                 raise "Symbol " + symbol + " not defined"
         elif(isinstance(symbol, Symbol)):
@@ -130,7 +140,7 @@ class LMDP:
 
     def state_groundings(self, state_groundings_list):
         for state in state_groundings_list:
-            self.__state_groundings[state.name] = state
+            self.add(state)
 
     def bind(self, mdp, state_names=None):
         self.add_actions(list(map(lambda a: DiscreteActionGrounding(a, name=str(a)), mdp.get_actions())))
@@ -141,6 +151,7 @@ class LMDP:
         
     def when(self, boolean_expression):
         return Conditional(boolean_expression, self)
+
 
 if __name__=='__main__':
     from lmdp.grounding import *
@@ -158,26 +169,25 @@ if __name__=='__main__':
 
     # 2-dimension state vector in gridworld
     position = StateFactor([0, 1], "position")
-    lmdp.add_state_var(position)
+    lmdp.add_state_feature(position)
 
     diagonal = Symbol(lmdp.state('x') + 1 == lmdp.state('y'), "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))
     lmdp.add_symbol([diagonal, goal, not_goal])
     
+
     # transitions (deterministic)
-    up_effect = EffectSymbol((next_state(lmdp.state("y")) == lmdp.state("y") + 1).and_(lmdp.state("x") == next_state(lmdp.state("x"))) )
-    lmdp.transition.add(Any, lmdp.action("up"), up_effect)
-    print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))(s1_up)}")
+    with lmdp.when(any_state & (action == lmdp.action("up")())) as c:
+        c.effect((next_state(lmdp.state("y")) == lmdp.state("y") + 1) & (lmdp.state("x") == next_state(lmdp.state("x"))))
+    
+    print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))[0](s1_up)}")
     
     # rewards
-    lmdp.reward.add(Any, -0.01)
+    # lmdp.reward.add(Any, -0.01)
     
-    # policy 
-    lmdp.policy.update_policy(lambda *args: "up")
+    # print(f"s1 in diagonal: {lmdp.symbol('diagonal')(s1)}")
+    # print(f"s1 is goal state: {lmdp.symbol('goal')(s1)}")
 
-    print(f"s1 in diagonal: {lmdp.symbol('diagonal')(s1)}")
-    print(f"s1 is goal state: {lmdp.symbol('goal')(s1)}")
-
-    print(f"policy at s1: {lmdp.policy(s1)}")
-    print(f"reward at s1: {lmdp.reward @ s1}")
+    # print(f"policy at s1: {lmdp.policy(s1)}")
+    # print(f"reward at s1: {lmdp.reward @ s1}")

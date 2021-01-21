@@ -42,8 +42,13 @@ class Conditional:
         return self
 
     def __exit__(self, type, value, traceback):
-        c = self.conditional_stack.pop()
-        # if(len(self.conditional_stack) == 0):
+        self.conditional_stack.pop()
+        if(len(self.conditional_stack) == 0 and self.lmdp is not None):
+            [self.lmdp.add_subpolicy(opt) for opt in self.subpolicies.values()]
+            
+            [self.lmdp.transition.add(boolean_sa, effect=effect) for (boolean_sa, effect) in self.transition_elements]
+            [self.lmdp.reward.add(boolean_sas, effect) for (boolean_sas, effect) in self.reward_elements]
+            [self.lmdp.value.add(boolean_sa, effect) for (boolean_sa, effect) in self.value_elements]
         
 
     def when(self, boolean_expression):
@@ -117,8 +122,6 @@ if __name__=="__main__":
     up_effect = Effect(any_state and any_action, next_state(x) == x + 1)
     up = DiscreteActionGrounding("up")
     # up = EffectSymbol(next_state(x) == x + 1)(s, "up")
-
-    # up = ActionGrounding(lambda **args: "up"
     with Conditional(any_state) as c:
         c.subpolicy(name="option1")
         with c.when(action == up):
