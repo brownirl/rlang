@@ -44,7 +44,7 @@ class RewardGrounding(Grounding, PartialFunction):
                 - reward
         '''
         if (isinstance(reward, float) or isinstance(reward, int)):
-            r = RealExpression(lambda *args: reward, domain=["State", "Action", "Next State"])
+            r = RealExpression(lambda **args: reward, domain=["state", "action", "next_state"])
         else:
             r = reward
         

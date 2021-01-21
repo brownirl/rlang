@@ -54,7 +54,7 @@ class RMaxLangAgent(LangAgent):
         return int(transitions)
 
     def default_rewards(self, state, action):
-        r = self.lmdp.reward(state)
+        r = self.lmdp.reward(state, action, state)
         if len(r) > 0:
             self.rmax_agent.r_s_a_counts[state][action] += 1
         return r

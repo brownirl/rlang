@@ -41,7 +41,7 @@ class ValueGrounding(Grounding, PartialFunction):
                 - reward
         '''
         if (isinstance(value, float) or isinstance(value, int)):
-            v = RealExpression(lambda *args: value, domain=["State", "Action", "Next State"])
+            v = RealExpression(lambda **args: value, domain=["state", "action"])
         else:
             v = value
         self.add_specification(symbol, v)

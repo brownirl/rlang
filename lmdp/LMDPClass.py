@@ -41,6 +41,7 @@ class LMDP:
 
     def add(self, element):
         self._vocabulary.add(element.name, element)
+        return element
 
     def state(self, name):
         return self.__call__(name)
