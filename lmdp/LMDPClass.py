@@ -179,7 +179,8 @@ if __name__=='__main__':
 
     # transitions (deterministic)
     with lmdp.when(any_state & (action == lmdp.action("up")())) as c:
-        c.effect((next_state(lmdp.state("y")) == lmdp.state("y") + 1) & (lmdp.state("x") == next_state(lmdp.state("x"))))
+        # c.effect((next_state(lmdp.state("y")) == lmdp.state("y") + 1) & (lmdp.state("x") == next_state(lmdp.state("x"))))
+        c.effect({lmdp("y"): lmdp("y") + 1, lmdp('x'): lmdp("x")})
     
     print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))[0](s1_up)}")
     

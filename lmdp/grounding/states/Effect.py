@@ -31,18 +31,17 @@ class Effect(Expression):
             f = lambda state, action, next_state: self._domain_sa(state, action) and (next_state in self._effect)
         elif(isinstance(self._effect, BooleanExpression) and self._effect.domain <= Domain(["state", "action", "next_state"])):
             f = lambda state, action, next_state: self._domain_sa(state, action) and self._effect(state=state, action=action, next_state=next_state)
-        # elif(isinstance(self._effect, dict)):
-        #     f = lambda state, action, next_state: self._domain_sa(state, action) and __verify_transformation(self._effect, )
+        elif(isinstance(self._effect, dict)):
+            f = lambda state, action, next_state: self._domain_sa(state, action) and self.__verify_transformation(self._effect, state, action, next_state)
         else:
             raise "Error: Unexpected Effect Expression"
         return EffectSymbol(f)(state, action)
 
-def __verify_transformation(effect, vocabulary, state, action, next_state):
-    verify = True
-    vocab = vocabulary
-    for (factor_name, factor_transformation) in effect.items():
-         verify = verify and vocab[factor_name](next_state) == factor_transformation(state, action) 
-    return verify
+    def __verify_transformation(self, effect, state, action, next_state):
+        verify = True
+        for (factor, factor_transformation) in effect.items():
+            verify = verify and factor(next_state) == factor_transformation(state, action) 
+        return verify
 
 if __name__=="__main__":
     from simple_rl.mdp.StateClass import State
