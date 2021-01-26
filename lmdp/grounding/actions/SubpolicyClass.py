@@ -44,6 +44,9 @@ class Subpolicy(PolicyGrounding):
             return SubpolicyChain([self,] + subpolicy.subpolicies)
         return SubpolicyChain([self, subpolicy])
 
+    def to_option(self):
+        return Option(Predicate(self._init), Predicate(self._termination), self.policy_fun, name=self.name)
+
 
 class SubpolicyFromOption(Subpolicy):
     def __init__(self, init_symbol, policy_fun, termination_symbol, name=None):
@@ -99,7 +102,6 @@ class SubpolicyChain(Subpolicy):
         if (isinstance(subpolicy, SubpolicyChain)):
             return SubpolicyChain(self.subpolicies + subpolicy.subpolicies)
         return SubpolicyChain(self.subpolicies + [subpolicy])
-
 
 if __name__== "__main__":
     from lmdp.grounding import *
