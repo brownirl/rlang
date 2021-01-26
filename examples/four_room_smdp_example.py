@@ -2,6 +2,7 @@ import sys, os
 sys.path.append(os.path.abspath('./'))
 
 from lmdp import *
+from lmdp.agents.AbstractValueIterationClass import AAValueInteration
 import simple_rl as rl
 import math
 import numpy as np
@@ -31,28 +32,39 @@ def compute_hallways(width, height):
         if j + 1 == math.ceil(height / 3.0) or j == math.ceil(2 * (height + 2) / 3.0):
             hallways.append(np.array((half_width, j)))
     
-    return {"room_1": (hallways[0], hallways[2]), "room_2": (hallways[1], hallways[2]), 
-            "room_3": (hallways[0], hallways[3]), "room_4": (hallways[1], hallways[3])}
+    return {"room_1": (hallways[0] + (0,1), hallways[2] + (1,0)), "room_2": (hallways[1]+ (0,1), hallways[2]-(1,0)), 
+            "room_3": (hallways[0] - (0,1), hallways[3] + (1,0)), "room_4": (hallways[1]-(0,1), hallways[3]-(1,0))}
 
 def compute_rooms(lmdp, width, height):
     half_width = math.ceil(width / 2.0)
     half_height = math.ceil(height / 2.0)
     
-    room_1 = Symbol((lmdp('x') < half_width) & (lmdp('y') < half_height), "room_1")
-    room_2 = Symbol((lmdp('x') > half_width) & (lmdp('y') < half_height), "room_2")
-    room_3 = Symbol((lmdp('x') < half_width) & (lmdp('y') > half_height), "room_3")
-    room_4 = Symbol((lmdp('x') > half_width) & (lmdp('y') > half_height), "room_4")
+    room_1 = Symbol((lmdp('x') <= half_width) & (lmdp('y') <= half_height), "room_1")
+    room_2 = Symbol((lmdp('x') >= half_width) & (lmdp('y') < half_height), "room_2")
+    room_3 = Symbol((lmdp('x') <= half_width) & (lmdp('y') >= half_height), "room_3")
+    room_4 = Symbol((lmdp('x') >= half_width) & (lmdp('y') >= half_height-1), "room_4")
     return (room_1, room_2, room_3, room_4)
 
-def hallway_policy(lmdp, hallway):
+def hallway_policy(lmdp, hallway, wall_type):
     distance_to_hallway = lmdp("position") - hallway
     def policy(state):
         d = distance_to_hallway(state) # manhattan distance
         if(abs(d[0]) + abs(d[1]) > 0):
-            if(abs(d[0]) > abs(d[1])): # d_x > d_y, hence move in the x axis first
-                return lmdp('right') if d[0] < 0 else lmdp('left') 
-            else:
-                return lmdp('up') if d[1] < 0 else lmdp('down')
+            if (wall_type == 'hor'): # below or above the wall
+                if(d[0] != 0):
+                    return lmdp('right')() if d[0] < 0 else lmdp('left')()
+                else:
+                    return lmdp('up')() if d[1] < 0 else lmdp('down')()
+            elif (wall_type == 'ver'): # right or left of the wall
+                if(d[1] != 0):
+                    return lmdp('up')() if d[1] < 0 else lmdp('down')()
+                else:
+                    return lmdp('right')() if d[0] < 0 else lmdp('left')()
+
+            # if(abs(d[0]) >= abs(d[1])): # d_x > d_y, hence move in the x axis first
+            #     return lmdp('right')() if d[0] < 0 else lmdp('left')()
+            # else:
+            #     return lmdp('up')() if d[1] < 0 else lmdp('down')()
 
     return policy
 
@@ -62,7 +74,7 @@ if __name__=="__main__":
     
     height, width = 9, 9 
     
-    four_room_mdp = rl.tasks.FourRoomMDP() # initialize mdp
+    four_room_mdp = rl.tasks.FourRoomMDP(goal_locs=[(8,4)]) # initialize mdp
     lmdp = LMDP(four_room_mdp, factor_names=["x", "y"]) # mdp is given to bind factors
 
     lmdp.add(StateFactor([0, 1], name='position'))
@@ -74,14 +86,27 @@ if __name__=="__main__":
 
     for room in rooms:
         with lmdp.when(room) as c: # compute and create hallway policies for each room
-            for idx in (0,1):
-                c.subpolicy(policy=hallway_policy(lmdp, hallways[room.name][idx]), until= room.not_(), name='subpolicy-'+room.name+'-'+str(idx))
+            for idx in (('hor', 0),('ver', 1)):
+                c.subpolicy(policy=hallway_policy(lmdp, hallways[room.name][idx[1]], wall_type=idx[0]), until= room.not_(), name='subpolicy-'+room.name+'-'+idx[0])
 
     ############# TEST ################
     
     pos1 = State(data=[2,1]) # room_1 position
     pos2 = State(data=[1,6]) # room_3 position
-    opt = lmdp('subpolicy-room_1-0')
-    assert lmdp('subpolicy-room_1-0').is_executable(pos1) == True
-    assert lmdp('subpolicy-room_1-0').is_executable(pos2) == False
-    assert lmdp('subpolicy-room_1-0')(state=pos1)() == 'up'
+    room1_to_room3 = State(data=[2,6]) 
+    opt = lmdp('subpolicy-room_1-hor')
+    assert lmdp('subpolicy-room_1-hor').is_executable(pos1) == True
+    assert lmdp('subpolicy-room_1-hor').is_executable(pos2) == False
+    assert lmdp('subpolicy-room_1-hor')(state=pos1) == 'up'
+    assert lmdp('subpolicy-room_3-ver').is_executable(room1_to_room3) == True
+    assert lmdp('subpolicy-room_3-ver')(state=room1_to_room3) == 'up'
+
+
+    ########### Value Iteration #############
+
+    value_iter = AAValueInteration(four_room_mdp, lmdp, max_iterations=1000, max_rollout=50)
+    print("====Value Iteration Planner Initialized====\nPlanning...")
+    value_iter.run_vi()
+    vi_action_seq, vi_state_seq = value_iter.plan(four_room_mdp.get_init_state())
+    print(list(map(lambda o: o.name, vi_action_seq)))
+    print(vi_state_seq)

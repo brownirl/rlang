@@ -70,7 +70,7 @@ class Conditional:
     # def goal(self, symbol=None, name=None):
     #     pass
 
-    def subpolicy(self, policy=None, until=any_state, initiation=any_state,name=None):
+    def subpolicy(self, policy=None, until=any_state, initiation=any_state, name=None):
         if(self._boolean_expression.domain.is_s()):
             opt = Subpolicy(initiation & self._boolean_expression, policy, termination_symbol=until, name=name)
             self.subpolicies[opt.name] = opt
