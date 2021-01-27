@@ -42,7 +42,8 @@ class Conditional:
         return self
 
     def __exit__(self, type, value, traceback):
-        self.conditional_stack.pop()
+        if(len(self.conditional_stack) > 0):
+            self.conditional_stack.pop()
         if(len(self.conditional_stack) == 0 and self.lmdp is not None):
             [self.lmdp.add_subpolicy(opt) for opt in self.subpolicies.values()]
             
@@ -57,7 +58,7 @@ class Conditional:
 
     def otherwise(self):
         condition = self.conditional_stack.pop() 
-        self.conditional_stack.append(~condition)
+        self.conditional_stack.append(condition.not_())
         return self
 
     
