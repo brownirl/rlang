@@ -14,6 +14,8 @@ sys.path.append(os.path.abspath("./"))
 import numpy as np
 from simple_rl.mdp.StateClass import State
 from functools import reduce
+from collections.abc import Iterable
+from collections import Counter
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
@@ -124,7 +126,25 @@ class StateFactor(Grounding, RealExpression):
 
     def __rtruediv__(self, other):
         return self.__truediv__(other)
+    
+    @classmethod
+    def check_concat(self, sequence, state_dim):
+        '''
+            Check factors concatanation:
 
+            returns:
+                missing_elements: list of elements that are not included
+                overlapping: list of elements and number of times included.
+
+        '''
+        features = reduce(lambda x, y: x + y, map(lambda f: f.feature_positions, sequence))
+        count = Counter(features)
+        if len(count.keys()) < state_dim:
+            missing_elements = set(range(state_dim)) - count.keys()
+        else:
+            missing_elements = []
+        overlapping = [(feature, number) for (feature, number) in count.items() if number > 1]
+        return missing_elements, overlapping
 
 class StateFeature(StateFactor):
     def __init__(self, function, number_of_features, variables):
@@ -146,6 +166,7 @@ if __name__ == '__main__':
     s2 = State(data=np.array([0, 1]))
     x = StateFactor(0, "x")
     y = StateFactor(1, "y")
+    position = StateFactor([0,1], "position")
     diag = x == y
     x_0 = x == 0 
     x_1 = x + 1
@@ -156,3 +177,5 @@ if __name__ == '__main__':
     print(f"s2 in x_0: {x_0(s2)} == True")
     print(f"s1.x + 1:  {x_1(s1)} == 2")
     print(f"s2.x + 1:  {x_1(s2)} == 1")
+
+    print(StateFactor.check_concat([x, y, position], 2))
