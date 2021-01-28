@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath("./"))
 import numpy as np
 from simple_rl.mdp.StateClass import State
 from functools import reduce
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from collections import Counter
 
 from lmdp.grounding.GroundingClass import Grounding
@@ -77,7 +77,7 @@ class StateFactor(Grounding, RealExpression):
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
             variables = other.variables() + self.variables()
             return StateFeature(super().__add__(other), self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
+        elif(isinstance(other, RealExpression) or isinstance(other, (float, int, Sequence))):
             return super().__add__(other)
         else:
             return NotImplemented
@@ -91,7 +91,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__sub__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, (float, int, np.ndarray, RealExpression))):
+        elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__sub__(other)
         else:
             return NotImplemented
@@ -105,7 +105,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__mul__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
+        elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__mul__(other)
         else:
             return NotImplemented
@@ -119,7 +119,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__truediv__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables)
-        elif(isinstance(other, RealExpression) or isinstance(other, float) or isinstance(other, int)):
+        elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__truediv__(other)
         else:
             return NotImplemented
@@ -179,3 +179,4 @@ if __name__ == '__main__':
     print(f"s2.x + 1:  {x_1(s2)} == 1")
 
     print(StateFactor.check_concat([x, y, position], 2))
+    print((position + (0,1))(s1))
