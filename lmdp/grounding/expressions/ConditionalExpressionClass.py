@@ -116,7 +116,7 @@ if __name__=="__main__":
     from lmdp.grounding import StateFactor
     from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
     from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
-    from lmdp.grounding.expressions.ExpressionsClass import S, A, state_prime
+    from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
     import numpy as np
     
     x = StateFactor(0, "x")
