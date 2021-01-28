@@ -3,8 +3,8 @@ from simple_rl.experiments import Experiment
 from collections import defaultdict
 
 def experiment_params():
-    return {"instances":5, 
-            "episodes": 1000, 
+    return {"instances":3, 
+            "episodes": 100, 
             "steps":100,
             "clear_old_results":True,
             "rew_step_count":1,
@@ -12,7 +12,7 @@ def experiment_params():
             "open_plot":True,
             "verbose":False,
             "reset_at_terminal":False,
-            "cumulative_plot":True,
+            "cumulative_plot":False,
             "dir_for_plot":"results",
             "experiment_name_prefix":"",
             "track_success":False,

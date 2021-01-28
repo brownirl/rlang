@@ -25,6 +25,7 @@ class Conditional:
         self._boolean_expression = boolean_expression
         self.lmdp = lmdp
         self.conditional_stack = deque([boolean_expression])
+        self.contexts = deque()
         # definitions
         self.subpolicies = {}
         self.state_features = {}
@@ -39,12 +40,14 @@ class Conditional:
 
     def __enter__(self):  
         self._boolean_expression = reduce(lambda a, b: a & b, self.conditional_stack)
+        self.contexts.append(self._boolean_expression)
         return self
 
     def __exit__(self, type, value, traceback):
-        if(len(self.conditional_stack) > 0):
-            self.conditional_stack.pop()
-        if(len(self.conditional_stack) == 0 and self.lmdp is not None):
+        self._boolean_expression = self.contexts.pop()
+        # if (len(self.conditional_stack) > 0):
+        #     self.conditional_stack.pop()
+        if(len(self.contexts) == 0 and self.lmdp is not None):
             [self.lmdp.add_subpolicy(opt) for opt in self.subpolicies.values()]
             
             [self.lmdp.transition.add(boolean_sa, effect=effect) for (boolean_sa, effect) in self.transition_elements]

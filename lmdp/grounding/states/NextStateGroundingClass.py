@@ -8,8 +8,21 @@
 import sys, os
 sys.path.append(os.path.abspath("./"))
 from lmdp.utils.expression_utils import Domain
-from lmdp.grounding.states.StateGroundingClass import StateFactor
+from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp.grounding.real.RealExpressionClass import RealExpression
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.grounding.states.SymbolClass import Symbol
+
+
+class NextStateSymbol(Symbol, BooleanExpression):
+    def __init__(self, symbol):
+        self._symbol = symbol
+        self._domain = Domain(["next_state"])
+        BooleanExpression.__init__(self, self.executor, domain=["next_state"])
+
+    def executor(self, next_state):
+        return self._symbol(next_state)
+
 
 class NextStateGrounding(StateFactor, RealExpression):
     def __init__(self, state_grounding):
@@ -24,6 +37,10 @@ class NextStateGrounding(StateFactor, RealExpression):
         #     next_state = args[1] # second argument must be s'
         
         return self.__state_grounding(next_state)
+    
+    @property
+    def domain(self):
+        return self._domain
 
     def number_of_features(self):
         return self.__state_grounding.number_of_features()
@@ -39,8 +56,11 @@ class NextStateGrounding(StateFactor, RealExpression):
         return RealExpression(self, dimension=self.number_of_features(), domain=["next_state"])
 
 
-def next_state(state_grounding):
-    return NextStateGrounding(state_grounding)
+def next_state(grounding):
+    if (isinstance(grounding, Symbol)):
+        return NextStateSymbol(grounding)
+    elif (isinstance(grounding, (StateFactor, StateFeature))):
+        return NextStateGrounding(state_grounding)
 
 
 

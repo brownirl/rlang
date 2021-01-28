@@ -27,7 +27,7 @@ class Effect(Expression):
         Expression.__init__(self, self.effect, domain=["state", "action"], codomain=["set_of_states"])
 
     def effect(self, state, action):
-        if (isinstance(self._effect, list)):
+        if (isinstance(self._effect, (list, tuple))):
             f = lambda state, action, next_state: self._domain_sa(state, action) and (next_state in self._effect)
         elif(isinstance(self._effect, BooleanExpression) and self._effect.domain <= Domain(["state", "action", "next_state"])):
             f = lambda state, action, next_state: self._domain_sa(state, action) and self._effect(state=state, action=action, next_state=next_state)
