@@ -18,11 +18,15 @@ class Domain:
     def __eq__(self, other):
         if (isinstance(other, Domain)):
             return (self._domain <= other._domain) and (other._domain <= self._domain)
+        elif(isinstance(other, Codomain)):
+            return (self._domain <= other._codomain) and (other._codomain <= self._domain)
         return NotImplemented
 
     def __le__(self, other):
         if (isinstance(other, Domain)):
             return (self._domain <= other._domain)
+        elif(isinstance(other, Codomain)):
+            return (self._domain <= other._codomain)
         return NotImplemented
 
 
@@ -70,12 +74,16 @@ class Codomain:
     def __eq__(self, other):
         if(isinstance(other, Codomain)):
             return self._codomain <= other._codomain and other._codomain <= self._codomain
+        elif(isinstance(other, Domain)):
+            return self._codomain <= other._domain and other._domain <= self._codomain
         else:
             return NotImplemented
 
     def __leq__(self, other):
         if(isinstance(other, Codomain)):
             return self._codomain <= other._codomain
+        elif(isinstance(other, Domain)):
+            return self._codomain <= other._domain
         else:
             return NotImplemented
 

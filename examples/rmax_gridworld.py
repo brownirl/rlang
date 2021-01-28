@@ -46,9 +46,9 @@ if __name__ == "__main__":
     ### Prior Info
     goal = lmdp.add(Symbol((lmdp("x") == 5).and_(lmdp("y") == 1)))
     wall = lmdp.add(Symbol((lmdp("x") == 3).and_(lmdp("y") == 1)))
-    lava = Symbol(lambda state: (lmdp("x")(state), lmdp("y")(state)) in lava_locs)
-    
-    with lmdp.when((lmdp('position') - np.array((1,0)) == (3,2)) & (action == 'left')) as c: # when you fall in lava
+    lava = Symbol(lambda S: (lmdp("x")(S), lmdp("y")(S)) in lava_locs)
+
+    with lmdp.when((lmdp('position') - np.array((1,0)) == (3,2)) & (A == 'left')) as c: # when you fall in lava
         c.reward(-1.1)
         with c.otherwise().when(goal): # otherwise when in goal
                 c.reward(0.9)

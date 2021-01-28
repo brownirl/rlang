@@ -111,24 +111,24 @@ class Conditional:
 
 if __name__=="__main__":
 
-    from simple_rl.mdp.StateClass import State
+    from simple_rl.mdp.StateClass import S
     from lmdp.grounding.states.NextStateGroundingClass import next_state
     from lmdp.grounding import StateFactor
     from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
     from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
-    from lmdp.grounding.expressions.ExpressionsClass import state, action, state_prime
+    from lmdp.grounding.expressions.ExpressionsClass import S, A, state_prime
     import numpy as np
     
     x = StateFactor(0, "x")
-    s = State(data=np.array([1,0]))
-    s_prime = State(data= np.array([2,1]))
-    s_prime_1 = State(data=np.array([1, 1]))
+    s = S(data=np.array([1,0]))
+    s_prime = S(data= np.array([2,1]))
+    s_prime_1 = S(data=np.array([1, 1]))
     up_effect = Effect(any_state and any_action, next_state(x) == x + 1)
     up = DiscreteActionGrounding("up")
     # up = EffectSymbol(next_state(x) == x + 1)(s, "up")
     with Conditional(any_state) as c:
         c.subpolicy(name="option1")
-        with c.when(action == up):
+        with c.when(A == up):
             c.effect(next_state(x) == x + 1)
             
     print(f"{c.transition_elements[0][0](s, 'down')} == False")

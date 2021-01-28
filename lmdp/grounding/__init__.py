@@ -11,7 +11,7 @@ from lmdp.grounding.states.NextStateGroundingClass import next_state
 from lmdp.grounding.states.Effect import Effect
 from lmdp.grounding.states.SymbolClass import Symbol, Any, None_
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_action, any_state, any_next_state
-from lmdp.grounding.expressions.ExpressionsClass import action, state_prime, state
+from lmdp.grounding.expressions.ExpressionsClass import A, state_prime, S
 from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy

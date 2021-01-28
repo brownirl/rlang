@@ -97,9 +97,9 @@ if __name__=="__main__":
     opt = lmdp('subpolicy-room_1-hor')
     assert lmdp('subpolicy-room_1-hor').is_executable(pos1) == True
     assert lmdp('subpolicy-room_1-hor').is_executable(pos2) == False
-    assert lmdp('subpolicy-room_1-hor')(state=pos1) == 'up'
+    assert lmdp('subpolicy-room_1-hor')(State=pos1) == 'up'
     assert lmdp('subpolicy-room_3-ver').is_executable(room1_to_room3) == True
-    assert lmdp('subpolicy-room_3-ver')(state=room1_to_room3) == 'up'
+    assert lmdp('subpolicy-room_3-ver')(State=room1_to_room3) == 'up'
 
 
     ########### Value Iteration #############

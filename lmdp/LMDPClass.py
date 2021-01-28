@@ -147,7 +147,7 @@ class LMDP:
         self.add_actions(list(map(lambda a: DiscreteActionGrounding(a, name=str(a)), mdp.get_actions())))
         state_seq = list(range(mdp.get_num_state_feats()))
         if factor_names is None:
-            factor_names = list(map(lambda state: "state-var-" + str(state), state_seq))
+            factor_names = list(map(lambda S: "state-var-" + str(S), state_seq))
         self.state_groundings(list(map(lambda i: StateFactor(i, factor_names[i]), state_seq)))
         
     def when(self, boolean_expression):
@@ -179,7 +179,7 @@ if __name__=='__main__':
     
 
     # transitions (deterministic)
-    with lmdp.when(any_state & (action == lmdp.action("up")())) as c:
+    with lmdp.when(any_state & (A == lmdp.action("up")())) as c:
         # c.effect((next_state(lmdp.state("y")) == lmdp.state("y") + 1) & (lmdp.state("x") == next_state(lmdp.state("x"))))
         c.effect({lmdp("y"): lmdp("y") + 1, lmdp('x'): lmdp("x")})
     
