@@ -2,6 +2,8 @@
     State Functions:
         - State Factor
         - State Features
+    N.B.: These classes assume Simple RL MDP States, whose underlying data structure is a numpy array.
+
     Author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     Date: August 2020
 """
@@ -123,73 +125,6 @@ class StateFactor(Grounding, RealExpression):
     def __rtruediv__(self, other):
         return self.__truediv__(other)
 
-    # def __lt__(self, other):
-    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-    #         return self.real_expression() < other.real_expression()
-    #     return self.real_expression() < other
-
-    # def __rlt__(self, other):
-    #     return self.__lt__(other)
-
-    # def __le__(self, other):
-    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-    #         return self.real_expression() <= other.real_expression()
-    #     return self.real_expression() <= other
-
-    # def __rle__(self, other):
-    #     return self.__le__(other)
-
-    # def __eq__(self, other):
-    #     # if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-    #     #     return self.real_expression() == other.real_expression()
-    #     return self.real_expression() == other
-
-    # def __req__(self, other):
-    #     return self.__eq__(other)
-
-    # def __ne__(self, other):
-    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-    #         return self.real_expression() != other.real_expression()
-    #     return self.real_expression() != other
-
-    # def __rne__(self, other):
-    #     return self.__ne__(other)
-
-    # def __gt__(self, other):
-    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-    #         return self.real_expression() > other.real_expression()
-    #     return self.real_expression() > other
-    # def __rgt__(self, other):
-    #     return self.__gt__(other)
-
-    # def __ge__(self, other):
-    #     if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
-    #         return self.real_expression() >= other.real_expression()
-    #     return self.real_expression() >= other
-
-    # def __rge__(self, other):
-    #     return self.__rge__(other)
-    
-    # def __floordiv__(self, other):
-    #     raise NotImplementedError
-    # def __mod__(self, other):
-    #     raise NotImplementedError
-    # def __divmod__(self, other):
-    #     raise NotImplementedError
-    # def __pow__(self, other):
-    #     raise NotImplementedError
-    # def __lshift__(self, other):
-    #     raise NotImplementedError
-    # def __rshift__(self, other):
-    #     raise NotImplementedError
-    # def __and__(self, other):
-    #     raise NotImplementedError
-    # def __xor__(self, other):
-    #     raise NotImplementedError
-    # def __or__(self, other):
-    #     raise NotImplementedError
-    # def __matmul__(self, other):
-    #     raise NotImplementedError
 
 class StateFeature(StateFactor):
     def __init__(self, function, number_of_features, variables):

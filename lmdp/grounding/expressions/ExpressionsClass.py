@@ -51,6 +51,6 @@ class Expression:
     #         return NotImplemented
 
 
-S = Expression(lambda S: S, domain=["state"], codomain=["state"])
-A = Expression(lambda A: A, domain=["action"], codomain=["action"])
+S = Expression(lambda state: state, domain=["state"], codomain=["state"])
+A = Expression(lambda action: action, domain=["action"], codomain=["action"])
 S_prime = Expression(lambda next_state: next_state, domain=["next_state"], codomain=["state"])
