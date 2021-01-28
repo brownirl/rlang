@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath("./"))
 import numpy as np
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from collections.abc import Sequence
 
 class RealExpression(Expression):
     def __init__(self, expression_fun, dimension=1, domain=[], codomain=["real"]):
@@ -17,13 +18,14 @@ class RealExpression(Expression):
         self.__dim = dimension
         Expression.__init__(self, expression_fun, domain, codomain)
 
+    
     def dim(self):
         return self.__dim
 
     def __add__(self, other):
         domain = self.domain()
         if (isinstance(other, RealExpression)):
-            if(other.dim == self.dim):
+            if(other.dim == self.dim()):
                 domain += other.domain()
                 f = lambda **args: self.__call__(**args) + other(**args)
             else:
@@ -31,8 +33,13 @@ class RealExpression(Expression):
         elif (isinstance(other, float) or isinstance(other, int)):
             f = lambda **args: self.__call__(**args) + other
         elif (isinstance(other, np.ndarray)):
-            if(other.shape == (self.dim,)):
+            if(other.shape == (self.dim(),)):
                 f = lambda **args: self.__call__(**args) + other
+            else:
+                raise "Shapes are not compatible"
+        elif (isinstance(other, Sequence)):
+            if(len(other) == self.dim()):
+                f = lambda **args: self.__call__(**args) + np.array(other)
             else:
                 raise "Shapes are not compatible"
         else:
@@ -54,6 +61,11 @@ class RealExpression(Expression):
                 f = lambda **args: self.__call__(**args) - other
             else:
                 raise "Shapes are not compatible"
+        elif (isinstance(other, Sequence)):
+            if(len(other) == self.dim()):
+                f = lambda **args: self.__call__(**args) - np.array(other)
+            else:
+                raise "Shapes are not compatible"
         else:
             return NotImplemented
         return RealExpression(f, self.dim(), domain=domain)
@@ -73,6 +85,11 @@ class RealExpression(Expression):
                 f = lambda **args: self.__call__(**args) *  other
             else:
                 raise "Shapes are not compatible"
+        elif (isinstance(other, Sequence)):
+            if(len(other) == self.dim()):
+                f = lambda **args: self.__call__(**args) * np.array(other)
+            else:
+                raise "Shapes are not compatible"
         else:
             return NotImplemented
         return RealExpression(f, self.dim(), domain=domain)
@@ -90,6 +107,11 @@ class RealExpression(Expression):
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self.dim(),)):
                 f = lambda **args: self.__call__(**args) / other
+            else:
+                raise "Shapes are not compatible"
+        elif (isinstance(other, Sequence)):
+            if(len(other) == self.dim()):
+                f = lambda **args: self.__call__(**args) / np.array(other)
             else:
                 raise "Shapes are not compatible"
         else:
