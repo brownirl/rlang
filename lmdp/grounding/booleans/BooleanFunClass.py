@@ -39,6 +39,13 @@ class BooleanExpression(Expression):
     def __not__(self, other):
         return self.not_()
 
+
+    def __compose__(self, expression):
+        if(self.domain == expression.codomain): #composable
+            return BooleanExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())
+        else:
+            return NotImplemented
+
 any_state = BooleanExpression(lambda **args: True, domain=["state"])
 any_action = BooleanExpression(lambda **args: True, domain=["action"])
 any_next_state = BooleanExpression(lambda **args: True, domain=["next_state"])

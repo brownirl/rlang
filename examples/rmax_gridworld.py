@@ -23,13 +23,13 @@ def gridworld_state_space(width, height):
 
 def action_effect(state, action):
         if action == 'up':
-            return  state + (0,1)
+            return  GridWorldState(state.x, state.y + 1)
         if action == 'down':
-            return  state + (0,-1)
+            return  GridWorldState(state.x, state.y-1)
         if action == 'left':
-            return state + (-1, 0)
+            return GridWorldState(state.x - 1, state.y)
         if action == 'right':
-            return state + (1, 0)
+            return GridWorldState(state.x + 1, state.y)
 
 if __name__ == "__main__":
     width, height = 6,6
@@ -47,8 +47,9 @@ if __name__ == "__main__":
     goal = lmdp.add(Symbol((lmdp("x") == 5).and_(lmdp("y") == 1)))
     wall = lmdp.add(Symbol((lmdp("x") == 3).and_(lmdp("y") == 1)))
     lava = Symbol(lambda state: (lmdp("x")(state), lmdp("y")(state)) in lava_locs)
-
-    with lmdp.when((lmdp('position') - np.array((1,0)) == (3,2)) & (A == 'left')) as c: # when you fall in lava
+    effect_action = PredictiveEffect(any_state & any_action, action_effect)
+    # with lmdp.when((lmdp('position') - (1, 0) == (3, 2)) & (A == 'left')) as c: # when you fall in lava
+    with lmdp.when(lava(effect_action)) as c:
         c.reward(-1.1)
         with c.otherwise().when(goal): # otherwise when in goal
                 c.reward(0.9)

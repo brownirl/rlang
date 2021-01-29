@@ -222,6 +222,12 @@ class RealExpression(Expression):
         else:
             raise "Comparison not defined for vector groundings"
     
+    def __compose__(self, expression):
+        if(self.domain == expression.codomain): #composable
+            return RealExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())
+        else:
+            return NotImplemented
+
     def __floordiv__(self, other):
         raise NotImplementedError
     def __mod__(self, other):

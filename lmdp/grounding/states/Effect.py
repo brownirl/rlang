@@ -16,7 +16,8 @@ from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
 from lmdp.grounding.states.SymbolClass import Symbol
-from lmdp.utils.expression_utils import Domain
+from lmdp.grounding.states.StateGroundingClass import StateFactor
+from lmdp.utils.expression_utils import Domain, Codomain
 from functools import partial
 
 class Effect(Expression):
@@ -42,6 +43,37 @@ class Effect(Expression):
         for (factor, factor_transformation) in effect.items():
             verify = verify and factor(next_state) == factor_transformation(state, action) 
         return verify
+
+class PredictiveEffect(Effect):
+    
+    def __init__(self, boolean_expression_sa, effect, state_dim=None):
+        Effect.__init__(self, boolean_expression_sa, effect)
+        self._codomain = Codomain(["state"])
+        self.state_dim = state_dim
+    
+    def effect(self, state, action):
+        return self._effect(state, action)
+
+    def __create_effect_from_dict(self, d):
+        '''
+            Dictionary of StateFactor -> Expression(S, A) -> Real
+            Return: state vector
+        '''
+
+        missing, overlapping = StateFactor.check_concat(d.keys(), self.state_dim)
+
+        error = ""
+        if len(missing) > 0:
+            error += "State Underspecified. "
+        if len(overlapping) > 0:
+            error += "Effect ambiguous. "
+        if len(error) > 0: 
+            raise ValueError(error)
+        
+        # for (f, exp) in d.items():
+            
+
+
 
 if __name__=="__main__":
     from simple_rl.mdp.StateClass import State
