@@ -25,6 +25,9 @@ class RMaxLangAgent(LangAgent):
         self.transitions = defaultdict(lambda state: defaultdict(lambda action: defaultdict(lambda state_prime: self.default_transition(state, action, state_prime))))
         self.rewards = defaultdict(lambda state: defaultdict(lambda action: self.default_rewards(state, action)))
         self.q_func = self.initialize_q_function(self.state_space(), self.rmax_agent.actions)
+        self.r_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
+        self.t_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
+
 
         self.rmax_agent.rewards = self.rewards
         self.rmax_agent.transitions = self.transitions
@@ -76,7 +79,7 @@ class RMaxLangAgent(LangAgent):
         if len(r) > 0:
             self.r_s_a_counts[state][action] += 1
         else:
-            r = None
+            r = []
         return r
     
 

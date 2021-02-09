@@ -17,24 +17,33 @@ sys.path.append(os.path.abspath("./"))
 from lmdp.grounding import *
 from lmdp.grounding.expressions.ConditionalExpressionClass import Conditional
 from lmdp.grounding.VocabularyClass import Vocabulary
+from lmdp.grounding.states.StateClass import StateFactory
 from simple_rl.mdp.MDPClass import MDP
 from collections import defaultdict
 from collections.abc import Iterable
 import random 
 
 class LMDP:
-
-    def __init__(self, mdp=None, factor_names=None):
+    id = 0
+    LMDPs = dict()
+    def __init__(self, mdp, factor_names=None, domain_name=None):
+        if domain_name is None:
+            domain_name = "LMDP_" + str(LMDP.id)
+            LMDP.id += 1
+        self.domain_name = domain_name
         self._vocabulary = Vocabulary()
 
-        if(mdp is not None):
+        if(mdp is not None and factor_names is not None and len(factor_names) > 0):
             self.bind(mdp, factor_names=factor_names)
+            self.__state_constructor = StateFactory(type(mdp.get_init_state()))
         
         self.__reward = RewardGrounding()
         self.__value_function = ValueGrounding()
         self.__transition = TransitionGrounding()
         self.__policy = PolicyElements()
         self.__goals = []
+        
+        LMDP.LMDPs[self.domain_name] = self
 
     def __call__(self, name):
         return self._vocabulary(name)
@@ -43,7 +52,7 @@ class LMDP:
         self._vocabulary.add(element.name, element)
         return element
 
-    def state(self, name):
+    def state_feature(self, name):
         return self.__call__(name)
     
     def add_state_feature(self, state_grounding):
@@ -151,7 +160,14 @@ class LMDP:
         self.state_groundings(list(map(lambda i: StateFactor(i, factor_names[i]), state_seq)))
         
     def when(self, boolean_expression):
-        return Conditional(boolean_expression, self)
+        self._conditional = Conditional(boolean_expression, self)
+        return self._conditional # context manager
+    
+    def otherwise(self):
+        pass
+    
+    def build_state(self, *args, **kwargs):
+        return self.__state_constructor(*args, **kwargs)
 
 
 if __name__=='__main__':
@@ -172,24 +188,15 @@ if __name__=='__main__':
     position = StateFactor([0, 1], "position")
     lmdp.add_state_feature(position)
 
-    diagonal = Symbol(lmdp.state('x') + 1 == lmdp.state('y'), "diagonal")
+    diagonal = Symbol(lmdp('x') + 1 == lmdp('y'), "diagonal")
     goal = Symbol(position == np.array([10, 10]), "goal")
     not_goal = Symbol(position != np.array([10, 10]))
     lmdp.add_symbol([diagonal, goal, not_goal])
     
 
     # transitions (deterministic)
-    with lmdp.when(any_state & (action == lmdp.action("up")())) as c:
+    with lmdp.when(any_state & (A == lmdp.action("up")())) as c:
         # c.effect((next_state(lmdp.state("y")) == lmdp.state("y") + 1) & (lmdp.state("x") == next_state(lmdp.state("x"))))
         c.effect({lmdp("y"): lmdp("y") + 1, lmdp('x'): lmdp("x")})
     
     print(f"next_state_symbol:{lmdp.transition(s1, lmdp.action('up'))[0](s1_up)}")
-    
-    # rewards
-    # lmdp.reward.add(Any, -0.01)
-    
-    # print(f"s1 in diagonal: {lmdp.symbol('diagonal')(s1)}")
-    # print(f"s1 is goal state: {lmdp.symbol('goal')(s1)}")
-
-    # print(f"policy at s1: {lmdp.policy(s1)}")
-    # print(f"reward at s1: {lmdp.reward @ s1}")

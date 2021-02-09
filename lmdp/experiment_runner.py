@@ -12,7 +12,7 @@ def experiment_params():
             "open_plot":True,
             "verbose":False,
             "reset_at_terminal":False,
-            "cumulative_plot":False,
+            "cumulative_plot":True,
             "dir_for_plot":"results",
             "experiment_name_prefix":"",
             "track_success":False,
@@ -179,8 +179,9 @@ def run_agents(agents, mdp):
     for agent in agents:
         print(str(agent) + " is learning.")
 
-        start = time.clock()
+        times = defaultdict(float)
         for instance in range(1, instances + 1):
+            start = time.clock()
             print("  Instance " + str(instance) + " of " + str(instances) + ".")
             sys.stdout.flush()
             run_single_agent_on_mdp(
@@ -196,8 +197,11 @@ def run_agents(agents, mdp):
             # Reset the agent.
             agent.reset()
             mdp.end_of_instance()
-        end = time.clock()
+            end = time.clock()
+            times[instance] = end-start
+            print(f"{instance}: {times[instance]}")
 
+        
     print("\n--- TIMES ---")
     for agent in time_dict.keys():
         print(str(agent) + " agent took " + str(round(time_dict[agent], 2)) \
