@@ -60,7 +60,7 @@ def next_state(grounding):
     if (isinstance(grounding, Symbol)):
         return NextStateSymbol(grounding)
     elif (isinstance(grounding, (StateFactor, StateFeature))):
-        return NextStateGrounding(state_grounding)
+        return NextStateGrounding(grounding)
 
 
 

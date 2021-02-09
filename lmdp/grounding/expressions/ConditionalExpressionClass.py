@@ -11,26 +11,38 @@
 '''
 
 import sys, os
-sys.path.append(os.path.abspath("./"))
-from collections import deque
+sys.path.append(os.path.abspath("./lmdp"))
+from collections import deque, namedtuple
 from functools import reduce
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_state, any_action
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 from lmdp.grounding.states.Effect import Effect
 from lmdp.grounding import *
+from lmdp.grounding.booleans.BooleanFunClass import TrueBooleanExp
+
+WHEN_CTX = True
+OTHERWISE_CTX = False
+Context = namedtuple('Context', ['is_when', 'boolean', 'outer_ctx'])
+
+def empty_stack(stack):
+    if(stack):
+        yield stack.pop()
 
 class Conditional:
     def __init__(self, boolean_expression, lmdp=None):
         self._boolean_expression = boolean_expression
+        self._curr_boolean = boolean_expression
         self.lmdp = lmdp
-        self.conditional_stack = deque([boolean_expression])
-        self.contexts = deque()
+        # self.conditional_stack = deque([boolean_expression])
+        self.contexts = list()
+        self.current_context = Context(WHEN_CTX, boolean_expression, TrueBooleanExp)
+        
         # definitions
-        self.subpolicies = {}
-        self.state_features = {}
-        self.symbols = {}
-        self.markov = {}
+        self.subpolicies = []
+        self.state_features = []
+        self.symbols = []
+        self.markov = []
 
         # partial functions
         self.transition_elements = []
@@ -38,33 +50,53 @@ class Conditional:
         self.value_elements = []
         self.policy_elements = []
 
+        self.__is_otherwise_available = False
+
+    #### Context Handling
     def __enter__(self):  
-        self._boolean_expression = reduce(lambda a, b: a & b, self.conditional_stack)
-        self.contexts.append(self._boolean_expression)
+        # self._boolean_expression = reduce(lambda a, b: a & b, self.conditional_stack)
+        # self.contexts.append(self._boolean_expression)
         return self
 
     def __exit__(self, type, value, traceback):
-        self._boolean_expression = self.contexts.pop()
+        # self._boolean_expression = self.contexts.pop()
         # if (len(self.conditional_stack) > 0):
         #     self.conditional_stack.pop()
-        if(len(self.contexts) == 0 and self.lmdp is not None):
-            [self.lmdp.add_subpolicy(opt) for opt in self.subpolicies.values()]
-            
-            [self.lmdp.transition.add(boolean_sa, effect=effect) for (boolean_sa, effect) in self.transition_elements]
-            [self.lmdp.reward.add(boolean_sas, effect) for (boolean_sas, effect) in self.reward_elements]
-            [self.lmdp.value.add(boolean_sa, effect) for (boolean_sa, effect) in self.value_elements]
+        self._boolean_expression = self.current_context.outer_ctx # back to the outer context
+        self.__is_otherwise_available = self.current_context.is_when
+        if(self.lmdp is not None):
+            self.__update_lmdp()
         
 
     def when(self, boolean_expression):
-        self.conditional_stack.append(boolean_expression)
+        # self.conditional_stack.append(boolean_expression)
+        self.contexts.append(self.current_context)
+        self.current_context = Context(WHEN_CTX, boolean_expression, self._boolean_expression) # current context
+        self._boolean_expression = self.current_context.outer_ctx & boolean_expression  # boolean expression to use within the context
         return self
 
     def otherwise(self):
-        condition = self.conditional_stack.pop() 
-        self.conditional_stack.append(condition.not_())
+        # condition = self.conditional_stack.pop() 
+        # self.conditional_stack.append(condition.not_())
+        if (self.__is_otherwise_available):
+            self.current_context = Context(OTHERWISE_CTX, self.current_context.boolean.not_(), self.current_context.outer_ctx)
+            self._boolean_expression = self.current_context.outer_ctx & self.current_context.boolean
+            self.__is_otherwise_available = False
+        else:
+            raise ValueError("Otherwise Statement does not correspond to a When Statement")
         return self
 
-    
+    def __update_lmdp(self):
+        [self.lmdp.add_subpolicy(opt) for opt in empty_stack(self.subpolicies)]
+        [self.lmdp.transition.add(boolean_sa, effect=effect) for (boolean_sa, effect) in empty_stack(self.transition_elements)]
+        [self.lmdp.reward.add(boolean_sas, effect) for (boolean_sas, effect) in empty_stack(self.reward_elements)]
+        [self.lmdp.value.add(boolean_sa, effect) for (boolean_sa, effect) in empty_stack(self.value_elements)]
+
+    def __close_context(self):
+        if (self.__is_otherwise_available):
+            self.current_context = self.contexts.pop()
+            self.__is_otherwise_available = False
+
     # def state_feature(self, expression=None, name=None):
     #     pass
 
@@ -75,33 +107,39 @@ class Conditional:
     #     pass
 
     def subpolicy(self, policy=None, until=any_state, initiation=any_state, name=None):
+        self.__close_context()
         if(self._boolean_expression.domain.is_s()):
             opt = Subpolicy(initiation & self._boolean_expression, policy, termination_symbol=until, name=name)
-            self.subpolicies[opt.name] = opt
+            self.subpolicies.append(opt)
         else:
             raise "Boolean Expression must be a function of State s"
 
     def symbol(self, expression=any_state, name=None):
+        self.__close_context()
         if(self._boolean_expression.domain.is_s() and expression.domain.is_s()): # only a set of state
             ss = Symbol(expression & self._boolean_expression, name=name)
-            self.symbols[ss.name] = ss
+            self.symbols.append(ss)
         else:
             raise "Boolean Expression must be a function of the State"
 
     def policy(self, action=None, boolean_expression_s=any_state):
+        self.__close_context()
         if (boolean_expression_s.domain.is_s() and self._boolean_expression.domain.is_s()):
             self.policy_elements.append((boolean_expression_s & self._boolean_expression, action))
         else:
             raise "Boolean Expression must be a function of the State"
 
     def reward(self, real_sas_expression):
+        self.__close_context()
         self.reward_elements.append((self._boolean_expression, real_sas_expression))
 
     def value(self, sa_expression):
+        self.__close_context()
         if (not self._boolean_expression.domain.is_sas() or not self._boolean_expression.domain.is_ss()):
             self.value_elements.append((self._boolean_expression, sa_expression))
 
     def effect(self, effect_expression=None, boolean_expression_sa=(any_state & any_action)):
+        self.__close_context()
         if (not boolean_expression_sa.domain.is_sas() and not self._boolean_expression.domain.is_ss() 
             and not self._boolean_expression.domain.is_sas() and not self._boolean_expression.domain.is_ss()):
             b = boolean_expression_sa & self._boolean_expression
@@ -130,6 +168,8 @@ if __name__=="__main__":
         c.subpolicy(name="option1")
         with c.when(A == up):
             c.effect(next_state(x) == x + 1)
+        with c.otherwise().when(any_action):
+            c.effect(next_state(x) == x)
             
     print(f"{c.transition_elements[0][0](s, 'down')} == False")
     print(f"{c.transition_elements[0][1](s, 'up')(s_prime)} == True")

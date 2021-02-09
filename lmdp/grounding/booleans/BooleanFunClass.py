@@ -49,3 +49,4 @@ class BooleanExpression(Expression):
 any_state = BooleanExpression(lambda **args: True, domain=["state"])
 any_action = BooleanExpression(lambda **args: True, domain=["action"])
 any_next_state = BooleanExpression(lambda **args: True, domain=["next_state"])
+TrueBooleanExp = BooleanExpression(lambda **args: True,  domain=[])

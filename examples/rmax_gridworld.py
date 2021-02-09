@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("./lmdp"))
 
 # envs
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
@@ -49,11 +49,11 @@ if __name__ == "__main__":
     
     with lmdp.when(lava(effect_action)) as c: # when you fall in lava
         c.reward(-1.1)
-        with c.otherwise().when(goal(effect_action)): # otherwise when in goal
-                c.reward(0.9)
-                # with c.otherwise(): # any other case is step cost
-                #     c.reward(-.1)
-    
+    with c.otherwise().when(goal(effect_action)): # otherwise when in goal
+        c.reward(0.9)
+    with c.otherwise(): # any other case is step cost
+        c.reward(-.1)
+
 
     #### Run agents
     lang_rmax_agent = RMaxLangAgent(mdp.get_actions(), lmdp=lmdp,  s_a_threshold=10)
