@@ -54,7 +54,6 @@ if __name__ == "__main__":
     with c.otherwise(): # any other case is step cost
         c.reward(-.1)
 
-
     #### Run agents
     lang_rmax_agent = RMaxLangAgent(mdp.get_actions(), lmdp=lmdp,  s_a_threshold=10)
     lang_rmax_agent.update_from_lang(partial(gridworld_state_space, width, height))
