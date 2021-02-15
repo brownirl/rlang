@@ -40,27 +40,31 @@ class BooleanExpression(Expression):
         return self.not_()
 
 
-    def __compose__(self, expression):
-        if(self.domain == expression.codomain): #composable
-            return BooleanExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())
-        else:
-            return NotImplemented
 
-def __check_is_boolean(exp):
-    return isinstance(exp, BooleanExpression)
+    # def __compose__(self, expression):
+    #     if(self.domain == expression.codomain): #composable
+    #         return BooleanExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())
+    #     else:
+    #         return NotImplemented
+
 
 def bool_and(exp1, exp2):
-    assert __check_is_boolean(exp1) and __check_is_boolean(exp2)
+    exp1 = cast_to_boolean(exp1)
+    exp2 = cast_to_boolean(exp2)
     return exp1.__and__(exp2)
 
 def bool_or(exp1, exp2):
-    assert __check_is_boolean(exp1) and __check_is_boolean(exp2)
-    return exp1.__or-_(exp2)
+    exp1 = cast_to_boolean(exp1)
+    exp2 = cast_to_boolean(exp2)
+    return exp1.__or__(exp2)
 
 def bool_not(exp):
-    assert __check_is_boolean(exp)
+    exp = cast_to_boolean(exp)
     return exp.not_()
 
+def cast_to_boolean(expression):
+    assert "boolean" in expression.codomain()
+    return BooleanExpression(expression, domain=expression.domain()) if not isinstance(expression, BooleanExpression) else expression
 
 
 ### CONSTANTS #####

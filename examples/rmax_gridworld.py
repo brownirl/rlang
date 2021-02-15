@@ -47,9 +47,9 @@ if __name__ == "__main__":
     lava = Symbol(lambda state: (lmdp("x")(state), lmdp("y")(state)) in lava_locs) # TODO: Improve this
     effect_action = PredictiveEffect(bool_and(any_state, any_action), action_effect)
     
-    with lmdp.when(lava(effect_action)) as c: # when you fall in lava
+    with lmdp.when(lava @ effect_action) as c: # when you fall in lava (@ is the function composition operator)
         c.reward(-1.1)
-    with c.otherwise().when(goal(effect_action)): # otherwise when in goal
+    with c.otherwise().when(goal @ effect_action ): # otherwise when in goal
         c.reward(0.9)
     with c.otherwise(): # any other case is step cost
         c.reward(-.1)

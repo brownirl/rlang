@@ -8,7 +8,7 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding.GroundingClass import Grounding
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
 
 class Symbol(Grounding, BooleanExpression):
     counter = 0
@@ -35,7 +35,7 @@ class Symbol(Grounding, BooleanExpression):
             return NotImplemented
     
     def not_(self):
-        return Symbol(super().not_())
+        return Symbol(bool_not(super()))
     
 
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     start = Symbol(s == np.array([0,0]))
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")
-    diag_not_start = start.not_().and_(diag)
+    diag_not_start = bool_and(bool_not(start), diag)
     print(f"Boolean ops: True == {diag_not_start(s1)}")
     print(f"Boolean ops: False == {diag_not_start(s2)}")
     print(f"s1 belongs to {diag.name}: {diag(s1)} == True")

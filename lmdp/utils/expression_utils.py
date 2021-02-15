@@ -1,4 +1,3 @@
-
 class Domain:
     DOMAINS = {0: "state", 1: "action", 2: "next_state"}
     INV_DOMAINS = dict(zip(DOMAINS.values(), DOMAINS.keys()))
@@ -29,9 +28,18 @@ class Domain:
             return (self._domain <= other._codomain)
         return NotImplemented
 
+    def __ge__(self, other):
+        if (isinstance(other, Domain)):
+            return (self._domain >= other._domain)
+        elif(isinstance(other, Codomain)):
+            return (self._domain >= other._codomain)
+        return NotImplemented
+
     def __len__(self):
         return len(self._domain)
 
+    def __sub__(self, other):
+        return set(self.__call__()) - set(other.__call__())
 
     def is_sa(self):
         return 0 in self._domain and 1 in self._domain and 2 not in self._domain
@@ -82,13 +90,24 @@ class Codomain:
         else:
             return NotImplemented
 
-    def __leq__(self, other):
+    def __le__(self, other):
         if(isinstance(other, Codomain)):
             return self._codomain <= other._codomain
         elif(isinstance(other, Domain)):
             return self._codomain <= other._domain
         else:
             return NotImplemented
+
+    def __ge__(self, other):
+        if(isinstance(other, Codomain)):
+            return self._codomain >= other._codomain
+        elif(isinstance(other, Domain)):
+            return self._codomain >= other._domain
+        else:
+            return NotImplemented
+
+    def __len__(self):
+        return len(self._codomain)
 
 if __name__ == "__main__":
     d1 = Domain(["state", "action"])

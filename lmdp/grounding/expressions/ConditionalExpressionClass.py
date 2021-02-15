@@ -15,7 +15,7 @@ sys.path.append(os.path.abspath("./lmdp"))
 from collections import deque, namedtuple
 from functools import reduce
 from lmdp.grounding.expressions.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_state, any_action
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_state, any_action, bool_not, bool_and, bool_or
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 from lmdp.grounding.states.Effect import Effect
 from lmdp.grounding import *
@@ -79,7 +79,7 @@ class Conditional:
         # condition = self.conditional_stack.pop() 
         # self.conditional_stack.append(condition.not_())
         if (self.__is_otherwise_available):
-            self.current_context = Context(OTHERWISE_CTX, self.current_context.boolean.not_(), self.current_context.outer_ctx)
+            self.current_context = Context(OTHERWISE_CTX, bool_not(self.current_context.boolean), self.current_context.outer_ctx)
             self._boolean_expression = self.current_context.outer_ctx & self.current_context.boolean
             self.__is_otherwise_available = False
         else:
