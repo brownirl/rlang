@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
+sys.path.append(os.path.abspath("./"))
 
 # envs
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
@@ -9,7 +9,6 @@ from lmdp.agents import RMaxLangAgent, RMaxAgent, RandomAgent
 #lmdp
 from lmdp import *
 from lmdp.experiment_runner import *
-from lmdp.utils.StateSpaceGenClass import StateSpaceGen
 from lmdp.experiment_runner import run_agents
 from functools import partial
 

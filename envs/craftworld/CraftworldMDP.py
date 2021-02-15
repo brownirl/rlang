@@ -26,12 +26,15 @@ class CraftworldState(State):
 
     def features(self):
         return self.state.features()
+    
+    def get_craftstate(self):
+        return self.state
 
 class Craftworld(MDP):
     ACTIONS = (DOWN, UP, LEFT, RIGHT, USE)
-    def __init__(self, goal, path_to_recipes='./recipes.yaml', gamma=0.99, random_seed=0):
+    def __init__(self, goal, path_to_recipes='recipes.yaml', gamma=0.99, random_seed=0):
         self.random_seed = random_seed
-        np.random.set_state(random_seed)
+        np.random.seed(random_seed)
         
         self.goal = goal
         self.config = config(path_to_recipes)
@@ -40,7 +43,7 @@ class Craftworld(MDP):
         MDP.__init__(self, actions=Craftworld.ACTIONS, 
                            transition_func=self._transition_func, 
                            reward_func=self._reward_func, 
-                           init_state=self.craft_scenario.init(), 
+                           init_state=CraftworldState(self.craft_scenario.init()), 
                            gamma=gamma)
 
     def get_parameters(self):
@@ -52,14 +55,14 @@ class Craftworld(MDP):
         return param_dict
 
     def _reward_func(self, state, action, next_state):
-        return float(next_state.satisfy("make/get", self.craft_world.cookbook.index[self.goal]))
+        return float(next_state.get_craftstate().satisfies("make/get", self.craft_world.cookbook.index[self.goal]))
 
     def _transition_func(self, state, action):
-        _, next_state = self.cur_state.step(action)
-        return next_state
+        _, next_state = self.cur_state.get_craftstate().step(action)
+        return CraftworldState(next_state)
 
-    def get_init_state(self):
-        return CraftworldState(self.init_state)
+    # def get_init_state(self):
+    #     return CraftworldState(self.init_state)
 
-    def get_curr_state(self):
-        return CraftworldState(self.cur_state)
+    # def get_curr_state(self):
+    #     return CraftworldState(self.cur_state)

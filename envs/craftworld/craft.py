@@ -193,10 +193,10 @@ class CraftState(object):
     def features(self):
         if self._cached_features is None:
             x, y = self.pos
-            hw = WINDOW_WIDTH / 2
-            hh = WINDOW_HEIGHT / 2
-            bhw = (WINDOW_WIDTH * WINDOW_WIDTH) / 2
-            bhh = (WINDOW_HEIGHT * WINDOW_HEIGHT) / 2
+            hw = int(WINDOW_WIDTH / 2)
+            hh = int(WINDOW_HEIGHT / 2)
+            bhw = int((WINDOW_WIDTH * WINDOW_WIDTH) / 2)
+            bhh = int((WINDOW_HEIGHT * WINDOW_HEIGHT) / 2)
 
             grid_feats = array.pad_slice(self.grid, (x-hw, x+hw+1), 
                     (y-hh, y+hh+1))
