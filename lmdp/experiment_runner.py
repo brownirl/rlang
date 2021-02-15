@@ -86,8 +86,8 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
             step_start = time.clock()
 
             # Compute the agent's policy.
+            
             action = agent.act(state, reward)
-
             # Terminal check.
             if state.is_terminal():
 
