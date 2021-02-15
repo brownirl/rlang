@@ -26,7 +26,7 @@ OTHERWISE_CTX = False
 Context = namedtuple('Context', ['is_when', 'boolean', 'outer_ctx'])
 
 def empty_stack(stack):
-    if(stack):
+    while(stack):
         yield stack.pop()
 
 class Conditional:

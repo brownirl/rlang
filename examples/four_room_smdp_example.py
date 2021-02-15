@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath('./'))
+sys.path.append(os.path.abspath('./lmdp'))
 
 from lmdp import *
 from lmdp.agents.AbstractValueIterationClass import AAValueInteration
@@ -39,10 +39,10 @@ def compute_rooms(lmdp, width, height):
     half_width = math.ceil(width / 2.0)
     half_height = math.ceil(height / 2.0)
     
-    room_1 = Symbol((lmdp('x') <= half_width) & (lmdp('y') <= half_height), "room_1")
-    room_2 = Symbol((lmdp('x') >= half_width) & (lmdp('y') < half_height), "room_2")
-    room_3 = Symbol((lmdp('x') <= half_width) & (lmdp('y') >= half_height), "room_3")
-    room_4 = Symbol((lmdp('x') >= half_width) & (lmdp('y') >= half_height-1), "room_4")
+    room_1 = Symbol(bool_and(lmdp('x') <= half_width, lmdp('y') <= half_height), "room_1")
+    room_2 = Symbol(bool_and(lmdp('x') >= half_width, lmdp('y') < half_height), "room_2")
+    room_3 = Symbol(bool_and(lmdp('x') <= half_width, lmdp('y') >= half_height), "room_3")
+    room_4 = Symbol(bool_and(lmdp('x') >= half_width, lmdp('y') >= half_height-1), "room_4")
     return (room_1, room_2, room_3, room_4)
 
 def hallway_policy(lmdp, hallway, wall_type):
@@ -60,11 +60,6 @@ def hallway_policy(lmdp, hallway, wall_type):
                     return lmdp('up')() if d[1] < 0 else lmdp('down')()
                 else:
                     return lmdp('right')() if d[0] < 0 else lmdp('left')()
-
-            # if(abs(d[0]) >= abs(d[1])): # d_x > d_y, hence move in the x axis first
-            #     return lmdp('right')() if d[0] < 0 else lmdp('left')()
-            # else:
-            #     return lmdp('up')() if d[1] < 0 else lmdp('down')()
 
     return policy
 
@@ -97,9 +92,9 @@ if __name__=="__main__":
     opt = lmdp('subpolicy-room_1-hor')
     assert lmdp('subpolicy-room_1-hor').is_executable(pos1) == True
     assert lmdp('subpolicy-room_1-hor').is_executable(pos2) == False
-    assert lmdp('subpolicy-room_1-hor')(State=pos1) == 'up'
+    assert lmdp('subpolicy-room_1-hor')(state=pos1) == 'up'
     assert lmdp('subpolicy-room_3-ver').is_executable(room1_to_room3) == True
-    assert lmdp('subpolicy-room_3-ver')(State=room1_to_room3) == 'up'
+    assert lmdp('subpolicy-room_3-ver')(state=room1_to_room3) == 'up'
 
 
     ########### Value Iteration #############
