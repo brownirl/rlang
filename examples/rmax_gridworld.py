@@ -42,10 +42,10 @@ if __name__ == "__main__":
     lmdp.add(StateFactor([0,1], "position")) # definition of new factor.
 
     ### Prior Info
-    goal = lmdp.add(Symbol((lmdp("x") == 5).and_(lmdp("y") == 1)))
-    wall = lmdp.add(Symbol((lmdp("x") == 3).and_(lmdp("y") == 1)))
+    goal = lmdp.add(Symbol(bool_and(lmdp("x") == 5, lmdp("y") == 1)))
+    wall = lmdp.add(Symbol(bool_and(lmdp("x") == 3, lmdp("y") == 1)))
     lava = Symbol(lambda state: (lmdp("x")(state), lmdp("y")(state)) in lava_locs) # TODO: Improve this
-    effect_action = PredictiveEffect(any_state & any_action, action_effect)
+    effect_action = PredictiveEffect(bool_and(any_state, any_action), action_effect)
     
     with lmdp.when(lava(effect_action)) as c: # when you fall in lava
         c.reward(-1.1)

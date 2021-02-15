@@ -43,9 +43,6 @@ class Craftworld(MDP):
                            init_state=self.craft_scenario.init(), 
                            gamma=gamma)
 
-    def __state__(self, craftworld_state):
-        return CraftworldState(craftworld_state)
-
     def get_parameters(self):
         param_dict = {}
         param_dict["gamma"] = self.gamma

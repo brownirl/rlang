@@ -29,6 +29,9 @@ class Domain:
             return (self._domain <= other._codomain)
         return NotImplemented
 
+    def __len__(self):
+        return len(self._domain)
+
 
     def is_sa(self):
         return 0 in self._domain and 1 in self._domain and 2 not in self._domain

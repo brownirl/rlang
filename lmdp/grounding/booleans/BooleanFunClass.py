@@ -46,7 +46,26 @@ class BooleanExpression(Expression):
         else:
             return NotImplemented
 
+def __check_is_boolean(exp):
+    return isinstance(exp, BooleanExpression)
+
+def bool_and(exp1, exp2):
+    assert __check_is_boolean(exp1) and __check_is_boolean(exp2)
+    return exp1.__and__(exp2)
+
+def bool_or(exp1, exp2):
+    assert __check_is_boolean(exp1) and __check_is_boolean(exp2)
+    return exp1.__or-_(exp2)
+
+def bool_not(exp):
+    assert __check_is_boolean(exp)
+    return exp.not_()
+
+
+
+### CONSTANTS #####
 any_state = BooleanExpression(lambda **args: True, domain=["state"])
 any_action = BooleanExpression(lambda **args: True, domain=["action"])
 any_next_state = BooleanExpression(lambda **args: True, domain=["next_state"])
-TrueBooleanExp = BooleanExpression(lambda **args: True,  domain=[])
+bool_true = BooleanExpression(lambda **args: True,  domain=[])
+bool_false = BooleanExpression(lambda **args: False, domain=[])
