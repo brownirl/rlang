@@ -37,8 +37,10 @@ class CraftworldState(State):
         return self.hash
 
     def __eq__(self, other):
-        return  (other.data == self.data).all()
-        
+        if other is not None:
+            return  (other.data == self.data).all()
+        return False
+
 class Craftworld(MDP):
     ACTIONS = {"down": DOWN, "up": UP, "left" : LEFT, "right": RIGHT, "use": USE}
     def __init__(self, goal, path_to_recipes='recipes.yaml', gamma=0.99, random_seed=0):
@@ -64,7 +66,10 @@ class Craftworld(MDP):
         return param_dict
 
     def _reward_func(self, state, action, next_state):
-        return float(next_state.get_craftstate().satisfies("make/get", self.craft_world.cookbook.index[self.goal]))
+        goal_achieved = next_state.get_craftstate().satisfies("make/get", self.craft_world.cookbook.index[self.goal])
+        if goal_achieved:
+            next_state.is_terminal = True
+        return float(goal_achieved)
 
     def _transition_func(self, state, action):
         _, next_state = self.cur_state.get_craftstate().step(Craftworld.ACTIONS[action])
