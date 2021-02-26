@@ -9,7 +9,7 @@ from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 
 
-class PolicyGrounding(Grounding, Expression):
+class Policy(Grounding, Expression):
 
     def __init__(self, policy, name="policy"):
         self.policy_fun = policy

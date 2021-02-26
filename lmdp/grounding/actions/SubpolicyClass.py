@@ -7,12 +7,12 @@
 import sys, os
 sys.path.append(os.path.abspath("./"))
 
-from lmdp.grounding.actions.PolicyGroundingClass import PolicyGrounding
+from lmdp.grounding.actions.PolicyGroundingClass import Policy
 from lmdp.grounding.states.SymbolClass import Any
 from simple_rl.abstraction.action_abs.PredicateClass import Predicate
 from simple_rl.abstraction.action_abs.OptionClass import Option
 
-class Subpolicy(PolicyGrounding):
+class Subpolicy(Policy):
     id = 0
     def __init__(self, init_symbol, policy_fun, termination_symbol, name=None):
         if (name is None):
@@ -21,7 +21,7 @@ class Subpolicy(PolicyGrounding):
         self._init = init_symbol
         self._termination = termination_symbol
         self.__executing = False
-        PolicyGrounding.__init__(self, policy_fun, name=name)
+        Policy.__init__(self, policy_fun, name=name)
  
     def __call__(self, state):
         if (not self.__executing and self._init(state)):

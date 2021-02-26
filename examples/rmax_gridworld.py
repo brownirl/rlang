@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("./lmdp"))
 
 # envs
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     lava_locs=[(3,2), (1,4), (2,4), (2,5)]
     walls=[(3, 1)]
     goal_locs=[(5,1)]
-    mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0)
+    mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0, step_cost=0.1)
 
     #### 
     lmdp = LMDP(mdp, factor_names=["x", "y"])
@@ -49,16 +49,16 @@ if __name__ == "__main__":
     with lmdp.when(lava @ effect_action) as c: # when you fall in lava (@ is the function composition operator)
         c.reward(-1.1)
     with c.otherwise().when(goal @ effect_action ): # otherwise when in goal
-        c.reward(0.9)
-    with c.otherwise(): # any other case is step cost
-        c.reward(-.1)
+        c.reward(.9)
+    # with c.otherwise(): # any other case is step cost
+    #     c.reward(-.1)
 
     #### Run agents
     lang_rmax_agent = RMaxLangAgent(mdp.get_actions(), lmdp=lmdp,  s_a_threshold=10)
     lang_rmax_agent.update_from_lang(partial(gridworld_state_space, width, height))
 
     random = RandomAgent(mdp.get_actions())
-    rmax_agent = RMaxAgent(mdp.get_actions(), s_a_threshold=10)
+    rmax_agent = RMaxAgent(mdp.get_actions(), s_a_threshold=10, max_reward=.9)
 
     run_agents([lang_rmax_agent, rmax_agent], mdp)
 

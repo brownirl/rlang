@@ -24,16 +24,16 @@ class RMaxLangAgent(LangAgent):
         
         self.transitions = defaultdict(lambda state: defaultdict(lambda action: defaultdict(lambda state_prime: self.default_transition(state, action, state_prime))))
         self.rewards = defaultdict(lambda state: defaultdict(lambda action: self.default_rewards(state, action)))
-        self.q_func = self.initialize_q_function(self.state_space(), self.rmax_agent.actions)
+        self.q_func = self.initialize_q_function(self.state_space, self.rmax_agent.actions)
         self.r_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
         self.t_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
 
 
-        self.rmax_agent.rewards = self.rewards
-        self.rmax_agent.transitions = self.transitions
+        # self.rmax_agent.rewards = self.rewards
+        # self.rmax_agent.transitions = self.transitions
+        # self.rmax_agent.r_s_a_counts = self.r_s_a_counts
+        # self.rmax_agent.t_s_a_counts = self.t_s_a_counts
         self.rmax_agent.q_func = self.q_func
-        self.rmax_agent.r_s_a_counts = self.r_s_a_counts
-        self.rmax_agent.t_s_a_counts = self.t_s_a_counts
 
 
     def _update_transitions_from_lang(self, state_space):
@@ -85,14 +85,20 @@ class RMaxLangAgent(LangAgent):
 
     def initialize_q_function(self, state_space, action_space):
         q_function = defaultdict(lambda *args: defaultdict(lambda *args: self.rmax_agent.rmax))
-        for s in state_space:
-            for a in action_space:
-                r = self.rewards[s][a]
-                if (self.rewards[s][a] is not None and len(r) > 0):
-                    q_function[s][a] = float(sum(r))/len(r)
-                    # for s_prime in state_space:
-                    #     if (self.rmax_agent.transitions[s][a][s_prime]):
+        lim = int(np.log(1/(self.rmax_agent.epsilon_one * (1 - self.rmax_agent.gamma))) / (1 - self.rmax_agent.gamma))
+        for _ in range(1, lim):
+            for s in state_space():
+                for a in action_space:
+                    r = self.rewards[s][a]
+                    if (self.rewards[s][a] is not None and len(r) > 0):
+                        q_function[s][a] = float(sum(r))/len(r)
+                        s_primes = [s_prime for s_prime in state_space() if self.rmax_agent.transitions[s][a][s_prime] != 0]
+                        if len(s_primes) > 0:
+                            q_function[s][a] += self.rmax_agent.gamma *  sum(map(lambda s_prime: self.__get_max_q(q_function, s_prime), s_primes))/len(s_primes)
         return q_function
+
+    def __get_max_q(self, q, s):
+        return max(q[s].values())
 
     def update_from_lang(self, state_space=None):
         '''

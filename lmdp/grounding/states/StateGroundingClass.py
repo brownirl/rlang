@@ -9,7 +9,7 @@
 """
 
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("./lmdp"))
 
 import numpy as np
 from simple_rl.mdp.StateClass import State
@@ -126,6 +126,19 @@ class StateFactor(Grounding, RealExpression):
 
     def __rtruediv__(self, other):
         return self.__truediv__(other)
+
+    def __getitem__(self, idx):
+        if isinstance(idx, (list, tuple, np.ndarray)):
+            if not self.__indices_within_bounds(idx, self.number_of_features()):
+                raise ValueError("Indices out of bounds")
+        elif isinstance(idx, slice):
+            idx.stop = min(idx.stop, self.number_of_features())
+            idx = np.mgrid[idx].astype(int)
+        elif idx >= self.number_of_features():
+            raise ValueError("Index out of bounds")
+        
+        n_features = 1 if isinstance(idx, int) else len(idx)
+        return StateFeature(lambda state: self.__call__(state)[idx], n_features, self.variables)
     
     @classmethod
     def check_concat(self, sequence, state_dim):
@@ -146,8 +159,18 @@ class StateFactor(Grounding, RealExpression):
         overlapping = [(feature, number) for (feature, number) in count.items() if number > 1]
         return missing_elements, overlapping
 
+    def __indices_within_bounds(self, array_like, dim):
+        for i in range(len(array_like)):
+            if array_like[i] >= dim or  array_like[i] < 0:
+                return False
+        return True
+    
+    def dim(self):
+        return self.number_of_features()
+
 class StateFeature(StateFactor):
-    def __init__(self, function, number_of_features, variables):
+    def __init__(self, function, number_of_features, variables=None):
+        StateFactor.__init__(self, list(range(number_of_features)))
         self._variables = variables
         self.__function = function
         self.number_features = number_of_features
