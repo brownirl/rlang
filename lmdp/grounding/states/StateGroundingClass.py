@@ -132,7 +132,7 @@ class StateFactor(Grounding, RealExpression):
             if not self.__indices_within_bounds(idx, self.number_of_features()):
                 raise ValueError("Indices out of bounds")
         elif isinstance(idx, slice):
-            idx.stop = min(idx.stop, self.number_of_features())
+            idx = slice(idx.start, min(idx.stop, self.number_of_features()), idx.step)
             idx = np.mgrid[idx].astype(int)
         elif idx >= self.number_of_features():
             raise ValueError("Index out of bounds")

@@ -34,7 +34,7 @@ if __name__ == "__main__":
     lava_locs=[(3,2), (1,4), (2,4), (2,5)]
     walls=[(3, 1)]
     goal_locs=[(5,1)]
-    mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0, step_cost=0.1)
+    mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0.1, step_cost=0.1)
 
     #### 
     lmdp = LMDP(mdp, factor_names=["x", "y"])
@@ -52,6 +52,13 @@ if __name__ == "__main__":
         c.reward(.9)
     # with c.otherwise(): # any other case is step cost
     #     c.reward(-.1)
+
+    with lmdp.when(wall @ effect_action) as c: # when the action taken takes you to a wall position 
+        c.effect(S) # next state is the current state
+    # with lmdp.when(lava @ effect_action) as c: # when you move into lava. This however, is not true! lava is a terminal state.
+    #     c.effect(any_state)
+    with lmdp.when(bool_and(any_state, any_action)) as c:
+        c.effect(effect_action)
 
     #### Run agents
     lang_rmax_agent = RMaxLangAgent(mdp.get_actions(), lmdp=lmdp,  s_a_threshold=10)
