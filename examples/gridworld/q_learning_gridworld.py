@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath("./"))
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
 #agents
-from lmdp.agents import RMaxLangAgent, RMaxAgent, RandomAgent
+from lmdp.agents import RandomAgent, QLearningAgent, QLearningLangAgent
 #lmdp
 from lmdp import *
 from lmdp.experiment_runner import *
@@ -39,11 +39,11 @@ if __name__ == "__main__":
     #### Run agents
     
     random = RandomAgent(mdp.get_actions())
-    lang_rmax_agent = RMaxLangAgent(mdp.get_actions(), lmdp=lmdp,  s_a_threshold=10)
-    lang_rmax_agent.update_from_lang(partial(gridworld_state_space, width, height))
-    rmax_agent = RMaxAgent(mdp.get_actions(), s_a_threshold=10, max_reward=.9)
 
-    run_agents([lang_rmax_agent, rmax_agent], mdp)
+    q_learning_agent = QLearningAgent(mdp.get_actions())
+    lang_q_learning_agent = QLearningLangAgent(mdp.get_actions(), lmdp=lmdp)
+    lang_q_learning_agent.update_from_lang(partial(gridworld_state_space, width, height))
+    run_agents([lang_q_learning_agent , q_learning_agent], mdp)
 
     
 

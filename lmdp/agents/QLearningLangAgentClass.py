@@ -27,7 +27,7 @@ class QLearningLangAgent(LangAgent):
         
         self.transitions = defaultdict(lambda state: defaultdict(lambda action: defaultdict(lambda state_prime: self.default_transition(state, action, state_prime))))
         self.rewards = defaultdict(lambda state: defaultdict(lambda action: self.default_rewards(state, action)))
-        self.q_func = self.initialize_q_function(self.state_space, self.rmax_agent.actions) # value iteration with q_func default
+        self.q_func = self.initialize_q_function(self.state_space, self.base_agent.actions) # value iteration with q_func default
         self.base_agent.q_func = self.q_func
 
 
@@ -80,13 +80,16 @@ class QLearningLangAgent(LangAgent):
                     r = self.rewards[s][a]
                     if (self.rewards[s][a] is not None and len(r) > 0):
                         q_function[s][a] =  float(sum(r))/len(r)
-                        s_primes = [s_prime for s_prime in state_space() if self.rmax_agent.transitions[s][a][s_prime] != 0]
+                        s_primes = [s_prime for s_prime in state_space() if self.transitions[s][a][s_prime] != 0]
                         if len(s_primes) > 0:
-                            q_function[s][a] += self.rmax_agent.gamma *  sum(map(lambda s_prime: self.__get_max_q(q_function, s_prime), s_primes))/len(s_primes)
+                            q_function[s][a] += self.base_agent.gamma *  sum(map(lambda s_prime: self.__get_max_q(q_function, s_prime), s_primes))/len(s_primes)
         return q_function
 
     def __get_max_q(self, q, s):
-        return max(q[s].values())
+        q_values = q[s].values()
+        if len(q_values) > 0:
+            return max(q_values)
+        return 0
 
     def update_from_lang(self, state_space=None):
         '''

@@ -34,11 +34,11 @@ class Effect(Expression):
             f = lambda state, action, next_state: self._domain_sa(state, action) and self._effect(state=state, action=action, next_state=next_state)
         elif(isinstance(self._effect, dict)): # factored effects
             f = lambda state, action, next_state: self._domain_sa(state, action) and self.__verify_transformation(self._effect, state, action, next_state)
-        elif(isinstance(self._effect, Expression) and  Codomain(["state"]) == self._effect.codomain()): # predictive effect
+        elif(isinstance(self._effect, Expression) and  Codomain(["state"]) == self._effect.codomain): # predictive effect
             f = lambda state, action, next_state: self._domain_sa(state, action) and self._effect(state=state, action=action) == next_state
         else:
-            raise "Error: Unexpected Effect Expression"
-        return EffectSymbol(f)(state, action)
+            raise ValueError("Error: Unexpected Effect Expression")
+        return partial(EffectSymbol(f), state, action)
 
     def __verify_transformation(self, effect, state, action, next_state):
         verify = True
@@ -68,7 +68,7 @@ class PredictiveEffect(Effect):
         if len(missing) > 0:
             error += "State Underspecified. "
         if len(overlapping) > 0:
-            error += "Effect ambiguous. "
+            error += "Effect ambiguous."
         if len(error) > 0: 
             raise ValueError(error)
         

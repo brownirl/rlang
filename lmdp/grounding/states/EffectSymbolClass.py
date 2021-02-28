@@ -20,11 +20,11 @@ class EffectSymbol(Expression):
         # Symbol.__init__(self, boolean_fun, name)
         # self.__fun = boolean_fun  
         self._boolean_fun = boolean_fun
-        Expression.__init__(self, self.executor, domain=["state", "action", "next_state"], codomain=["boolean"])
+        Expression.__init__(self, self._boolean_fun, domain=["state", "action", "next_state"], codomain=["boolean"])
 
 
-    def executor(self, state, action):
-        return partial(self._boolean_fun, state, action)
+    # def executor(self, state, action):
+    #     return partial(self._boolean_fun, state, action)
 
 
 if __name__ == '__main__':
