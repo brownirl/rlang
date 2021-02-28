@@ -1,5 +1,3 @@
-import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
 
 # simple_rl environments
 from simple_rl.tasks import TaxiOOMDP

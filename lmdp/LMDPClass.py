@@ -11,9 +11,6 @@
     date: v0 September 2020
           v1 January 2021
 '''
-import sys, os
-sys.path.append(os.path.abspath("./"))
-
 from lmdp.grounding import *
 from lmdp.grounding.expressions.ConditionalExpressionClass import Conditional
 from lmdp.grounding.VocabularyClass import Vocabulary

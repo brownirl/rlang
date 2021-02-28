@@ -1,5 +1,4 @@
-import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
+
 
 from envs import Craftworld
 from lmdp.experiment_runner import run_agents

@@ -1,6 +1,6 @@
 import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
-
+sys.path.append(os.path.abspath("./"))
+print(sys.path)
 # envs
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
@@ -19,36 +19,13 @@ def gridworld_state_space(width, height): # state space iterator
         for y in range(1, height+1):
             yield GridWorldState(x, y)
 
-def action_effect(state, action): # actions effects on state/Transition Dynamics
-        if action == 'up':
-            return  GridWorldState(state.x, state.y + 1)
-        if action == 'down':
-            return  GridWorldState(state.x, state.y-1)
-        if action == 'left':
-            return GridWorldState(state.x - 1, state.y)
-        if action == 'right':
-            return GridWorldState(state.x + 1, state.y)
-
 if __name__ == "__main__":
-    width, height = 6,6
-    lava_locs=[(3,2), (1,4), (2,4), (2,5)]
-    walls=[(3, 1)]
-    goal_locs=[(5,1)]
-    mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0.1, step_cost=0.1)
+    from vocab import *
 
-    #### 
     lmdp = LMDP(mdp, factor_names=["x", "y"])
-    lmdp.add(StateFactor([0,1], "position")) # definition of new factor.
-
-    ### Prior Info
-    goal = lmdp.add(Symbol(bool_and(lmdp("x") == 5, lmdp("y") == 1)))
-    wall = lmdp.add(Symbol(bool_and(lmdp("x") == 3, lmdp("y") == 1)))
-    lava = Symbol(lambda state: (lmdp("x")(state), lmdp("y")(state)) in lava_locs) # TODO: Improve this
-    effect_action = PredictiveEffect(bool_and(any_state, any_action), action_effect)
-    
     with lmdp.when(lava @ effect_action) as c: # when you fall in lava (@ is the function composition operator)
         c.reward(-1.1)
-    with c.otherwise().when(goal @ effect_action ): # otherwise when in goal
+    with c.otherwise().when(goal @ effect_action): # otherwise when in goal
         c.reward(.9)
     # with c.otherwise(): # any other case is step cost
     #     c.reward(-.1)

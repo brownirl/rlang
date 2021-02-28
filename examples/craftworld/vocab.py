@@ -1,5 +1,3 @@
-import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
 
 import yaml
 import numpy as np

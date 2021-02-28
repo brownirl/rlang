@@ -1,5 +1,4 @@
-import sys, os
-sys.path.append(os.path.abspath('./lmdp'))
+
 
 from lmdp import *
 from lmdp.agents.AbstractValueIterationClass import AAValueInteration
