@@ -222,6 +222,19 @@ class RealExpression(Expression):
         else:
             raise "Comparison not defined for vector groundings"
     
+    def __getitem__(self, idx):
+        if isinstance(idx, (list, tuple, np.ndarray)):
+            if not self.__indices_within_bounds(idx, self.dim()):
+                raise ValueError("Indices out of bounds")
+        elif isinstance(idx, slice):
+            idx = slice(idx.start, min(idx.stop, self.dim()), idx.step)
+            idx = np.mgrid[idx].astype(int)
+        elif idx >= self.dim():
+            raise ValueError("Index out of bounds")
+        
+        n_features = 1 if isinstance(idx, int) else len(idx)
+        return RealExpression(lambda **args: self.__call__(**args)[idx], dimension=n_features, domain=self.domain())
+
     def __compose__(self, expression):
         if(self.domain == expression.codomain): #composable
             return RealExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())

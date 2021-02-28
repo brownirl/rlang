@@ -42,10 +42,14 @@ locals().update(walls_state)
 locals().update(passenger_state)
 
 #-----features 
+passenger_pos_dest= {}
+for name, passenger in passenger_state.items():
+    passenger_pos_dest.update({name + "_pos": passenger[:2]})
+    passenger_pos_dest.update({name + "_dest": passenger[2:4]})
+    passenger_pos_dest.update({name+"_intaxi": passenger[4]})
 
-#passenger_dest
+locals().update(passenger_pos_dest)
 
-#passenger_pos
 agent_position = agent_state[:2]  #agent_pos
 
 #-----symbols 
