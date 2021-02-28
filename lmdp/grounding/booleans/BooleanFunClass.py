@@ -15,7 +15,7 @@ class BooleanExpression(Expression):
         if(isinstance(other, BooleanExpression) or isinstance(other, Expression)):
             return BooleanExpression(lambda **args: self.__call__(**args) and other(**args), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return BooleanExpression(lambda **args: self.__call__(**args) or other, domain=self.domain()) 
+            return BooleanExpression(lambda **args: self.__call__(**args) and other, domain=self.domain()) 
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
    
@@ -36,7 +36,7 @@ class BooleanExpression(Expression):
     def __or__(self, other):
         return self.or_(other)
     
-    def __not__(self, other):
+    def __not__(self):
         return self.not_()
 
 

@@ -1,4 +1,5 @@
-
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
 from lmdp import *
 from lmdp.agents.AbstractValueIterationClass import AAValueInteration
@@ -65,23 +66,20 @@ def hallway_policy(lmdp, hallway, wall_type):
 
 if __name__=="__main__":
     from simple_rl.mdp.StateClass import State
+    from vocab import *
     
-    height, width = 9, 9 
-    
-    four_room_mdp = rl.tasks.FourRoomMDP(goal_locs=[(8,4)]) # initialize mdp
     lmdp = LMDP(four_room_mdp, factor_names=["x", "y"]) # mdp is given to bind factors
 
-    lmdp.add(StateFactor([0, 1], name='position'))
-    rooms = compute_rooms(lmdp, width, height) # compute rooms symbols
-    hallways = compute_hallways(width, height)
-
+    lmdp.add(position) # add position to lmdp symbols
+    
+    rooms = (room_1, room_2, room_3, room_4)
     for r in rooms:
         lmdp.add(r) # add room symbols to lmdp
 
     for room in rooms:
         with lmdp.when(room) as c: # compute and create hallway policies for each room
             for idx in (('hor', 0),('ver', 1)):
-                c.subpolicy(policy=hallway_policy(lmdp, hallways[room.name][idx[1]], wall_type=idx[0]), until= room.not_(), name='subpolicy-'+room.name+'-'+idx[0])
+                c.subpolicy(policy=hallway_policy(hallways[room.name][idx[1]], wall_type=idx[0]), until=bool_not(room), name='subpolicy-'+room.name+'-'+idx[0])
 
     ############# TEST ################
     

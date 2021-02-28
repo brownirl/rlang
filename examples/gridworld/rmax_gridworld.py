@@ -13,6 +13,23 @@ from functools import partial
 
 import numpy as np
 
+def experiment_params():
+    return {"instances":3, 
+            "episodes": 100, 
+            "steps":100,
+            "clear_old_results":True,
+            "rew_step_count":1,
+            "track_disc_reward":False,
+            "open_plot":True,
+            "verbose":False,
+            "reset_at_terminal":False,
+            "cumulative_plot":False,
+            "dir_for_plot":"results",
+            "experiment_name_prefix":"",
+            "track_success":False,
+            "success_reward":None}
+
+
 def gridworld_state_space(width, height): # state space iterator
     for x in range(1,width+1):
         for y in range(1, height+1):
@@ -43,7 +60,7 @@ if __name__ == "__main__":
     lang_rmax_agent.update_from_lang(partial(gridworld_state_space, width, height))
     rmax_agent = RMaxAgent(mdp.get_actions(), s_a_threshold=10, max_reward=.9)
 
-    run_agents([lang_rmax_agent, rmax_agent], mdp)
+    run_agents([lang_rmax_agent, rmax_agent], mdp, experiment_params())
 
     
 

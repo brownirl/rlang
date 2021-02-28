@@ -154,8 +154,8 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
 
     return False, steps, value_per_episode
     
-def run_agents(agents, mdp):
-    exp_params = experiment_params()
+def run_agents(agents, mdp, exp_params=None):
+    exp_params = experiment_params() if exp_params is None else exp_params
     params = {"instances": exp_params["instances"],
               "episodes": exp_params["episodes"],
               "steps": exp_params["steps"]}

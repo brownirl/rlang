@@ -35,7 +35,7 @@ class Symbol(Grounding, BooleanExpression):
             return NotImplemented
     
     def not_(self):
-        return Symbol(bool_not(super()))
+        return Symbol(super().not_())
     
 
 
