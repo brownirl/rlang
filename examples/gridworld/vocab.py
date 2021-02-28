@@ -31,4 +31,4 @@ def action_effect(state, action): # actions effects on state/Transition Dynamics
 
 effect_action = PredictiveEffect(bool_and(any_state, any_action), action_effect)
 
-mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0.1, step_cost=0.1)
+mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0, step_cost=0.1)

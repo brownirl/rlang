@@ -14,16 +14,16 @@ from functools import partial
 import numpy as np
 
 def experiment_params():
-    return {"instances":3, 
-            "episodes": 10000, 
-            "steps":100,
+    return {"instances":20, 
+            "episodes": 100, 
+            "steps":200,
             "clear_old_results":True,
             "rew_step_count":1,
             "track_disc_reward":False,
             "open_plot":True,
             "verbose":False,
             "reset_at_terminal":False,
-            "cumulative_plot":False,
+            "cumulative_plot":not False,
             "dir_for_plot":"results",
             "experiment_name_prefix":"",
             "track_success":False,
