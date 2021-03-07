@@ -1,4 +1,3 @@
-
 import numpy as np
 from lmdp.grounding import *
 
@@ -8,7 +7,7 @@ from functools import partial
 # Taxi MDP Parameters
 WIDTH, HEIGHT = 5, 5
 agent = {"x":1, "y":1, "has_passenger":0}
-passengers = [{"x":4, "y":4, "dest_x":1, "dest_y":1, "in_taxi":0}]
+passengers = [{"x":4, "y":4, "dest_x":1, "dest_y":1, "in_taxi":0}, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
 walls = [{"x": 2, "y": 2}]
 
 ## Utils
@@ -28,12 +27,12 @@ walls_state = {}
 init_idx = agent_n_features
 for i in range(len(walls)):
     walls_state.update({"wall_"+str(i): 
-                        StateFactor(list(range(init_idx, init_idx + i*wall_n_features)), "wall_"+str(i))})
+                        StateFactor(list(range(init_idx, init_idx + (i+1)*wall_n_features)), "wall_"+str(i))})
     init_idx += i*wall_n_features
 # passengers
 passenger_state = {}
 for p in range(len(passengers)):
-    passenger_state["passenger_"+str(p)] = StateFactor(list(range(init_idx, agent_n_features + p*passenger_n_features)), "passenger_"+str(p))
+    passenger_state["passenger_"+str(p)] = StateFactor(list(range(init_idx, agent_n_features + (p+1)*passenger_n_features)), "passenger_"+str(p))
     init_idx += p*passenger_n_features
 
 locals().update(walls_state)
@@ -44,7 +43,7 @@ passenger_pos_dest= {}
 for name, passenger in passenger_state.items():
     passenger_pos_dest.update({name + "_pos": passenger[:2]})
     passenger_pos_dest.update({name + "_dest": passenger[2:4]})
-    passenger_pos_dest.update({name+"_intaxi": passenger[4]})
+    passenger_pos_dest.update({name +"_intaxi": passenger[4]})
 
 locals().update(passenger_pos_dest)
 
