@@ -1,13 +1,22 @@
+import sys, os
+sys.path.append(os.path.abspath("./lmdp"))
+
+
 import numpy as np
 from lmdp.grounding import *
 
 from simple_rl.tasks import TaxiOOMDP, TaxiState
+from simple_rl.mdp.oomdp.OOMDPObjectClass import OOMDPObject
 from functools import partial
+from collections import deque
+import copy
+
+from taxi_utils import taxi_state_generator
 
 # Taxi MDP Parameters
 WIDTH, HEIGHT = 5, 5
 agent = {"x":1, "y":1, "has_passenger":0}
-passengers = [{"x":4, "y":4, "dest_x":1, "dest_y":1, "in_taxi":0}, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
+passengers = [{"x":4, "y":4, "dest_x":1, "dest_y":1, "in_taxi":0}]#, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
 walls = [{"x": 2, "y": 2}]
 
 ## Utils
@@ -87,3 +96,5 @@ def dropoff_passenger(passenger, state):
 
 
 taxi_mdp = TaxiOOMDP(WIDTH, HEIGHT, agent=agent, passengers=passengers, walls=walls)
+
+taxi_states = partial(taxi_state_generator, WIDTH, HEIGHT, passengers, walls)

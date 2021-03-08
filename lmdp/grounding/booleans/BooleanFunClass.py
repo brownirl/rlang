@@ -6,6 +6,7 @@
 '''
 
 from lmdp.grounding.expressions.ExpressionsClass import Expression
+from functools import reduce 
 
 class BooleanExpression(Expression):
     def __init__(self, fun, domain):
@@ -48,15 +49,16 @@ class BooleanExpression(Expression):
     #         return NotImplemented
 
 
-def bool_and(exp1, exp2):
-    exp1 = cast_to_boolean(exp1)
-    exp2 = cast_to_boolean(exp2)
-    return exp1.__and__(exp2)
+def bool_and(*exps):
+    b_exps = map(cast_to_boolean, exps)
+    return reduce(lambda a, b: a.__and__(b), b_exps)
+    # exp1 = cast_to_boolean(exp1)
+    # exp2 = cast_to_boolean(exp2)
+    # return exp1.__and__(exp2)
 
-def bool_or(exp1, exp2):
-    exp1 = cast_to_boolean(exp1)
-    exp2 = cast_to_boolean(exp2)
-    return exp1.__or__(exp2)
+def bool_or(*exps):
+    b_exps = map(cast_to_boolean, exps)
+    return reduce(lambda a, b: a.__or__(b), b_exps)
 
 def bool_not(exp):
     exp = cast_to_boolean(exp)

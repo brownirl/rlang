@@ -237,7 +237,7 @@ class RealExpression(Expression):
 
     def __compose__(self, expression):
         if(self.domain == expression.codomain): #composable
-            return RealExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())
+            return RealExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain(), dimension=self.dim())
         else:
             return NotImplemented
 
@@ -258,8 +258,6 @@ class RealExpression(Expression):
     def __xor__(self, other):
         raise NotImplementedError
     def __or__(self, other):
-        raise NotImplementedError
-    def __matmul__(self, other):
         raise NotImplementedError
 
 if __name__ == "__main__":

@@ -10,6 +10,8 @@ from lmdp.utils.collections import defaultdict
 from functools import reduce
 import numpy as np
 
+import time 
+
 
 class QLearningLangAgent(LangAgent):
     DEFAULT_Q = 0
@@ -73,8 +75,9 @@ class QLearningLangAgent(LangAgent):
 
     def initialize_q_function(self, state_space, action_space): # Value iteration initialization
         q_function = defaultdict(lambda state: defaultdict(lambda action: self.default_q_func(state, action)))
-        lim = int(np.log(1/(self.epsilon_one * (1 - self.base_agent.gamma))) / (1 - self.base_agent.gamma))
+        lim = 10#int(np.log(1/(self.epsilon_one * (1 - self.base_agent.gamma))) / (1 - self.base_agent.gamma))
         for _ in range(1, lim):
+            start = time.clock()
             for s in state_space():
                 for a in action_space:
                     r = self.rewards[s][a]
@@ -83,6 +86,8 @@ class QLearningLangAgent(LangAgent):
                         s_primes = [s_prime for s_prime in state_space() if self.transitions[s][a][s_prime] != 0]
                         if len(s_primes) > 0:
                             q_function[s][a] += self.base_agent.gamma *  sum(map(lambda s_prime: self.__get_max_q(q_function, s_prime), s_primes))/len(s_primes)
+            end = time.clock()
+            print(f"{end-start}s")
         return q_function
 
     def __get_max_q(self, q, s):

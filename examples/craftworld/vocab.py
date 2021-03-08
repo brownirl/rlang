@@ -39,6 +39,7 @@ inventory = StateFactor(list(range(2*GRID_HEIGHT*GRID_HEIGHT*idx, 2*GRID_HEIGHT*
 position = StateFactor(list(range(2*GRID_HEIGHT*GRID_HEIGHT*idx + idx+ 4, 2*GRID_HEIGHT*GRID_HEIGHT*idx + idx+ 4+2)), "position")
 x = position[0]
 y = position[1]
+
 #-----features 
 elements = {}
 for p in recipes['primitives']:

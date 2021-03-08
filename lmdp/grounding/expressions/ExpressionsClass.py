@@ -56,6 +56,17 @@ class Expression:
         if(isinstance(expression, Expression)):
             return self.__compose__(expression)
 
+    def __eq__(self, expression):
+        if(isinstance(expression, Expression) and expression.codomain == self.codomain):
+            return Expression(lambda **args: expression(**args) == self.__call__(**args), 
+                                        domain=self.domain()+expression.domain(),
+                                        codomain=["boolean"])
+        else:
+            return Expression(lambda **args: expression == self.__call__(**args), 
+                                        domain=self.domain(),
+                                        codomain=["boolean"])
+        
+
     def __compose__(self, expression):
 
         if(self.domain >= expression.codomain): #composable

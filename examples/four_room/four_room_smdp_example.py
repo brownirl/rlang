@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("./lmdp"))
 
 from lmdp import *
 from lmdp.agents.AbstractValueIterationClass import AAValueInteration
@@ -92,7 +92,6 @@ if __name__=="__main__":
     assert lmdp('subpolicy-room_1-hor')(state=pos1) == 'up'
     assert lmdp('subpolicy-room_3-ver').is_executable(room1_to_room3) == True
     assert lmdp('subpolicy-room_3-ver')(state=room1_to_room3) == 'up'
-
 
     ########### Value Iteration #############
 
