@@ -7,6 +7,8 @@ from lmdp.grounding import *
 
 from simple_rl.tasks import TaxiOOMDP, TaxiState
 from simple_rl.mdp.oomdp.OOMDPObjectClass import OOMDPObject
+
+from envs.TaxiDensifiedReward import TaxiDense
 from functools import partial
 from collections import deque
 import copy
@@ -16,7 +18,7 @@ from taxi_utils import taxi_state_generator
 # Taxi MDP Parameters
 WIDTH, HEIGHT = 5, 5
 agent = {"x":1, "y":1, "has_passenger":0}
-passengers = [{"x":4, "y":4, "dest_x":1, "dest_y":1, "in_taxi":0}]#, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
+passengers = [{"x":4, "y":4, "dest_x":1, "dest_y":1, "in_taxi":0}, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
 walls = [{"x": 2, "y": 2}]
 
 ## Utils

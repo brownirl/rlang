@@ -16,7 +16,7 @@ import numpy as np
 def experiment_params():
     return {"instances":5, 
             "episodes": 100, 
-            "steps":200,
+            "steps":400,
             "clear_old_results":True,
             "rew_step_count":1,
             "track_disc_reward":False,
@@ -46,10 +46,10 @@ if __name__ == "__main__":
     
     random = RandomAgent(taxi_mdp.get_actions())
 
-    q_learning_agent = QLearningAgent(taxi_mdp.get_actions())
-    lang_q_learning_agent = QLearningLangAgent(taxi_mdp.get_actions(), lmdp=lmdp)
+    q_learning_agent = QLearningAgent(taxi_mdp.get_actions(), anneal=True, epsilon=0.2)
+    lang_q_learning_agent = QLearningLangAgent(taxi_mdp.get_actions(), lmdp=lmdp, anneal=True, epsilon=0.2)
     lang_q_learning_agent.update_from_lang(taxi_states)
-    run_agents([lang_q_learning_agent , q_learning_agent], taxi_mdp, experiment_params())
+    run_agents([lang_q_learning_agent, q_learning_agent, random], taxi_mdp, experiment_params())
 
     
 
