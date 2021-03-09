@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("./lmdp"))
 # envs
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
