@@ -40,7 +40,7 @@ class Index:
             return key in self.obj_to_idx
     
     def __len__(self):
-        return len(self.obj_to_idx)
+        return self.curr_idx
     def elems(self):
         return self.obj_to_idx.keys()
 
@@ -59,7 +59,6 @@ class arraydict:
     def __len__(self):
         return len(self.data.shape)
 
-
     def __get_indices(self, keys):
         if not isinstance(keys, tuple):
             keys = (keys,)
@@ -76,7 +75,10 @@ class arraydict:
         if len(keys) == len(self):
             return self.data[idx_k]
         else: # if not return slice as arraydict
-            return arraydict(*self.data.shape[len(keys):], data=self.data[idx_k].squeeze(), index=self.index[len(keys):])
+            d = self.data
+            for i in idx_k:
+                d = d[i]
+            return arraydict(*self.data.shape[len(keys):], data=d, index=self.index[len(keys):])
 
     def __setitem__(self, keys, value):
         keys, idx_k = self.__get_indices(keys)
@@ -103,6 +105,7 @@ if __name__=="__main__":
     Q = arraydict(4, 4, iterators=[gridworld_state_space(2,2), actions])
     s = GridWorldState(1,1)
     a = "up"
-    print(Q[s, a])
-    print(Q[s])
+    Q[s][a] = 1
+    print(Q[s][a])
+    print(Q)
     

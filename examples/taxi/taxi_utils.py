@@ -51,7 +51,7 @@ def __taxi_state(state, passengers, walls):
     objects = []
 
     for i, p in enumerate(passengers):
-        p_state = state[i] + tuple((p[i] for i in ("dest_x", "dest_y"))) + (0,)
+        p_state = state[i+1] + tuple((p[i] for i in ("dest_x", "dest_y"))) + (0,)
         p_states.append(dict(zip(passenger_attributes, p_state)))
 
     objects.append([a_states, walls, p_states])
@@ -62,7 +62,7 @@ def __taxi_state(state, passengers, walls):
             p_states_2 = copy.deepcopy(p_states)
             p_states_2[i]["in_taxi"] = 1 #dict(zip(passenger_attributes, p[:-1] + (1,))) # ith passenger in taxi
             o.append(p_states_2)
-        objects.append(o)
+            objects.append(o)
     # objects = zip(a_states, [walls, walls], [p_states, p_states_2])
     return map(lambda o : TaxiState(__oomdp_objects_from_dicts(zip(object_classes, o))), objects)
             

@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
+sys.path.append(os.path.abspath("./"))
 # envs
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
@@ -14,9 +14,9 @@ from functools import partial
 import numpy as np
 
 def experiment_params():
-    return {"instances":20, 
-            "episodes": 100, 
-            "steps":200,
+    return {"instances":5, 
+            "episodes": 1000, 
+            "steps":100,
             "clear_old_results":True,
             "rew_step_count":1,
             "track_disc_reward":False,
@@ -39,9 +39,9 @@ if __name__ == "__main__":
 
     lmdp = LMDP(mdp, factor_names=["x", "y"])
     with lmdp.when(lava @ effect_action) as c: # when you fall in lava (@ is the function composition operator)
-        c.reward(-1.1)
+        c.reward(-1)
     with c.otherwise().when(goal @ effect_action): # otherwise when in goal
-        c.reward(.9)
+        c.reward(1)
     # with c.otherwise(): # any other case is step cost
     #     c.reward(-.1)
 
@@ -55,9 +55,10 @@ if __name__ == "__main__":
     #### Run agents
     
     random = RandomAgent(mdp.get_actions())
-
-    q_learning_agent = QLearningAgent(mdp.get_actions())
-    lang_q_learning_agent = QLearningLangAgent(mdp.get_actions(), lmdp=lmdp)
+    epsilon = 0.1
+    alpha = 0.05
+    q_learning_agent = QLearningAgent(mdp.get_actions(), epsilon=epsilon, alpha=alpha, anneal=True)
+    lang_q_learning_agent = QLearningLangAgent(mdp.get_actions(), lmdp=lmdp, epsilon=epsilon/10, alpha=alpha, anneal=True)
     lang_q_learning_agent.update_from_lang(partial(gridworld_state_space, width, height))
     run_agents([lang_q_learning_agent , q_learning_agent], mdp, experiment_params())
 
