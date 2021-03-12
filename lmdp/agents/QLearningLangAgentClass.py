@@ -12,7 +12,8 @@ from collections import namedtuple
 import numpy as np
 import copy, time
 import pickle, os.path
-
+from itertools import product
+from tqdm import tqdm
 indices = namedtuple("SAIndex", ["state_space", "action_space"])
 def _indices(state_space_gen, action_space):
     return indices(Index(state_space_gen()), Index(action_space))
@@ -56,12 +57,22 @@ class QLearningLangAgent(LangAgent):
         self.base_agent.q_func = copy.deepcopy(self.q_func)
             
     def __init_functions(self):
-        for s in self.indices.state_space.elems():
-            for a in self.indices.action_space.elems():
-                self.q_func[s,a] = self.default_q_func(s,a)
-                for s_prime in self.indices.state_space.elems():
-                    self.rewards[s,a,s_prime] = self.default_rewards(s, a, s_prime)
-                    self.transitions[s,a,s_prime] = self.default_transition(s, a, s_prime)
+        # start = time.clock()
+        # for s, a, s_prime in tqdm(product(self.indices.state_space.elems(), self.indices.action_space.elems(), self.indices.state_space.elems())):
+        #     self.rewards[s,a,s_prime] = self.default_rewards(s, a, s_prime)
+        #     self.transitions[s,a,s_prime] = self.default_transition(s, a, s_prime)
+        # end = time.clock()
+        # print(end-start)
+        # t = time.clock()
+        r = self.rewards.numpy()
+        t = self.transitions.numpy()
+        q = self.q_func.numpy()
+        for s, s_i in tqdm(self.indices.state_space.elems()):
+            for a, a_i in self.indices.action_space.elems():
+                q[s_i,a_i] = self.default_q_func(s,a)
+                for s_prime, s_prime_i in self.indices.state_space.elems():
+                    r[s_i,a_i,s_prime_i] = self.default_rewards(s, a, s_prime)
+                    t[s_i,a_i,s_prime_i] = self.default_transition(s, a, s_prime)
 
     def default_transition(self, state, action, state_prime):
         next_states = self.lmdp.transition(state, action)
@@ -79,7 +90,7 @@ class QLearningLangAgent(LangAgent):
     def default_q_func(self, state, action):  # default q_function is the same value for all actions
         v = self.lmdp.value(state)
         if len(v) <= 0:
-            return [0]
+            v = [0]
         return sum(v)/len(v) # return mean
 
     def initialize_q_function(self, state_space, action_space): # Value iteration initialization

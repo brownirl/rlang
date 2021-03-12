@@ -14,8 +14,8 @@ from functools import partial
 import numpy as np
 
 def experiment_params():
-    return {"instances":1, 
-            "episodes": 500, 
+    return {"instances":5, 
+            "episodes": 250, 
             "steps":400,
             "clear_old_results":True,
             "rew_step_count":1,
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     with lmdp.when(bool_and(A == "dropoff", bool_not(passenger_in_taxi))) as c:
         c.effect(S_prime == S)
 
-    with lmdp.when(bool_and(agent_position == passenger_0_pos, A == "pickup")) as c:
+    with lmdp.when(bool_and(agent_position == passenger_0_pos, bool_not(passenger_in_taxi), A == "pickup")) as c:
         c.effect(passenger_in_taxi)
 
     #### Run agents
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     random = RandomAgent(taxi_mdp.get_actions())
 
     q_learning_agent = QLearningAgent(taxi_mdp.get_actions(), anneal=True, epsilon=0.1)
-    lang_q_learning_agent = QLearningLangAgent(taxi_mdp.get_actions(), lmdp=lmdp, anneal=True, epsilon=0.1)
+    lang_q_learning_agent = QLearningLangAgent(taxi_mdp.get_actions(), lmdp=lmdp, anneal=True, epsilon=0.1/10)
     lang_q_learning_agent.update_from_lang(taxi_states)
     run_agents([lang_q_learning_agent, q_learning_agent], taxi_mdp, experiment_params())
 

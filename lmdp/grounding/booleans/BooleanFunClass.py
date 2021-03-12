@@ -6,7 +6,10 @@
 '''
 
 from lmdp.grounding.expressions.ExpressionsClass import Expression
-from functools import reduce 
+from functools import reduce, partial
+
+
+
 
 class BooleanExpression(Expression):
     def __init__(self, fun, domain):
@@ -14,22 +17,26 @@ class BooleanExpression(Expression):
         
     def and_(self, other):
         if(isinstance(other, BooleanExpression) or isinstance(other, Expression)):
-            return BooleanExpression(lambda **args: self.__call__(**args) and other(**args), domain=self.domain() + other.domain())
+            return BooleanExpression(partial(_conj, self, other), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return BooleanExpression(lambda **args: self.__call__(**args) and other, domain=self.domain()) 
+            if not other:
+                return bool_false
+            return self
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
    
     def or_(self, other):
         if(isinstance(other, BooleanExpression)):
-            return BooleanExpression(lambda **args: self.__call__(**args) or other(**args), domain=self.domain() + other.domain())
+            return BooleanExpression(partial(_disj, self, other), domain=self.domain() + other.domain())
         elif (isinstance(other, bool)):
-            return BooleanExpression(lambda **args: self.__call__(**args) or other, domain=self.domain())
+            if other:
+                return bool_true
+            return self
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
     
     def not_(self):
-         return BooleanExpression(lambda **args: not self.__call__(**args), domain=self.domain())
+         return BooleanExpression(partial(_neg, self), domain=self.domain())
 
     def __and__(self, other):
         return self.and_(other)
@@ -48,6 +55,14 @@ class BooleanExpression(Expression):
     #     else:
     #         return NotImplemented
 
+def _disj(f1, f2, **args):
+    return f1(**args) or f2(**args)
+
+def _conj(f1, f2, **args):
+    return f1(**args) and f2(**args)
+
+def _neg(f, **args):
+    return not f(**args)
 
 def bool_and(*exps):
     b_exps = map(cast_to_boolean, exps)

@@ -97,7 +97,7 @@ def dropoff_passenger(passenger, state):
 
 
 
-taxi_mdp = TaxiOOMDP(WIDTH, HEIGHT, agent=agent, passengers=passengers, walls=walls)
+taxi_mdp = TaxiDense(WIDTH, HEIGHT, agent=agent, passengers=passengers, walls=walls)
 
 taxi_states = partial(taxi_state_generator, WIDTH, HEIGHT, passengers, walls)
 # for s in taxi_state_generator(5,5,passengers, walls):

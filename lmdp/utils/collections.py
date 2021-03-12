@@ -42,7 +42,7 @@ class Index:
     def __len__(self):
         return self.curr_idx
     def elems(self):
-        return self.obj_to_idx.keys()
+        return self.obj_to_idx.items()
 
 
 class arraydict:

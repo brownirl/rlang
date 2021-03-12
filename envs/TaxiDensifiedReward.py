@@ -19,10 +19,17 @@ class TaxiDense(TaxiOOMDP):
         Returns
             (float)
         '''
+        # r = super()._taxi_reward_func(state, action, next_state)
+        # dis = self.__distance_passengers_to_dest(state)/(self.width + self.height)
+        # dis_prime = self.__distance_passengers_to_dest(next_state)/(self.width + self.height)
+        # return r + (self.gamma * dis_prime - dis)*(-0.01)
         r = super()._taxi_reward_func(state, action, next_state)
-        dis = self.__distance_passengers_to_dest(state)/(self.width + self.height)
-        dis_prime = self.__distance_passengers_to_dest(next_state)/(self.width + self.height)
-        return r + (self.gamma * dis_prime - dis)*(-0.01)
+
+        if (action == "dropoff" and state.get_objects_of_class("agent")[0].get_attribute("has_passenger") != 1):
+            return -0.5 + r 
+        return r
+        
+
 
 
     def _min_distance_to_passengers(self, state):
