@@ -73,11 +73,13 @@ class QLearningLangAgent(LangAgent):
         t = self.transitions.numpy()
         q = self.q_func.numpy()
         for a, i  in tqdm(self.indices.action_space.elems()):
-            start = time.clock()
+            # start = time.clock()
+            print("Init rewards...")
             r[:,i] = self.default_rewards(s, a, s_prime).reshape(len(s_), len(s_))     
-            end = time.clock()
-            print(end-start)
+            # end = time.clock()
+            print("Init transitions...")
             t[:,i] = self.default_transition(s, a, s_prime).reshape(len(s_), len(s_))
+            print("Init values...")
             q[:,i] = self.default_q_func(s_,a).reshape(len(s_))
 
 
