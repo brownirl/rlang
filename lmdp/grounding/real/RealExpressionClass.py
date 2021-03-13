@@ -241,24 +241,11 @@ class RealExpression(Expression):
         else:
             return NotImplemented
 
-    def __floordiv__(self, other):
-        raise NotImplementedError
-    def __mod__(self, other):
-        raise NotImplementedError
-    def __divmod__(self, other):
-        raise NotImplementedError
-    def __pow__(self, other):
-        raise NotImplementedError
-    def __lshift__(self, other):
-        raise NotImplementedError
-    def __rshift__(self, other):
-        raise NotImplementedError
-    def __and__(self, other):
-        raise NotImplementedError
-    def __xor__(self, other):
-        raise NotImplementedError
-    def __or__(self, other):
-        raise NotImplementedError
+    def __indices_within_bounds(self, array_like, dim):
+        for i in range(len(array_like)):
+            if array_like[i] >= dim or  array_like[i] < 0:
+                return False
+        return True
 
 if __name__ == "__main__":
     constant = RealExpression(lambda **args: 1.0)

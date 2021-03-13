@@ -40,7 +40,11 @@ class Index:
             return key in self.obj_to_idx
     
     def __len__(self):
-        return self.curr_idx
+        return len(self.objects())
+    
+    def objects(self):
+        return self.obj_to_idx.keys()
+        
     def elems(self):
         return self.obj_to_idx.items()
 

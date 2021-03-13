@@ -14,7 +14,7 @@ from functools import partial
 import numpy as np
 
 def experiment_params():
-    return {"instances":5, 
+    return {"instances":2, 
             "episodes": 1000, 
             "steps":100,
             "clear_old_results":True,
@@ -42,18 +42,13 @@ if __name__ == "__main__":
         c.reward(-1)
     with c.otherwise().when(goal @ effect_action): # otherwise when in goal
         c.reward(1)
-    # with c.otherwise(): # any other case is step cost
-    #     c.reward(-.1)
-
+        
     with lmdp.when(wall @ effect_action) as c: # when the action taken takes you to a wall position 
         c.effect(S) # next state is the current state
-    # with lmdp.when(lava @ effect_action) as c: # when you move into lava. This however, is not true! lava is a terminal state.
-    #     c.effect(any_state)
     with lmdp.when(bool_and(any_state, any_action)) as c:
         c.effect(effect_action)
 
     #### Run agents
-    
     random = RandomAgent(mdp.get_actions())
     epsilon = 0.1
     alpha = 0.05

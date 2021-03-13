@@ -37,7 +37,10 @@ if __name__ == "__main__":
     lmdp = LMDP(taxi_mdp)
 
     # reward function
-    with lmdp.when(bool_and(passenger_0_pos == passenger_0_dest, A == "dropoff", passenger_in_taxi)) as c:
+    with lmdp.when(bool_and(passenger_0_pos == passenger_0_dest, A == "dropoff", passenger_0_intaxi==1)) as c:
+        c.reward(1)
+
+    with lmdp.when(bool_and(passenger_1_pos == passenger_1_dest, A == "dropoff", passenger_1_intaxi==1)) as c:
         c.reward(1) 
 
     with lmdp.when(bool_and(A == "dropoff", bool_not(passenger_in_taxi))) as c:

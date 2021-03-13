@@ -2,7 +2,7 @@ import numpy as np
 
 from simple_rl.tasks import TaxiOOMDP, TaxiState
 from simple_rl.mdp.oomdp.OOMDPObjectClass import OOMDPObject
-from functools import partial
+from functools import partial, reduce
 from collections import deque
 import copy
 
@@ -34,7 +34,7 @@ def taxi_state_generator(width, height, passengers_init, walls): # state space i
                 gen = passenger_position_generators[p]()
                 active_generators.append((p, gen))
             else:
-                for s in __taxi_state(state, passengers_init, walls):
+                for s in __taxi_state_tuple(state, passengers_init, walls):
                     yield s
 
 
@@ -71,3 +71,33 @@ def __oomdp_objects_from_dicts(Object):
     for name, obj in Object:
          o[name] = [OOMDPObject(attributes=o_dict, name=name) for o_dict in obj]
     return o
+
+def __taxi_state_tuple(state, passengers, walls):
+    # object_classes = ("agent", "wall", "passenger")
+    # agent_attributes = ("x", "y", "has_passenger")
+    # passenger_attributes = ("x", "y", "dest_x", "dest_y", "in_taxi")
+    agent = state[0]+(0,) # has no passenger
+    # a_states = [dict(zip(agent_attributes, agent))]
+    p_states = []
+    p_states_2 = []
+
+    objects = []
+    w_ = tuple(reduce(lambda x, y: x+y, [w.values() for w in walls]))
+    for i, p in enumerate(passengers):
+        p_state = state[i+1] + tuple((p[i] for i in ("dest_x", "dest_y"))) + (0,)
+        p_states.append(p_state)
+    p_ = tuple(reduce(lambda x, y: x+y, [p for p in p_states]))
+    objects.append(agent + w_ + p_)
+    for i, p in enumerate(p_states):
+        # Add state that has passenger in taxi
+        if agent[0]== p[0] and agent[1] == p[0]:
+            o = copy.deepcopy(agent)[:-1] + (1,) + w_
+            p_states_2 = copy.deepcopy(p_states)
+            p_states_2[i] = p_states_2[i][:-1] + (1,0) #dict(zip(passenger_attributes, p[:-1] + (1,))) # ith passenger in taxi
+            p_ = tuple(reduce(lambda x, y: x+y,[p for p in p_states]))
+            o = o + p_
+            objects.append(o)
+    return objects
+    # objects = zip(a_states, [walls, walls], [p_states, p_states_2])
+
+    

@@ -29,13 +29,13 @@ class Effect(Expression):
 
     def effect(self, state, action):
         if (isinstance(self._effect, (list, tuple))): # state enumerations
-            f = lambda state, action, next_state: self._domain_sa(state, action) and (next_state in self._effect)
+            f = lambda state, action, next_state: self._domain_sa(state, action) & (next_state in self._effect)
         elif(isinstance(self._effect, Expression) and self._effect.codomain == Codomain(["boolean"]) and self._effect.domain <= Domain(["state", "action", "next_state"])): # set of states as symbols
-            f = lambda state, action, next_state: self._domain_sa(state, action) and self._effect(state=state, action=action, next_state=next_state)
+            f = lambda state, action, next_state: self._domain_sa(state, action) & self._effect(state=state, action=action, next_state=next_state)
         elif(isinstance(self._effect, dict)): # factored effects
-            f = lambda state, action, next_state: self._domain_sa(state, action) and self.__verify_transformation(self._effect, state, action, next_state)
+            f = lambda state, action, next_state: self._domain_sa(state, action) & self.__verify_transformation(self._effect, state, action, next_state)
         elif(isinstance(self._effect, Expression) and  Codomain(["state"]) == self._effect.codomain): # predictive effect
-            f = lambda state, action, next_state: self._domain_sa(state, action) and self._effect(state=state, action=action) == next_state
+            f = lambda state, action, next_state: self._domain_sa(state, action) & (self._effect(state=state, action=action) == next_state)
         else:
             raise ValueError("Error: Unexpected Effect Expression")
         return partial(EffectSymbol(f), state, action)

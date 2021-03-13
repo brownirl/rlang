@@ -14,6 +14,13 @@ import copy, time
 import pickle, os.path
 from itertools import product
 from tqdm import tqdm
+
+
+def _cartesian(a1, a2):
+    r2 = np.tile(a2, (a1.shape[0],1))
+    r1 = np.repeat(a1, a2.shape[0], 0) 
+    return r1, r2
+
 indices = namedtuple("SAIndex", ["state_space", "action_space"])
 def _indices(state_space_gen, action_space):
     return indices(Index(state_space_gen()), Index(action_space))
@@ -28,17 +35,10 @@ class QLearningLangAgent(LangAgent):
         self.q_func = None
         q_agent = QLearningAgent(actions, name=name, alpha=alpha, gamma=gamma, epsilon=epsilon, explore=explore, anneal=anneal, custom_q_init=custom_q_init, default_q=default_q)
         LangAgent.__init__(self, base_agent=q_agent, lmdp=lmdp)
-        # if (os.path.exists("q_func.pk")):
-        #     with open("q_func.pk", "rb") as f:
-        #         self.q_func = pickle.load(f)
 
 
     def reset(self):
         self.base_agent.reset()
-        
-        # self.transitions = defaultdict(lambda state: defaultdict(lambda action: defaultdict(lambda state_prime: self.default_transition(state, action, state_prime))))
-        # self.rewards = defaultdict(lambda state: defaultdict(lambda action: self.default_rewards(state, action)))
-        # self.q_func = self.initialize_q_function(self.state_space, self.base_agent.actions) # value iteration with q_func default
         if self.q_func is None:
             self.indices = _indices(self.state_space, self.base_agent.actions)
             self.transitions = arraydict(len(self.indices.state_space), len(self.indices.action_space), len(self.indices.state_space), 
@@ -50,50 +50,80 @@ class QLearningLangAgent(LangAgent):
                                         index=self.indices)
 
             self.__init_functions()
-            self.q_func.data = self.initialize_q_function(self.state_space, self.base_agent.actions)
-            # with open("q_func.pk", "wb") as f:
-            #     pickle.dump(self.q_func, f)
+            self.q_func.data = self.initialize_q_function()
 
         self.base_agent.q_func = copy.deepcopy(self.q_func)
             
     def __init_functions(self):
-        # start = time.clock()
-        # for s, a, s_prime in tqdm(product(self.indices.state_space.elems(), self.indices.action_space.elems(), self.indices.state_space.elems())):
-        #     self.rewards[s,a,s_prime] = self.default_rewards(s, a, s_prime)
-        #     self.transitions[s,a,s_prime] = self.default_transition(s, a, s_prime)
-        # end = time.clock()
-        # print(end-start)
-        # t = time.clock()
+        from itertools import product
+        from lmdp.grounding.states.StateClass import BatchedState
+        from lmdp.utils.space import BatchedTuple
+
+
+        t = self.indices.state_space.objects()
+        # s_ = map(lambda x: x.features(), t)
+        s_ = BatchedState(tuple(t))
+        # s, s_prime  = zip(*map(lambda t: (t[0].data, t[1].data), t))
+        s, s_prime = _cartesian(s_.numpy(), s_.numpy())
+        # s, s_prime = zip(*t)
+        s, s_prime = BatchedState(s), BatchedState(s_prime)
+        
+
         r = self.rewards.numpy()
         t = self.transitions.numpy()
         q = self.q_func.numpy()
-        for s, s_i in tqdm(self.indices.state_space.elems()):
-            for a, a_i in self.indices.action_space.elems():
-                q[s_i,a_i] = self.default_q_func(s,a)
-                for s_prime, s_prime_i in self.indices.state_space.elems():
-                    r[s_i,a_i,s_prime_i] = self.default_rewards(s, a, s_prime)
-                    t[s_i,a_i,s_prime_i] = self.default_transition(s, a, s_prime)
+        for a, i  in tqdm(self.indices.action_space.elems()):
+            start = time.clock()
+            r[:,i] = self.default_rewards(s, a, s_prime).reshape(len(s_), len(s_))     
+            end = time.clock()
+            print(end-start)
+            t[:,i] = self.default_transition(s, a, s_prime).reshape(len(s_), len(s_))
+            q[:,i] = self.default_q_func(s_,a).reshape(len(s_))
+
 
     def default_transition(self, state, action, state_prime):
         next_states = self.lmdp.transition(state, action)
-        if (next_states is not None and len(next_states) > 0):
-            transitions = reduce(lambda x, y: x or y, map(lambda n_state: n_state(state_prime), next_states), False)
-            return int(transitions)
-        return int(0)
+        t = np.zeros(len(state), dtype=bool)
+        if len(next_states) > 0:
+            for bs, ns in next_states:
+                ns = ns(state_prime)
+                t = t | (bs & ns)
+        return t
+        
+        # if (next_states is not None and len(next_states) > 0):
+        #     transitions = reduce(lambda x, y: x or y, map(lambda n_state: n_state(state_prime), next_states), False)
+        #     return int(transitions)
+        # return int(0)
 
     def default_rewards(self, state, action, s_prime):
-        r = self.lmdp.reward(state, action, s_prime)
-        if len(r) <= 0:
-            r = [0]
-        return sum(r)/len(r) # return mean
+        rewards = self.lmdp.reward(state, action, s_prime)
+        r = np.zeros(len(state))  # return zero by default
+        if len(rewards) > 0:
+            n = np.zeros(len(state))
+            b = np.zeros(len(state), dtype=bool)
+            for bs, fs in rewards:
+                n += bs
+                b = b | np.logical_not(bs)
+                r[bs] += fs[bs]
+            n[b] = 1
+            return r / b
+        return r
 
     def default_q_func(self, state, action):  # default q_function is the same value for all actions
-        v = self.lmdp.value(state)
-        if len(v) <= 0:
-            v = [0]
-        return sum(v)/len(v) # return mean
+        values = self.lmdp.value(state)
+        if len(values)>0:
+            r = np.zeros(len(state))  # return zero by default
+            n = np.zeros(len(state))
+            b = np.zeros(len(state), dtype=bool)
+            for bs, fs in values:
+                n += bs
+                b = b | np.logical_not(bs)
+                r[bs] += fs[bs]
+            n[b] = 1
+            return r / b
+        return np.zeros(len(state))
 
-    def initialize_q_function(self, state_space, action_space): # Value iteration initialization
+    def initialize_q_function(self): # Value iteration initialization
         q_function = self.q_func.numpy()
         lim = int(np.log(1/(self.epsilon_one * (1 - self.base_agent.gamma))) / (1 - self.base_agent.gamma))
         start = time.clock()

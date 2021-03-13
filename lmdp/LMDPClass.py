@@ -14,7 +14,6 @@
 from lmdp.grounding import *
 from lmdp.grounding.expressions.ConditionalExpressionClass import Conditional
 from lmdp.grounding.VocabularyClass import Vocabulary
-from lmdp.grounding.states.StateClass import StateFactory
 from simple_rl.mdp.MDPClass import MDP
 from collections import defaultdict
 from collections.abc import Iterable
@@ -32,7 +31,7 @@ class LMDP:
 
         if(mdp is not None and factor_names is not None and len(factor_names) > 0):
             self.bind(mdp, factor_names=factor_names)
-            self.__state_constructor = StateFactory(type(mdp.get_init_state()))
+            # self.__state_constructor = StateFactory(type(mdp.get_init_state()))
         
         self.__reward = RewardGrounding()
         self.__value_function = ValueGrounding()
@@ -65,10 +64,6 @@ class LMDP:
         else:
             self.add(symbol_object)
 
-    # def add_symbols(self, symbols_iterable):
-    #     for symbol in symbols_iterable:
-    #         self.__symbols[symbol.name] = symbol
-    
     def get_symbols(self):
         return list(self._vocabulary._symbols.values())
 
@@ -95,46 +90,22 @@ class LMDP:
     def reward(self):
         return self.__reward
 
-    # @reward.setter
-    # def reward(self, reward_grounding):
-    #     if (isinstance(reward_grounding, RewardGrounding)):
-    #         self.__reward = reward_grounding
-    #     else:
-    #         raise "Argument must be a RewardGrounding instance"
-    
     @property
     def value(self):
         return self.__value_function
 
-    # @value.setter  
-    # def value(self, value_grounding):
-    #     if (isinstance(value_grounding, ValueGrounding)):
-    #         self.__value_function = value_grounding
-    #     else:
-    #         raise "Argument must be a RewardGrounding instance"
-    
+ 
 
     @property
     def transition(self):
         return self.__transition
 
-    # @transition.setter
-    # def transition(self, transition_grounding):
-    #     if (isinstance(transition_grounding, TransitionGrounding)):
-    #         self.__transition = transition_grounding
-    #     else:
-    #         raise "Argument must be a TransitionGrounding instance"
 
     @property
     def policy(self):
         return self.__policy
     
-    # @policy.setter
-    # def policy(self, policy_grounding):
-    #     if (isinstance(policy_grounding, PolicyGrounding)):
-    #         self.__policy = policy_grounding
-    #     else:
-    #         raise "Argument must be a PolicyGrounding instance"
+   
 
     def goal(self, symbol):
         if(isinstance(symbol, str)):

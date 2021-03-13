@@ -18,8 +18,8 @@ class PartialFunction:
     def __call__(self, *args):
         r = []
         for spec in self.specification:
-            if spec[0](*args):
-                r.append(spec[1](*args))
+            bs, fs = spec[0](*args), spec[1](*args)
+            r.append((bs, fs))
         return r
 
     def add_specification(self, boolean_cond, function):

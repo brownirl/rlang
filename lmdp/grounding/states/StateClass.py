@@ -3,36 +3,61 @@
     that can be initialized for the particular class of MDP
 
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    date: January 2021
+    date: v0 January 2021
+          v1 March 2021
 '''
+import sys, os
+sys.path.append(os.path.abspath("./"))
+import numpy as np
+from lmdp.utils.space import Vector, BatchedVector
 
-class State:
-    def __init__(self, factor_names, state_constructor):
-        self.factory = StateFactory(state_constructor)
-        self.factor_names = factor_names
+class State(Vector):
+    '''
+        State Object for RLang/LMDP implementations
+        States are real vectors of 1 dimension.
+    '''
+    def __init__(self, data, dim=None):
+        '''
+            data: single dimension array-like object
+            dim: dimension of the state vector. 
+        '''
+        
+        Vector.__init__(self, data, dim)
 
-    def __call__(self, *factors, **kwords):
-        self.state = self.factory(*factors, **kwords)
-        return self.state
-
-class NumericState(State):
-    def __init__(self, factor_names, state_constructor, feature_getter):
-        State.__init__(self, factor_names, state_constructor)
-        self.feature_getter = feature_getter
-    
     def features(self):
-        return self.feature_getter(self.state)
-
-class StateFactory:
-    def __init__(self, state_constructor):
-        self.state_constructor = state_constructor
-
-    def __call__(self, *args, **kwargs):
-        return self.state_constructor(*args, **kwargs)
+        return self
+    
+    def numpy(self):
+        return self.data
 
 
-if __name__ == "__main__":
-    from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
-    import inspect
-    s_factory = StateFactory(GridWorldState)
-    print(s_factory(3,4))
+class BatchedState(BatchedVector, State):
+    def __init__(self, data):
+        BatchedVector.__init__(self, data)
+   
+class StateSpace:
+    def __init__(self, generator, state_factory):
+        self.state_factory = state_factory
+        self.generator = generator
+
+    def __call__(self):
+        return self.generator()
+    
+    def build(self, state): # TODO iterate over the batching dimensions.
+        return self.state_factory(state)
+
+
+if __name__=="__main__":
+    s = State([0,1,4])
+    print(s)
+
+    print(s[:-1])
+    s[:2] = np.array([-1,-1])
+    print(s)
+
+
+    s = BatchedState(np.random.rand(*(3,2)))
+    print(s)
+    print(s[1])
+    s[1] = 3
+    print(s.numpy() + 1)

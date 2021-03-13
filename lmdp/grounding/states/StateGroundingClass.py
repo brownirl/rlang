@@ -9,23 +9,24 @@
 """
 
 import sys, os
-sys.path.append(os.path.abspath("./lmdp"))
+sys.path.append(os.path.abspath("./"))
 
 import numpy as np
-from simple_rl.mdp.StateClass import State
-from functools import reduce
+from functools import reduce, partial
 from collections.abc import Iterable, Sequence
 from collections import Counter
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from lmdp.grounding.real.RealExpressionClass import RealExpression
+from lmdp.grounding.states.StateClass import State, BatchedState
+
 
 class StateFactor(Grounding, RealExpression):
     counter = 0
     def __init__(self, feature_positions, name=None):
         '''
-            Args: feature_positions is an array-like of indices (list or np.array)
+            Args: feature_positions is an array-like of indices (list, tuple or np.array)
         '''
         if(name is None):
             name = "state-feature-" + str(StateFactor.counter)
@@ -50,17 +51,18 @@ class StateFactor(Grounding, RealExpression):
             Args:
                 - args[0] must be the state from MDP
         '''
+        if (isinstance(state, np.ndarray)):
+            if(len(state.shape) > 1):
+                state = BatchedState(state)
+            else:
+                state = State(state)
+        return state.features()[self.feature_positions]
 
-        if (isinstance(state, State)):
-            return state.features()[self.feature_positions]
-        else:
-            raise "First argument must be MDP State Class"
-
-    def rest(self, state_dim):
-        if (self._rest is None):
-            feature_positions = [i for i in range(state_dim) if i not in self.feature_positions]
-            self._rest = StateFactor(feature_positions, name=self.name + "-rest") # cache it
-        return self._rest
+    # def rest(self, state_dim):
+    #     if (self._rest is None):
+    #         feature_positions = [i for i in range(state_dim) if i not in self.feature_positions]
+    #         self._rest = StateFactor(feature_positions, name=self.name + "-rest") # cache it
+    #     return self._rest
     
     def concat(self, *others, name=None):
         if name is None:
@@ -168,6 +170,16 @@ class StateFactor(Grounding, RealExpression):
     def dim(self):
         return self.number_of_features()
 
+    def in_(self, l):
+        def __in(seq, **args):
+            s = self.__call__(**args)
+            
+            t = []
+            for e in seq:
+                t.append((s == e).all(-1))
+            return reduce(lambda x, y: x | y , t)
+        return partial(__in, l)
+
 class StateFeature(StateFactor):
     def __init__(self, function, number_of_features, variables=None):
         StateFactor.__init__(self, list(range(number_of_features)))
@@ -185,6 +197,8 @@ class StateFeature(StateFactor):
 
 if __name__ == '__main__':
     import numpy as np
+    from lmdp.grounding.states.StateClass import BatchedState
+    from lmdp.grounding.booleans.BooleanFunClass import bool_and, bool_not
     s1 = State(data=np.array([1, 1]))
     s2 = State(data=np.array([0, 1]))
     x = StateFactor(0, "x")
@@ -203,3 +217,9 @@ if __name__ == '__main__':
 
     print(StateFactor.check_concat([x, y, position], 2))
     print((position + (0,1))(s1))
+
+    s3 = BatchedState(data=np.random.rand(4,2))
+    print(s3)
+    print(y(s3))
+    print((y+1)(s3))
+    print(bool_and((y < 1.5), bool_not(x < 3))(s3))

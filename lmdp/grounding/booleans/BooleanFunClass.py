@@ -8,9 +8,6 @@
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import reduce, partial
 
-
-
-
 class BooleanExpression(Expression):
     def __init__(self, fun, domain):
         Expression.__init__(self, fun, domain=domain, codomain=["boolean"])
@@ -49,27 +46,22 @@ class BooleanExpression(Expression):
 
 
 
-    # def __compose__(self, expression):
-    #     if(self.domain == expression.codomain): #composable
-    #         return BooleanExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain())
-    #     else:
-    #         return NotImplemented
-
 def _disj(f1, f2, **args):
-    return f1(**args) or f2(**args)
+    return f1(**args) | f2(**args)
 
 def _conj(f1, f2, **args):
-    return f1(**args) and f2(**args)
+    return f1(**args) & f2(**args)
 
 def _neg(f, **args):
-    return not f(**args)
+    import numpy as np
+    try:
+        return not f(**args)
+    except:
+        return np.logical_not(f(**args))
 
 def bool_and(*exps):
     b_exps = map(cast_to_boolean, exps)
     return reduce(lambda a, b: a.__and__(b), b_exps)
-    # exp1 = cast_to_boolean(exp1)
-    # exp2 = cast_to_boolean(exp2)
-    # return exp1.__and__(exp2)
 
 def bool_or(*exps):
     b_exps = map(cast_to_boolean, exps)
