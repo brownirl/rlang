@@ -47,6 +47,9 @@ class Subpolicy(Policy):
     def to_option(self):
         return Option(Predicate(self._init), Predicate(self._termination), self.policy_fun, name=self.name)
 
+    def to_option2(self):
+        import lmdp.grounding.actions.options as options
+        return options.Option(self._init, self.policy_fun, self._termination, self.name)
 
 class SubpolicyFromOption(Subpolicy):
     def __init__(self, init_symbol, policy_fun, termination_symbol, name=None):

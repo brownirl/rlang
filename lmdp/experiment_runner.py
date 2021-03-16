@@ -1,6 +1,7 @@
 import sys, time
 from simple_rl.experiments import Experiment
 from collections import defaultdict
+from tqdm import tqdm
 
 def experiment_params():
     return {"instances":3, 
@@ -55,7 +56,7 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
     gamma = mdp.get_gamma()
 
     # For each episode.
-    for episode in range(1, episodes + 1):
+    for episode in tqdm(range(1, episodes + 1)):
 
         cumulative_episodic_reward = 0
 
@@ -86,7 +87,6 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
             step_start = time.clock()
 
             # Compute the agent's policy.
-            
             action = agent.act(state, reward)
             # Terminal check.
             if state.is_terminal():

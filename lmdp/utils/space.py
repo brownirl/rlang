@@ -29,7 +29,6 @@ class Vector:
         '''
         
         self.data = data.squeeze() if isinstance(data, np.ndarray) else np.array(data).squeeze()
-        print(self.data)
         assert len(self.data.shape) == 1 # number of dimensions
         self._dim = dim if dim is not None else len(self.data)
 
@@ -49,6 +48,9 @@ class BatchedVector(Vector):
     def __init__(self, data):
         self.data = data if isinstance(data, np.ndarray) else np.array(data)
         self._dim = self.data.shape[-1] # assume last dimension to be the state dimension and all other batch_dimensions
+
+    def __len__(self):
+        return len(self.data)
 
     @property
     def shape(self):
