@@ -14,3 +14,6 @@ class SimpleRLAgent(simple_rl_agent.Agent):
     
     def policy(self, state):
         return self._agent.eval({'observation': state, 'reward': 0, 'done': state.is_terminal()})
+    
+    def reset(self):
+        self._agent.reset()

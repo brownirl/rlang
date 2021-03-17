@@ -128,6 +128,7 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
                 elif resample_at_terminal and step < steps:
                     mdp.reset()
                     return True, step, value_per_episode
+                break
 
             # Update pointer.
             state = next_state
@@ -196,6 +197,7 @@ def run_agents(agents, mdp, exp_params=None):
 
             # Reset the agent.
             agent.reset()
+            mdp.reset()
             mdp.end_of_instance()
             end = time.clock()
             times[instance] = end-start
