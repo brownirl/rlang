@@ -32,6 +32,9 @@ class LMDP:
         if(mdp is not None and factor_names is not None and len(factor_names) > 0):
             self.bind(mdp, factor_names=factor_names)
             # self.__state_constructor = StateFactory(type(mdp.get_init_state()))
+
+        for a in mdp.get_actions():
+            self.add(DiscreteActionGrounding(a))
         
         self.__reward = RewardGrounding()
         self.__value_function = ValueGrounding()
@@ -71,7 +74,7 @@ class LMDP:
         return self.__call__(name)
 
     def get_subpolicies(self):
-        return list(self._vocabulary._subpolicies.values())
+        return list(self._vocabulary._subpolicies.values()) # +[Subpolicy.primitive_to_subpolicy(a) for a in self.get_actions()]
     
     def add_subpolicy(self, subpolicy):
         self.add(subpolicy)
@@ -94,19 +97,13 @@ class LMDP:
     def value(self):
         return self.__value_function
 
- 
-
     @property
     def transition(self):
         return self.__transition
-
-
     @property
     def policy(self):
         return self.__policy
     
-   
-
     def goal(self, symbol):
         if(isinstance(symbol, str)):
             if(symbol in self._vocabulary):
@@ -131,11 +128,9 @@ class LMDP:
         self._conditional = Conditional(boolean_expression, self)
         return self._conditional # context manager
     
-    def otherwise(self):
-        pass
-    
     def build_state(self, *args, **kwargs):
         return self.__state_constructor(*args, **kwargs)
+
 
 
 if __name__=='__main__':

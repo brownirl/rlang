@@ -6,11 +6,9 @@
 '''
 import sys, os
 sys.path.append(os.path.abspath("./"))
-
+from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.actions.PolicyGroundingClass import Policy
-from lmdp.grounding.states.SymbolClass import Any
-from simple_rl.abstraction.action_abs.PredicateClass import Predicate
-from simple_rl.abstraction.action_abs.OptionClass import Option
+from lmdp.grounding.booleans.BooleanFunClass import any_state
 
 class Subpolicy(Policy):
     id = 0
@@ -22,16 +20,6 @@ class Subpolicy(Policy):
         self._termination = termination_symbol
         self.__executing = False
         Policy.__init__(self, policy_fun, name=name)
- 
-    def __call__(self, state):
-        if (not self.__executing and self._init(state)):
-            self.__executing = True
-            return super().__call__(state)
-        elif (self.__executing and not self._termination(state)):
-            return super().__call__(state)
-        elif (self._termination(state)):
-            self.__executing = False
-            return None
 
     def is_executable(self, state):
         return self._init(state)
@@ -45,30 +33,17 @@ class Subpolicy(Policy):
         return SubpolicyChain([self, subpolicy])
 
     def to_option(self):
-        return Option(Predicate(self._init), Predicate(self._termination), self.policy_fun, name=self.name)
-
+        return self.to_option2()
+        
     def to_option2(self):
         import lmdp.grounding.actions.options as options
         return options.Option(self._init, self.policy_fun, self._termination, self.name)
-
-class SubpolicyFromOption(Subpolicy):
-    def __init__(self, init_symbol, policy_fun, termination_symbol, name=None):
-        Subpolicy.__init__(self, init_symbol, policy_fun, termination_symbol, name=name) 
-        self.__option = Option(Predicate(init_symbol), Predicate(termination_symbol), policy_fun, name=self.name)
-
-    def __call__(self):
-        '''
-            Returns the option to be used by simple_rl agent
-        '''
-        return self.__option
-
-class GoalSubpolicy(SubpolicyFromOption):
-    id = 0
-    def __init__(self, policy_fun, goal_symbol, name=None):
-        if (name is None):
-            name = 'goal-subpolicy-' + str(GoalSubpolicy.id)
-        GoalSubpolicy.id += 1
-        SubpolicyFromOption.__init__(self, Any, policy_fun, goal_symbol, name=name)
+    
+    @classmethod
+    def primitive_to_subpolicy(self, action):
+        if isinstance(action, ActionGrounding):
+            return Subpolicy(any_state, action, any_state, name=action.name)
+        return Subpolicy(any_state, lambda **args: action, any_state, name="a-"+str(action))
 
 class SubpolicyChain(Subpolicy):
     def __init__(self, subpolicies):
@@ -76,27 +51,6 @@ class SubpolicyChain(Subpolicy):
         self.executing_policy = None
         self._init = subpolicies[0]._init
         self._termination = subpolicies[-1]._termination
-
-    def __call__(self, *args):
-        if (not self.is_executing):
-            if (self._init(*args)):
-                self.executing_policy = self.subpolicies[0]
-                self.current_policy_idx = 0
-                return self.executing_policy(*args)
-        else:
-            if (self.executing_policy.is_executing()):
-                return self.executing_policy(*args)
-            else:
-                self.current_policy_idx += 1
-                if (self.current_policy_idx > len(self.subpolicies)):
-                    self.executing_policy = None
-                    return None
-                self.executing_policy = self.subpolicies[self.current_policy_idx]
-                if (not self._termination(*args) and self.executing_policy._init(*args)):
-                    return self.executing_policy(*args)
-                else:
-                    self.executing_policy = None
-        return None
     
     def is_executing(self):
         return self.executing_policy is None

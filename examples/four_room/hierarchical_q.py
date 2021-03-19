@@ -64,11 +64,11 @@ if __name__=="__main__":
     ### Hierarchical Q-Learning
     options = sorted([sp.to_option2() for sp in lmdp.get_subpolicies()], key=lambda o: o._id)
     # inner_factory = LinearQLearningFactory(four_room_mdp.get_actions(), features, alpha=0.3, anneal=True, explore="uniform")
-    inner_factory = QLearningFactory(four_room_mdp.get_actions(), alpha=0.1, anneal=True)
-    agent = IntraoptionQAgent(four_room_mdp.get_actions(), options, inner_factory, warmup_period=0)#10000)
+    inner_factory = QLearningFactory(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.2, anneal=True)
+    agent = IntraoptionQAgent(four_room_mdp.get_actions(), options, inner_factory, alpha=0.1, epsilon=0.1)
     #Flat Q Learning
     q_learning = QLearningAgent(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)
 
     run_agents([SimpleRLAgent(agent, options, name="Intraoption-Q-Agent"), q_learning], 
                 four_room_mdp, 
-                experiment_params(instances=5, episodes=500, steps=400, cumulative_plot=True))
+                experiment_params(instances=2, episodes=2000, steps=100, cumulative_plot=True))

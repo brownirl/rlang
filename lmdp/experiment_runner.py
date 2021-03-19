@@ -54,10 +54,9 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
 
     value_per_episode = [0] * episodes
     gamma = mdp.get_gamma()
-
+    
     # For each episode.
     for episode in tqdm(range(1, episodes + 1)):
-
         cumulative_episodic_reward = 0
 
         if verbose:
@@ -90,7 +89,7 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
             action = agent.act(state, reward)
             # Terminal check.
             if state.is_terminal():
-
+                
                 if verbose:
                     sys.stdout.write("x")
 
@@ -100,6 +99,13 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
                     experiment.add_experience(agent, state, action, 0, state,
                                               time_taken=time.clock()-step_start)
                     continue
+                if reset_at_terminal:
+                    # Reset the MDP.
+                    next_state = mdp.get_init_state()
+                    mdp.reset()
+                elif resample_at_terminal and step < steps:
+                    mdp.reset()
+                    return True, step, value_per_episode
                 break
 
             # Execute in MDP.
@@ -120,15 +126,15 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
                                           reward_to_track, next_state,
                                           time_taken=time.clock() - step_start)
 
-            if next_state.is_terminal():
-                if reset_at_terminal:
-                    # Reset the MDP.
-                    next_state = mdp.get_init_state()
-                    mdp.reset()
-                elif resample_at_terminal and step < steps:
-                    mdp.reset()
-                    return True, step, value_per_episode
-                break
+            # if next_state.is_terminal():
+            #     if reset_at_terminal:
+            #         # Reset the MDP.
+            #         next_state = mdp.get_init_state()
+            #         mdp.reset()
+            #         break
+            #     elif resample_at_terminal and step < steps:
+            #         mdp.reset()
+            #         return True, step, value_per_episode
 
             # Update pointer.
             state = next_state
@@ -152,7 +158,6 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
     # Only print if our experiment isn't trivially short.
     if verbose:
         print("\tLast episode reward:", cumulative_episodic_reward)
-
     return False, steps, value_per_episode
     
 def run_agents(agents, mdp, exp_params=None):

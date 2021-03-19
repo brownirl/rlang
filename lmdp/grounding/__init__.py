@@ -15,3 +15,4 @@ from lmdp.grounding.expressions.ExpressionsClass import A, S_prime, S
 from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
+from lmdp.grounding.actions.options import Option

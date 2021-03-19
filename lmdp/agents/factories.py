@@ -50,10 +50,50 @@ class QLearning(QLearningAgent):
     def __init__(self, *args, beta=0.2, **kwargs):
         self._beta = beta
         QLearningAgent.__init__(self, *args, **kwargs)
+    
+    def act(self, state, timestep=1, learning=True):
+        if learning:
+            self.update(self.prev_state, self.prev_action, state['reward'], state)
+        if self.explore == "softmax":
+            # Softmax exploration
+            action = self.soft_max_policy(state['observation'])
+        else:
+            # Uniform exploration
+            action = self.epsilon_greedy_q_policy(state['observation'])
 
-    def act(self, state):
-        action = super().act(state['observation'], state['reward'])
+        self.prev_state = state['observation']
+        self.prev_action = action
+        self.step_number += 1
+
+        # Anneal params.
+        if learning and self.anneal:
+            self._anneal()
+
         return action
+
+    def update(self, state, action, reward, next_state):
+        '''
+        Args:
+            state (State)
+            action (str)
+            reward (float)
+            next_state (State)
+
+        Summary:
+            Updates the internal Q Function according to the Bellman Equation. (Classic Q Learning update)
+        '''
+        # If this is the first state, just return.
+        if state is None:
+            self.prev_state = next_state['observation']
+            return
+
+        # Update the Q Function.
+        prev_q_val = self.get_q_value(state, action)
+        max_q_curr_state = self.get_max_q_value(next_state['observation'])
+        if not next_state['done']:
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (reward + self.gamma*max_q_curr_state)
+        else:
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward 
 
     def eval(self, state):
         return super().act(state['observation'], state['reward'], learning=False)
@@ -82,7 +122,61 @@ class QLearning(QLearningAgent):
 
         return softmax
 
+    def __repr__(self):
+        r = []
+        for s in self.q_func.keys():
+            r.append(f"Q[{s}]= [{list(self.q_func[s].items())}]")
+        return '\n'.join(r)
+
+
 class OptQLearning(QLearning):
+    def act(self, state, learning=True, timestep=1):
+        if learning:
+            self.update(self.prev_state, self.prev_action, state['reward'], state, timestep=timestep)
+        if not state['done']:
+            if self.explore == "softmax":
+                # Softmax exploration
+                action = self.soft_max_policy(state['observation'])
+            else:
+                # Uniform exploration
+                action = self.epsilon_greedy_q_policy(state['observation'])
+        else:
+            action = self.actions[0]
+
+        self.prev_state = state['observation']
+        self.prev_action = action
+        self.step_number += 1
+
+        # Anneal params.
+        if learning and self.anneal:
+            self._anneal()
+
+        return action
+
+    def update(self, state, action, reward, next_state, timestep=1):
+        '''
+        Args:
+            state (State)
+            action (str)
+            reward (float)
+            next_state (State)
+
+        Summary:
+            Updates the internal Q Function according to the Bellman Equation. (Classic Q Learning update)
+        '''
+        # If this is the first state, just return.
+        if state is None:
+            self.prev_state = next_state
+            return
+
+        # Update the Q Function.
+        prev_q_val = self.get_q_value(state, action)
+        if not next_state['done']:
+            max_q_curr_state = self.get_max_q_value(next_state['observation'])
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (reward + (self.gamma**timestep)*max_q_curr_state)
+        else:
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward
+
     def epsilon_greedy_q_policy(self, state):
         '''
         Args:
@@ -129,7 +223,7 @@ class OptQLearning(QLearning):
 
 
     def _get_active_options(self, state):
-        return [o for o in self.actions if o.initiation(RLState(state.features())).squeeze()]
+        return [o for o in self.actions if o.initiation(RLState(state.features()))]
 
 class OptQLearningFactory(AgentFactory):
     def __init__(self, 

@@ -1,11 +1,12 @@
 '''
-    Hierarchical RL Agent
+    Hierarchical RL Agents
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: March 2021
 '''
 import random
 from lmdp.grounding.states.StateClass import State as RLangState
 from copy import deepcopy
+
 class HierarchicalAgent:
     def __init__(self, actions, options, outer_agent, inner_agent, warmup_period=0, discount_factor=0.99):
         self._actions = actions
@@ -60,13 +61,31 @@ class HierarchicalAgent:
         return [o for o in self._options if o.initiation(RLangState(state['observation']))]
 
     def reset(self):
+        self.end_of_episode()
+        self._inner_agent = deepcopy(self._inner)
+        self._outer_agent = deepcopy(self._outer)
+
+    def end_of_episode(self):
         self._t = 0
         self._r = 0
         self._curr_option = None
         self._steps = 0
-        self._inner_agent = deepcopy(self._inner)
-        self._outer_agent = deepcopy(self._outer)
         
+class SubgoalHierarchicalAgent(HierarchicalAgent):
+    def inner_is_executing(self, state):
+        if self._inner_agent.is_executing(state): # not terminated
+            return True
+        else:
+            if (self._curr_option.termination(state['observation'])): # goal reached.
+                s =  {'observation': state['observation'], 'reward': 1, 'done': True}
+                self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+                self._inner_agent.stop(state)
+                self._curr_option = None
+            return False
+    
+    def inner_agent_act(self, state):
+        s =  {'observation': state['observation'], 'reward': -.01, 'done': state['done']}
+        return self._inner_agent.act(s)
 
 class OptionAgent(HierarchicalAgent):
 
@@ -77,20 +96,6 @@ class OptionAgent(HierarchicalAgent):
     def inner_agent_act(self, state):
         return self._inner_agent.eval(state)
 
-        
-class SubgoalHierarchicalAgent(HierarchicalAgent):
-    def inner_is_executing(self, state):
-        if self._inner_agent.is_executing(state): # not terminated
-            return True
-        else:
-            if (self._curr_option.termination(state['observation'])): # goal reached.
-                s =  {'observation': state['observation'], 'reward': 1, 'done': state['done']}
-                self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
-            return False
-    
-    def inner_agent_act(self, state):
-        s =  {'observation': state['observation'], 'reward': -0.1, 'done': state['done']}
-        return self._inner_agent.act(s)
 
 from lmdp.agents.factories import OptQLearningFactory
 
@@ -113,6 +118,31 @@ class IntraoptionQAgent(SubgoalHierarchicalAgent):
             o = self.random_policy(state) # uniformly at random during warmup
         return o
 
+class SMDPQAgent(SubgoalHierarchicalAgent):
+    def __init__(self, actions, options, inner_agent, warmup_period=0, discount_factor=0.99, alpha=0.1, epsilon=0.1, anneal=True):
+        outer_agent = OptQLearningFactory(options, alpha=alpha, epsilon=epsilon, gamma=discount_factor, anneal=anneal)
+        self._t = 0
+        self._max_inner_steps = 100
+        SubgoalHierarchicalAgent.__init__(self, actions, options, outer_agent, inner_agent, warmup_period=warmup_period, discount_factor=discount_factor)
+    
+    def act(self, state):
+        self._t += 1
+        if self._curr_option is None or not self.inner_is_executing(state):# or self._t > self._max_inner_steps:
+            o = self.outer_agent_act(state) # outer agent act
+            self._curr_option = o
+            self._inner_agent.execute(o) # start option o
+            self._t = 0 # restart time counter
+        if state['done']:
+            return random.choice(self._actions)
+        return self.inner_agent_act(state) # rollout option
+    
+    def outer_agent_act(self, state):
+        o = self._outer_agent.act(state, self._t)
+        if self._steps < self._warmup:
+            o = self.random_policy(state) # uniformly at random during warmup
+        return o
+
+
 class InnerAgent:
     def __init__(self, actions, options, agent_factory):
         self._executing_agent = None
@@ -133,9 +163,9 @@ class InnerAgent:
 
     def is_executing(self, state):
         if (self._executing_agent is None or self._executing_option is None):
+            self._curr_option = None
             return False
         if (self._executing_option.terminated(state['observation'])):
-            self.stop(state)
             return False
         return True
     
@@ -146,8 +176,12 @@ class OuterAgent:
     def __init__(self, options, agent_factory):
         self._agent = agent_factory(options)
 
-    def act(self, state):
-        return self._agent.act(state)
+    def act(self, state, timestep=1):
+        return self._agent.act(state, timestep=timestep)
 
     def eval(self, state):
         return self._agent.eval(state)
+    
+    def __repr__(self):
+        return repr(self._agent)
+
