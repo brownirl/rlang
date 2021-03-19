@@ -74,13 +74,18 @@ class HierarchicalAgent:
 class SubgoalHierarchicalAgent(HierarchicalAgent):
     def inner_is_executing(self, state):
         if self._inner_agent.is_executing(state): # not terminated
-            return True
-        else:
-            if (self._curr_option.termination(state['observation'])): # goal reached.
-                s =  {'observation': state['observation'], 'reward': 1, 'done': True}
+            if (not self._curr_option.is_executable(state['observation'])): # initiation condition if false -> Interrupt
+                s =  {'observation': state['observation'], 'reward': -.01, 'done': True}
                 self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
                 self._inner_agent.stop(state)
                 self._curr_option = None
+                return False
+            return True
+        elif (self._curr_option.terminated(state['observation'])): # goal reached.
+            s =  {'observation': state['observation'], 'reward': 1, 'done': True}
+            self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+            self._inner_agent.stop(state)
+            self._curr_option = None
             return False
     
     def inner_agent_act(self, state):

@@ -91,6 +91,7 @@ class Conditional:
         [self.lmdp.transition.add(boolean_sa, effect=effect) for (boolean_sa, effect) in empty_stack(self.transition_elements)]
         [self.lmdp.reward.add(boolean_sas, effect) for (boolean_sas, effect) in empty_stack(self.reward_elements)]
         [self.lmdp.value.add(boolean_sa, effect) for (boolean_sa, effect) in empty_stack(self.value_elements)]
+        [self.lmdp.policy.add(boolean_s, action) for (boolean_s, action) in empty_stack(self.policy_elements)]
 
     def __close_context(self):
         if (self.__is_otherwise_available):
@@ -122,6 +123,14 @@ class Conditional:
         else:
             raise "Boolean Expression must be a function of the State"
 
+
+    def execute(self, action=None):
+        self.__close_context()
+        if (self._boolean_expression.domain.is_s()):
+            self.policy_elements.append((self._boolean_expression, action))
+        else:
+            raise ValueError("Boolean Expression must be a function of the State")
+    
     def policy(self, action=None, boolean_expression_s=any_state):
         self.__close_context()
         if (boolean_expression_s.domain.is_s() and self._boolean_expression.domain.is_s()):

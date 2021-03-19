@@ -26,6 +26,7 @@ def experiment_params(**kwargs):
     return default_params
 
 if __name__=="__main__":
+    from lmdp.agents.lang_hierarchical import RLangIntraoptionQAgent, RLangSMDPQAgent
     from lmdp.agents.HierarchicalAgent import IntraoptionQAgent, OptionAgent
     from lmdp.agents.factories import LinearQLearningFactory, OptQLearningFactory, QLearningFactory
     from lmdp.utils.features import FourierBasis
@@ -61,14 +62,34 @@ if __name__=="__main__":
         c.subpolicy(until=room_2, name='o-room4-room2')
         c.subpolicy(until=room_3, name='o-room4-room3')
 
-    ### Hierarchical Q-Learning
-    options = sorted([sp.to_option2() for sp in lmdp.get_subpolicies()], key=lambda o: o._id)
-    # inner_factory = LinearQLearningFactory(four_room_mdp.get_actions(), features, alpha=0.3, anneal=True, explore="uniform")
-    inner_factory = QLearningFactory(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.2, anneal=True)
-    agent = IntraoptionQAgent(four_room_mdp.get_actions(), options, inner_factory, alpha=0.1, epsilon=0.1)
-    #Flat Q Learning
-    q_learning = QLearningAgent(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)
+    # initial policy
+    with lmdp.when(room_1) as c:
+        c.execute(lmdp('o-room1-room2'))
+    with lmdp.when(room_2) as c:
+        c.execute(lmdp('o-room2-room4'))
+    with lmdp.when(room_3) as c:
+        c.execute(lmdp('o-room3-room4'))
+        c.execute(lmdp('o-room3-room1'))
+    with lmdp.when(room_4) as c:
+        c.execute(lmdp('o-room4-room2'))
 
-    run_agents([SimpleRLAgent(agent, options, name="Intraoption-Q-Agent"), q_learning], 
+    ### Hierarchical Q-Learning
+    # options = sorted([sp.to_option2() for sp in lmdp.get_subpolicies()], key=lambda o: o._id)
+    # # inner_factory = LinearQLearningFactory(four_room_mdp.get_actions(), features, alpha=0.3, anneal=True, explore="uniform")
+    # inner_factory = QLearningFactory(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.2, anneal=True)
+    # agent = IntraoptionQAgent(four_room_mdp.get_actions(), options, inner_factory, alpha=0.1, epsilon=0.1)
+    # #Flat Q Learning
+    # q_learning = QLearningAgent(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)
+
+
+    #### Run agents
+    inner_factory = QLearningFactory(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)
+    rlang_agent = RLangSMDPQAgent(four_room_mdp.get_actions(), lmdp, inner_factory, anneal=False, epsilon=0.01, alpha=0.5)
+
+    #Flat Q Learning
+    flat_q_learning = QLearningAgent(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True, name="Flat-Q-Learning")
+
+    run_agents([SimpleRLAgent(rlang_agent, rlang_agent.get_options(), name="RLang-Option-Q-Agent"), 
+                flat_q_learning], 
                 four_room_mdp, 
-                experiment_params(instances=2, episodes=2000, steps=100, cumulative_plot=True))
+                experiment_params(instances=5, episodes=1000, steps=100, cumulative_plot=True))

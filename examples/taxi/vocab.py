@@ -18,7 +18,7 @@ from taxi_utils import taxi_state_generator
 # Taxi MDP Parameters
 WIDTH, HEIGHT = 5, 5
 agent = {"x":1, "y":1, "has_passenger":0}
-passengers = [{"x":4, "y":4, "dest_x":2, "dest_y":1, "in_taxi":0}, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
+passengers = [{"x":4, "y":1, "dest_x":2, "dest_y":1, "in_taxi":0}, {"x":3, "y":2, "dest_x":4, "dest_y":1, "in_taxi":0}]
 walls = [{"x": 2, "y": 2}]
 
 ## Utils
@@ -128,7 +128,7 @@ import numpy as np
 from lmdp.grounding.states.StateClass import State
 terminal_state = State(np.array((4,1,0,2,2,2,1,2,1,0,4,1,4,1,0)))
 passenger_1_in_dest = (passenger_1_dest == passenger_1_pos)
-assert (passenger_1_in_dest & bool_not(passenger_1_intaxi))(terminal_state) == True
+# assert (passenger_1_in_dest & bool_not(passenger_1_intaxi))(terminal_state) == True
 
 
 

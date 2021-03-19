@@ -39,79 +39,78 @@ if __name__ == "__main__":
     from lmdp.agents.simple_rl_agent import SimpleRLAgent
     from vocab import *
 
-    lmdp = LMDP(taxi_mdp)
-
-    # reward function
-    with lmdp.when(bool_and(passenger_0_pos == passenger_0_dest, A == "dropoff", passenger_in_taxi)) as c:
-        c.reward(1) 
-
-    # transition dynamics
-    with lmdp.when(bool_and(A == "dropoff", bool_not(passenger_in_taxi))) as c:
-        c.effect(S_prime == S)
-    with lmdp.when(bool_and(agent_position == passenger_0_pos, A == "pickup")) as c:
-        c.effect(passenger_in_taxi)
-
-    # policy structure
+    lmdp_none = LMDP(taxi_mdp)
+    lmdp_full = LMDP(taxi_mdp)
+    
+    ############ policy structure
     passenger_0_in_dest = (passenger_0_dest == passenger_0_pos)
     init_passenger_0_pick_up = bool_and(
                                         bool_not(passenger_in_taxi), # taxi is free
                                         bool_not(passenger_0_in_dest) # passenger 0 need to be taken to dest
                                         )
 
-    with lmdp.when(init_passenger_0_pick_up) as c:
+    with lmdp_none.when(init_passenger_0_pick_up) as c:
         c.subpolicy(name='pickup-passenger-0', 
-                    policy= partial(pick_up_passenger, passenger_0),
+                    # policy= partial(pick_up_passenger, passenger_0),
                     until=passenger_0_intaxi) # take passenger 0 to dest 
     
-    with lmdp.when(passenger_0_intaxi) as c:
+    with lmdp_none.when(passenger_0_intaxi) as c:
         c.subpolicy(name='dropoff-passenger-0', 
-                    policy=partial(dropoff_passenger, passenger_0), 
+                    # policy=partial(dropoff_passenger, passenger_0), 
                     until=passenger_0_in_dest & bool_not(passenger_0_intaxi))
-    
-    # with lmdp.when(bool_and(passenger_0_in_dest, passenger_0_intaxi)) as c:
-    #     c.subpolicy(name='dropoff-0',
-    #                 policy = lambda *args, **kwargs: "dropoff",
-    #                 until=bool_not(passenger_0_intaxi))
-    
+
     passenger_1_in_dest = (passenger_1_dest == passenger_1_pos)
     init_passenger_1_pick_up = bool_and(
                                         bool_not(passenger_in_taxi), # taxi is free
                                         bool_not(passenger_1_in_dest) # passenger 0 need to be taken to dest
                                         )
 
-    with lmdp.when(init_passenger_1_pick_up) as c:
+    with lmdp_none.when(init_passenger_1_pick_up) as c:
         c.subpolicy(name='pickup-passenger-1', 
                     # policy=partial(pick_up_passenger, passenger_1),
-                    until=passenger_1_intaxi) # take passenger 0 to dest 
+                    until=passenger_1_intaxi) # take passenger 1 to dest 
     
-    with lmdp.when(passenger_1_intaxi) as c:
+    with lmdp_none.when(passenger_1_intaxi) as c:
         c.subpolicy(name='dropoff-passenger-1', 
-                    #policy=partial(dropoff_passenger, passenger_1), 
+                    # policy=partial(dropoff_passenger, passenger_1), 
                     until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
-    
-    # with lmdp.when(bool_and(passenger_1_in_dest, passenger_1_intaxi)) as c:
-    #     c.subpolicy(name='dropoff-1',
-    #                 policy = lambda *args, **kwargs: "dropoff",
-    #                 until= bool_not(passenger_1_intaxi))
     
     # with lmdp.when(bool_and(passenger_0_in_dest, passenger_0_pos == agent_position)) as c:
     #     # do not pick up.
     #  
 
-    # with lmdp.when(bool_and(passenger_0_pos == agent_position, init_passenger_0_pick_up)) as c:
-    #     c.policy(action="pickup")
+    #### full options
+
+    with lmdp_full.when(init_passenger_0_pick_up) as c:
+        c.subpolicy(name='pickup-passenger-0', 
+                    policy= partial(pick_up_passenger, passenger_0),
+                    until=passenger_0_intaxi) # take passenger 0 to dest 
+    
+    with lmdp_full.when(passenger_0_intaxi) as c:
+        c.subpolicy(name='dropoff-passenger-0', 
+                    policy=partial(dropoff_passenger, passenger_0), 
+                    until=passenger_0_in_dest & bool_not(passenger_0_intaxi))
+
+    with lmdp_full.when(init_passenger_1_pick_up) as c:
+        c.subpolicy(name='pickup-passenger-1', 
+                    policy=partial(pick_up_passenger, passenger_1),
+                    until=passenger_1_intaxi) # take passenger 1 to dest 
+    
+    with lmdp_full.when(passenger_1_intaxi) as c:
+        c.subpolicy(name='dropoff-passenger-1', 
+                    policy=partial(dropoff_passenger, passenger_1), 
+                    until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
 
     #### Run agents
     inner_factory = QLearningFactory(taxi_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)
-    lang_hierarchical_agent = RLangSMDPQAgent(taxi_mdp.get_actions(), lmdp, inner_factory, anneal=False, epsilon=0.01, alpha=0.5)
+    rlang_none = RLangSMDPQAgent(taxi_mdp.get_actions(), lmdp_none, inner_factory, anneal=False, epsilon=0.01, alpha=0.5)
+    rlang_full = RLangSMDPQAgent(taxi_mdp.get_actions(), lmdp_full, inner_factory, anneal=False, epsilon=0.01, alpha=0.5)
 
     #Flat Q Learning
     flat_q_learning = QLearningAgent(taxi_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True, name="Flat-Q-Learning")
 
-    run_agents([SimpleRLAgent(lang_hierarchical_agent, lang_hierarchical_agent.get_options(), name="RLang-Intraoption-Q-Agent")], 
+    run_agents([SimpleRLAgent(rlang_full, rlang_full.get_options(), name="RLang-Option-Q-Agent (F)"),
+                SimpleRLAgent(rlang_none, rlang_none.get_options(), name="RLang-Option-Q-Agent (N)"),
+                flat_q_learning], 
                 taxi_mdp, 
-                experiment_params(instances=1, episodes=1000, steps=1000, cumulative_plot=False))
-    
-    # run_agents([flat_q_learning], 
-    #             taxi_mdp, 
-    #             experiment_params(instances=1, episodes=300, steps=1000))
+                experiment_params(instances=5, episodes=1000, steps=1000, cumulative_plot=True))
