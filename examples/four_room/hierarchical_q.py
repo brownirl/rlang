@@ -26,7 +26,7 @@ def experiment_params(**kwargs):
     return default_params
 
 if __name__=="__main__":
-    from lmdp.agents.lang_hierarchical import RLangIntraoptionQAgent, RLangSMDPQAgent
+    from lmdp.agents.lang_hierarchical import RLangSMDPQAgent_PriorPolicy as RLangSMDPQAgent
     from lmdp.agents.HierarchicalAgent import IntraoptionQAgent, OptionAgent
     from lmdp.agents.factories import LinearQLearningFactory, OptQLearningFactory, QLearningFactory
     from lmdp.utils.features import FourierBasis
@@ -84,7 +84,7 @@ if __name__=="__main__":
 
     #### Run agents
     inner_factory = QLearningFactory(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)
-    rlang_agent = RLangSMDPQAgent(four_room_mdp.get_actions(), lmdp, inner_factory, anneal=False, epsilon=0.01, alpha=0.5)
+    rlang_agent = RLangSMDPQAgent(four_room_mdp.get_actions(), lmdp, inner_factory, anneal=True, epsilon=0.01, alpha=0.8)
 
     #Flat Q Learning
     flat_q_learning = QLearningAgent(four_room_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True, name="Flat-Q-Learning")
@@ -92,4 +92,4 @@ if __name__=="__main__":
     run_agents([SimpleRLAgent(rlang_agent, rlang_agent.get_options(), name="RLang-Option-Q-Agent"), 
                 flat_q_learning], 
                 four_room_mdp, 
-                experiment_params(instances=5, episodes=1000, steps=100, cumulative_plot=True))
+                experiment_params(instances=5, episodes=500, steps=200, cumulative_plot=True))

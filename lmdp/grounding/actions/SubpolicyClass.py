@@ -20,6 +20,9 @@ class Subpolicy(Policy):
         self._termination = termination_symbol
         self.__executing = False
         Policy.__init__(self, policy_fun, name=name)
+    
+    def __call__(self, *args, **kwargs):
+        return self.to_option()
 
     def is_executable(self, state):
         return self._init(state)

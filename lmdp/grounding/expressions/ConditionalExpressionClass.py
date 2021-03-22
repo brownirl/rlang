@@ -69,15 +69,12 @@ class Conditional:
         
 
     def when(self, boolean_expression):
-        # self.conditional_stack.append(boolean_expression)
         self.contexts.append(self.current_context)
         self.current_context = Context(WHEN_CTX, boolean_expression, self._boolean_expression) # current context
         self._boolean_expression = self.current_context.outer_ctx & boolean_expression  # boolean expression to use within the context
         return self
 
     def otherwise(self):
-        # condition = self.conditional_stack.pop() 
-        # self.conditional_stack.append(condition.not_())
         if (self.__is_otherwise_available):
             self.current_context = Context(OTHERWISE_CTX, bool_not(self.current_context.boolean), self.current_context.outer_ctx)
             self._boolean_expression = self.current_context.outer_ctx & self.current_context.boolean
@@ -113,7 +110,7 @@ class Conditional:
             opt = Subpolicy(initiation & self._boolean_expression, policy, termination_symbol=until, name=name)
             self.subpolicies.append(opt)
         else:
-            raise "Boolean Expression must be a function of State s"
+            raise ValueError("Boolean Expression must be a function of State s")
 
     def symbol(self, expression=any_state, name=None):
         self.__close_context()
@@ -121,7 +118,7 @@ class Conditional:
             ss = Symbol(expression & self._boolean_expression, name=name)
             self.symbols.append(ss)
         else:
-            raise "Boolean Expression must be a function of the State"
+            raise ValueError("Boolean Expression must be a function of the State")
 
 
     def execute(self, action=None):
@@ -136,7 +133,7 @@ class Conditional:
         if (boolean_expression_s.domain.is_s() and self._boolean_expression.domain.is_s()):
             self.policy_elements.append((boolean_expression_s & self._boolean_expression, action))
         else:
-            raise "Boolean Expression must be a function of the State"
+            raise ValueError("Boolean Expression must be a function of the State")
 
     def reward(self, real_sas_expression):
         self.__close_context()
@@ -154,7 +151,7 @@ class Conditional:
             b = boolean_expression_sa & self._boolean_expression
             self.transition_elements.append((b, Effect(b, effect_expression)))
         else:
-            raise "Boolean Expression must be a function of the State-Action"
+            raise ValueError("Boolean Expression must be a function of the State-Action")
 
 if __name__=="__main__":
 
