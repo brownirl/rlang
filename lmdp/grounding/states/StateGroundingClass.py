@@ -209,12 +209,6 @@ class StateFeature(StateFactor):
         RealExpression.__repr__(self)
 
 
-def state_feature(dim=1):
-    def __state_feature(func):
-        return StateFeature(func, dim, name=func.__name__)
-    return __state_feature
-
-
 if __name__ == '__main__':
     import numpy as np
     from lmdp.grounding.states.StateClass import BatchedState

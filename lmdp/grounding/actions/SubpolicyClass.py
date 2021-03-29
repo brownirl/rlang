@@ -48,6 +48,9 @@ class Subpolicy(Policy):
             return Subpolicy(any_state, action, any_state, name=action.name)
         return Subpolicy(any_state, lambda **args: action, any_state, name="a-"+str(action))
 
+    def __repr__(self):
+        return f"(at: {repr(self.init_symbol)}, {repr(self.policy_fun)}, until: {repr(self.termination_symbol)})"
+
 class SubpolicyChain(Subpolicy):
     def __init__(self, subpolicies):
         self.subpolicies = subpolicies

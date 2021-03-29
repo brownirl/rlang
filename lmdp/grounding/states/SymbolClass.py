@@ -45,6 +45,7 @@ class Symbol(Grounding, BooleanExpression):
 Any = Symbol(lambda *args: True, name='any-symbol') 
 None_ = Symbol(lambda  *args: False, name='none-symbol')
 
+
         
 if __name__ == "__main__":
     import numpy as np
