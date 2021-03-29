@@ -34,7 +34,7 @@ class StateFactor(Grounding, RealExpression):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
         Grounding.__init__(self, name)
-        RealExpression.__init__(self, self.executor, len(self.feature_positions), domain=["state"])
+        RealExpression.__init__(self, self.executor, len(self.feature_positions), domain=["state"], name=name)
         StateFactor.counter += 1
         self._rest = None
     
@@ -69,7 +69,7 @@ class StateFactor(Grounding, RealExpression):
             names = list(map(lambda x: x.name, others))
             name = '(' + self.name +',' + ','.join(names) + ')'
         feature_positions = set(self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
-        return StateFeature(sorted(list(feature_positions)), name=name, operator='.')
+        return StateFactor(sorted(list(feature_positions)), name=name)
 
     def real_expression(self):
         return self
@@ -192,14 +192,27 @@ class StateFeature(StateFactor):
         self._variables = variables
         self.__function = function
         self.number_features = number_of_features
+        RealExpression.__init__(self, self.executor, 
+                                dimension=self.number_features, 
+                                domain=['state'],
+                                name=name,
+                                operator=operator,
+                                operands=self._variables)
     
     def executor(self, state):
         return self.__function(state)
     def number_of_features(self):
         return self.number_features
     def variables(self):
-        return self._variables
-    
+        return self._variables 
+    def __repr__(self):
+        RealExpression.__repr__(self)
+
+
+def state_feature(dim=1):
+    def __state_feature(func):
+        return StateFeature(func, dim, name=func.__name__)
+    return __state_feature
 
 
 if __name__ == '__main__':
