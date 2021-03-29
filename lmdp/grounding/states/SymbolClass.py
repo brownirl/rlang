@@ -17,6 +17,7 @@ class Symbol(Grounding, BooleanExpression):
             name = "symbol-" + str(Symbol.counter)
         Grounding.__init__(self, name)
         BooleanExpression.__init__(self, boolean_fun, domain=["state"])
+        Symbol.counter += 1
     
     def and_(self, other):
         if(isinstance(other, Symbol)):

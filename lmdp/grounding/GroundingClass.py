@@ -15,3 +15,6 @@ class Grounding(object):
 
     def __hash__(self):
         return self._name.__hash__()
+
+    def __repr__(self):
+        return self._name

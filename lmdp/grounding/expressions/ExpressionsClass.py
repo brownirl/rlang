@@ -14,10 +14,11 @@ sys.path.append(os.path.abspath("./"))
 from lmdp.utils.expression_utils import Domain, Codomain
 
 class Expression:
-    def __init__(self, fun, domain=[], codomain=[]):
+    def __init__(self, fun, domain=[], codomain=[], name=None):
         self._fun = fun
         self._domain = Domain(domain)
         self._codomain = Codomain(codomain)    
+        self._name = name
     
     def __call__(self, *args, **kwargs):
         fun_args = self.__get_arguments(args, kwargs)
@@ -54,7 +55,6 @@ class Expression:
             return Expression(lambda **args: expression == self.__call__(**args), 
                                         domain=self.domain(),
                                         codomain=["boolean"])
-        
 
     def __compose__(self, expression):
 
@@ -66,7 +66,6 @@ class Expression:
                     new_args = [new_args]
                 new_named_args = dict(zip(expression.codomain(), new_args))
 
-                
                 for a in (self.domain - expression.codomain):
                     new_named_args[a] = args[a]
                 return self.__call__(**new_named_args)
@@ -83,7 +82,12 @@ class Expression:
     def codomain(self):
         return self._codomain
 
+    def __repr__(self):
+        if self._name is None:
+            return "(exp: " + repr(self.domain) + "->" + repr(self.codomain) + ")"
+        else: 
+            return self._name
 
-S = Expression(lambda state: state, domain=["state"], codomain=["state"])
-A = Expression(lambda action: action, domain=["action"], codomain=["action"])
-S_prime = Expression(lambda next_state: next_state, domain=["next_state"], codomain=["state"])
+S = Expression(lambda state: state, domain=["state"], codomain=["state"], name="s")
+A = Expression(lambda action: action, domain=["action"], codomain=["action"], name="a")
+S_prime = Expression(lambda next_state: next_state, domain=["next_state"], codomain=["state"], name="s'")

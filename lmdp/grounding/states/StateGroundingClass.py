@@ -29,7 +29,7 @@ class StateFactor(Grounding, RealExpression):
             Args: feature_positions is an array-like of indices (list, tuple or np.array)
         '''
         if(name is None):
-            name = "state-feature-" + str(StateFactor.counter)
+            name = "state-factor-" + str(StateFactor.counter)
         if (isinstance(feature_positions, int)):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
@@ -69,7 +69,7 @@ class StateFactor(Grounding, RealExpression):
             names = list(map(lambda x: x.name, others))
             name = '(' + self.name +',' + ','.join(names) + ')'
         feature_positions = set(self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
-        return StateFactor(sorted(list(feature_positions)), name=name)
+        return StateFactor(sorted(list(feature_positions)), name=name, operator='.')
 
     def real_expression(self):
         return self
@@ -78,7 +78,7 @@ class StateFactor(Grounding, RealExpression):
         variables = []
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
             variables = other.variables() + self.variables()
-            return StateFeature(super().__add__(other), self.number_of_features(), variables)
+            return StateFeature(super().__add__(other), self.number_of_features(), variables, operator='+')
         elif(isinstance(other, RealExpression) or isinstance(other, (float, int, Sequence))):
             return super().__add__(other)
         else:
@@ -92,7 +92,7 @@ class StateFactor(Grounding, RealExpression):
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
             f = super().__sub__(other)
             variables = other.variables() + self.variables()
-            return StateFeature(f, self.number_of_features(), variables)
+            return StateFeature(f, self.number_of_features(), variables, operator='-')
         elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__sub__(other)
         else:
@@ -106,7 +106,7 @@ class StateFactor(Grounding, RealExpression):
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
             f = super().__mul__(other)
             variables = other.variables() + self.variables()
-            return StateFeature(f, self.number_of_features(), variables)
+            return StateFeature(f, self.number_of_features(), variables, operator='*')
         elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__mul__(other)
         else:
@@ -120,7 +120,7 @@ class StateFactor(Grounding, RealExpression):
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
             f = super().__truediv__(other)
             variables = other.variables() + self.variables()
-            return StateFeature(f, self.number_of_features(), variables)
+            return StateFeature(f, self.number_of_features(), variables, operator='/')
         elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__truediv__(other)
         else:
@@ -140,7 +140,7 @@ class StateFactor(Grounding, RealExpression):
             raise ValueError("Index out of bounds")
         
         n_features = 1 if isinstance(idx, int) else len(idx)
-        return StateFeature(lambda state: self.__call__(state)[idx], n_features, self.variables)
+        return StateFeature(lambda state: self.__call__(state)[idx], n_features, self.variables, operator='[]')
     
     @classmethod
     def check_concat(self, sequence, state_dim):
@@ -180,9 +180,15 @@ class StateFactor(Grounding, RealExpression):
             return reduce(lambda x, y: x | y , t)
         return partial(__in, l)
 
+
 class StateFeature(StateFactor):
-    def __init__(self, function, number_of_features, variables=None):
-        StateFactor.__init__(self, list(range(number_of_features)))
+    _id = 0
+    def __init__(self, function, number_of_features, variables=None, name=None, operator=None):
+        if name is None:
+            name= "state-feature-" + str(StateFeature._id)
+        self._operator = operator
+        StateFeature._id += 1
+        StateFactor.__init__(self, list(range(number_of_features)), name=name)
         self._variables = variables
         self.__function = function
         self.number_features = number_of_features
@@ -193,6 +199,7 @@ class StateFeature(StateFactor):
         return self.number_features
     def variables(self):
         return self._variables
+    
 
 
 if __name__ == '__main__':

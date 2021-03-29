@@ -1,5 +1,6 @@
 class Domain:
     DOMAINS = {0: "state", 1: "action", 2: "next_state"}
+    DOMAINS_repr = {0: "S", 1: "A", 2: "S'"}
     INV_DOMAINS = dict(zip(DOMAINS.values(), DOMAINS.keys()))
     def __init__(self, domain):
         self._domain = set([Domain.INV_DOMAINS[d] for d in domain])
@@ -56,6 +57,13 @@ class Domain:
     def is_ss(self):
         return 0 in self._domain and 1 not in self._domain and 2 in self._domain
 
+    def __repr__(self):
+        if (len(self._domain) == 0):
+            return ""
+        else:
+            d = [Domain.DOMAINS_repr[d] for d in sorted(list(self._domain))]
+            return " x ".join(d)
+
 class Codomain:
     CODOMAINS = {0: "state", 
                  1: "action", 
@@ -68,6 +76,17 @@ class Codomain:
                  8: "value",
                  9: "policy",
                  10: "boolean"}
+    CODOMAINS_repr =   {0: "S", 
+                        1: "A", 
+                        2: "S'",
+                        3: "2^S",
+                        4: "2^A",
+                        5: "R",
+                        6: "T",
+                        7: "Rew",
+                        8: "V",
+                        9: "pi",
+                        10: "{T, F}"}
 
     INV_CODOMAINS = dict(zip(CODOMAINS.values(), CODOMAINS.keys()))
     def __init__(self, codomain):
@@ -108,15 +127,22 @@ class Codomain:
 
     def __len__(self):
         return len(self._codomain)
+    
+    def __repr__(self):
+        if (len(self._domain) == 0):
+            return ""
+        else:
+            d = [Codomain.CODOMAINS_repr[d] for d in sorted(list(self._codomain))]
+            return " x ".join(d)
 
 if __name__ == "__main__":
     d1 = Domain(["state", "action"])
     d2 = Domain(["state", "next_state", "action"])
     d3 = Domain(["state", "action", "next_state"])
 
-    print(d1)
-    print(d2)
-    print(d3)
+    print(repr(d1))
+    print(repr(d2))
+    print(repr(d3))
 
     assert (d2 == d3)
     assert not d2 == d1
