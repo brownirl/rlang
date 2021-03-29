@@ -117,3 +117,9 @@ bool_false = BooleanExpression(lambda **args: False, domain=[], name='False')
 any_state = BooleanExpression(bool_true, domain=["state"], name='any_state')
 any_action = BooleanExpression(bool_true, domain=["action"], name='any_action')
 any_next_state = BooleanExpression(bool_true, domain=["next_state"], name='any_next_state')
+
+
+def boolean(domain=[]):
+    def __boolean_dec(fun):
+        return BooleanExpression(fun, domain=domain, name=fun.__name__)
+    return __boolean_dec

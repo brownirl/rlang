@@ -69,7 +69,7 @@ class StateFactor(Grounding, RealExpression):
             names = list(map(lambda x: x.name, others))
             name = '(' + self.name +',' + ','.join(names) + ')'
         feature_positions = set(self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
-        return StateFactor(sorted(list(feature_positions)), name=name, operator='.')
+        return StateFeature(sorted(list(feature_positions)), name=name, operator='.')
 
     def real_expression(self):
         return self

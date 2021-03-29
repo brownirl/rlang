@@ -12,16 +12,17 @@ from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, 
 
 class Symbol(Grounding, BooleanExpression):
     counter = 0
-    def __init__(self, boolean_fun, name=None):
+    def __init__(self, boolean_fun, name=None, operator=None, operands=None):
         if (name is None):
             name = "symbol-" + str(Symbol.counter)
         Grounding.__init__(self, name)
-        BooleanExpression.__init__(self, boolean_fun, domain=["state"])
+        BooleanExpression.__init__(self, boolean_fun, domain=["state"], 
+                                  name=name, operator=operator, operands=operands)
         Symbol.counter += 1
     
     def and_(self, other):
         if(isinstance(other, Symbol)):
-            return Symbol(super().and_(other))
+            return Symbol(super().and_(other), operator='and', operands=[self, other])
         elif (isinstance(other, bool)):
             return super().and_(other)
         else:
@@ -29,16 +30,17 @@ class Symbol(Grounding, BooleanExpression):
    
     def or_(self, other):
         if(isinstance(other, Symbol)):
-            return Symbol(super().or_(other))
+            return Symbol(super().or_(other), operator='and', operands=[self, other])
         elif (isinstance(other, bool)):
             return super().or_(other)
         else:
             return NotImplemented
     
     def not_(self):
-        return Symbol(super().not_())
+        return Symbol(super().not_(), operator='not', operands=[self])
     
-
+    def __repr__(self):
+        return BooleanExpression.__repr__(self)
 
 Any = Symbol(lambda *args: True, name='any-symbol') 
 None_ = Symbol(lambda  *args: False, name='none-symbol')
@@ -58,6 +60,8 @@ if __name__ == "__main__":
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")
     diag_not_start = bool_and(bool_not(start), diag)
+    d = diag & bool_not(start)
+    print(repr(d))
     print(f"Boolean ops: True == {diag_not_start(s1)}")
     print(f"Boolean ops: False == {diag_not_start(s2)}")
     print(f"s1 belongs to {diag.name}: {diag(s1)} == True")

@@ -71,11 +71,7 @@ class PredictiveEffect(Effect):
             error += "Effect ambiguous."
         if len(error) > 0: 
             raise ValueError(error)
-        
-        # for (f, exp) in d.items():
             
-
-
 
 if __name__=="__main__":
     from simple_rl.mdp.StateClass import State

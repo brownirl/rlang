@@ -88,6 +88,11 @@ class Expression:
         else: 
             return self._name
 
+def rlang_exp(domain, codomain):
+    def __rlang_exp(func):
+        return Expression(func, domain=domain, codomain=codomain, name=func.__name__)
+    return __rlang_exp
+
 S = Expression(lambda state: state, domain=["state"], codomain=["state"], name="s")
 A = Expression(lambda action: action, domain=["action"], codomain=["action"], name="a")
 S_prime = Expression(lambda next_state: next_state, domain=["next_state"], codomain=["state"], name="s'")

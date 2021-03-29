@@ -12,25 +12,29 @@ from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from collections.abc import Sequence
 
 class RealExpression(Expression):
-    def __init__(self, expression_fun, dimension=1, domain=[], codomain=["real"]):
-        # if(isinstance(expression_fun, Expression)):
-        #     domain.append(expression_fun.domain())
+    _id = 0
+    def __init__(self, expression_fun, dimension=1, domain=[], codomain=["real"], name=None, operator=None, operands=None):
         self.__dim = dimension
-        Expression.__init__(self, expression_fun, domain, codomain)
-
+        self._operator = operator
+        self._operands = operands
+        if name is None:
+            name = "real-exp-" + str(RealExpression._id)
+            RealExpression._id += 1
+        Expression.__init__(self, expression_fun, domain, codomain, name=name)
     
     def dim(self):
         return self.__dim
 
     def __add__(self, other):
         domain = self.domain()
+        operands = [self, other]
         if (isinstance(other, RealExpression)):
-            if(other.dim == self.dim()):
+            if(other.dim() == self.dim()):
                 domain += other.domain()
                 f = lambda **args: self.__call__(**args) + other(**args)
             else:
                 raise "Shapes are not compatible"
-        elif (isinstance(other, float) or isinstance(other, int)):
+        elif (isinstance(other, (float, int))):
             f = lambda **args: self.__call__(**args) + other
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self.dim(),)):
@@ -44,10 +48,11 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, dimension=self.dim(), domain=domain)
+        return RealExpression(f, dimension=self.dim(), domain=domain, operator='+', operands=operands)
 
     def __sub__(self, other):
         domain = self.domain()
+        operands = [self, other]
         if (isinstance(other, RealExpression)):
             if(other.dim() == self.dim()):
                 domain += other.domain()
@@ -68,10 +73,11 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, self.dim(), domain=domain)
+        return RealExpression(f, self.dim(), domain=domain, operator='-', operands=operands)
 
     def __mul__(self, other):
         domain = self.domain()
+        operands=[self, other]
         if (isinstance(other, RealExpression)):
             if(other.dim() == self.dim()):
                 domain += other.domain()
@@ -92,10 +98,11 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, self.dim(), domain=domain)
+        return RealExpression(f, self.dim(), domain=domain, operator='*', operands=operands)
 
     def __truediv__(self, other):
         domain = self.domain()
+        operands=[self, other]
         if (isinstance(other, RealExpression)):
             if(other.dim() == self.dim()):
                 domain += other.domain()
@@ -116,64 +123,82 @@ class RealExpression(Expression):
                 raise "Shapes are not compatible"
         else:
             return NotImplemented
-        return RealExpression(f, self.dim(), domain=domain)
+        return RealExpression(f, self.dim(), domain=domain, operator='/', operands=operands)
 
     def __lt__(self, other):
+        operands = [self, other]
         if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other.dim() == self.dim()):
-                    return BooleanExpression(lambda **args: self.__call__(**args) < other(**args), domain=self.domain()+other.domain())
+                    return BooleanExpression(lambda **args: self.__call__(**args) < other(**args), domain=self.domain()+other.domain(), operator='<', operands=operands)
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanExpression(lambda **args: self.__call__(**args) < other, domain=self.domain())
+                return BooleanExpression(lambda **args: self.__call__(**args) < other, domain=self.domain(), operator='<', operands=operands)
             else:
                 return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
 
     def __le__(self, other):
+        operands=[self, other]
         if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other.dim() == self.dim()):
-                    return BooleanExpression(lambda **args: self.__call__(**args) <= other(**args), domain=self.domain()+other.domain())
+                    return BooleanExpression(lambda **args: self.__call__(**args) <= other(**args), 
+                                                domain=self.domain()+other.domain(), 
+                                                operator='<=', operands=operands)
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanExpression(lambda **args: self.__call__(**args) <= other, domain=self.domain())
+                return BooleanExpression(lambda **args: self.__call__(**args) <= other, 
+                                        domain=self.domain(), 
+                                        operator='<', operands=operands)
             else:
                 return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
 
     def __eq__(self, other):
+        operands = [self, other]
         if (isinstance(other, RealExpression)):
             if(other.dim() == self.dim()):
-                return BooleanExpression(lambda **args: np.array_equal(self.__call__(**args), other(**args)), domain=self.domain()+other.domain())
+                return BooleanExpression(lambda **args: np.array_equal(self.__call__(**args), other(**args)), 
+                                        domain=self.domain()+other.domain(), 
+                                        operator='==', operands=operands)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
             if (self.dim() == 1):
-                return BooleanExpression(lambda **args: self.__call__(**args) == other, domain=self.domain())
+                return BooleanExpression(lambda **args: self.__call__(**args) == other,
+                                         domain=self.domain(), 
+                                         operator='==', operands=operands)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self.dim(),)):
-                return BooleanExpression(lambda **args: np.array_equal(self.__call__(**args), other), domain=self.domain())
+                return BooleanExpression(lambda **args: np.array_equal(self.__call__(**args), other), 
+                                         domain=self.domain(),
+                                         operator='==', operands=operands)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, (list,tuple))):
             if(len(other) == self.dim()):
-                return BooleanExpression(lambda **args: np.array_equal(self.__call__(**args), other), domain=self.domain())
+                return BooleanExpression(lambda **args: np.array_equal(self.__call__(**args), other),
+                                         domain=self.domain(),
+                                         operator='==', operands=operands)
             else:
                 raise "Length must be equal"
         else:
             return NotImplemented
 
     def __ne__(self, other):
+        operands = [self, other]
         if (isinstance(other, RealExpression)):
             if(other.dim() == self.dim()):
-                return BooleanExpression(lambda **args: not np.array_equal(self.__call__(**args), other(**args)), domain=self.domain()+other.domain())
+                return BooleanExpression(lambda **args: not np.array_equal(self.__call__(**args), other(**args)), 
+                                         domain=self.domain()+other.domain(),
+                                         operator='!=', operands=operands)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
@@ -183,46 +208,61 @@ class RealExpression(Expression):
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
             if(other.shape == (self.dim(),)):
-                return BooleanExpression(lambda **args: not np.array_equal(self.__call__(**args), other), domain=self.domain())
+                return BooleanExpression(lambda **args: not np.array_equal(self.__call__(**args), other), 
+                                         domain=self.domain(),
+                                         operator='!=', operands=operands)
             else:
                 raise "Length must be equal"
         elif (isinstance(other, (tuple, list))):
             if(len(other) == self.dim()):
-                return BooleanExpression(lambda **args: not np.array_equal(self.__call__(**args), other), domain=self.domain())
+                return BooleanExpression(lambda **args: not np.array_equal(self.__call__(**args), other),
+                                         domain=self.domain(),
+                                         operator='!=', operands=operands)
             else:
                 raise "Length must be equal"
         else:
             return NotImplemented
 
     def __gt__(self, other):
+        operands = [self, other]
         if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other.dim() == self.dim()):
-                    return BooleanExpression(lambda **args: self.__call__(**args) > other(**args), domain=self.domain()+other.domain())
+                    return BooleanExpression(lambda **args: self.__call__(**args) > other(**args), 
+                                            domain=self.domain()+other.domain(),
+                                            operator='>', operands=operands)
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanExpression(lambda **args: self.__call__(**args) > other, domain=self.domain())
+                return BooleanExpression(lambda **args: self.__call__(**args) > other,
+                                         domain=self.domain(),
+                                         operator='>', operands=operands)
             else:
                 return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
 
     def __ge__(self, other):
+        operands = [self, other]
         if (self.dim() == 1):
             if (isinstance(other, RealExpression)):
                 if(other.dim() == self.dim()):
-                    return BooleanExpression(lambda **args: self.__call__(**args) >= other(**args), domain=self.domain()+other.domain())
+                    return BooleanExpression(lambda **args: self.__call__(**args) >= other(**args), 
+                                             domain=self.domain()+other.domain(),
+                                             operator='>=', operands=operands)
                 else:
                     raise "Comparison not defined"
             elif (isinstance(other, float) or isinstance(other, int)):
-                return BooleanExpression(lambda **args: self.__call__(**args) >= other, domain=self.domain())
+                return BooleanExpression(lambda **args: self.__call__(**args) >= other, 
+                                         domain=self.domain(),
+                                         operator='>=', operands=operands)
             else:
                 return NotImplemented
         else:
             raise "Comparison not defined for vector groundings"
     
     def __getitem__(self, idx):
+        operands = [self, idx]
         if isinstance(idx, (list, tuple, np.ndarray)):
             if not self.__indices_within_bounds(idx, self.dim()):
                 raise ValueError("Indices out of bounds")
@@ -233,7 +273,10 @@ class RealExpression(Expression):
             raise ValueError("Index out of bounds")
         
         n_features = 1 if isinstance(idx, int) else len(idx)
-        return RealExpression(lambda **args: self.__call__(**args)[idx], dimension=n_features, domain=self.domain())
+        return RealExpression(lambda **args: self.__call__(**args)[idx], 
+                              dimension=n_features, 
+                              domain=self.domain(),
+                              operator='[]', operands=operands)
 
     def __compose__(self, expression):
         if(self.domain == expression.codomain): #composable
@@ -247,6 +290,24 @@ class RealExpression(Expression):
                 return False
         return True
 
+    def __repr__(self):
+        if (self._operator is not None):
+            if self._operator == '[]':
+                return self._operands[0].name + "[" + str(self._operands[1]) + ']'
+            else:
+                return "(" + repr(self._operands[0]) + f" {self._operator} " + repr(self._operands[1]) + ")" 
+        return self._name
+
+def real_exp(dim=1, domain=[]):
+    def __real_exp(func):
+        return RealExpression(func, dimension=dim, domain=domain, name=func.__name__)
+    return __real_exp
+
 if __name__ == "__main__":
     constant = RealExpression(lambda **args: 1.0)
-    print(f"{constant()} == 1.0")
+
+    @real_exp(domain=['state'])
+    def distance(state):
+        return state[0] + state[1]
+    
+    print(distance + 1)
