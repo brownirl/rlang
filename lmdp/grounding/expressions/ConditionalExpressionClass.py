@@ -89,7 +89,7 @@ class Conditional:
         [self.lmdp.transition.add(boolean_sa, effect=effect) for (boolean_sa, effect) in empty_stack(self.transition_elements)]
         [self.lmdp.reward.add(boolean_sas, effect) for (boolean_sas, effect) in empty_stack(self.reward_elements)]
         [self.lmdp.value.add(boolean_sa, effect) for (boolean_sa, effect) in empty_stack(self.value_elements)]
-        [self.lmdp.policy.add(boolean_s, action) for (boolean_s, action) in empty_stack(self.policy_elements)]
+        [self.lmdp.policy.execute(boolean_s, action) for (boolean_s, action) in empty_stack(self.ex_policy_elements)]
 
     def __close_context(self):
         if (self.__is_otherwise_available):

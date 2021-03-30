@@ -9,6 +9,8 @@ sys.path.append(os.path.abspath("./"))
 import numpy as np
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.utils.expression_utils import Domain
+from lmdp.utils.space import BatchedVector, BatchedTuple
 from collections.abc import Sequence
 
 class RealExpression(Expression):
@@ -17,6 +19,7 @@ class RealExpression(Expression):
         self.__dim = dimension
         self._operator = operator
         self._operands = operands
+
         if name is None:
             name = "real-exp-" + str(RealExpression._id)
             RealExpression._id += 1
@@ -298,10 +301,36 @@ class RealExpression(Expression):
                 return "(" + repr(self._operands[0]) + f" {self._operator} " + repr(self._operands[1]) + ")" 
         return self._name
 
+
+class RealConstant(RealExpression):
+    def __init__(self, constant, domain=[]):
+        self._constant = constant
+        _dim = 1 if isinstance(constant, (int, float)) else len(constant) 
+        RealExpression.__init__(self, self.__f, _dim, domain=domain)
+    
+    def __f(self, **kwargs):
+        batch_size = 1
+        if (Domain(["state"]) <= self.domain):
+            if isinstance(kwargs["state"], BatchedVector):
+                batch_size = len(kwargs["state"])
+        elif (Domain(["action"]) <= self.domain):
+            if isinstance(kwargs["action"], (BatchedVector, BatchedTuple)):
+                batch_size = len(kwargs["action"])
+        if batch_size > 1:
+            return np.array((self._constant,)*batch_size)
+        return self._constant
+
+    def __repr__(self):
+        return f"{self._name} = {self._constant}"
+
 def real_exp(dim=1, domain=[]):
     def __real_exp(func):
-        return RealExpression(func, dimension=dim, domain=domain, name=func.__name__)
+        if not isinstance(func, (int, float, tuple, list, np.ndarray)):
+            return RealExpression(func, dimension=dim, domain=domain, name=func.__name__)
+        else:
+            return RealConstant(func, domain=domain)
     return __real_exp
+
 
 if __name__ == "__main__":
     constant = RealExpression(lambda **args: 1.0)

@@ -91,9 +91,17 @@ class arraydict:
     
     def __str__(self):
         return str(self.data)
+    
+    def keys(self):
+        return self.index[0].objects()
+
     def numpy(self):
         return self.data
 
+def _cartesian(a1, a2):
+    r2 = np.tile(a2, (a1.shape[0],1))
+    r1 = np.repeat(a1, a2.shape[0], 0) 
+    return r1, r2
 
 if __name__=="__main__":
     from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState

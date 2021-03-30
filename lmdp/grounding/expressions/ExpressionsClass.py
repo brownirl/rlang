@@ -69,9 +69,9 @@ class Expression:
                 for a in (self.domain - expression.codomain):
                     new_named_args[a] = args[a]
                 return self.__call__(**new_named_args)
-
+            name = f"{self._name}({expression._name})"
             # return Expression(lambda **args: self.__call__(expression(**args)), domain=expression.domain(), codomain=self.codomain())
-            return Expression(composed_function, domain = set(self.domain()+expression.domain()) , codomain=self.codomain())
+            return Expression(composed_function, domain = set(self.domain()+expression.domain()) , codomain=self.codomain(), name=name)
         else:
             return NotImplemented
 

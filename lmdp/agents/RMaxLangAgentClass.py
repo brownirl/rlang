@@ -27,12 +27,6 @@ class RMaxLangAgent(LangAgent):
         self.q_func = self.initialize_q_function(self.state_space, self.rmax_agent.actions)
         self.r_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
         self.t_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
-
-
-        # self.rmax_agent.rewards = self.rewards
-        # self.rmax_agent.transitions = self.transitions
-        # self.rmax_agent.r_s_a_counts = self.r_s_a_counts
-        # self.rmax_agent.t_s_a_counts = self.t_s_a_counts
         self.rmax_agent.q_func = self.q_func
 
 
@@ -66,7 +60,7 @@ class RMaxLangAgent(LangAgent):
 
 
     def default_transition(self, state, action, state_prime):
-        next_states = self.lmdp.transition(state, action)
+        next_states = tuple(map(lambda x: x[1], filter(lambda x: x[0], self.lmdp.transition(state, action))))
         if (next_states is not None and len(next_states) > 0):
             transitions = reduce(lambda x, y: x or y, map(lambda n_state: n_state(state_prime), next_states), False)
             if transitions:
@@ -75,7 +69,7 @@ class RMaxLangAgent(LangAgent):
         return int(0)
 
     def default_rewards(self, state, action):
-        r = self.lmdp.reward(state, action, state)
+        r = tuple(map(lambda x: x[1], filter(lambda x: x[0], self.lmdp.reward(state, action, state))))
         if len(r) > 0:
             self.r_s_a_counts[state][action] += 1
         else:

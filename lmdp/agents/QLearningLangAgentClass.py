@@ -6,7 +6,7 @@
 '''
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
 from lmdp.agents.LangAgentClass import LangAgent
-from lmdp.utils.collections import defaultdict, arraydict, Index
+from lmdp.utils.collections import defaultdict, arraydict, Index, _cartesian
 from functools import reduce
 from collections import namedtuple
 import numpy as np
@@ -16,10 +16,7 @@ from itertools import product
 from tqdm import tqdm
 
 
-def _cartesian(a1, a2):
-    r2 = np.tile(a2, (a1.shape[0],1))
-    r1 = np.repeat(a1, a2.shape[0], 0) 
-    return r1, r2
+
 
 indices = namedtuple("SAIndex", ["state_space", "action_space"])
 def _indices(state_space_gen, action_space):
@@ -61,11 +58,8 @@ class QLearningLangAgent(LangAgent):
 
 
         t = self.indices.state_space.objects()
-        # s_ = map(lambda x: x.features(), t)
         s_ = BatchedState(tuple(t))
-        # s, s_prime  = zip(*map(lambda t: (t[0].data, t[1].data), t))
         s, s_prime = _cartesian(s_.numpy(), s_.numpy())
-        # s, s_prime = zip(*t)
         s, s_prime = BatchedState(s), BatchedState(s_prime)
         
 
@@ -73,10 +67,8 @@ class QLearningLangAgent(LangAgent):
         t = self.transitions.numpy()
         q = self.q_func.numpy()
         for a, i  in tqdm(self.indices.action_space.elems()):
-            # start = time.clock()
             print("Init rewards...")
             r[:,i] = self.default_rewards(s, a, s_prime).reshape(len(s_), len(s_))     
-            # end = time.clock()
             print("Init transitions...")
             t[:,i] = self.default_transition(s, a, s_prime).reshape(len(s_), len(s_))
             print("Init values...")
@@ -91,11 +83,6 @@ class QLearningLangAgent(LangAgent):
                 ns = ns(state_prime)
                 t = t | (bs & ns)
         return t
-        
-        # if (next_states is not None and len(next_states) > 0):
-        #     transitions = reduce(lambda x, y: x or y, map(lambda n_state: n_state(state_prime), next_states), False)
-        #     return int(transitions)
-        # return int(0)
 
     def default_rewards(self, state, action, s_prime):
         rewards = self.lmdp.reward(state, action, s_prime)

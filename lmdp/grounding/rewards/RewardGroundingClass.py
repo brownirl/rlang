@@ -8,7 +8,8 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.PartialFunctionClass import PartialFunction
-from lmdp.grounding.real.RealExpressionClass import RealExpression
+from lmdp.grounding.real.RealExpressionClass import RealExpression, real_exp
+from lmdp.grounding.states.StateClass import BatchedState
 import numpy as np
 
 class RewardGrounding(Grounding, PartialFunction):
@@ -45,7 +46,7 @@ class RewardGrounding(Grounding, PartialFunction):
                 - reward
         '''
         if (isinstance(reward, (float, int))):
-            r = RealExpression(lambda **args: np.ones(len(args["state"]))*reward, domain=["state", "action", "next_state"])
+            r = real_exp(domain=["state", "action", "next_state"])(reward)
         else:
             r = reward
         
