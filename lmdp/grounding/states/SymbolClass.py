@@ -1,71 +1,75 @@
 '''
     Symbol Base Class
     author: Rafael Rodriguez-Sanchez
-    date: August 2020
+    date: v0 August 2020
+          v1 January 2021 
 '''
-from lmdp.grounding.GroundingClass import Grounding
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
-class Symbol(Grounding):
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
+
+class Symbol(Grounding, BooleanExpression):
     counter = 0
-    def __init__(self, boolean_fun, name=None):
+    def __init__(self, boolean_fun, name=None, operator=None, operands=None):
         if (name is None):
             name = "symbol-" + str(Symbol.counter)
         Grounding.__init__(self, name)
-        self.__symbol = boolean_fun
-
-    def __call__(self, *args):
-        '''
-            This takes in the state from MDP.
-            Args:
-                - args[0] must be the state from MDP
-            return:
-                - bool: state belongs to the symbol (set)
-        '''
-        return self.__symbol(args[0])
+        BooleanExpression.__init__(self, boolean_fun, domain=["state"], 
+                                  name=name, operator=operator, operands=operands)
+        Symbol.counter += 1
     
     def and_(self, other):
         if(isinstance(other, Symbol)):
-            return lambda *args: self.__call__(*args) and other(*args)
+            return Symbol(super().and_(other), operator='and', operands=[self, other])
         elif (isinstance(other, bool)):
-            return lambda *args: self.__call__(*args) and other 
+            return super().and_(other)
         else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+            return NotImplemented
    
     def or_(self, other):
         if(isinstance(other, Symbol)):
-            return lambda *args: self.__call__(*args) or other(*args)
+            return Symbol(super().or_(other), operator='and', operands=[self, other])
         elif (isinstance(other, bool)):
-            return lambda *args: self.__call__(*args) or other 
+            return super().or_(other)
         else:
-            raise other.__name__() + " must be a Boolean Fun or bool"
+            return NotImplemented
     
     def not_(self):
-        return lambda *args: not self.__call__(*args)
+        return Symbol(super().not_(), operator='not', operands=[self])
     
-
+    def __repr__(self):
+        return BooleanExpression.__repr__(self)
 
 Any = Symbol(lambda *args: True, name='any-symbol') 
 None_ = Symbol(lambda  *args: False, name='none-symbol')
+
 
         
 if __name__ == "__main__":
     import numpy as np
     from simple_rl.mdp.StateClass import State
-    from StateGroundingClass import StateGrounding
+    from StateGroundingClass import StateFactor
     
     s1 = State(data=np.array([1, 1]))
     s2 = State(data=np.array([0, 1]))
-    x = StateGrounding(0, "x")
-    y = StateGrounding(1, "y")
-    s = StateGrounding([0,1], "s1")
+    x = StateFactor(0, "x")
+    y = StateFactor(1, "y")
+    s = StateFactor([0,1], "s1")
     start = Symbol(s == np.array([0,0]))
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")
-    print(f"s1 belongs to {diag.name}: {diag(s1)}")
-    print(f"s2 belongs to {diag.name}: {diag(s2)}")
+    diag_not_start = bool_and(bool_not(start), diag)
+    d = diag & bool_not(start)
+    print(repr(d))
+    print(f"Boolean ops: True == {diag_not_start(s1)}")
+    print(f"Boolean ops: False == {diag_not_start(s2)}")
+    print(f"s1 belongs to {diag.name}: {diag(s1)} == True")
+    print(f"s2 belongs to {diag.name}: {diag(s2)} == False")
     x_0 = x == 0 
     x_1 = x + 1
-    print(f"z is start: {start(State(data=np.array([0,0])))}")
-    print(f"s1 is start: {start(s1)}")
-    print(f"s2 is not goal: {not_goal(s2)}")
-    print(f"s1 is not goal: {not_goal(s1)}")
+    print(f"z is start: {start(State(data=np.array([0,0])))} == True")
+    print(f"s1 is start: {start(s1)} == False")
+    print(f"s2 is not goal: {not_goal(s2)} == True")
+    print(f"s1 is not goal: {not_goal(s1)} == False")

@@ -1,11 +1,18 @@
 '''
     Grounding for symbols to Rewards
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    date: August 2020
+    date: v0 August 2020
+          v1 January 2021 (Partial Function)
 '''
+import sys, os
+sys.path.append(os.path.abspath("./"))
 from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.PartialFunctionClass import PartialFunction
+from lmdp.grounding.real.RealExpressionClass import RealExpression, real_exp
+from lmdp.grounding.states.StateClass import BatchedState
+import numpy as np
 
-class RewardGrounding(Grounding):
+class RewardGrounding(Grounding, PartialFunction):
     id = 0
     def __init__(self, symbols_rewards=[], name=None):
         '''
@@ -15,23 +22,21 @@ class RewardGrounding(Grounding):
         if (name is None):
             name = "reward-" + str(RewardGrounding.id)
         Grounding.__init__(self, name)
-        self.__rewards = dict(symbols_rewards)
+        PartialFunction.__init__(self, domain=["state", "action", "next_state"], codomain=["real"])
+        for p in symbols_rewards:
+            self.add(*p)
 
-    def __call__(self, state):
+    def __call__(self, state, action, next_state):
         '''
             Args:
-                - state from MDP
+                - MDP Transition tuple
             return:
                 - list of rewards for all symbol matches
         '''
-        symbols = [s for s in self.__rewards.keys() if s(state)]
-        r = [self.__rewards[s] for s in symbols]
-        # if len(r) == 1:
-        #     return r[0]
-        return r
+        return super().__call__(state, action, next_state)
     
-    def __matmul__(self, state):
-        return self.__call__(state)
+    def __matmul__(self, s_a_s):
+        return self.__call__(*s_a_s)
     
     def add(self, symbol, reward):
         '''
@@ -40,23 +45,28 @@ class RewardGrounding(Grounding):
                 - symbol 
                 - reward
         '''
-        self.__rewards[symbol] = reward
+        if (isinstance(reward, (float, int))):
+            r = real_exp(domain=["state", "action", "next_state"])(reward)
+        else:
+            r = reward
+        
+        self.add_specification(symbol, r)
 
 
 if __name__ == "__main__":
-    from SymbolClass import Symbol
-    from StateGroundingClass import StateGrounding
+    from lmdp.grounding.states.SymbolClass import Symbol
+    from lmdp.grounding.states.StateGroundingClass import StateFactor
     from simple_rl.mdp.StateClass import State
     import numpy as np
 
     s1 = State(data=np.array([1, 1]))
     s2 = State(data=np.array([0, 1]))
-    x = StateGrounding(0, "x")
-    y = StateGrounding(1, "y")
-    s = StateGrounding([0,1], "s1")
+    x = StateFactor(0, "x")
+    y = StateFactor(1, "y")
+    s = StateFactor([0,1], "s1")
     start = Symbol(s == np.array([0,0]))
     not_goal = Symbol(s != np.array([1,1]))
     diag = Symbol(x == y, "diag")
-    r = RewardGrounding([(start, 0), (diag, 1)])
-    print(f"{r.name} for {diag.name} symbol: {r(s1)}")
-    print(f"{r.name} for {diag.name} symbol: {r(s2)}")
+    r = RewardGrounding([(start, 0.0), (diag, 1.0)])
+    print(f"{r.name} for {diag.name} symbol: {r(s1, 'up', s1)} == 1")
+    print(f"{r.name} for {diag.name} symbol: {r(s2, 'up', s2)} == []")

@@ -1,12 +1,16 @@
 '''
     Grounding for symbols to Rewards
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    date: August 2020
+    date: v0 August 2020
+          v1 January 2021 (Partial Function)
 '''
 
 from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.PartialFunctionClass import PartialFunction
+from lmdp.grounding.real.RealExpressionClass import RealExpression
 
-class ValueGrounding(Grounding):
+
+class ValueGrounding(Grounding, PartialFunction):
     id = 0
     def __init__(self, symbols_values=[], name=None):
         '''
@@ -16,7 +20,9 @@ class ValueGrounding(Grounding):
         if (name is None):
             name = "value-" + str(ValueGrounding.id)
         Grounding.__init__(self, name)
-        self.__values = dict(symbols_values)
+        PartialFunction.__init__(self, domain=["state"], codomain=["real"])
+        for spec in symbols_values:
+            self.add(*spec)
 
     def __call__(self, state):
         '''
@@ -25,11 +31,7 @@ class ValueGrounding(Grounding):
             return:
                 - list of rewards for all symbol matches
         '''
-        symbols = [s for s in self.__values.keys() if s(state)]
-        v = [self.__values[s] for s in symbols]
-        if len(v) == 1: # return scalar if only one value available.
-            return v[0]
-        return v
+        return super().__call__(state)
     
     def add(self, symbol, value):
         '''
@@ -38,4 +40,8 @@ class ValueGrounding(Grounding):
                 - symbol 
                 - reward
         '''
-        self.__values[symbol] = value
+        if (isinstance(value, float) or isinstance(value, int)):
+            v = RealExpression(lambda **args: value, domain=["state", "action"])
+        else:
+            v = value
+        self.add_specification(symbol, v)

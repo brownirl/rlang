@@ -1,10 +1,11 @@
 import sys, time
 from simple_rl.experiments import Experiment
 from collections import defaultdict
+from tqdm import tqdm
 
 def experiment_params():
-    return {"instances":5, 
-            "episodes": 1000, 
+    return {"instances":3, 
+            "episodes": 100, 
             "steps":100,
             "clear_old_results":True,
             "rew_step_count":1,
@@ -12,7 +13,7 @@ def experiment_params():
             "open_plot":True,
             "verbose":False,
             "reset_at_terminal":False,
-            "cumulative_plot":True,
+            "cumulative_plot":False,
             "dir_for_plot":"results",
             "experiment_name_prefix":"",
             "track_success":False,
@@ -53,10 +54,9 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
 
     value_per_episode = [0] * episodes
     gamma = mdp.get_gamma()
-
+    
     # For each episode.
-    for episode in range(1, episodes + 1):
-
+    for episode in tqdm(range(1, episodes + 1)):
         cumulative_episodic_reward = 0
 
         if verbose:
@@ -87,10 +87,9 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
 
             # Compute the agent's policy.
             action = agent.act(state, reward)
-
             # Terminal check.
             if state.is_terminal():
-
+                
                 if verbose:
                     sys.stdout.write("x")
 
@@ -100,6 +99,13 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
                     experiment.add_experience(agent, state, action, 0, state,
                                               time_taken=time.clock()-step_start)
                     continue
+                if reset_at_terminal:
+                    # Reset the MDP.
+                    next_state = mdp.get_init_state()
+                    mdp.reset()
+                elif resample_at_terminal and step < steps:
+                    mdp.reset()
+                    return True, step, value_per_episode
                 break
 
             # Execute in MDP.
@@ -120,14 +126,15 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
                                           reward_to_track, next_state,
                                           time_taken=time.clock() - step_start)
 
-            if next_state.is_terminal():
-                if reset_at_terminal:
-                    # Reset the MDP.
-                    next_state = mdp.get_init_state()
-                    mdp.reset()
-                elif resample_at_terminal and step < steps:
-                    mdp.reset()
-                    return True, step, value_per_episode
+            # if next_state.is_terminal():
+            #     if reset_at_terminal:
+            #         # Reset the MDP.
+            #         next_state = mdp.get_init_state()
+            #         mdp.reset()
+            #         break
+            #     elif resample_at_terminal and step < steps:
+            #         mdp.reset()
+            #         return True, step, value_per_episode
 
             # Update pointer.
             state = next_state
@@ -151,11 +158,10 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
     # Only print if our experiment isn't trivially short.
     if verbose:
         print("\tLast episode reward:", cumulative_episodic_reward)
-
     return False, steps, value_per_episode
     
-def run_agents(agents, mdp):
-    exp_params = experiment_params()
+def run_agents(agents, mdp, exp_params=None):
+    exp_params = experiment_params() if exp_params is None else exp_params
     params = {"instances": exp_params["instances"],
               "episodes": exp_params["episodes"],
               "steps": exp_params["steps"]}
@@ -179,8 +185,9 @@ def run_agents(agents, mdp):
     for agent in agents:
         print(str(agent) + " is learning.")
 
-        start = time.clock()
+        times = defaultdict(float)
         for instance in range(1, instances + 1):
+            start = time.clock()
             print("  Instance " + str(instance) + " of " + str(instances) + ".")
             sys.stdout.flush()
             run_single_agent_on_mdp(
@@ -195,9 +202,13 @@ def run_agents(agents, mdp):
 
             # Reset the agent.
             agent.reset()
+            mdp.reset()
             mdp.end_of_instance()
-        end = time.clock()
+            end = time.clock()
+            times[instance] = end-start
+            print(f"{instance}: {times[instance]}")
 
+        
     print("\n--- TIMES ---")
     for agent in time_dict.keys():
         print(str(agent) + " agent took " + str(round(time_dict[agent], 2)) \
