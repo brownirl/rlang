@@ -3,8 +3,11 @@ from lmdp.grounding.actions.PolicyGroundingClass import Policy
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 
 
-def policy(policy_func):
-    return Policy(policy_func, name=policy_func.__name__)
+def policy(name=None):
+    def __policy(policy_func):
+        p_name = policy_func.__name__ if name is None else name
+        return Policy(policy_func, name=p_name)
+    return __policy
 
 def subpolicy(at=any_state, until=any_state):
     def __subpolicy(policy_fun):

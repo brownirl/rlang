@@ -48,7 +48,8 @@ class Conditional:
         self.transition_elements = []
         self.reward_elements = []
         self.value_elements = []
-        self.policy_elements = []
+        self.ex_policy_elements = []
+        self.not_ex_policy_elements = []
 
         self.__is_otherwise_available = False
 
@@ -95,15 +96,6 @@ class Conditional:
             self.current_context = self.contexts.pop()
             self.__is_otherwise_available = False
 
-    # def state_feature(self, expression=None, name=None):
-    #     pass
-
-    # def markov_feature(self, expression=None, name=None):
-    #     pass
-    
-    # def goal(self, symbol=None, name=None):
-    #     pass
-
     def subpolicy(self, policy=None, until=any_state, initiation=any_state, name=None):
         self.__close_context()
         if(self._boolean_expression.domain.is_s()):
@@ -124,10 +116,17 @@ class Conditional:
     def execute(self, action=None):
         self.__close_context()
         if (self._boolean_expression.domain.is_s()):
-            self.policy_elements.append((self._boolean_expression, action))
+            self.ex_policy_elements.append((self._boolean_expression, action))
         else:
             raise ValueError("Boolean Expression must be a function of the State")
     
+    def do_not_execute(self, action=None):
+        self.__close_context()
+        if (self._boolean_expression.domain.is_s()):
+            self.not_ex_policy_elements.append((self._boolean_expression, action))
+        else:
+            raise ValueError("Boolean Expression must be a function of the State")
+
     def policy(self, action=None, boolean_expression_s=any_state):
         self.__close_context()
         if (boolean_expression_s.domain.is_s() and self._boolean_expression.domain.is_s()):

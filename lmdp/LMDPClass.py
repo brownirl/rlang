@@ -31,8 +31,6 @@ class LMDP:
 
         if(mdp is not None and factor_names is not None and len(factor_names) > 0):
             self.bind(mdp, factor_names=factor_names)
-            # self.__state_constructor = StateFactory(type(mdp.get_init_state()))
-
         for a in mdp.get_actions():
             self.add(DiscreteActionGrounding(a))
         

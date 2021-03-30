@@ -129,7 +129,7 @@ class Codomain:
         return len(self._codomain)
     
     def __repr__(self):
-        if (len(self._domain) == 0):
+        if (len(self._codomain) == 0):
             return ""
         else:
             d = [Codomain.CODOMAINS_repr[d] for d in sorted(list(self._codomain))]
