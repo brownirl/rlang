@@ -70,7 +70,7 @@ passenger_in_taxi = agent_state[2] == 1 # passenger in taxi
 # primitive actions
 actions = ("down", "up", "left", "right", "pickup", "dropoff")
 actions = dict(zip(actions, actions))
-locals().update(actions)
+locals().update(actions) 
 
 # move_to_cell
 def move_to_cell(x, y, state):
