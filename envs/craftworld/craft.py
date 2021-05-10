@@ -54,7 +54,7 @@ class CraftWorld(object):
                 2 * WINDOW_WIDTH * WINDOW_HEIGHT * self.cookbook.n_kinds + \
                 self.cookbook.n_kinds + \
                 4 + \
-                2
+                1
         self.n_actions = N_ACTIONS
 
         self.non_grabbable_indices = self.cookbook.environment
@@ -198,12 +198,12 @@ class CraftState(object):
             bhw = int((WINDOW_WIDTH * WINDOW_WIDTH) / 2)
             bhh = int((WINDOW_HEIGHT * WINDOW_HEIGHT) / 2)
 
-            grid_feats = array.pad_slice(self.grid, (x-hw, x+hw+1),  # reduced field of view.
+            grid_feats = array.pad_slice(self.grid, (x-hw, x+hw+1), 
                     (y-hh, y+hh+1))
             grid_feats_big = array.pad_slice(self.grid, (x-bhw, x+bhw+1),
                     (y-bhh, y+bhh+1))
             grid_feats_big_red = block_reduce(grid_feats_big,
-                    (WINDOW_WIDTH, WINDOW_HEIGHT, 1), func=np.max) 
+                    (WINDOW_WIDTH, WINDOW_HEIGHT, 1), func=np.max)
             #grid_feats_big_red = np.zeros((WINDOW_WIDTH, WINDOW_HEIGHT, self.world.cookbook.n_kinds))
 
             self.gf = grid_feats.transpose((2, 0, 1))
@@ -216,9 +216,9 @@ class CraftState(object):
             dir_features = np.zeros(4)
             dir_features[self.dir] = 1
 
-            features = np.concatenate((self.grid.transpose(2, 0, 1).ravel(),
+            features = np.concatenate((grid_feats.ravel(),
                     grid_feats_big_red.ravel(), self.inventory, 
-                    dir_features, x, y))
+                    dir_features, [0]))
             assert len(features) == self.world.n_features
             self._cached_features = features
 
@@ -320,3 +320,18 @@ class CraftState(object):
     def next_to(self, i_kind):
         x, y = self.pos
         return self.grid[x-1:x+2, y-1:y+2, i_kind].any()
+
+
+class CraftStateGrid(CraftState):
+    def features(self):
+        if self._cached_features is None:
+            x, y = self.pos
+            dir_features = np.zeros(4)
+            dir_features[self.dir] = 1
+
+            features = np.concatenate((self.grid.transpose(2, 0, 1).ravel(), 
+                                       self.inventory, 
+                                       dir_features, np.array(self.pos)))
+            self._cached_features = features
+
+        return self._cached_features

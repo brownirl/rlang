@@ -10,12 +10,14 @@ from collections import namedtuple
 from simple_rl.mdp.StateClass import State
 from simple_rl.mdp.MDPClass import MDP
 
-from envs.craftworld.craft import CraftScenario, CraftState, CraftWorld, UP, DOWN, LEFT, RIGHT, USE
+from envs.craftworld.craft import CraftScenario, CraftStateGrid, CraftWorld, UP, DOWN, LEFT, RIGHT, USE
 
 config = namedtuple("config", ["recipes"])
+Transition = namedtuple("Transition", ["s1", "m1", "a", "s2", "m2", "r"])
+ModelState = namedtuple("ModelState", ["action", "arg", "remaining", "task", "step"])
 
 def CraftworldStateFactory(self, scenario, grid, pos, dir, inventory):
-    s = CraftState(scenario, grid, pos, dir, inventory)
+    s = CraftStateGrid(scenario, grid, pos, dir, inventory)
     return CraftworldState(s)
 
 class CraftworldState(State):
@@ -51,6 +53,7 @@ class Craftworld(MDP):
         self.config = config(path_to_recipes)
         self.craft_world = CraftWorld(self.config)
         self.craft_scenario = self.craft_world.sample_scenario_with_goal(self.craft_world.cookbook.index[goal])
+        self.transitions = []
         MDP.__init__(self, actions=list(Craftworld.ACTIONS.keys()), 
                            transition_func=self._transition_func, 
                            reward_func=self._reward_func, 
@@ -68,15 +71,27 @@ class Craftworld(MDP):
     def _reward_func(self, state, action, next_state):
         goal_achieved = next_state.get_craftstate().satisfies("make/get", self.craft_world.cookbook.index[self.goal])
         if goal_achieved:
-            next_state.is_terminal = True
+            next_state._is_terminal = True
         return float(goal_achieved)
 
     def _transition_func(self, state, action):
         _, next_state = self.cur_state.get_craftstate().step(Craftworld.ACTIONS[action])
         return CraftworldState(next_state)
 
-    # def get_init_state(self):
-    #     return CraftworldState(self.init_state)
+    def execute_agent_action(self, action):
+        m = ModelState(None, None, None, None, None)
+        curr_s = self.cur_state.get_craftstate()
+        r, next_state = super().execute_agent_action(action)
+        t = Transition(curr_s, m, action, next_state.get_craftstate(), m, r)
+        self.transitions.append(t)
+        return r, next_state
+    
+    def get_transitions(self):
+        return self.transitions
 
-    # def get_curr_state(self):
-    #     return CraftworldState(self.cur_state)
+    def reset(self):
+        super().reset()
+        self.transitions = []
+    
+    def vis(self):
+        self.craft_world.visualize(self.transitions)
