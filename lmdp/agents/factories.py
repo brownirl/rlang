@@ -3,6 +3,7 @@ from lmdp.agents.Agent import AgentFactory
 from all.presets.classic_control.models import fc_relu_q
 from lmdp.grounding.states.StateClass import BatchedState as RLangState
 from lmdp.grounding.states.StateClass import State as RLState
+import torch.nn as nn
 import random
 import numpy as np
 
@@ -300,7 +301,8 @@ class QN(Agent):
 def _all_state_wrapper(state):
     state = deepcopy(state)
     state['observation'] = torch.from_numpy(state['observation'].features()).float()
-    # return State.array([State(state)]) # return all.State object
+    state['reward'] = torch.Tensor([state['reward']]).squeeze()
+    state['done'] = torch.Tensor([state['done']]).squeeze()
     return State(state)
 
 class QNFactory(AgentFactory):
@@ -393,7 +395,7 @@ class DQNFactory(AgentFactory):
 
 
 
-import torch.nn as nn
+
 class OptionInitMask(nn.Module):
     def __init__(self, options):
         super(OptionInitMask, self).__init__()

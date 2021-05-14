@@ -3,7 +3,6 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: September 2020
 '''
-from simple_rl.agents.AgentClass import Agent
 
 class LangAgent(object):
 

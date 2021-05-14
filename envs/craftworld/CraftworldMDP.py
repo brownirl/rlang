@@ -10,14 +10,14 @@ from collections import namedtuple
 from simple_rl.mdp.StateClass import State
 from simple_rl.mdp.MDPClass import MDP
 
-from envs.craftworld.craft import CraftScenario, CraftStateGrid, CraftWorld, UP, DOWN, LEFT, RIGHT, USE
+from envs.craftworld.craft import CraftScenario, CraftWorld, UP, DOWN, LEFT, RIGHT, USE, HEIGHT, WIDTH
 
 config = namedtuple("config", ["recipes"])
 Transition = namedtuple("Transition", ["s1", "m1", "a", "s2", "m2", "r"])
 ModelState = namedtuple("ModelState", ["action", "arg", "remaining", "task", "step"])
 
 def CraftworldStateFactory(self, scenario, grid, pos, dir, inventory):
-    s = CraftStateGrid(scenario, grid, pos, dir, inventory)
+    s = CraftState(scenario, grid, pos, dir, inventory)
     return CraftworldState(s)
 
 class CraftworldState(State):
@@ -59,6 +59,10 @@ class Craftworld(MDP):
                            reward_func=self._reward_func, 
                            init_state=CraftworldState(self.craft_scenario.init()), 
                            gamma=gamma)
+
+
+    def get_grid_params(self):
+        return (WIDTH, HEIGHT, self.craft_world.cookbook.n_kinds)
 
     def get_parameters(self):
         param_dict = {}

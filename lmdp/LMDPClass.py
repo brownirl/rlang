@@ -22,7 +22,7 @@ import random
 class LMDP:
     id = 0
     LMDPs = dict()
-    def __init__(self, mdp, factor_names=None, domain_name=None):
+    def __init__(self, mdp=None, factor_names=None, domain_name=None):
         if domain_name is None:
             domain_name = "LMDP_" + str(LMDP.id)
             LMDP.id += 1
@@ -31,8 +31,9 @@ class LMDP:
 
         if(mdp is not None and factor_names is not None and len(factor_names) > 0):
             self.bind(mdp, factor_names=factor_names)
-        for a in mdp.get_actions():
-            self.add(DiscreteActionGrounding(a))
+        if (mdp is not None):
+            for a in mdp.get_actions():
+                self.add(DiscreteActionGrounding(a))
         
         self.__reward = RewardGrounding()
         self.__value_function = ValueGrounding()

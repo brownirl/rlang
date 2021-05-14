@@ -190,36 +190,50 @@ class CraftState(object):
     def satisfies(self, goal_name, goal_arg):
         return self.inventory[goal_arg] > 0
 
+    # def features(self):
+    #     if self._cached_features is None:
+    #         x, y = self.pos
+    #         hw = int(WINDOW_WIDTH / 2)
+    #         hh = int(WINDOW_HEIGHT / 2)
+    #         bhw = int((WINDOW_WIDTH * WINDOW_WIDTH) / 2)
+    #         bhh = int((WINDOW_HEIGHT * WINDOW_HEIGHT) / 2)
+
+    #         grid_feats = array.pad_slice(self.grid, (x-hw, x+hw+1), 
+    #                 (y-hh, y+hh+1))
+    #         grid_feats_big = array.pad_slice(self.grid, (x-bhw, x+bhw+1),
+    #                 (y-bhh, y+bhh+1))
+    #         grid_feats_big_red = block_reduce(grid_feats_big,
+    #                 (WINDOW_WIDTH, WINDOW_HEIGHT, 1), func=np.max)
+    #         #grid_feats_big_red = np.zeros((WINDOW_WIDTH, WINDOW_HEIGHT, self.world.cookbook.n_kinds))
+
+    #         self.gf = grid_feats.transpose((2, 0, 1))
+    #         self.gfb = grid_feats_big_red.transpose((2, 0, 1))
+
+    #         pos_feats = np.asarray(self.pos)
+    #         pos_feats[0] /= WIDTH
+    #         pos_feats[1] /= HEIGHT
+
+    #         dir_features = np.zeros(4)
+    #         dir_features[self.dir] = 1
+
+    #         features = np.concatenate((grid_feats.ravel(),
+    #                 grid_feats_big_red.ravel(), self.inventory, 
+    #                 dir_features, [0]))
+    #         assert len(features) == self.world.n_features
+    #         self._cached_features = features
+
+    #     return self._cached_features
+
     def features(self):
         if self._cached_features is None:
+            # dir_features = np.zeros(4)
+            # dir_features[self.dir] = 1
+            pos = np.zeros((WIDTH, HEIGHT))
             x, y = self.pos
-            hw = int(WINDOW_WIDTH / 2)
-            hh = int(WINDOW_HEIGHT / 2)
-            bhw = int((WINDOW_WIDTH * WINDOW_WIDTH) / 2)
-            bhh = int((WINDOW_HEIGHT * WINDOW_HEIGHT) / 2)
-
-            grid_feats = array.pad_slice(self.grid, (x-hw, x+hw+1), 
-                    (y-hh, y+hh+1))
-            grid_feats_big = array.pad_slice(self.grid, (x-bhw, x+bhw+1),
-                    (y-bhh, y+bhh+1))
-            grid_feats_big_red = block_reduce(grid_feats_big,
-                    (WINDOW_WIDTH, WINDOW_HEIGHT, 1), func=np.max)
-            #grid_feats_big_red = np.zeros((WINDOW_WIDTH, WINDOW_HEIGHT, self.world.cookbook.n_kinds))
-
-            self.gf = grid_feats.transpose((2, 0, 1))
-            self.gfb = grid_feats_big_red.transpose((2, 0, 1))
-
-            pos_feats = np.asarray(self.pos)
-            pos_feats[0] /= WIDTH
-            pos_feats[1] /= HEIGHT
-
-            dir_features = np.zeros(4)
-            dir_features[self.dir] = 1
-
-            features = np.concatenate((grid_feats.ravel(),
-                    grid_feats_big_red.ravel(), self.inventory, 
-                    dir_features, [0]))
-            assert len(features) == self.world.n_features
+            pos[x,y] = 1
+            grid = np.concatenate((self.grid, pos[..., np.newaxis]), axis=-1)
+            features = np.concatenate((grid.transpose((2,0,1)).ravel(), 
+                                       self.inventory))
             self._cached_features = features
 
         return self._cached_features
@@ -320,18 +334,3 @@ class CraftState(object):
     def next_to(self, i_kind):
         x, y = self.pos
         return self.grid[x-1:x+2, y-1:y+2, i_kind].any()
-
-
-class CraftStateGrid(CraftState):
-    def features(self):
-        if self._cached_features is None:
-            x, y = self.pos
-            dir_features = np.zeros(4)
-            dir_features[self.dir] = 1
-
-            features = np.concatenate((self.grid.transpose(2, 0, 1).ravel(), 
-                                       self.inventory, 
-                                       dir_features, np.array(self.pos)))
-            self._cached_features = features
-
-        return self._cached_features

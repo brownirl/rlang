@@ -2,6 +2,8 @@ from copy import deepcopy
 from lmdp.agents.LangAgentClass import LangAgent
 from lmdp.agents.HierarchicalAgent import IntraoptionQAgent, SMDPQAgent
 from lmdp.utils.collections import defaultdict
+
+
 class RLangSMDPQAgent(SMDPQAgent, LangAgent):
     def __init__(self, actions, lmdp, *args, **kwargs):
         self.primitive_actions = actions

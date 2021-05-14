@@ -1,6 +1,7 @@
 from lmdp.agents.Agent import Agent
 from abc import abstractmethod
+
 class RLangAgent(Agent):
     @abstractmethod
-    def init(self, rlang_program):
+    def inform(self, rlang_program):
         pass
