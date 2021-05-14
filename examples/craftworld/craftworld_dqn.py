@@ -19,7 +19,7 @@ exp_parser.add_argument('--nruns', type=int, default=1, help='Number of Runs')
 exp_parser.add_argument('--frames', type=int, default=1000, help='Max number of timesteps')
 exp_parser.add_argument('--test_episodes', type=int, default=100, help='Episodes to evaluate Agent')
 exp_parser.add_argument('--seed', type=int, default=argparse.SUPPRESS, help='Random Generator seed')
-exp_parser.add_argument('--logdir', type=str, default='results/runs', help='Result logging directory')
+exp_parser.add_argument('--logdir', type=str, default='results/craftworld/runs', help='Result logging directory')
 exp_parser.add_argument('--name', type=str, default='craft-ppo')
 
 # Agent params
