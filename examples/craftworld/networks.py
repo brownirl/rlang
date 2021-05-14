@@ -45,7 +45,15 @@ def fc_value_head(in_features=256):
         )
     return _head
 
-
+def dqn_q_head(width, height, n_elements, in_features=256, hidden=64):
+    def _head(env):
+        return nn.Sequential(
+            CraftFeatureNetwork(width, height, n_elements, out=in_features),
+            nn.Linear(in_features, hidden),
+            nn.ReLU(),
+            nn.Linear(hidden, env.action_space.n)
+        )
+    return _head
 
 class CraftFeature(nn.Module):
     def __init__(self, width, height, elements, out=256):
@@ -72,7 +80,7 @@ class CraftFeatureNetwork(nn.Module):
             CraftFeatureNetwork.feats = CraftFeature(width, height, elements, out)
     
     def __call__(self, *args):
-        return CraftFeatureNetwork.feats
+        return CraftFeatureNetwork.feats(*args)
 
     def forward(self, state):
         if CraftFeatureNetwork.feats is not None:

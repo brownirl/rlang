@@ -1,4 +1,3 @@
-from lmdp.agents.ReinforceMLPAgentClass import ReinforceMLPAgent
 from lmdp.agents.Agent import AgentFactory
 from all.presets.classic_control.models import fc_relu_q
 from lmdp.grounding.states.StateClass import BatchedState as RLangState
@@ -7,25 +6,26 @@ import torch.nn as nn
 import random
 import numpy as np
 
+# from lmdp.agents.ReinforceMLPAgentClass import ReinforceMLPAgent
 
-class ReinforceFactory(AgentFactory):
-    def __init__(self, actions, state_dim=1, name="", gamma=0.95, alpha=0.01, 
-                                N=5, hidden_size=16, n_hidden_layers=1):
-        self._agent = ReinforceAgent(actions, state_dim=1, name="", gamma=0.95, alpha=0.01, 
-                                N=5, hidden_size=16, n_hidden_layers=1)
+# class ReinforceFactory(AgentFactory):
+#     def __init__(self, actions, state_dim=1, name="", gamma=0.95, alpha=0.01, 
+#                                 N=5, hidden_size=16, n_hidden_layers=1):
+#         self._agent = ReinforceAgent(actions, state_dim=1, name="", gamma=0.95, alpha=0.01, 
+#                                 N=5, hidden_size=16, n_hidden_layers=1)
     
     
-class ReinforceAgent(ReinforceMLPAgent):
+# class ReinforceAgent(ReinforceMLPAgent):
     
-    def act(self, state):
-        action = super().act(state['observation'], state['reward'])
-        return action
+#     def act(self, state):
+#         action = super().act(state['observation'], state['reward'])
+#         return action
 
-    def eval(self, state):
-        return super().act(state['observation'], state['reward'])
+#     def eval(self, state):
+#         return super().act(state['observation'], state['reward'])
 
-    def stop(self, state):
-        self.end_of_episode()
+#     def stop(self, state):
+#         self.end_of_episode()
 
 #=================================================================
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
