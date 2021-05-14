@@ -86,3 +86,6 @@ class CraftFeatureNetwork(nn.Module):
         if CraftFeatureNetwork.feats is not None:
             return CraftFeatureNetwork.feats.forward(state)
         raise ValueError("CraftNetwork not initialized!")
+
+    def to(self, device):
+        CraftFeatureNetwork.feats.to(device)
