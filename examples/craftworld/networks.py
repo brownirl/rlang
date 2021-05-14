@@ -48,7 +48,7 @@ def fc_value_head(in_features=256):
 def dqn_q_head(width, height, n_elements, in_features=256, hidden=64):
     def _head(env):
         return nn.Sequential(
-            CraftFeatureNetwork(width, height, n_elements, out=in_features),
+            CraftFeature(width, height, n_elements, out=in_features),
             nn.Linear(in_features, hidden),
             nn.ReLU(),
             nn.Linear(hidden, env.action_space.n)
@@ -88,4 +88,4 @@ class CraftFeatureNetwork(nn.Module):
         raise ValueError("CraftNetwork not initialized!")
 
     def to(self, device):
-        CraftFeatureNetwork.feats.to(device)
+        return CraftFeatureNetwork.feats.to(device)
