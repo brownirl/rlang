@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description='Craftworld-RLang Arguments', add_h
 parser.add_argument('--device', type=str, default='cpu', help='Device to run: cpu or gpu')
 
 # Experiment params
-experiment_params = ['nruns', 'frames', 'test_episodes', 'seed', 'logdir', 'name', 'device']
+experiment_params = ['nruns', 'frames', 'test_episodes', 'seed', 'logdir', 'name', 'device', 'max_frames_per_episode']
 
 parser.add_argument('--nruns', type=int, default=1, help='Number of Runs')
 parser.add_argument('--frames', type=int, default=1000, help='Max number of timesteps')
@@ -30,6 +30,7 @@ parser.add_argument('--test_episodes', type=int, default=100, help='Episodes to 
 parser.add_argument('--seed', type=int, default=argparse.SUPPRESS, help='Random Generator seed')
 parser.add_argument('--logdir', type=str, default='results/craftworld/runs', help='Result logging directory')
 parser.add_argument('--name', type=str, default='craft-dqn')
+parser.add_argument('--max_frames_per_episode', type=int, default=10000)
 
 # Agent params
 parser.add_argument('--state_feature_dim', type=int, default=256, help='Final feature dimension')
