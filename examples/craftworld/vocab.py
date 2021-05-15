@@ -45,12 +45,12 @@ def position(state):
     row, col = np.nonzero(_agent_pos) # position indices
     return np.array((col, row))
 
+x, y = position[0], position[1]  
+
 @state_feature(dim=n_objects+1)
 def elements_at_position(state):
     _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
-    p = position(state)
-    x, y = p[0], p[1]
-    return _map[:, y, x]
+    return _map[:, y(state), x(state)]
 
 materials = {}
 for p in primitives_elements + built_elements:
