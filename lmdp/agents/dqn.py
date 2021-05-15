@@ -127,10 +127,15 @@ class DQNPreset(Preset):
             replay_start_size=self.hyperparameters['replay_start_size'],
             update_frequency=self.hyperparameters['update_frequency'],
         )
+        
+   
 
     def test_agent(self):
         q = QNetwork(copy.deepcopy(self.model))
         return DQNTestAgent(q, self.n_actions, exploration=self.hyperparameters['test_exploration'])
 
+    def save(self, filename):
+        del self.hyperparameters['model_constructor']
+        super().save(filename)
 
 dqn = partial(PresetBuilder, constructor=DQNPreset)

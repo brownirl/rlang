@@ -73,7 +73,7 @@ class SingleEnvExperiment(allexp.SingleEnvExperiment):
         action = self._agent.act(state)
         returns = 0
         frames = 0
-        while not state.done and self._max_frames_per_episode <= frames:
+        while not state.done and self._max_frames_per_episode > frames:
             if self._render:
                 self._env.render()
             state = self._env.step(action)
@@ -81,6 +81,23 @@ class SingleEnvExperiment(allexp.SingleEnvExperiment):
             returns += state.reward
             self._frame += 1
             frames += 1
+        return returns
+    
+    def _run_test_episode(self, test_agent):
+        # initialize the episode
+        state = self._env.reset()
+        action = test_agent.act(state)
+        returns = 0
+        frames = 0
+        # loop until the episode is finished
+        while not state.done and self._max_frames_per_episode > frames:
+            if self._render:
+                self._env.render()
+            state = self._env.step(action)
+            action = test_agent.act(state)
+            returns += state.reward
+            frames += 1
+
         return returns
 
 class allExperimentRunner(ExperimentRunner):
