@@ -1,8 +1,14 @@
+import sys, os
+sys.path.append(os.path.abspath("./"))
+from vocab import *
 from lmdp import *
-from craft import vocab
 
 
-program = LMDP()
+def program(mdp=None):
+    lmdp = LMDP()
 
 
-all = ["program"]
+
+
+
+__all__ = ["program"]

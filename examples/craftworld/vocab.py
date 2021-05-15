@@ -1,14 +1,21 @@
+import sys, os
+sys.path.append(os.path.abspath("./"))
 
 import yaml
 import numpy as np
 from lmdp.grounding import *
 
-GRID_HEIGHT, GRID_WIDTH = 5, 5
-recipes_path = 'lmdp/envs/craftworld/recipes.yaml'
+import sys, os
+sys.path.append(os.path.abspath("./"))
+
+HEIGHT, WIDTH = 10, 10
+
+recipes_path = 'envs/craftworld/recipes.yaml'
 
 ### Inventory Coding
 with open(recipes_path) as recipes_f:
     recipes = yaml.load(recipes_f)
+
 idx = 0
 objects_to_idx = {}
 idx_to_objects = {}
@@ -18,66 +25,66 @@ for t in ('environment', 'primitives', 'recipes'):
     objects_to_idx.update(dict(zip(l, range(idx, idx+len(l)))))
     idx += len(recipes[t])
 
-## Utils
-def ravel_idx(x, y, z):
-    if (isinstance(x, int)):
-        x = slice(x, x+1)
-    if (isinstance(y, int)):
-        y = slice(y, y+1)
-    if (isinstance(z, int)):
-        z = slice(z, z+1)
-    
-    indices = np.mgrid[z, x, y].reshape(3, -1).astype(int)
-    return np.ravel_multi_index(indices, (idx, GRID_WIDTH, GRID_HEIGHT))
+n_objects = idx+1
+primitives_elements = recipes['primitives']
+built_elements = list(recipes['recipes'].keys())
 
 #### VOCABULARY
 
 #-----factors
-grid_view = StateFactor(list(range(GRID_HEIGHT*GRID_HEIGHT*idx)), "grid_view")
-grid_big_view = StateFactor(list(range(GRID_HEIGHT*GRID_HEIGHT*idx, 2*GRID_HEIGHT*GRID_HEIGHT*idx)), "grid_big_view")
-inventory = StateFactor(list(range(2*GRID_HEIGHT*GRID_HEIGHT*idx, 2*GRID_HEIGHT*GRID_HEIGHT*idx + idx)), "inventory")
-position = StateFactor(list(range(2*GRID_HEIGHT*GRID_HEIGHT*idx + idx+ 4, 2*GRID_HEIGHT*GRID_HEIGHT*idx + idx+ 4+2)), "position")
-x = position[0]
-y = position[1]
+end_map_idx = (n_objects+1) * WIDTH * HEIGHT
+grid_map = StateFactor(list(range(end_map_idx)), "grid_map")
+inventory = StateFactor(list(range(end_map_idx, end_map_idx + n_objects)), "inventory")
+
 
 #-----features 
-elements = {}
-for p in recipes['primitives']:
-    elements.update({p: inventory[objects_to_idx[p]]})
+@state_feature(dim=2)  # state feature 'position'
+def position(state):
+    _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
+    _agent_pos = _map[n_objects] # position map
+    row, col = np.nonzero(_agent_pos) # position indices
+    return np.array((col, row))
 
-locals().update(elements) # add variables for element features such as gold, iron, etc.    
+@state_feature(dim=n_objects+1)
+def elements_at_position(state):
+    _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
+    p = position(state)
+    x, y = p[0], p[1]
+    return _map[:, y, x]
 
-# current-position elements
-# current_elements = grid_view[ravel_idx(int(GRID_WIDTH/2), int(GRID_HEIGHT/2), slice(0,idx))] 
-current_elements = StateFeature(lambda state: grid_view(state)[ravel_idx(x, y, slice(idx))], idx, "current_elements")
-mid_position = (int(GRID_WIDTH/2), int(GRID_HEIGHT/2))
-# elements in neighboring directions.
-down_left = grid_big_view[ravel_idx(mid_position[0], mid_position[1], slice(0,idx))]
-down_right = grid_big_view[ravel_idx(mid_position[0]+1, mid_position[1], slice(0,idx))]
-up_left = grid_big_view[ravel_idx(mid_position[0], mid_position[1]+1, slice(0,idx))]
-up_right = grid_big_view[ravel_idx(mid_position[0]+1, mid_position[1]+1, slice(0,idx))]
+materials = {}
+for p in primitives_elements + built_elements:
+    materials.update({p: inventory[objects_to_idx[p]]})
+
+locals().update(materials) # add variables for element features such as gold, iron, etc.    
 
 #-----symbols 
 
 # workbenches, water, boundary, stone
 environment_elements = {}
 for p in recipes['environment']:
-    environment_elements.update({"at_"+p: Symbol(current_elements[objects_to_idx[p]] > 0, name="at_"+p)})
+    environment_elements.update({"at_"+p: Symbol(elements_at_position[objects_to_idx[p]] > 0, name="at_"+p)})
 
+environment_symbols = list(environment_elements.keys())
 locals().update(environment_elements)
+
 # resource availability
 elements = {}
 for p in recipes['primitives']:
-    elements.update({'there_is_' + p: Symbol(current_elements[objects_to_idx[p]] > 0, name='there_is_' + p)})
-
+    elements.update({'there_is_' + p: Symbol(elements_at_position[objects_to_idx[p]] > 0, name='there_is_' + p)})
+availability_symbols = list(elements.keys())
 locals().update(elements) 
 
 #-----subpolicies
 
 # primitive actions
-actions = ("down", "up", "left", "right", "use")
-actions = dict(zip(actions, range(len(actions))))
-locals().update(actions)
+actions = ["down", "up", "left", "right", "use"]
+down = DiscreteActionGrounding(0, name='down')
+up = DiscreteActionGrounding(1, name='up')
+left = DiscreteActionGrounding(2, name='left')
+right = DiscreteActionGrounding(3, name='right')
+use = DiscreteActionGrounding(4, name='use')
+
 
 # go to cell
 
@@ -85,8 +92,14 @@ def go_to_cell(state, x, y):
     d = position(state) - np.array((x, y)) # manhattan distance
     if(abs(d[0]) + abs(d[1]) > 0):
         if(d[0] != 0):
-            return actions["right"] if d[0] < 0 else actions["left"]
+            return right() if d[0] < 0 else left()
         else:
-            return actions["up"] if d[1] < 0 else actions["down"]
+            return up() if d[1] < 0 else down()
 
-# collect material
+
+#======== clean up
+vocab_terms = ['grid_map', 'inventory', 'position', 'elements_at_position'] + built_elements + primitives_elements   \
+        + environment_symbols + availability_symbols + actions
+l = locals()
+vocab = [l[p] for p in vocab_terms]
+__all__ = vocab_terms + ['vocab']

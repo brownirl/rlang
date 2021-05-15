@@ -177,6 +177,11 @@ class CraftScenario(object):
         state = CraftState(self, self.init_grid, self.init_pos, self.init_dir, inventory)
         return state
 
+    def sample_init(self):
+        random = np.random.RandomState(0)
+        self.init_pos = random_free(self.init_grid, random)
+        return self.init()
+
 class CraftState(object):
     def __init__(self, scenario, grid, pos, dir, inventory):
         self.scenario = scenario

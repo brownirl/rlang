@@ -15,5 +15,5 @@ class ActionGrounding(Expression, Grounding):
         if (name is None):
             name = "action-" + str(ActionGrounding.counter)
         Grounding.__init__(self, name)
-        Expression.__init__(self, action_function, domain=[], codomain=["action"])
+        Expression.__init__(self, action_function, domain=[], codomain=["action"], name=name)
         ActionGrounding.counter += 1
