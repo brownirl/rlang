@@ -1,6 +1,4 @@
-import sys, os
-sys.path.append(os.path.abspath("./"))
-from vocab import *
+from examples.craftworld.vocab import *
 from lmdp import *
 
 

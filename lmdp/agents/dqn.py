@@ -128,7 +128,6 @@ class DQNPreset(Preset):
             update_frequency=self.hyperparameters['update_frequency'],
         )
         
-   
 
     def test_agent(self):
         q = QNetwork(copy.deepcopy(self.model))

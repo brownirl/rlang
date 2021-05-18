@@ -14,7 +14,7 @@ class Craftworld(gym.Env):
     spec = "Craftworld"
     metadata = dict()
     metadata['render.modes'] = ['terminal']
-    def __init__(self, goal, **kwargs):
+    def __init__(self, goal, name=None, **kwargs):
         self.config = config(PATH_TO_RECIPES)
         self.world = craft.CraftWorld(self.config)
         self.goal = self.world.cookbook.index[goal]
@@ -23,6 +23,7 @@ class Craftworld(gym.Env):
         self.action_space = spaces.Discrete(craft.USE + 1)
         self.observation_space = spaces.Box(0, 100, shape=(craft.WIDTH*craft.HEIGHT*(self.world.cookbook.n_kinds+1)+self.world.cookbook.n_kinds,))
         self.reward_range = (0, 1)
+        self.name = name if name is not None else f"craft-{goal}"
     
     def get_grid_params(self):
         return (craft.WIDTH, craft.HEIGHT, self.world.cookbook.n_kinds)

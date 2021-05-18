@@ -1,6 +1,3 @@
-import sys, os
-sys.path.append(os.path.abspath("./"))
-
 import yaml
 import numpy as np
 from lmdp.grounding import *

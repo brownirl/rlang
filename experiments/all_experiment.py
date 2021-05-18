@@ -109,7 +109,7 @@ class allExperimentRunner(ExperimentRunner):
         device = experiments_params['device']
         experiments_params = dict(list(map(lambda p: (p,experiments_params[p]), all_experiment_params)))
         agents = list(map(lambda a: a.device(device), agents))
-        envs = list(map(lambda e: allgym(e, device=device), envs))
+        envs = list(map(lambda e: allgym(e, device=device, name=e.name), envs))
         run_experiment(agents, 
                         envs,
                         **experiments_params
