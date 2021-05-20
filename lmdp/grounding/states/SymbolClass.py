@@ -9,6 +9,15 @@ sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
+from lmdp.grounding.states.StateClass import BatchedState
+
+import numpy as np
+
+def __bool_true(state):
+    if(isinstance(state, BatchedState)):
+        return np.ones(state.shape[:-1], dtype=bool)
+    else:
+        return True
 
 class Symbol(Grounding, BooleanExpression):
     counter = 0
@@ -44,8 +53,8 @@ class Symbol(Grounding, BooleanExpression):
 
 Any = Symbol(lambda *args: True, name='any-symbol') 
 None_ = Symbol(lambda  *args: False, name='none-symbol')
-
-
+any_state = BooleanExpression(__bool_true, domain=["state"], name='any_state')
+any_next_state = BooleanExpression(__bool_true, domain=["next_state"], name='any_next_state')
         
 if __name__ == "__main__":
     import numpy as np

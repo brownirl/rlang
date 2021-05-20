@@ -15,7 +15,8 @@ sys.path.append(os.path.abspath("./lmdp"))
 from collections import deque, namedtuple
 from functools import reduce
 from lmdp.grounding.expressions.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_state, any_action, bool_not, bool_and, bool_or
+from lmdp.grounding.states.SymbolClass import any_state
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_action, bool_not, bool_and, bool_or
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 from lmdp.grounding.states.Effect import Effect
 from lmdp.grounding import *

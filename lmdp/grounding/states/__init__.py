@@ -1,5 +1,5 @@
 from lmdp.grounding.states.StateGroundingClass import StateFeature
-from lmdp.grounding.states.SymbolClass import Symbol
+from lmdp.grounding.states.SymbolClass import Symbol, any_state
 from lmdp.grounding.states.Effect import PredictiveEffect
 from lmdp.grounding.booleans.BooleanFunClass import bool_true
 

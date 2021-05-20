@@ -1,4 +1,4 @@
-from lmdp.grounding.booleans.BooleanFunClass import any_state
+from lmdp.grounding.states.SymbolClass import any_state
 from lmdp.grounding.actions.PolicyGroundingClass import Policy
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 

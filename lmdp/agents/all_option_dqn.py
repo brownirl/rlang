@@ -10,7 +10,7 @@ from all.approximation.checkpointer import PeriodicCheckpointer
 from all.presets import PresetBuilder, Preset
 
 from lmdp.agents.dqn import DQNPreset
-from lmdp.grounding.states.StateClass import State as RLangState
+from lmdp.grounding.states.StateClass import state_builder as RLangState
 import numpy as np
 import torch
 import torch.nn as nn
@@ -24,7 +24,8 @@ class OptionInitMask(nn.Module):
         self._options = options
 
     def forward(self, states):
-        mask = torch.from_numpy(np.array([o.initiation(RLangState(states)) for o in self._options]))
+        s = RLangState(states)
+        mask = torch.from_numpy(np.array([o.initiation(s) for o in self._options]))
         return mask.transpose(1,0)
 
 

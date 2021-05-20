@@ -8,7 +8,7 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.actions.PolicyGroundingClass import Policy
-from lmdp.grounding.booleans.BooleanFunClass import any_state
+from lmdp.grounding.states.SymbolClass import any_state
 
 class Subpolicy(Policy):
     id = 0

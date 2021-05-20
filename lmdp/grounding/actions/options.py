@@ -1,4 +1,4 @@
-from lmdp.grounding.booleans.BooleanFunClass import any_state
+from lmdp.grounding.states.SymbolClass import any_state
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 class Option:
     id = 0

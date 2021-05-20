@@ -221,7 +221,7 @@ class HDQNPreset(Preset):
     def __outer_params(self, writer):
         _env_c = namedtuple('env', ['action_space'])
         _action_space = namedtuple('action_space', ['n'])
-        _env = _env_c(_action_space(len(self.hyperparameters['options'])))
+        _env = _env_c(_action_space(len(self.__get_options())))
 
         _model = self.hyperparameters['outer_dqn_params']['model_constructor'](_env).to(self.device)
         hyperparameters = self.hyperparameters['outer_dqn_params']

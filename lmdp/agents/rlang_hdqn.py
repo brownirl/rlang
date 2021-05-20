@@ -21,8 +21,8 @@ default_inner_params = {
     "replay_buffer_size": 10000,
     # Explicit exploration
     "initial_exploration": 1.,
-    "final_exploration": 0.,
-    "final_exploration_step": 200,
+    "final_exploration": 0.01,
+    "final_exploration_step": 1000,
     "test_exploration": 0.001,
     # Model construction
     "model_constructor": fc_relu_q

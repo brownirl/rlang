@@ -1,3 +1,7 @@
+import sys, os
+sys.path.append(os.path.abspath("./"))
+
+
 import yaml
 import numpy as np
 from lmdp.grounding import *
@@ -39,7 +43,8 @@ delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 
 def position(state):
     _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
     _agent_pos = _map[n_objects] # position map
-    row, col = np.nonzero(_agent_pos) # position indices
+    _pos = np.nonzero(_agent_pos).squeeze() # position indices
+    row, col = _pos[..., 0], _pos[..., 1]
     return np.array((col, row))
 
 x, y = position[0], position[1]  

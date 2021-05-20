@@ -69,7 +69,7 @@ _dqn = dqn.dqn('craft-dqn', dqn.dqn_hyperparameters(**agent_params))
 _hdqn = rlang_hdqn(
                     'craft-hdqn', 
                     hdqn_hyperparameters(**{'discount_factor': agent_params['discount_factor'],
-                                        'outer_dqn_params': agent_params,
+                                        'outer_dqn_params': {'model_constructor':q_model},
                                         'inner_dqn_params': {'model_constructor':q_model} })
                 )
 

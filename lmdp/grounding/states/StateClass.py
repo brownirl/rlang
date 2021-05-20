@@ -11,6 +11,7 @@ sys.path.append(os.path.abspath("./"))
 import numpy as np
 from lmdp.utils.space import Vector, BatchedVector
 
+
 class State(Vector):
     '''
         State Object for RLang/LMDP implementations
@@ -22,7 +23,7 @@ class State(Vector):
             dim: dimension of the state vector. 
         '''
         
-        Vector.__init__(self, data, dim)
+        Vector.__init__(self, data, dim) 
 
     def features(self):
         return self
@@ -46,6 +47,11 @@ class StateSpace:
     def build(self, state): # TODO iterate over the batching dimensions.
         return self.state_factory(state)
 
+def state_builder(state):
+    if len(state.shape) > 1:
+        return BatchedState(state)
+    else:
+        return State(state)
 
 if __name__=="__main__":
     s = State([0,1,4])
@@ -61,3 +67,4 @@ if __name__=="__main__":
     print(s[1])
     s[1] = 3
     print(s.numpy() + 1)
+

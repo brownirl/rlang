@@ -1,4 +1,5 @@
 import numpy as np
+import torch 
 from collections import UserList
 
 class DiscreteSpace:
@@ -28,7 +29,7 @@ class Vector:
             dim: dimension of the state vector. 
         '''
         
-        self.data = data.squeeze() if isinstance(data, np.ndarray) else np.array(data).squeeze()
+        self.data = data.squeeze() if isinstance(data, (np.ndarray, torch.Tensor)) else np.array(data).squeeze()
         assert len(self.data.shape) == 1 # number of dimensions
         self._dim = dim if dim is not None else len(self.data)
 
@@ -46,7 +47,7 @@ class Vector:
 class BatchedVector(Vector):
 
     def __init__(self, data):
-        self.data = data if isinstance(data, np.ndarray) else np.array(data)
+        self.data = data if isinstance(data, (np.ndarray, torch.Tensor)) else np.array(data)
         self._dim = self.data.shape[-1] # assume last dimension to be the state dimension and all other batch_dimensions
 
     def __len__(self):

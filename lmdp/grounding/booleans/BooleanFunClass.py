@@ -8,6 +8,7 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import reduce, partial
+import numpy as np
 
 class BooleanExpression(Expression):
     _id = 0
@@ -114,9 +115,9 @@ def cast_to_boolean(expression):
 ### CONSTANTS #####
 bool_true = BooleanExpression(lambda **args: True,  domain=[], name='True')
 bool_false = BooleanExpression(lambda **args: False, domain=[], name='False')
-any_state = BooleanExpression(bool_true, domain=["state"], name='any_state')
 any_action = BooleanExpression(bool_true, domain=["action"], name='any_action')
 any_next_state = BooleanExpression(bool_true, domain=["next_state"], name='any_next_state')
+
 
 
 def boolean(domain=[]):
