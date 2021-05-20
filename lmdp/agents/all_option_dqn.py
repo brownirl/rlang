@@ -25,7 +25,8 @@ class OptionInitMask(nn.Module):
 
     def forward(self, states):
         s = RLangState(states)
-        mask = torch.from_numpy(np.array([o.initiation(s) for o in self._options]))
+        _m = [o.initiation(s) for o in self._options]
+        mask = torch.Tensor(_m)
         return mask.transpose(1,0)
 
 
@@ -36,7 +37,7 @@ class masked_q(nn.Module):
         self._policy = p_model
 
     def forward(self, states):
-        mask = self._option_mask(states)
+        mask = self._option_mask(states).to(states.get_device())
         return mask * self._policy(states)
 
 class OptionGreedyPolicy(GreedyPolicy):
