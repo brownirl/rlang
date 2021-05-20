@@ -6,9 +6,9 @@ def program():
     lmdp = LMDP()
 
     ### subpolicies
-    with lmdp.when(any_state) as c:
-        c.subpolicy(name='go_to_workshop_1',
-                    until=at_workshop1)
+    # with lmdp.when(any_state) as c:
+    #     c.subpolicy(name='go_to_workshop_1',
+    #                 until=at_workshop1)
     
     with lmdp.when(any_state) as c:
         c.subpolicy(name='go_to_workshop_2',

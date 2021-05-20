@@ -77,9 +77,26 @@ class InnerAgent(Agent):
         return self._executing_agent.eval(state)
 
 class RLangInnerAgent(InnerAgent):
-    def __init__(self, options, agent_factory):
+    def __init__(self, options, agent_factory, writer=DummyWriter()):
         super().__init__([], options['learnable'], agent_factory)
         self._option_agents.update(dict([(o._id, RLangOptionAgent(o)) for o in options['non_learnable']]))
+        self._writer = writer
+        self._return = 0.
+
+    def act(self, state):
+        self._return += state['reward']
+        return super().act(state)
+    
+    def execute(self, option):
+        ## log return for currently executing option
+        if self._executing_option is not None:
+            self.__log_performance(self._return, self._executing_option)
+            self._return = 0
+        self._executing_option = option
+        self._executing_agent = self._option_agents[option._id]
+
+    def __log_performance(self, returns, option):
+        self._writer.add_evaluation(f'returns/{repr(option)}/frame', returns, step="frame")
 
 class HierarchicalAgent(Agent):
     def __init__(self, options, outer_agent, inner_agent, discount_factor=0.99):
@@ -147,24 +164,29 @@ class HierarchicalAgent(Agent):
         
         
 class SubgoalHierarchicalAgent(HierarchicalAgent):
+    def __init__(self, *args, **kwargs):
+        self._step_cost = 0.
+        self._goal_reward = 1.
+        super().__init__(*args, **kwargs)
+
     def inner_is_executing(self, state):
         if self._inner_agent.is_executing(state): # not terminated
             if (not self._curr_option.is_executable(RLangState(state['observation']))): # initiation condition if false -> Interrupt
-                s =  State({'observation': state['observation'], 'reward': -.01, 'done': True})
+                s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': True})
                 self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
                 self._inner_agent.stop(state)
                 self._curr_option = None
                 return False
             return True
         elif (self._curr_option.terminated(RLangState(state['observation']))): # goal reached.
-            s =  State({'observation': state['observation'], 'reward': 1, 'done': True})
+            s =  State({'observation': state['observation'], 'reward': self._goal_reward, 'done': True})
             self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
             # self._inner_agent.stop(state)
             self._curr_option = None
             return False
     
     def inner_agent_act(self, state):
-        s = State( {'observation': state['observation'], 'reward': -.01, 'done': state['done']} )
+        s = State( {'observation': state['observation'], 'reward': self._step_cost, 'done': state['done']} )
         return self._inner_agent.act(s)
 
 
@@ -178,11 +200,11 @@ class HDQNAgent(SubgoalHierarchicalAgent):
                     'replay_start_size',
                     'update_frequency']
 
-    def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params):
+    def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params, writer=DummyWriter()):
         ## initialize OptionDQN 
         outer_dqn = DQN(**outer_dqn_params())
         ## DQN per option
-        inner_dqn = RLangInnerAgent(options, self.__inner_factory(inner_dqn_params))
+        inner_dqn = RLangInnerAgent(options, self.__inner_factory(inner_dqn_params), writer=writer)
         super().__init__(options, outer_dqn, inner_dqn, discount_factor=discount_factor)
         self._options = options['learnable'] + options['non_learnable']
 
@@ -209,7 +231,8 @@ class HDQNPreset(Preset):
             self.hyperparameters['options'], 
             self.hyperparameters['discount_factor'],
             self._outer_dqn_params,
-            self._inner_dqn_params
+            self._inner_dqn_params,
+            writer=writer
         )
 
         return self._agent

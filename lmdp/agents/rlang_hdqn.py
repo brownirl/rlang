@@ -13,7 +13,7 @@ default_inner_params = {
     # Adam optimizer settings
     "lr": 1e-3,
     # Training settings
-    "minibatch_size": 32,
+    "minibatch_size": 64,
     "update_frequency": 1,
     "target_update_frequency": 100,
     # Replay buffer settings
@@ -22,7 +22,7 @@ default_inner_params = {
     # Explicit exploration
     "initial_exploration": 1.,
     "final_exploration": 0.01,
-    "final_exploration_step": 1000,
+    "final_exploration_step": 500,
     "test_exploration": 0.001,
     # Model construction
     "model_constructor": fc_relu_q
@@ -34,7 +34,7 @@ default_outer_params = {
     # Adam optimizer settings
     "lr": 1e-3,
     # Training settings
-    "minibatch_size": 64,
+    "minibatch_size": 32,
     "update_frequency": 1,
     "target_update_frequency": 100,
     # Replay buffer settings
