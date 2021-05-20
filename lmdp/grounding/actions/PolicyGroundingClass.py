@@ -14,7 +14,7 @@ class Policy(Grounding, Expression):
     def __init__(self, policy, name="policy"):
         self.policy_fun = policy
         Grounding.__init__(self, name=name)
-        Expression.__init__(self, self.policy_fun, domain=["state"], codomain=["action"])
+        Expression.__init__(self, self.policy_fun, domain=["state"], codomain=["action"], name=name)
     
     def __repr__(self):
         return Grounding.__repr__(self)

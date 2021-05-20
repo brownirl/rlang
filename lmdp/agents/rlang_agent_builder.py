@@ -1,7 +1,9 @@
-from lmdp.agents.Agent import Agent
 from abc import abstractmethod
 
-class RLangAgent(Agent):
+class RLangBuilderFactory:
     @abstractmethod
     def inform(self, rlang_program):
+        '''
+            returns all.preset.PresetBuilder
+        '''
         pass

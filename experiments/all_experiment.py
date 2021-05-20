@@ -73,7 +73,11 @@ class SingleEnvExperiment(allexp.SingleEnvExperiment):
         action = self._agent.act(state)
         returns = 0
         frames = 0
-        while not state.done and self._max_frames_per_episode > frames:
+        while not state.done:
+            if(not self._max_frames_per_episode > frames):
+                if (hasattr(self._agent, 'reset')):
+                    self._agent.reset()
+                break
             if self._render:
                 self._env.render()
             state = self._env.step(action)
@@ -110,7 +114,8 @@ class allExperimentRunner(ExperimentRunner):
         experiments_params = dict(list(map(lambda p: (p,experiments_params[p]), all_experiment_params)))
         agents = list(map(lambda a: a.device(device), agents))
         envs = list(map(lambda e: allgym(e, device=device, name=e.name), envs))
-        run_experiment(agents, 
+        run_experiment(
+                        agents, 
                         envs,
                         **experiments_params
                     )

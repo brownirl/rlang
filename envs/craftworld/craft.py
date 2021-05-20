@@ -9,6 +9,7 @@ import logging
 import numpy as np
 from skimage.measure import block_reduce
 import time
+import copy
 
 WIDTH = 10
 HEIGHT = 10
@@ -174,7 +175,7 @@ class CraftScenario(object):
 
     def init(self):
         inventory = np.zeros(self.world.cookbook.n_kinds)
-        state = CraftState(self, self.init_grid, self.init_pos, self.init_dir, inventory)
+        state = CraftState(self, self.init_grid, self.init_pos, self.init_dir, inventory, inventory)
         return state
 
     def sample_init(self):
@@ -183,11 +184,12 @@ class CraftScenario(object):
         return self.init()
 
 class CraftState(object):
-    def __init__(self, scenario, grid, pos, dir, inventory):
+    def __init__(self, scenario, grid, pos, dir, inventory, prev_inventory):
         self.scenario = scenario
         self.world = scenario.world
         self.grid = grid
         self.inventory = inventory
+        self.prev_inventory = prev_inventory
         self.pos = pos
         self.dir = dir
         self._cached_features = None
@@ -238,7 +240,7 @@ class CraftState(object):
             pos[x,y] = 1
             grid = np.concatenate((self.grid, pos[..., np.newaxis]), axis=-1)
             features = np.concatenate((grid.transpose((2,0,1)).ravel(), 
-                                       self.inventory))
+                                       self.inventory, self.inventory-self.prev_inventory))
             self._cached_features = features
 
         return self._cached_features
@@ -246,7 +248,7 @@ class CraftState(object):
     def step(self, action):
         x, y = self.pos
         n_dir = self.dir
-        n_inventory = self.inventory
+        n_inventory = copy.deepcopy(self.inventory)
         n_grid = self.grid
 
         reward = 0
@@ -333,7 +335,7 @@ class CraftState(object):
         if self.grid[n_x, n_y, :].any():
             n_x, n_y = x, y
 
-        new_state = CraftState(self.scenario, n_grid, (n_x, n_y), n_dir, n_inventory)
+        new_state = CraftState(self.scenario, n_grid, (n_x, n_y), n_dir, n_inventory, self.inventory)
         return reward, new_state
 
     def next_to(self, i_kind):

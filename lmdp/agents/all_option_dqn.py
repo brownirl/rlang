@@ -7,15 +7,16 @@ from all.optim import LinearScheduler
 from all.policies import GreedyPolicy
 from all.presets.classic_control.models import fc_relu_q
 from all.approximation.checkpointer import PeriodicCheckpointer
-from all.presets import PresetBuilder
+from all.presets import PresetBuilder, Preset
 
 from lmdp.agents.dqn import DQNPreset
-from lmdp.grounding.states.StateClass import State
+from lmdp.grounding.states.StateClass import State as RLangState
 import numpy as np
 import torch
 import torch.nn as nn
 
 from functools import partial
+from collections import namedtuple
 
 class OptionInitMask(nn.Module):
     def __init__(self, options):
@@ -58,7 +59,7 @@ class OptionGreedyPolicy(GreedyPolicy):
         return torch.argmax(self.q.no_grad(state)).item()
 
     def __get_active_options(self, state):
-        active = torch.Tensor([o._id for o in self._options if o.initiation(State(state.observation)).squeeze()]).long()
+        active = torch.Tensor([o._id for o in self._options if o.initiation(RLangState(state['observation']))]).long()
         return active
     
     def __random_action(self, state):
@@ -66,13 +67,16 @@ class OptionGreedyPolicy(GreedyPolicy):
         return np.random.choice(active_opts)
 
 
-class OptionDQNPreset(DQNPreset):
+class OptionDQNPreset(Preset):
     def __init__(self, env, name, device, options, **hyperparameters):
-        DQNPreset.__init__(self, env, name, device, hyperparameters)
         if options is None:
-            raise ValueError("Number of options needed!")
+            raise ValueError("Options needed!")
+        _env_type = namedtuple('env', ['action_space'])
+        _action_space = namedtuple('action_space', ['n'])
+        _env = _env_type(_action_space(len(options)))
         self.n_options = len(options)
         self.options = options
+        self.model = hyperparameters['model_constructor'](env).to(device)
 
     def agent(self, writer=DummyWriter(), train_steps=float('inf')):
         optimizer = Adam(self.model.parameters(), lr=self.hyperparameters['lr'])

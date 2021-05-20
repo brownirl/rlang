@@ -32,7 +32,7 @@ built_elements = list(recipes['recipes'].keys())
 end_map_idx = (n_objects+1) * WIDTH * HEIGHT
 grid_map = StateFactor(list(range(end_map_idx)), "grid_map")
 inventory = StateFactor(list(range(end_map_idx, end_map_idx + n_objects)), "inventory")
-
+delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 2*n_objects)))
 
 #-----features 
 @state_feature(dim=2)  # state feature 'position'
@@ -50,8 +50,11 @@ def elements_at_position(state):
     return _map[:, y(state), x(state)]
 
 materials = {}
+delta_elements = []
 for p in primitives_elements + built_elements:
     materials.update({p: inventory[objects_to_idx[p]]})
+    materials.update({"delta_"+p: delta_inventory[objects_to_idx[p]]})
+    delta_elements += ["delta_"+p]
 
 locals().update(materials) # add variables for element features such as gold, iron, etc.    
 
@@ -95,7 +98,7 @@ def go_to_cell(state, x, y):
 
 
 #======== clean up
-vocab_terms = ['grid_map', 'inventory', 'position', 'elements_at_position'] + built_elements + primitives_elements   \
+vocab_terms = ['grid_map', 'inventory', 'delta_inventory', 'position', 'elements_at_position'] + built_elements + delta_elements + primitives_elements   \
         + environment_symbols + availability_symbols + actions
 l = locals()
 vocab = [l[p] for p in vocab_terms]
