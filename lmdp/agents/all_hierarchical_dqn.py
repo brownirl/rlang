@@ -172,7 +172,7 @@ class SubgoalHierarchicalAgent(HierarchicalAgent):
     def inner_is_executing(self, state):
         if self._inner_agent.is_executing(state): # not terminated
             if (not self._curr_option.is_executable(RLangState(state['observation']))): # initiation condition if false -> Interrupt
-                s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': True})
+                s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
                 self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
                 self._inner_agent.stop(state)
                 self._curr_option = None

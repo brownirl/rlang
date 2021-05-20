@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath("./"))
 
 import yaml
 import numpy as np
+import torch
 from lmdp.grounding import *
 
 import sys, os
@@ -43,11 +44,10 @@ delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 
 def position(state):
     _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
     _agent_pos = _map[n_objects] # position map
-    _pos = np.nonzero(_agent_pos).squeeze() # position indices
-    row, col = _pos[..., 0], _pos[..., 1]
-    return np.array((col, row))
+    _pos = _agent_pos.nonzero() if isinstance(_agent_pos, np.ndarray) else _agent_pos.nonzero(as_tuple=True)
+    return _pos
 
-x, y = position[0], position[1]  
+x, y = position[1], position[0]  
 
 @state_feature(dim=n_objects+1)
 def elements_at_position(state):
