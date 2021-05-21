@@ -233,14 +233,16 @@ class CraftState(object):
 
     def features(self):
         if self._cached_features is None:
-            # dir_features = np.zeros(4)
-            # dir_features[self.dir] = 1
+            dir_features = np.zeros(4)
+            dir_features[self.dir] = 1
             pos = np.zeros((WIDTH, HEIGHT))
-            x, y = self.pos
-            pos[x,y] = 1
+            x, y = self.pos 
+            for nx, ny in neighbors(self.pos, self.dir) :
+                pos[nx, ny] = 1
+            
             grid = np.concatenate((self.grid, pos[..., np.newaxis]), axis=-1)
             features = np.concatenate((grid.transpose((2,0,1)).ravel(), 
-                                       self.inventory, self.inventory-self.prev_inventory))
+                                       self.inventory, self.inventory-self.prev_inventory, np.array(self.pos), dir_features))
             self._cached_features = features
 
         return self._cached_features
