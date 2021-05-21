@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from envs.craftworld.craftworld_gym import Craftworld
-from examples.craftworld.agents.models import dqn_q_head
+from agents.models import dqn_q_head
 from experiments.all_experiment import allExperimentRunner
 from experiments.rlang_experiment import RLangExperiment
 
@@ -20,13 +20,14 @@ def _get_args(args, dict_args):
 
 parser = argparse.ArgumentParser(description='Craftworld-RLang Arguments', add_help=False)
 parser.add_argument('--device', type=str, default='cpu', help='Device to run: cpu or gpu')
+parser.add_argument('--tag', type=str, default='cpu', help='Device to run: cpu or gpu')
 
 # Experiment params
 experiment_params = ['nruns', 'frames', 'test_episodes', 'seed', 'logdir', 'name', 'device', 'max_frames_per_episode']
 
 parser.add_argument('--nruns', type=int, default=1, help='Number of Runs')
 parser.add_argument('--frames', type=int, default=1000, help='Max number of timesteps')
-parser.add_argument('--test_episodes', type=int, default=100, help='Episodes to evaluate Agent')
+parser.add_argument('--test_episodes', type=int, default=10, help='Episodes to evaluate Agent')
 parser.add_argument('--seed', type=int, default=argparse.SUPPRESS, help='Random Generator seed')
 parser.add_argument('--logdir', type=str, default='results/craftworld/runs', help='Result logging directory')
 parser.add_argument('--name', type=str, default='craft-dqn')
@@ -44,6 +45,7 @@ parser.add_argument('--goal', type=str, default='gold', help='Craftworld Goal')
 
 # params dicts
 params = vars(parser.parse_args())
+params['logdir'] += params['tag']
 exp_params = _get_args(experiment_params, params)
 agent_params = _get_args(agent_params, params)
 env_params = _get_args(environment_params, params)

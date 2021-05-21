@@ -60,7 +60,7 @@ class SingleEnvExperiment(allexp.SingleEnvExperiment):
 
         # stop the timer
         end_time = timer()
-        fps = (self._frame - start_frame) / (end_time - start_time)
+        fps = (self._frame - start_frame) #/ (end_time - start_time)
 
         # log the results
         self._log_training_episode(returns, fps)
