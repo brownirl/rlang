@@ -6,7 +6,7 @@ from agents.models import dqn_q_head
 from experiments.all_experiment import allExperimentRunner
 from experiments.rlang_experiment import RLangExperiment
 
-from lmdp.agents.rlang_hdqn import RLangHDQNFactory as rlang_hdqn, hdqn_hyperparameters
+from lmdp.agents.rlang_hdqn import RLangHDQNFactory as rlang_hdqn, hdqn_hyperparameters, default_outer_cli_parameters, default_inner_cli_parameters
 import lmdp.agents.dqn as dqn
 
 from craft_subpolicies import program
@@ -41,10 +41,17 @@ parser.add_argument('--name', type=str, default='craft-dqn')
 parser.add_argument('--max_frames_per_episode', type=int, default=1000)
 
 # Agent params
-parser.add_argument('--state_feature_dim', type=int, default=256, help='Final feature dimension')
-agent_params = list(dqn.default_cli_args.keys()) + ['state_feature_dim']
-for k, v in dqn.default_cli_args.items():
-    parser.add_argument(f"--{k}", type=type(v), default=v)
+parser.add_argument('--outer_state_feature_dim', type=int, default=256, help='Final feature dimension')
+parser.add_argument('--inner_state_feature_dim', type=int, default=256, help='Final feature dimension')
+inner_agent_params = ['inner_state_feature_dim']
+outer_agent_params = ['outer_state_feature_dim']
+
+for k, v in default_outer_cli_parameters.items():
+    parser.add_argument(f"--outer_{k}", type=type(v), default=v)
+    outer_agent_params.append(f"outer_{k}")
+for k, v in default_inner_cli_parameters.items():
+    parser.add_argument(f"--inner_{k}", type=type(v), default=v)
+    inner_agent_params.append(f"inner_{k}")
 
 # Environment params
 environment_params = ['goal']
@@ -54,7 +61,10 @@ parser.add_argument('--goal', type=str, default='bridge', help='Craftworld Goal'
 params = vars(parser.parse_args())
 params['logdir'] += '_' + params['tag']
 exp_params = _get_args(experiment_params, params)
-agent_params = _get_args(agent_params, params)
+
+inner_agent_params = _get_args(inner_agent_params, params)
+outer_agent_params = _get_args(outer_agent_params, params)
+
 env_params = _get_args(environment_params, params)
 
 # Environment Setup
@@ -64,15 +74,18 @@ envs = [craft]
 # Agents setup
 agents = []
 w, h, elements = craft.get_grid_params()
-q_model = dqn_q_head(w, h, elements, agent_params['state_feature_dim'])
+q_model_outer = dqn_q_head(w, h, elements, outer_agent_params['outer_state_feature_dim'])
+q_model_inner= dqn_q_head(w, h, elements, inner_agent_params['inner_state_feature_dim'])
 
-agent_params['model_constructor'] = q_model  # q network constructor
-_dqn = dqn.dqn('craft-dqn', dqn.dqn_hyperparameters(**agent_params))
+outer_agent_params['outer_model_constructor'] = q_model_outer  # outer q network constructor
+inner_agent_params['inner_model_constructor'] = q_model_inner  # inner q network constructor
+
+_dqn = dqn.dqn('craft-dqn', dqn.dqn_hyperparameters(**outer_agent_params))
 _hdqn = rlang_hdqn(
                     'craft-hdqn', 
-                    hdqn_hyperparameters(**{'discount_factor': agent_params['discount_factor'],
-                                        'outer_dqn_params': {'model_constructor':q_model},
-                                        'inner_dqn_params': {'model_constructor':q_model} })
+                    hdqn_hyperparameters(**{'discount_factor': outer_agent_params['outer_discount_factor'],
+                                        'outer_dqn_params': outer_agent_params,
+                                        'inner_dqn_params': inner_agent_params })
                 )
 
 # Experiment Setup and Run!
