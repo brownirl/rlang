@@ -11,18 +11,18 @@ default_inner_params = {
     # Common settings
     "discount_factor": 0.99,
     # Adam optimizer settings
-    "lr": 1e-3,
+    "lr": 1e-4,
     # Training settings
-    "minibatch_size": 64,
+    "minibatch_size": 128,
     "update_frequency": 1,
     "target_update_frequency": 100,
     # Replay buffer settings
-    "replay_start_size": 50,
+    "replay_start_size": 200,
     "replay_buffer_size": 10000,
     # Explicit exploration
     "initial_exploration": 1.,
     "final_exploration": 0.01,
-    "final_exploration_step": 500,
+    "final_exploration_step": 5000,
     "test_exploration": 0.001,
     # Model construction
     "model_constructor": fc_relu_q
@@ -32,9 +32,9 @@ default_outer_params = {
     # Common settings
     "discount_factor": 0.99,
     # Adam optimizer settings
-    "lr": 1e-3,
+    "lr": 1e-4,
     # Training settings
-    "minibatch_size": 32,
+    "minibatch_size": 64,
     "update_frequency": 1,
     "target_update_frequency": 100,
     # Replay buffer settings
