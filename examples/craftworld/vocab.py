@@ -6,7 +6,7 @@ import yaml
 import numpy as np
 import torch
 from lmdp.grounding import *
-
+from envs.craftworld.cookbook import Cookbook
 import sys, os
 sys.path.append(os.path.abspath("./"))
 
@@ -15,19 +15,23 @@ HEIGHT, WIDTH = 10, 10
 recipes_path = 'envs/craftworld/recipes.yaml'
 
 ### Inventory Coding
+
+cookbook = Cookbook(recipes_path)
+
 with open(recipes_path) as recipes_f:
     recipes = yaml.load(recipes_f)
 
-idx = 0
-objects_to_idx = {}
-idx_to_objects = {}
-for t in ('environment', 'primitives', 'recipes'):
-    l = recipes[t] if isinstance(recipes[t], (list, tuple)) else list(recipes[t].keys())
-    idx_to_objects.update(dict(zip(range(idx, idx+len(l)), l))) 
-    objects_to_idx.update(dict(zip(l, range(idx, idx+len(l)))))
-    idx += len(recipes[t])
+# idx = 1
+# objects_to_idx = {}
+# idx_to_objects = {}
+# for t in ('environment', 'primitives', 'recipes'):
+#     l = recipes[t] if isinstance(recipes[t], (list, tuple)) else list(recipes[t].keys())
+#     idx_to_objects.update(dict(zip(range(idx, idx+len(l)), l))) 
+#     objects_to_idx.update(dict(zip(l, range(idx, idx+len(l)))))
+#     idx += len(recipes[t])
 
-n_objects = idx+1
+objects_to_idx = cookbook.index
+n_objects = cookbook.n_kinds
 primitives_elements = recipes['primitives']
 built_elements = list(recipes['recipes'].keys())
 
@@ -107,4 +111,13 @@ vocab_terms = ['grid_map', 'inventory', 'delta_inventory', 'position', 'elements
         + environment_symbols + availability_symbols + actions
 l = locals()
 vocab = [l[p] for p in vocab_terms]
-__all__ = vocab_terms + ['vocab']
+# __all__ = vocab_terms + ['vocab']
+
+
+if __name__ == '__main__':
+    from envs.craftworld.craftworld_gym import Craftworld
+    craft = Craftworld('gold')
+    index = craft.world.cookbook.index
+    for obj in built_elements + primitives_elements + recipes['environment']:
+        # print(f"{obj}: {objects_to_idx[obj]} ?== {index[obj]}")
+        assert (objects_to_idx[obj]== index[obj])
