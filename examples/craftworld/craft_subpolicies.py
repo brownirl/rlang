@@ -19,10 +19,6 @@ def program():
         c.subpolicy(name='go_to_workshop_2',
                     until=at_workshop2)
     
-    # with lmdp.when(any_state) as c:
-    #     c.subpolicy(name='go_to_workshop_3',
-    #                 until=at_workshop3)
-
     with lmdp.when(bool_and(wood >= 1, iron >= 1, at_workshop2)) as c:
         c.subpolicy(
                 name='build_bridge',

@@ -59,7 +59,7 @@ class CraftFeature(nn.Module):
     def __init__(self, width, height, elements, out=256):
         nn.Module.__init__(self)
         self.grid_feats = gridCNN(elements + 1)
-        self.inv_feats = invMLP(elements*2)
+        self.inv_feats = invMLP(elements*2 + 6)
         self.affine = nn.Linear(100*128+32, 256)
         self._elements = elements
         self._width = width
@@ -67,9 +67,9 @@ class CraftFeature(nn.Module):
 
     def forward(self, state):
         batch_dims = state.shape[:-1]
-        grid = state[..., :-2*self._elements].reshape((*batch_dims, self._elements+1, self._width, self._height))
+        grid = state[..., :-2*self._elements-6].reshape((*batch_dims, self._elements+1, self._width, self._height))
         grid = self.grid_feats(grid)
-        inv = self.inv_feats(state[..., -2*self._elements:])
+        inv = self.inv_feats(state[..., -2*self._elements-6:])
         return self.affine(torch.cat((grid, inv), dim=-1))
 
 class CraftFeatureNetwork(nn.Module):
