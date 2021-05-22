@@ -53,8 +53,9 @@ x, y = position[0], position[1]
 @state_feature(dim=n_objects+1)
 def elements_to_use(state):
     _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
-    _at_view = _map[n_objects].nonzero() if isinstance(_map, np.ndarray) else _map[n_objects].nonzero(as_tuple=True) 
-    return _map[:, _at_view[0], _at_view[1]].squeeze()
+    _m = _map[n_objects]
+    _at_view = _map[n_objects].nonzero()
+    return _map[:, _at_view[0], _at_view[1]]
 
 materials = {}
 delta_elements = []
@@ -114,7 +115,7 @@ __all__ = vocab_terms + ['vocab']
 
 if __name__ == '__main__':
     from envs.craftworld.craftworld_gym import Craftworld
-    from lmdp.grounding.states.StateClass import State
+    from lmdp.grounding.states.StateClass import State, BatchedState
     from envs.craftworld.craft import neighbors
     import random
 
@@ -128,13 +129,25 @@ if __name__ == '__main__':
     index = craft.world.cookbook.index
     for obj in built_elements + primitives_elements + recipes['environment']:
         assert (objects_to_idx[obj]== index[obj])
+    
+    # batch test
+    batch = []
+    for _ in range(100):
+        init, _, _, info = craft.step(random.randint(0,4))
+        batch.append(init)
+
+    batch_state = BatchedState(batch)
+    elements = elements_to_use(batch_state)
+    assert elements.data.shape == (batch_state.data.shape[0], n_objects+1)
+    w = at_workshop2(batch_state)
+    assert w.shape == (batch_state.data.shape[0],)
 
     for i in range(3): # for all workshop
         for _ in range(1000):
             init, _, _, info = craft.step(random.randint(0,4))
             s = State(init)
             _m = grid_map(s).reshape(((n_objects+1), WIDTH, HEIGHT))
-            _grid = _m[:-1].transpose(1,2,0)
+            _grid = _m[:-1].data.transpose(1,2,0)
             inv = inventory(s)
             delta_inv = delta_inventory(s)
             _pos = position(s)
@@ -152,7 +165,7 @@ if __name__ == '__main__':
             _available = elements_to_use(s)
             nx, ny = _n[0]
             _true_available = info['next_state'].grid[nx, ny]
-            assert np.array_equal(_available[:-1], _true_available)
+            assert np.array_equal(_available[:-1].data.squeeze(), _true_available)
 
             workshop_pos = _m[index[f"workshop{i}"]].nonzero()
             assert (pos[0] == workshop_pos[0] and pos[1] == workshop_pos[1]) == locals()[f'at_workshop{i}'](s)
@@ -162,3 +175,5 @@ if __name__ == '__main__':
 
             for env in recipes['primitives']:
                 assert (_true_available[index[env]] > 0) == locals()[f"there_is_{env}"]
+
+    

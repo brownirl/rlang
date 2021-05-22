@@ -83,10 +83,11 @@ class BooleanExpression(Expression):
         return self._name
 
 def _disj(f1, f2, **args):
-    return f1(**args) | f2(**args)
+    return f1(**args).__or__(f2(**args))
 
 def _conj(f1, f2, **args):
-    return f1(**args) & f2(**args)
+    # print(f"f1: {repr(f1)}, f2: {repr(f2)}")
+    return f1(**args).__and__(f2(**args))
 
 def _neg(f, **args):
     import numpy as np

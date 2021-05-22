@@ -26,7 +26,7 @@ class OptionInitMask(nn.Module):
     def forward(self, states):
         s = RLangState(states)
         _m = [o.initiation(s) for o in self._options]
-        mask = torch.Tensor(_m)
+        mask = torch.stack(_m)
         return mask.transpose(1,0)
 
 
@@ -37,7 +37,11 @@ class masked_q(nn.Module):
         self._policy = p_model
 
     def forward(self, states):
-        mask = self._option_mask(states).to(states.get_device())
+        device = states.get_device()
+        if device > 0:
+            mask = self._option_mask(states).to(device)
+        else:
+            mask = self._option_mask(states)
         return mask * self._policy(states)
 
 class OptionGreedyPolicy(GreedyPolicy):
@@ -61,7 +65,8 @@ class OptionGreedyPolicy(GreedyPolicy):
         return torch.argmax(self.q.no_grad(state)).item()
 
     def __get_active_options(self, state):
-        active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(RLangState(state['observation']))]).long()
+        s = RLangState(state['observation'])
+        active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(s)]).long()
         return active
     
     def __random_action(self, state):

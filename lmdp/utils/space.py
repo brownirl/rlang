@@ -30,13 +30,22 @@ class Vector:
         '''
         
         self.data = data.squeeze() if isinstance(data, (np.ndarray, torch.Tensor)) else np.array(data).squeeze()
-        assert len(self.data.shape) == 1 # number of dimensions
+        assert len(self.data.shape) > 0 # number of dimensions
         self._dim = dim if dim is not None else len(self.data)
+
+    def nonzero(self, as_tuple=True):
+        return self.data.nonzero() if isinstance(self.data, np.ndarray) else self.data.nonzero(as_tuple=as_tuple)
+
+    def reshape(self, shape):
+        return Vector(self.data.reshape(shape))
 
     def __len__(self):
         return 1
     def __getitem__(self, *args):
-        return self.data.__getitem__(*args)
+        s = self.data.__getitem__(*args)
+        if len(s.shape) > 0:
+            return Vector(s)
+        return s
     def __setitem__(self, *args):
          self.data.__setitem__(*args)
     def __repr__(self):
@@ -48,24 +57,31 @@ class BatchedVector(Vector):
 
     def __init__(self, data):
         self.data = data if isinstance(data, (np.ndarray, torch.Tensor)) else np.array(data)
-        self._dim = self.data.shape[-1] # assume last dimension to be the state dimension and all other batch_dimensions
+        self._dim = self.data.shape[1:] # assume first dimension to be batch dimension
 
     def __len__(self):
-        return len(self.data)
+        return len(self.data[0])
 
     def reshape(self, shape):
         # assume first dimension to be batch dim
-        return self.data.reshape((-1,)+shape)
+        return BatchedVector(self.data.reshape((self.data.shape[0],)+shape))
 
+    def nonzero(self, as_tuple=True):
+        return self.data.nonzero()[1:] if isinstance(self.data, np.ndarray) else self.data.nonzero(as_tuple=as_tuple)[1:]
+
+    
     @property
     def shape(self):
-        return self.data.shape
-    def __len__(self):
-        return len(self.data)
+        return self._dim
+    
     def __getitem__(self, idx):
-        return BatchedVector(self.data[..., idx])
+        if isinstance(idx, (torch.Tensor, np.ndarray)):
+            return BatchedVector(self.data[idx])
+        key_ = (list(range(self.data.shape[0])),)+idx if isinstance(idx, tuple) else (slice(None),idx)
+        return BatchedVector(self.data.__getitem__(key_)) 
+    
     def __setitem__(self, idx, value):
-         self.data[..., idx] = value
+         self.data[:, idx] = value
 
     def __add__(self, other):
         return self.data.__add__(other)
@@ -86,6 +102,7 @@ class BatchedVector(Vector):
         return self.data.__ge__(other)
     def __eq__(self, other):
         return (self.data == other).all(-1)
+        # return self.data == other
     def __ne__(self, other):
         return self.data != other
 
