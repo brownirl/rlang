@@ -216,8 +216,8 @@ class HDQNAgent(SubgoalHierarchicalAgent):
         ## DQN per option
         inner_dqn = RLangInnerAgent(options, self.__inner_factory(inner_dqn_params), writer=writer)
         super().__init__(options, outer_dqn, inner_dqn, discount_factor=discount_factor)
-        self._options = dict([(o._id, o) for o in options['non_learnable'] + options['learnable']])
-
+        # self._options = dict([(o._id, o) for o in options['non_learnable'] + options['learnable']])
+        self._options = options['learnable'] + options['non_learnable']
 
     def __inner_factory(self, inner_params):
         def _factory(option):

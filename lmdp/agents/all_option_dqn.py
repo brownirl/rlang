@@ -61,12 +61,12 @@ class OptionGreedyPolicy(GreedyPolicy):
         return torch.argmax(self.q.no_grad(state)).item()
 
     def __get_active_options(self, state):
-        active = torch.Tensor([o._id for o in self._options if o.initiation(RLangState(state['observation']))]).long()
+        active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(RLangState(state['observation']))]).long()
         return active
     
     def __random_action(self, state):
         active_opts = self.__get_active_options(state)
-        return np.random.choice(active_opts)
+        return active_opts[torch.randint(len(active_opts), (1,))]
 
 
 class OptionDQNPreset(Preset):
