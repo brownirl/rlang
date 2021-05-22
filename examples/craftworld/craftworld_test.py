@@ -10,6 +10,4 @@ parser = argparse.ArgumentParser(description='Craftworld-RLang Arguments', add_h
 parser.add_argument('--device', type=str, default='cpu', help='Device to run: cpu or cuda')
 
 args = parser.parse_args()
-
-with torch.cuda.device(0):
-    vocab.main()
+vocab.main(args.device)

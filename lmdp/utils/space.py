@@ -56,7 +56,14 @@ class Vector:
 class BatchedVector(Vector):
 
     def __init__(self, data):
-        self.data = data if isinstance(data, (np.ndarray, torch.Tensor)) else np.array(data)
+        if isinstance(data, (np.ndarray, torch.Tensor)):
+            self.data = data
+        elif isinstance(data[0], (np.ndarray)):
+            self.data = np.array(data)
+        elif isinstance(data[0], torch.Tensor):
+            self.data = torch.stack(data)
+        else:
+            raise ValueError('unexpected datatype!')
         self._dim = self.data.shape[1:] # assume first dimension to be batch dimension
 
     def __len__(self):

@@ -41,7 +41,7 @@ built_elements = list(recipes['recipes'].keys())
 end_map_idx = (n_objects+1) * WIDTH * HEIGHT
 grid_map = StateFactor(list(range(end_map_idx)), "grid_map")
 inventory = StateFactor(list(range(end_map_idx, end_map_idx + n_objects)), "inventory")
-delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 2*n_objects)))
+delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 2*n_objects)), name='delta_inventory')
 
 end_inv = end_map_idx + 2*n_objects
 position = StateFactor(list(range(end_inv, end_inv+2)), 'position')
@@ -113,10 +113,11 @@ vocab = [l[p] for p in vocab_terms]
 __all__ = vocab_terms + ['vocab']
 
 
-def main():
+def main(device='cpu'):
     from envs.craftworld.craftworld_gym import Craftworld
     from lmdp.grounding.states.StateClass import State, BatchedState
     from envs.craftworld.craft import neighbors
+    from all.environments.gym import GymEnvironment as allgym
     import random
 
     def direction_offset(direction):
@@ -127,14 +128,15 @@ def main():
 
     craft = Craftworld('gold')
     index = craft.world.cookbook.index
+    craft = allgym(craft, device=device)
     for obj in built_elements + primitives_elements + recipes['environment']:
         assert (objects_to_idx[obj]== index[obj])
     
     # batch test
     batch = []
     for _ in range(100):
-        init, _, _, info = craft.step(random.randint(0,4))
-        batch.append(init)
+        s = craft.step(random.randint(0,4))
+        batch.append(s['observation'])
 
     batch_state = BatchedState(batch)
     elements = elements_to_use(batch_state)
@@ -144,10 +146,12 @@ def main():
 
     for i in range(3): # for all workshop
         for _ in range(1000):
-            init, _, _, info = craft.step(random.randint(0,4))
-            s = State(init)
+            _st = craft.step(random.randint(0,4))
+            info = {'state': _st['state'], 'next_state': _st['next_state']}
+            s = State(_st['observation'])
+         
             _m = grid_map(s).reshape(((n_objects+1), WIDTH, HEIGHT))
-            _grid = _m[:-1].data.transpose(1,2,0)
+            _grid = _m[:-1].data.transpose(1,2,0) if isinstance(_m[:-1].data, np.ndarray) else _m[:-1].data.permute(1,2,0)
             inv = inventory(s)
             delta_inv = delta_inventory(s)
             _pos = position(s)
