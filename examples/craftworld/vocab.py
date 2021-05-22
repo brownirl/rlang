@@ -113,7 +113,7 @@ vocab = [l[p] for p in vocab_terms]
 __all__ = vocab_terms + ['vocab']
 
 
-if __name__ == '__main__':
+def main():
     from envs.craftworld.craftworld_gym import Craftworld
     from lmdp.grounding.states.StateClass import State, BatchedState
     from envs.craftworld.craft import neighbors
@@ -168,12 +168,13 @@ if __name__ == '__main__':
             assert np.array_equal(_available[:-1].data.squeeze(), _true_available)
 
             workshop_pos = _m[index[f"workshop{i}"]].nonzero()
-            assert (pos[0] == workshop_pos[0] and pos[1] == workshop_pos[1]) == locals()[f'at_workshop{i}'](s)
+            assert (pos[0] == workshop_pos[0] and pos[1] == workshop_pos[1]) == globals()[f'at_workshop{i}'](s)
 
             for env in recipes['environment']:
-                assert (_true_available[index[env]] > 0) == locals()[f"at_{env}"]
+                assert (_true_available[index[env]] > 0) == globals()[f"at_{env}"]
 
             for env in recipes['primitives']:
-                assert (_true_available[index[env]] > 0) == locals()[f"there_is_{env}"]
+                assert (_true_available[index[env]] > 0) == globals()[f"there_is_{env}"]
 
-    
+if __name__ == "__main__":
+    main()   

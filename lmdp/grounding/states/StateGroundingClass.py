@@ -140,7 +140,7 @@ class StateFactor(Grounding, RealExpression):
             raise ValueError("Index out of bounds")
         
         n_features = 1 if isinstance(idx, int) else len(idx)
-        return StateFeature(lambda state: self.__call__(state)[idx], n_features, self.variables, operator='[]')
+        return StateFeature(lambda state: self.__call__(state)[idx], n_features, self.variables(), operator='[]')
     
     @classmethod
     def check_concat(self, sequence, state_dim):

@@ -67,6 +67,9 @@ class OptionGreedyPolicy(GreedyPolicy):
     def __get_active_options(self, state):
         s = RLangState(state['observation'])
         active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(s)]).long()
+        device = state['observation'].get_device()
+        if device > 0:
+            active.to(device)
         return active
     
     def __random_action(self, state):
