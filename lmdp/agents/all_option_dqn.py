@@ -71,7 +71,7 @@ class OptionGreedyPolicy(GreedyPolicy):
     
     def __random_action(self, state):
         active_opts = self.__get_active_options(state)
-        return active_opts[torch.randint(len(active_opts), (1,))]
+        return active_opts[torch.randint(len(active_opts), (1,))].item()
 
 
 class OptionDQNPreset(Preset):
