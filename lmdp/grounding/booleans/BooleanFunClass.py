@@ -21,10 +21,10 @@ class BooleanExpression(Expression):
         
     def and_(self, other):
         # Short-circuiting
-        if (self == bool_true or other == bool_true):
-            return self
-        if (self == bool_false or other == bool_false):
-            return bool_false
+        # if (self == bool_true or other == bool_true):
+        #     return self
+        # if (self == bool_false or other == bool_false):
+        #     return bool_false
         # generate function 
         if(isinstance(other, BooleanExpression) or isinstance(other, Expression)):
             return BooleanExpression(partial(_conj, self, other), 
@@ -40,10 +40,10 @@ class BooleanExpression(Expression):
    
     def or_(self, other):
         # Short-circuiting
-        if (self == bool_true or other == bool_true):
-            return bool_true
-        if (self == bool_false or other == bool_false):
-            return self
+        # if (self == bool_true or other == bool_true):
+        #     return bool_true
+        # if (self == bool_false or other == bool_false):
+        #     return self
         # generate function 
         if(isinstance(other, BooleanExpression)):
             return BooleanExpression(partial(_conj, self, other), 

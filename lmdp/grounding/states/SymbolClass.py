@@ -12,12 +12,13 @@ from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, 
 from lmdp.grounding.states.StateClass import BatchedState
 
 import numpy as np
+import torch 
 
 def __bool_true(state):
     if(isinstance(state, BatchedState)):
         return np.ones(state.shape[:-1], dtype=bool)
     else:
-        return True
+        return np.array([True]).squeeze() if isinstance(state.data, np.ndarray) else torch.tensor(True)
 
 class Symbol(Grounding, BooleanExpression):
     counter = 0

@@ -32,14 +32,15 @@ class Craftworld(gym.Env):
         _, next_state = self.curr_state.step(action)
         goal_achieved = next_state.satisfies("make/get", self.goal)
         reward = float(goal_achieved)
+        curr_state = self.curr_state
         self.curr_state = next_state
-        return next_state.features(), reward, bool(goal_achieved), {}
+        return next_state.features(), reward, bool(goal_achieved), {'state': curr_state, 'next_state': next_state}
     
     def reset(self):
         self.curr_state = self.scenario.init()
         self.transitions = []
         return self.curr_state.features()
-
+    
     def render(self):
         pass
 
