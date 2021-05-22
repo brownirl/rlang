@@ -84,6 +84,7 @@ class RLangInnerAgent(InnerAgent):
         self._return = 0.
 
     def act(self, state):
+        self._train()
         self._return += state['reward']
         return super().act(state)
     
@@ -97,6 +98,12 @@ class RLangInnerAgent(InnerAgent):
 
     def __log_performance(self, returns, option):
         self._writer.add_evaluation(f'returns/{repr(option)}/frame', returns, step="frame")
+
+    def _train(self):
+        for o_id, agent in self._option_agents.items():
+            if self._executing_option is not None and o_id != self._executing_option._id:
+                agent._train_step()
+    
 
 class HierarchicalAgent(Agent):
     def __init__(self, options, outer_agent, inner_agent, discount_factor=0.99):
@@ -212,7 +219,7 @@ class HDQNAgent(SubgoalHierarchicalAgent):
     def __inner_factory(self, inner_params):
         def _factory(option):
             params = inner_params(repr(option))
-            return DQN(**params)
+            return _DQN(**params)
         return _factory
 
 class HDQNPreset(Preset):
@@ -355,3 +362,20 @@ class HDQNTestAgent(Agent):
     
     def eval(self, state):
         return self._agent.eval(state)
+
+class _DQN(DQN):
+    def _train_step(self):
+        if self.__should_train():
+            # sample transitions from buffer
+            (states, actions, rewards, next_states, _) = self.replay_buffer.sample(self.minibatch_size)
+            # forward pass
+            values = self.q(states, actions)
+            # compute targets
+            targets = rewards + self.discount_factor * torch.max(self.q.target(next_states), dim=1)[0]
+            # compute loss
+            loss = self.loss(values, targets)
+            # backward pass
+            self.q.reinforce(loss)
+
+    def __should_train(self):
+        return (self._frames_seen > self.replay_start_size and self._frames_seen % self.update_frequency == 0)
