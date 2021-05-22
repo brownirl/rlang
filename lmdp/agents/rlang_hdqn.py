@@ -9,7 +9,7 @@ import re
 
 default_inner_cli_parameters = {
     # Common settings
-    "discount_factor": 0.9999,
+    "discount_factor": 0.99,
     # Adam optimizer settings
     "lr": 1e-4,
     # Training settings

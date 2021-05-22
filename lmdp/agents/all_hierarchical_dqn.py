@@ -4,7 +4,7 @@ from all.presets import Preset
 from all.logging import DummyWriter
 from all.approximation import QNetwork, FixedTarget
 from all.logging import DummyWriter
-from all.memory import ExperienceReplayBuffer
+from all.memory import PrioritizedReplayBuffer as ExperienceReplayBuffer
 from all.optim import LinearScheduler
 from all.policies import GreedyPolicy
 
@@ -46,6 +46,9 @@ class RLangOptionAgent(Iterable, Agent):
 
     def __iter__(self):
         return iter((self.option.get_id(), self))
+
+    def _train_step(self):
+        pass
 
 class InnerAgent(Agent):
     def __init__(self, actions, options, agent_factory):

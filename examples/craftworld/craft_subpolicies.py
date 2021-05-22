@@ -22,6 +22,7 @@ def program():
     with lmdp.when(bool_and(wood >= 1, iron >= 1, at_workshop2)) as c:
         c.subpolicy(
                 name='build_bridge',
+                policy=use,
                 until= delta_bridge > 0
             )
 
