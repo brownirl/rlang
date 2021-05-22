@@ -53,6 +53,10 @@ class BatchedVector(Vector):
     def __len__(self):
         return len(self.data)
 
+    def reshape(self, shape):
+        # assume first dimension to be batch dim
+        return self.data.reshape((-1,)+shape)
+
     @property
     def shape(self):
         return self.data.shape

@@ -35,6 +35,7 @@ class State(Vector):
 class BatchedState(BatchedVector, State):
     def __init__(self, data):
         BatchedVector.__init__(self, data)
+    
    
 class StateSpace:
     def __init__(self, generator, state_factory):

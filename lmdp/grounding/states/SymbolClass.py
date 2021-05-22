@@ -18,7 +18,7 @@ def __bool_true(state):
     if(isinstance(state, BatchedState)):
         return np.ones(state.shape[:-1], dtype=bool)
     else:
-        return np.array([True]).squeeze() if isinstance(state.data, np.ndarray) else torch.tensor(True)
+        return np.array([True]).squeeze() if isinstance(state.data, np.ndarray) else torch.tensor(True).to(state.data.get_device())
 
 class Symbol(Grounding, BooleanExpression):
     counter = 0
