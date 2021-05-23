@@ -123,7 +123,7 @@ def main(device='cpu'):
     def direction_offset(direction):
         offset = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         idx = direction.nonzero()[0]
-        return np.array(offset[int(idx)])
+        return torch.Tensor(offset[int(idx)])
 
 
     craft = Craftworld('gold')
@@ -156,20 +156,20 @@ def main(device='cpu'):
             delta_inv = delta_inventory(s)
             _pos = position(s)
 
-            assert np.array_equal(_pos, info['next_state'].pos)
-            assert np.array_equal(info['next_state'].grid, _grid)
-            assert np.array_equal(inv, info['next_state'].inventory)
-            assert np.array_equal(delta_inv, info['next_state'].inventory-info['next_state'].prev_inventory)
+            assert torch.equal(_pos.data, torch.Tensor(info['next_state'].pos).to(device))
+            assert torch.equal(torch.Tensor(info['next_state'].grid).to(device), _grid.data)
+            assert torch.equal(inv.data, torch.Tensor(info['next_state'].inventory).to(device))
+            assert torch.equal(delta_inv.data, torch.Tensor(info['next_state'].inventory-info['next_state'].prev_inventory).to(device))
 
 
-            pos = position(s) + direction_offset(direction(s))
+            pos = position(s).data + direction_offset(direction(s)).to(device)
             _n = neighbors(info['next_state'].pos, info['next_state'].dir)
-            assert  np.array_equal(pos, _n[0])
+            assert  torch.equal(pos, torch.Tensor(_n[0]).to(device))
 
             _available = elements_to_use(s)
             nx, ny = _n[0]
             _true_available = info['next_state'].grid[nx, ny]
-            assert np.array_equal(_available[:-1].data.squeeze(), _true_available)
+            assert torch.equal(_available[:-1].data.squeeze(), torch.Tensor(_true_available).to(device))
 
             workshop_pos = _m[index[f"workshop{i}"]].nonzero()
             assert (pos[0] == workshop_pos[0] and pos[1] == workshop_pos[1]) == globals()[f'at_workshop{i}'](s)
@@ -179,6 +179,11 @@ def main(device='cpu'):
 
             for env in recipes['primitives']:
                 assert (_true_available[index[env]] > 0) == globals()[f"there_is_{env}"]
+
+
+            t = bool_and(wood >= 1, iron >= 1, at_workshop2)
+            print(t(s))
+
 
 if __name__ == "__main__":
     main()   
