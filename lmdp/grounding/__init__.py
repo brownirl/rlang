@@ -18,4 +18,4 @@ from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 from lmdp.grounding.actions.options import Option
 
 from lmdp.grounding.actions import policy, subpolicy
-from lmdp.grounding.states import effect, state_feature
+from lmdp.grounding.states import effect, state_feature, symbol

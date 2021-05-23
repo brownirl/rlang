@@ -77,9 +77,17 @@ environment_symbols = list(environment_elements.keys())
 locals().update(environment_elements)
 
 # resource availability
+def primitive_available(object):
+    @symbol(name=f'there_is_{object}')
+    def _there_is(state):
+        _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
+        _m = _map[objects_to_idx[object]].data.sum()
+        return _m > 0
+    return _there_is
+
 elements = {}
 for p in recipes['primitives']:
-    elements.update({'there_is_' + p: Symbol(elements_to_use[objects_to_idx[p]] > 0, name='there_is_' + p)})
+    elements.update({'there_is_' + p: primitive_available(p)})
 availability_symbols = list(elements.keys())
 locals().update(elements) 
 
@@ -147,7 +155,7 @@ def main(device='cpu'):
     for i in range(3): # for all workshop
         for _ in range(1000):
             _st = craft.step(random.randint(0,4))
-            info = {'state': _st['state'], 'next_state': _st['next_state']}
+            info = {'craft_state': _st['craft_state'], 'craft_next_state': _st['craft_next_state']}
             s = State(_st['observation'])
          
             _m = grid_map(s).reshape(((n_objects+1), WIDTH, HEIGHT))
@@ -156,19 +164,19 @@ def main(device='cpu'):
             delta_inv = delta_inventory(s)
             _pos = position(s)
 
-            assert torch.equal(_pos.data, torch.Tensor(info['next_state'].pos).to(device))
-            assert torch.equal(torch.Tensor(info['next_state'].grid).to(device), _grid.data)
-            assert torch.equal(inv.data, torch.Tensor(info['next_state'].inventory).to(device))
-            assert torch.equal(delta_inv.data, torch.Tensor(info['next_state'].inventory-info['next_state'].prev_inventory).to(device))
+            assert torch.equal(_pos.data, torch.Tensor(info['craft_next_state'].pos).to(device))
+            assert torch.equal(torch.Tensor(info['craft_next_state'].grid).to(device), _grid.data)
+            assert torch.equal(inv.data, torch.Tensor(info['craft_next_state'].inventory).to(device))
+            assert torch.equal(delta_inv.data, torch.Tensor(info['craft_next_state'].inventory-info['craft_next_state'].prev_inventory).to(device))
 
 
             pos = position(s).data + direction_offset(direction(s)).to(device)
-            _n = neighbors(info['next_state'].pos, info['next_state'].dir)
+            _n = neighbors(info['craft_next_state'].pos, info['craft_next_state'].dir)
             assert  torch.equal(pos, torch.Tensor(_n[0]).to(device))
 
             _available = elements_to_use(s)
             nx, ny = _n[0]
-            _true_available = info['next_state'].grid[nx, ny]
+            _true_available = info['craft_next_state'].grid[nx, ny]
             assert torch.equal(_available[:-1].data.squeeze(), torch.Tensor(_true_available).to(device))
 
             workshop_pos = _m[index[f"workshop{i}"]].nonzero()
@@ -178,11 +186,7 @@ def main(device='cpu'):
                 assert (_true_available[index[env]] > 0) == globals()[f"at_{env}"]
 
             for env in recipes['primitives']:
-                assert (_true_available[index[env]] > 0) == globals()[f"there_is_{env}"]
-
-
-            t = bool_and(wood >= 1, iron >= 1, at_workshop2)
-            print(t(s))
+                assert (info['craft_next_state'].grid[:,:,index[env]].sum() > 0) == globals()[f"there_is_{env}"]
 
 
 if __name__ == "__main__":

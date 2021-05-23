@@ -26,13 +26,13 @@ def program():
                 until= delta_bridge > 0
             )
 
-    with lmdp.when(iron == 0) as c:
+    with lmdp.when(there_is_iron) as c:
         c.subpolicy(
                 name='get_iron',
                 until= delta_iron > 0
             )
     
-    with lmdp.when(wood == 0) as c:
+    with lmdp.when(there_is_wood) as c:
         c.subpolicy(
                 name='get_wood',
                 until=delta_wood > 0
