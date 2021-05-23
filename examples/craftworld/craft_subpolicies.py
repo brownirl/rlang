@@ -7,13 +7,13 @@ def program():
 
     ### subpolicies
    
-    with lmdp.when(any_state) as c:
-        c.subpolicy(name='go_to_workshop_0',
-                    until=at_workshop0)
+    # with lmdp.when(any_state) as c:
+    #     c.subpolicy(name='go_to_workshop_0',
+    #                 until=at_workshop0)
 
-    with lmdp.when(any_state) as c:
-        c.subpolicy(name='go_to_workshop_1',
-                    until=at_workshop1)
+    # with lmdp.when(any_state) as c:
+    #     c.subpolicy(name='go_to_workshop_1',
+    #                 until=at_workshop1)
     
     with lmdp.when(any_state) as c:
         c.subpolicy(name='go_to_workshop_2',
@@ -26,13 +26,13 @@ def program():
                 until= delta_bridge > 0
             )
 
-    with lmdp.when(any_state) as c:
+    with lmdp.when(iron == 0) as c:
         c.subpolicy(
                 name='get_iron',
                 until= delta_iron > 0
             )
     
-    with lmdp.when(any_state) as c:
+    with lmdp.when(wood == 0) as c:
         c.subpolicy(
                 name='get_wood',
                 until=delta_wood > 0

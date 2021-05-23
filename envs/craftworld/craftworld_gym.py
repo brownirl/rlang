@@ -34,7 +34,7 @@ class Craftworld(gym.Env):
         reward = float(goal_achieved)
         curr_state = self.curr_state
         self.curr_state = next_state
-        return next_state.features(), reward, bool(goal_achieved), {'state': curr_state, 'next_state': next_state}
+        return next_state.features(), reward, bool(goal_achieved), {} #{'state': curr_state, 'next_state': next_state}
     
     def reset(self):
         self.curr_state = self.scenario.init()

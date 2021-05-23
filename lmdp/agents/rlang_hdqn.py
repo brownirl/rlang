@@ -23,7 +23,7 @@ default_inner_cli_parameters = {
     "initial_exploration": 1.,
     "final_exploration": 0.01,
     "final_exploration_step": 5000,
-    "test_exploration": 0.001,
+    "test_exploration": 0.001
 }
 
 default_outer_cli_parameters = {

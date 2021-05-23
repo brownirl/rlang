@@ -56,6 +56,7 @@ class InnerAgent(Agent):
         self._executing_option = None
         agents = [(o._id, agent_factory(o)) for o in options]
         self._option_agents = dict(agents)
+        self._options = options
 
     def execute(self, option):
         self._executing_option = option
@@ -83,13 +84,25 @@ class RLangInnerAgent(InnerAgent):
     def __init__(self, options, agent_factory, writer=DummyWriter()):
         super().__init__([], options['learnable'], agent_factory)
         self._option_agents.update(dict([(o._id, RLangOptionAgent(o)) for o in options['non_learnable']]))
+        self._options += options['non_learnable']
         self._writer = writer
         self._return = 0.
 
     def act(self, state):
-        self._train()
+        # self._train()
         self._return += state['reward']
         return super().act(state)
+        # return self.__update_option_agents(state)
+
+    def __update_option_agents(self, state):
+        action = None
+        for o in self._options:
+            if (o.initiation(RLangState(state['observation']))):
+                agent = self._option_agents[o._id]
+                a = agent.act(state)
+                if o._id == self._executing_option._id:
+                    action = a
+        return a
     
     def execute(self, option):
         ## log return for currently executing option
@@ -128,6 +141,7 @@ class HierarchicalAgent(Agent):
             self._curr_option = self._options[o]
             self._inner_agent.execute(self._curr_option) # start option o
         self._steps += 1
+        self._t += 1
         return self.inner_agent_act(state)
     
     def eval(self, state):
@@ -210,7 +224,7 @@ class HDQNAgent(SubgoalHierarchicalAgent):
                     'replay_start_size',
                     'update_frequency']
 
-    def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params, writer=DummyWriter()):
+    def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params, writer=DummyWriter(), timeout=100):
         ## initialize OptionDQN 
         outer_dqn = DQN(**outer_dqn_params())
         ## DQN per option
@@ -218,12 +232,29 @@ class HDQNAgent(SubgoalHierarchicalAgent):
         super().__init__(options, outer_dqn, inner_dqn, discount_factor=discount_factor)
         # self._options = dict([(o._id, o) for o in options['non_learnable'] + options['learnable']])
         self._options = options['learnable'] + options['non_learnable']
+        self._timeout = timeout
 
     def __inner_factory(self, inner_params):
         def _factory(option):
             params = inner_params(repr(option))
             return _DQN(**params)
         return _factory
+
+    def inner_is_executing(self, state):
+        if self._inner_agent.is_executing(state): # not terminated
+            if (not self._curr_option.is_executable(RLangState(state['observation'])) or self._t > self._timeout): # initiation condition if false -> Interrupt
+                s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
+                self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+                self._inner_agent.stop(state)
+                self._curr_option = None
+                return False
+            return True
+        elif (self._curr_option.terminated(RLangState(state['observation']))): # goal reached.
+            s =  State({'observation': state['observation'], 'reward': self._goal_reward, 'done': True})
+            self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+            # self._inner_agent.stop(state)
+            self._curr_option = None
+            return False
 
 class HDQNPreset(Preset):
     HDQN_hyperparams = ['options', 'discount_factor', 'outer_dqn_params', 'inner_dqn_params']
@@ -382,3 +413,6 @@ class _DQN(DQN):
 
     def __should_train(self):
         return (self._frames_seen > self.replay_start_size and self._frames_seen % self.update_frequency == 0)
+    
+    def stop(self, *args):
+        pass
