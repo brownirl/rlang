@@ -60,7 +60,7 @@ class CraftFeature(nn.Module):
         nn.Module.__init__(self)
         self.grid_feats = gridCNN(elements + 1)
         self.inv_feats = invMLP(elements*2 + 6)
-        self.affine = nn.Linear(100*128+32, 256)
+        self.affine = nn.Linear(100*128+32, out)
         self._elements = elements
         self._width = width
         self._height = height
