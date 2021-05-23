@@ -87,9 +87,6 @@ def _disj(f1, f2, **args):
     return f1(**args).__or__(f2(**args))
 
 def _conj(f1, f2, **args):
-    print(f"state_device: {args['state'].data.get_device()}, f1: {f1}, f1_device: {f1(**args).get_device()}, f2: {f2}, f2 device: {f2(**args).get_device()}")
-    print(f"f1_shape: {f1(**args).shape}, f2 shape: {f2(**args).shape}")
-
     return f1(**args).__and__(f2(**args))
 
 def _neg(f, **args):
