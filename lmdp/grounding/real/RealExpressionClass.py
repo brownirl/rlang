@@ -296,12 +296,12 @@ class RealExpression(Expression):
     def __repr__(self):
         if (self._operator is not None):
             if self._operator == '[]':
-                if len(self._operands) > 1:
-                    return self._operands[0]._name + "[" + str(self._operands[1]) + ']'
+                if self._operands is not None and len(self._operands) > 1:
+                    return f"{self._operands[0]._name}[{str(self._operands[1])}]"
                 else:
-                    return self._operands[0]._name + "[]"
+                    return f"{repr(self._operands[0])}[]"
             else:
-                if len(self._operands) > 1:
+                if  self._operands is not None and len(self._operands) > 1:
                     return "(" + repr(self._operands[0]) + f" {self._operator} " + repr(self._operands[1]) + ")" 
                 else:
                     return "(" + repr(self._operands[0]) + f" {self._operator} " + ")" 
