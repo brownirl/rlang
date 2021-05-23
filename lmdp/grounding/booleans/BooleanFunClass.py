@@ -17,6 +17,7 @@ class BooleanExpression(Expression):
         self._operands = operands
         if name is None:
             name = 'boolean-f-'+ str(BooleanExpression._id)
+        BooleanExpression._id += 1
         Expression.__init__(self, fun, domain=domain, codomain=["boolean"], name=name)
         
     def and_(self, other):
@@ -77,15 +78,18 @@ class BooleanExpression(Expression):
     def __repr__(self):
         if self._operator is not None: # derived boolean function
             if self._operator != 'not':
-                return "(" + repr(self._operands[0]) + " " + self._operator + " " + repr(self._operands[1]) + ")"
+                return f"({repr(self._operands[0])} {self._operator} {repr(self._operands[1])})"
             else:
-                return self._operator + " " + repr(self._operands[0])
+                return f"{self._operator} {repr(self._operands[0])}"
         return self._name
 
 def _disj(f1, f2, **args):
     return f1(**args).__or__(f2(**args))
 
 def _conj(f1, f2, **args):
+    print(f"state_device: {args['state'].data.get_device()}, f1: {f1}, f1_device: {f1(**args).get_device()}, f2: {f2}, f2 device: {f2(**args).get_device()}")
+    print(f"f1_shape: {f1(**args).shape}, f2 shape: {f2(**args).shape}")
+
     return f1(**args).__and__(f2(**args))
 
 def _neg(f, **args):
