@@ -38,6 +38,12 @@ def program():
                 until=delta_wood > 0
             )
 
+
+    with lmdp.when(bridge >= 1) as c:
+        c.subpolicy(
+                name='get_gold',
+                until=delta_gold > 0
+            )
     return lmdp
 
 

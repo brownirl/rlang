@@ -186,7 +186,7 @@ def main(device='cpu'):
                 assert (_true_available[index[env]] > 0) == globals()[f"at_{env}"]
 
             for env in recipes['primitives']:
-                assert (info['craft_next_state'].grid[:,:,index[env]].sum() > 0) == globals()[f"there_is_{env}"]
+                assert (info['craft_next_state'].grid[:,:,index[env]].sum() > 0) == globals()[f"there_is_{env}"](s)
 
 
 if __name__ == "__main__":
