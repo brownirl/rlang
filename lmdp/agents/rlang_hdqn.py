@@ -23,7 +23,8 @@ default_inner_cli_parameters = {
     "initial_exploration": 1.,
     "final_exploration": 0.01,
     "final_exploration_step": 5000,
-    "test_exploration": 0.001
+    "test_exploration": 0.001,
+    "timeout": 100
 }
 
 default_outer_cli_parameters = {
@@ -42,7 +43,7 @@ default_outer_cli_parameters = {
     "initial_exploration": 1.,
     "final_exploration": 0.,
     "final_exploration_step": 500,
-    "test_exploration": 0.001,
+    "test_exploration": 0.001
 }
 
 
@@ -64,7 +65,8 @@ default_inner_params = {
     "final_exploration_step": 5000,
     "test_exploration": 0.001,
     # Model construction
-    "model_constructor": fc_relu_q
+    "model_constructor": fc_relu_q,
+    "timeout": 100
 }
 
 default_outer_params = {

@@ -227,7 +227,8 @@ class HDQNAgent(SubgoalHierarchicalAgent):
 
     def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params, writer=DummyWriter(), timeout=100):
         ## initialize OptionDQN 
-        outer_dqn = DQN(**outer_dqn_params())
+        _outer_params = outer_dqn_params()
+        outer_dqn = DQN(**_outer_params)
         ## DQN per option
         inner_dqn = RLangInnerAgent(options, self.__inner_factory(inner_dqn_params), writer=writer)
         super().__init__(options, outer_dqn, inner_dqn, discount_factor=discount_factor)
@@ -262,6 +263,7 @@ class HDQNPreset(Preset):
     def __init__(self, env, device, name, **hyperparameters):
         super().__init__(name, device, hyperparameters)
         self._env = env
+        self._timeout = hyperparameters['inner_dqn_params']['timeout']
 
     def agent(self, writer=DummyWriter(), train_steps=float('inf')):
         ## option dqn models
@@ -274,7 +276,8 @@ class HDQNPreset(Preset):
             self.hyperparameters['discount_factor'],
             self._outer_dqn_params,
             self._inner_dqn_params,
-            writer=writer
+            writer=writer,
+            timeout=self._timeout
         )
 
         return self._agent
