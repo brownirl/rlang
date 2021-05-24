@@ -153,6 +153,7 @@ class HierarchicalAgent(Agent):
             self._curr_option = o
             self._inner_agent.execute(o) # start option o
         self._steps += 1
+        self._t += 1
         return self._inner_agent.eval(state)
 
     def outer_agent_eval(self, state):

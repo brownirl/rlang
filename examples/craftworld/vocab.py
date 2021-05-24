@@ -183,10 +183,16 @@ def main(device='cpu'):
             assert (pos[0] == workshop_pos[0] and pos[1] == workshop_pos[1]) == globals()[f'at_workshop{i}'](s)
 
             for env in recipes['environment']:
-                assert (_true_available[index[env]] > 0) == globals()[f"at_{env}"]
+                t = _true_available[index[env]] > 0
+                _t = globals()[f"at_{env}"](s)
+                assert _t == t
+                # assert (_true_available[index[env]] > 0) == globals()[f"at_{env}"](s)
 
             for env in recipes['primitives']:
-                assert (info['craft_next_state'].grid[:,:,index[env]].sum() > 0) == globals()[f"there_is_{env}"]
+                t = info['craft_next_state'].grid[:,:,index[env]].sum() > 0
+                _t = globals()[f"there_is_{env}"](s).item()
+                assert t == _t
+                # assert (info['craft_next_state'].grid[:,:,index[env]].sum() > 0) == globals()[f"there_is_{env}"](s)
 
 
 if __name__ == "__main__":
