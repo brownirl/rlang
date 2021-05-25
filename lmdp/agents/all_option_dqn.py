@@ -1,4 +1,5 @@
 from torch.optim import Adam
+from all.core import StateArray
 from all.agents import DDQN as DQN
 from all.approximation import QNetwork, FixedTarget
 from all.logging import DummyWriter
@@ -10,13 +11,20 @@ from all.approximation.checkpointer import PeriodicCheckpointer
 from all.presets import PresetBuilder, Preset
 
 from lmdp.agents.dqn import DQNPreset
-from lmdp.grounding.states.StateClass import state_builder as RLangState
+from lmdp.grounding.states.StateClass import  State, BatchedState
+from lmdp.grounding.states.StateClass import  state_builder as RLangState
 import numpy as np
 import torch
 import torch.nn as nn
 
 from functools import partial
 from collections import namedtuple
+
+def state_builder(state):
+    if isinstance(state, StateArray):
+        return BatchedState(state.observation)
+    else:
+        return State(state.observation)
 
 class OptionInitMask(nn.Module):
     def __init__(self, options):
@@ -65,7 +73,7 @@ class OptionGreedyPolicy(GreedyPolicy):
         return torch.argmax(self.q.no_grad(state)).item()
 
     def __get_active_options(self, state):
-        s = RLangState(state['observation'])
+        s = State(state['observation'])
         active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(s)]).long()
         device = state['observation'].get_device()
         if device > 0:
@@ -125,6 +133,45 @@ class OptionDQNPreset(Preset):
             replay_start_size=self.hyperparameters['replay_start_size'],
             update_frequency=self.hyperparameters['update_frequency'],
         )
+
+
+
+
+class OptionDDQN(DQN):
+
+    def __init__(self, options, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._options = options
+
+
+    def _train(self):
+        if self._should_train():
+            # sample transitions from buffer
+            (states, actions, rewards, next_states, weights) = self.replay_buffer.sample(self.minibatch_size)
+            # forward pass
+            values = self.q(states, actions) # batch x action
+            # compute targets
+            _q_values  = self.q.no_grad(next_states)
+            active_mask = self._get_active_options(next_states)
+            min_q_values, _ = torch.min(_q_values, dim=1, keepdim=True)
+            next_actions = torch.argmax(_q_values * ~active_mask * (min_q_values-1)  + _q_values * active_mask, dim=1)
+            
+            targets = rewards + self.discount_factor * self.q.target(next_states, next_actions)
+            # compute loss
+            loss = self.loss(values, targets, weights)
+            # backward pass
+            self.q.reinforce(loss)
+            # update replay buffer priorities
+            td_errors = targets - values
+            self.replay_buffer.update_priorities(td_errors.abs())
+
+    def _get_active_options(self, states):
+        s = state_builder(states)
+        active = [o.initiation(s) & ~o.terminated(s) for o in self._options] # (batch x 1)
+        return torch.stack(active).transpose(1,0) # batch x action
+
+        
+
 
 option_dqn = partial(PresetBuilder, constructor=OptionDQNPreset)
 

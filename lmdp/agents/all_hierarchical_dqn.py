@@ -8,7 +8,7 @@ from all.memory import PrioritizedReplayBuffer as ExperienceReplayBuffer
 from all.optim import LinearScheduler
 from all.policies import GreedyPolicy
 
-from lmdp.agents.all_option_dqn import OptionGreedyPolicy, OptionInitMask, masked_q
+from lmdp.agents.all_option_dqn import OptionGreedyPolicy, OptionInitMask, masked_q, OptionDDQN
 from lmdp.grounding.states.StateClass import State as RLangState
 
 import torch
@@ -228,7 +228,7 @@ class HDQNAgent(SubgoalHierarchicalAgent):
     def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params, writer=DummyWriter(), timeout=100):
         ## initialize OptionDQN 
         _outer_params = outer_dqn_params()
-        outer_dqn = DQN(**_outer_params)
+        outer_dqn = OptionDDQN(**_outer_params)
         ## DQN per option
         inner_dqn = RLangInnerAgent(options, self.__inner_factory(inner_dqn_params), writer=writer)
         super().__init__(options, outer_dqn, inner_dqn, discount_factor=discount_factor)
@@ -244,7 +244,7 @@ class HDQNAgent(SubgoalHierarchicalAgent):
 
     def inner_is_executing(self, state):
         if self._inner_agent.is_executing(state): # not terminated
-            if (not self._curr_option.is_executable(RLangState(state['observation'])) or self._t > self._timeout): # initiation condition if false -> Interrupt
+            if (not self._curr_option.is_executable(RLangState(state['observation'])) or self._t > self._timeout): # initiation condition if false -> Interrupt             
                 s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
                 self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
                 self._inner_agent.stop(state)
@@ -297,7 +297,8 @@ class HDQNPreset(Preset):
         optimizer = Adam(_model.parameters(), lr=hyperparameters['lr'])
         
         q = QNetwork(
-            masked_q(_model, self.__get_options()),
+            # masked_q(_model, self.__get_options()),
+            _model,
             optimizer,
             target=FixedTarget(hyperparameters['target_update_frequency']),
             writer=writer,
@@ -323,6 +324,7 @@ class HDQNPreset(Preset):
         )
 
         params = {
+            'options': self.__get_options(),
             'q': q,
             'policy': policy,
             'replay_buffer': replay_buffer,
