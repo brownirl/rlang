@@ -65,20 +65,34 @@ class OptionGreedyPolicy(GreedyPolicy):
     def __call__(self, state):
         if np.random.rand() < self.epsilon:
             return self.__random_action(state)
-        return torch.argmax(self.q(state)).item()
+        active = self.get_active_options_mask(state)
+        q_values = self.q(state) 
+        min_q, _ = torch.min(q_values)
+        q_values = q_values * active + (min_q - 1) * ~active
+        return torch.argmax(q_values).item()
 
     def no_grad(self, state):
         if np.random.rand() < self.epsilon:
             return self.__random_action(state)
-        return torch.argmax(self.q.no_grad(state)).item()
+
+        active = self.get_active_options_mask(state)
+        q_values = self.q.no_grad(state)
+        min_q, _ = torch.min(q_values)
+        q_values = q_values * active + (min_q - 1) * ~active
+        return torch.argmax(q_values).item()
 
     def __get_active_options(self, state):
         s = State(state['observation'])
-        active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(s)]).long()
+        active = torch.Tensor([idx for idx, o in enumerate(self._options) if o.initiation(s) & ~o.terminated(s)]).long()
         device = state['observation'].get_device()
         if device > 0:
             active.to(device)
         return active
+
+    def get_active_options_mask(self, states):
+        s = state_builder(states)
+        active = [o.initiation(s) & ~o.terminated(s) for o in self._options] # (batch x 1)
+        return torch.stack(active) # batch x action
     
     def __random_action(self, state):
         active_opts = self.__get_active_options(state)
