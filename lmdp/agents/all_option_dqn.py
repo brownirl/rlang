@@ -67,7 +67,7 @@ class OptionGreedyPolicy(GreedyPolicy):
             return self.__random_action(state)
         active = self.get_active_options_mask(state)
         q_values = self.q(state) 
-        min_q, _ = torch.min(q_values)
+        min_q = torch.min(q_values)
         q_values = q_values * active + (min_q - 1) * ~active
         return torch.argmax(q_values).item()
 
@@ -77,7 +77,7 @@ class OptionGreedyPolicy(GreedyPolicy):
 
         active = self.get_active_options_mask(state)
         q_values = self.q.no_grad(state)
-        min_q, _ = torch.min(q_values, dim=-1)
+        min_q = q.min()
         q_values = q_values * active + (min_q - 1) * ~active
         return torch.argmax(q_values).item()
 
