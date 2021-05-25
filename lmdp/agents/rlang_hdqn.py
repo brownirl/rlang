@@ -21,8 +21,8 @@ default_inner_cli_parameters = {
     "replay_buffer_size": 10000,
     # Explicit exploration
     "initial_exploration": 1.,
-    "final_exploration": 0.01,
-    "final_exploration_step": 5000,
+    "final_exploration": 0.001,
+    "final_exploration_step": 40000,
     "test_exploration": 0.001,
     "timeout": 100
 }
@@ -42,7 +42,7 @@ default_outer_cli_parameters = {
     # Explicit exploration
     "initial_exploration": 1.,
     "final_exploration": 0.,
-    "final_exploration_step": 500,
+    "final_exploration_step": 80000,
     "test_exploration": 0.001
 }
 
