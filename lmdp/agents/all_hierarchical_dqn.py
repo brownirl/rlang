@@ -128,27 +128,28 @@ class HierarchicalAgent(Agent):
         self._inner_agent = inner_agent
         self._gamma = discount_factor
         self._t = 0
-        self._r = 0
         self._curr_option = None
         self._steps = 0
+        self._past_states = []
 
     def act(self, state):
         r = state['reward']
         s = State({'observation': state['observation'], 'reward': self._r, 'done': state['done']})
         self._r += r * self._gamma ** self._t # accumulates discounted reward
-        if self._curr_option is None or not self.inner_is_executing(state):
+        self._past_states.append(state) # add state to list
+        if self._curr_option is None or not self.inner_is_executing(state): # change option
             o = self.outer_agent_act(s) # outer agent act
             self._curr_option = self._options[o]
             self._inner_agent.execute(self._curr_option) # start option o
         self._steps += 1
         self._t += 1
         return self.inner_agent_act(state)
-    
+
     def eval(self, state):
         r = state['reward']
         s = {'observation': state['observation'], 'reward': self._r, 'done': state['done']}
         self._r += r * self._gamma ** self._t # accumulates discounted reward
-        if self._curr_option is None or not self.inner_is_executing(state):
+        if self._curr_option is None or not self.inner_is_executing(state): 
             o = self.outer_agent_eval(s) # outer agent act
             self._curr_option = o
             self._inner_agent.execute(o) # start option o
@@ -162,9 +163,24 @@ class HierarchicalAgent(Agent):
         return o
 
     def outer_agent_act(self, state):
+        self._outer_train(state)
         o = self._outer_agent.act(state)
         self._r, self._t = 0, 0
         return o
+
+    def _outer_train(self, state):
+        rewards = torch.Tensor(self._r)
+        t = torch.arange(self._t)
+        discount = self._gamma * t
+        states = []
+        for t in range(self._t-1):
+            _s = {'observation': self._past_states[t].observation,
+                          'reward': self._past_states[t].reward,
+                          'done': self._past_states[t].done}
+            next_s = {'observation': self._past_states[t].observation,
+                          'reward': (rewards[t:] * discount[t:]).sum(),
+                          'done': self._past_states[t].done}
+
 
     def inner_agent_act(self, state):
         return self._inner_agent.act(state)
