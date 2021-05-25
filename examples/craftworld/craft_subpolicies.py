@@ -66,7 +66,7 @@ def program_ladder():
                 until=delta_wood > 0
             )
 
-    with lmdp.when(bool_and(wood >= 1, at_workshop1)) as c:
+    with lmdp.when(bool_and(wood >= 1, iron == 0, at_workshop1)) as c:
         c.subpolicy(
                 name='build_stick',
                 policy=use,
