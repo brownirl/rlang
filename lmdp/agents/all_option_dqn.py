@@ -77,7 +77,7 @@ class OptionGreedyPolicy(GreedyPolicy):
 
         active = self.get_active_options_mask(state)
         q_values = self.q.no_grad(state)
-        min_q, _ = torch.min(q_values)
+        min_q, _ = torch.min(q_values, dim=-1)
         q_values = q_values * active + (min_q - 1) * ~active
         return torch.argmax(q_values).item()
 
@@ -184,7 +184,9 @@ class OptionDDQN(DQN):
         active = [o.initiation(s) & ~o.terminated(s) for o in self._options] # (batch x 1)
         return torch.stack(active).transpose(1,0) # batch x action
 
-        
+    def _train_step(self, curr_state, action, next_state):
+        self.replay_buffer.store(curr_state, action, next_state)
+        self._train()
 
 
 option_dqn = partial(PresetBuilder, constructor=OptionDQNPreset)

@@ -75,7 +75,7 @@ class SingleEnvExperiment(allexp.SingleEnvExperiment):
         frames = 0
         while not state.done:
             if(frames > self._max_frames_per_episode):
-                if (hasattr(self._agent, 'reset')):
+                if (hasattr(self._agent, 'reset')):#???
                     self._agent.reset()
                 break
             if self._render:

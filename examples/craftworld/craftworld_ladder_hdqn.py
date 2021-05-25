@@ -38,7 +38,7 @@ parser.add_argument('--test_episodes', type=int, default=10, help='Episodes to e
 parser.add_argument('--seed', type=int, default=argparse.SUPPRESS, help='Random Generator seed')
 parser.add_argument('--logdir', type=str, default='results/craftworld/runs', help='Result logging directory')
 parser.add_argument('--name', type=str, default='craft-dqn')
-parser.add_argument('--max_frames_per_episode', type=int, default=10)
+parser.add_argument('--max_frames_per_episode', type=int, default=1000)
 
 # Agent params
 parser.add_argument('--outer_state_feature_dim', type=int, default=10, help='Final feature dimension')

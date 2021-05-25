@@ -131,15 +131,22 @@ class HierarchicalAgent(Agent):
         self._curr_option = None
         self._steps = 0
         self._past_states = []
+        self._past_rewards = []
+        self._r = 0
+
 
     def act(self, state):
         r = state['reward']
-        s = State({'observation': state['observation'], 'reward': self._r, 'done': state['done']})
+        
+        # s = State({'observation': state['observation'], 'reward': self._r, 'done': state['done']})
         self._r += r * self._gamma ** self._t # accumulates discounted reward
         self._past_states.append(state) # add state to list
+        self._past_rewards.append(r)
+        
         if self._curr_option is None or not self.inner_is_executing(state): # change option
-            o = self.outer_agent_act(s) # outer agent act
+            o = self.outer_agent_act(state) # outer agent act
             self._curr_option = self._options[o]
+            self._curr_option_idx = o
             self._inner_agent.execute(self._curr_option) # start option o
         self._steps += 1
         self._t += 1
@@ -166,21 +173,22 @@ class HierarchicalAgent(Agent):
         self._outer_train(state)
         o = self._outer_agent.act(state)
         self._r, self._t = 0, 0
+        self._past_rewards, self._past_states = [], []
         return o
 
     def _outer_train(self, state):
-        rewards = torch.Tensor(self._r)
-        t = torch.arange(self._t)
-        discount = self._gamma * t
+        rewards = torch.Tensor(self._past_rewards)
+        t = torch.arange(len(self._past_states))
+        discount = self._gamma ** t
         states = []
-        for t in range(self._t-1):
-            _s = {'observation': self._past_states[t].observation,
-                          'reward': self._past_states[t].reward,
-                          'done': self._past_states[t].done}
-            next_s = {'observation': self._past_states[t].observation,
+        for t in range(self._t - 1):
+            _s = State({'observation': self._past_states[t]['observation'],
+                          'reward': self._past_states[t]['reward'],
+                          'done': self._past_states[t]['done']})
+            _next_s = State({'observation': state['observation'],
                           'reward': (rewards[t:] * discount[t:]).sum(),
-                          'done': self._past_states[t].done}
-
+                          'done': state['done']})
+            self._outer_agent._train_step(_s, self._curr_option_idx, _next_s)
 
     def inner_agent_act(self, state):
         return self._inner_agent.act(state)
@@ -200,6 +208,8 @@ class HierarchicalAgent(Agent):
     def reset(self):
         self._t = 0
         self._r = 0
+        self._past_states = []
+        self._past_rewards = []
         self._curr_option = None
         self._steps = 0
         
