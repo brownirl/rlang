@@ -1,6 +1,6 @@
 import copy
 from torch.optim import Adam
-from all.agents import DQN, DQNTestAgent
+from all.agents import DDQN as DQN, DQNTestAgent
 from all.approximation import QNetwork, FixedTarget
 from all.logging import DummyWriter
 from all.memory import PrioritizedReplayBuffer as ExperienceReplayBuffer

@@ -1,5 +1,5 @@
 from torch.optim import Adam
-from all.agents import DQN
+from all.agents import DDQN as DQN
 from all.approximation import QNetwork, FixedTarget
 from all.logging import DummyWriter
 from all.memory import ExperienceReplayBuffer
