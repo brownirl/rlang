@@ -1,4 +1,4 @@
-from all.agents import Agent, DQN
+from all.agents import Agent, DDQN as DQN
 from all.core import State
 from all.presets import Preset
 from all.logging import DummyWriter
