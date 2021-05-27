@@ -77,7 +77,7 @@ class OptionGreedyPolicy(GreedyPolicy):
 
         active = self.get_active_options_mask(state)
         q_values = self.q.no_grad(state)
-        min_q = q.min()
+        min_q = q_values.min()
         q_values = q_values * active + (min_q - 1) * ~active
         return torch.argmax(q_values).item()
 
@@ -168,9 +168,9 @@ class OptionDDQN(DQN):
             _q_values  = self.q.no_grad(next_states)
             active_mask = self._get_active_options(next_states)
             min_q_values, _ = torch.min(_q_values, dim=1, keepdim=True)
-            next_actions = torch.argmax(_q_values * ~active_mask * (min_q_values-1)  + _q_values * active_mask, dim=1)
-            
-            targets = rewards + self.discount_factor * self.q.target(next_states, next_actions)
+            next_actions = torch.argmax(~active_mask * (min_q_values-1)  + _q_values * active_mask, dim=1)
+            done_mask = next_states['done']
+            targets = rewards + self.discount_factor * self.q.target(next_states, next_actions) * ~done_mask
             # compute loss
             loss = self.loss(values, targets, weights)
             # backward pass

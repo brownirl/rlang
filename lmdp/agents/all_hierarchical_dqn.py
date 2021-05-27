@@ -177,11 +177,12 @@ class HierarchicalAgent(Agent):
         return o
 
     def _outer_train(self, state):
+        _t = 0#len(self._past_states)-1#0
         rewards = torch.Tensor(self._past_rewards)
-        t = torch.arange(len(self._past_states))
+        t = torch.arange(_t, len(self._past_states))
         discount = self._gamma ** t
         states = []
-        for t in range(self._t - 1):
+        for t in range(len(t) - 1):
             _s = State({'observation': self._past_states[t]['observation'],
                           'reward': self._past_states[t]['reward'],
                           'done': self._past_states[t]['done']})
