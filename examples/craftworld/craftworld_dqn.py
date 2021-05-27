@@ -9,6 +9,12 @@ from experiments.rlang_experiment import RLangExperiment
 import lmdp.agents.dqn as dqn
 
 import argparse
+import numpy as np
+import torch
+import random
+
+import yaml
+import os
 
 def _get_args(args, dict_args):
     r = {}
@@ -17,21 +23,34 @@ def _get_args(args, dict_args):
             r[arg] = dict_args[arg]
     return r
 
+def set_seeds(seed):    
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+def save_params(params, dir_file):
+    try:
+        os.makedirs(dir_file)
+    except:
+        print("file exists!")
+    file = f"{dir_file}/params.yml"
+    with open(file, 'w') as f:
+        yaml.dump(params, f, default_flow_style=False)
 
 parser = argparse.ArgumentParser(description='Craftworld-RLang Arguments', add_help=False)
 parser.add_argument('--device', type=str, default='cpu', help='Device to run: cpu or gpu')
-parser.add_argument('--tag', type=str, default='cpu', help='Device to run: cpu or gpu')
+parser.add_argument('--tag', type=str, default='dqn', help='Device to run: cpu or gpu')
 
 # Experiment params
 experiment_params = ['nruns', 'frames', 'test_episodes', 'seed', 'logdir', 'name', 'device', 'max_frames_per_episode']
 
 parser.add_argument('--nruns', type=int, default=1, help='Number of Runs')
-parser.add_argument('--frames', type=int, default=1000, help='Max number of timesteps')
+parser.add_argument('--frames', type=int, default=800000, help='Max number of timesteps')
 parser.add_argument('--test_episodes', type=int, default=10, help='Episodes to evaluate Agent')
 parser.add_argument('--seed', type=int, default=argparse.SUPPRESS, help='Random Generator seed')
 parser.add_argument('--logdir', type=str, default='results/craftworld/runs', help='Result logging directory')
 parser.add_argument('--name', type=str, default='craft-dqn')
-parser.add_argument('--max_frames_per_episode', type=int, default=10000)
+parser.add_argument('--max_frames_per_episode', type=int, default=1000)
 
 # Agent params
 parser.add_argument('--state_feature_dim', type=int, default=256, help='Final feature dimension')
@@ -45,7 +64,11 @@ parser.add_argument('--goal', type=str, default='gold', help='Craftworld Goal')
 
 # params dicts
 params = vars(parser.parse_args())
-params['logdir'] += params['tag']
+params['logdir'] += f"_{params['tag']}"
+
+# save params
+save_params(params, params['logdir'])
+
 exp_params = _get_args(experiment_params, params)
 agent_params = _get_args(agent_params, params)
 env_params = _get_args(environment_params, params)
@@ -63,5 +86,9 @@ _dqn = dqn.dqn('craft-flat-dqn', dqn.dqn_hyperparameters(**agent_params, model_c
 # Experiment Setup and Run!
 runner = allExperimentRunner()
 experiment = RLangExperiment(agents=[_dqn], experiment_runner=runner)
+
+if 'seed' in params:
+    set_seeds(params['seed'])
+
 for _ in range(exp_params['nruns']):
     experiment.run(envs, exp_params)

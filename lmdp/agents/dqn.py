@@ -16,9 +16,9 @@ default_hyperparameters = {
     # Common settings
     "discount_factor": 0.99,
     # Adam optimizer settings
-    "lr": 1e-3,
+    "lr": 1e-2,
     # Training settings
-    "minibatch_size": 64,
+    "minibatch_size": 128,
     "update_frequency": 1,
     "target_update_frequency": 100,
     # Replay buffer settings
@@ -27,7 +27,7 @@ default_hyperparameters = {
     # Explicit exploration
     "initial_exploration": 1.,
     "final_exploration": 0.,
-    "final_exploration_step": 10000,
+    "final_exploration_step": 300000,
     "test_exploration": 0.001,
     # Model construction
     "model_constructor": fc_relu_q

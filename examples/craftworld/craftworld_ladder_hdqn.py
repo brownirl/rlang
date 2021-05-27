@@ -12,7 +12,12 @@ import lmdp.agents.dqn as dqn
 from craft_subpolicies import program_ladder as program
 
 import argparse
+import numpy as np
+import torch
+import random
 
+import yaml
+import os
 #====== AUX functions ==========================
 
 def _get_args(args, dict_args):
@@ -22,18 +27,33 @@ def _get_args(args, dict_args):
             r[arg] = dict_args[arg]
     return r
  
+
+def set_seeds(seed):    
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+def save_params(params, dir_file):
+    try:
+        os.makedirs(dir_file)
+    except:
+        print("file exists!")
+    file = f"{dir_file}/params.yml"
+    with open(file, 'w') as f:
+        yaml.dump(params, f, default_flow_style=False)
+
 # ==============================================
 
 
 parser = argparse.ArgumentParser(description='Craftworld-RLang Arguments', add_help=False)
 parser.add_argument('--device', type=str, default='cpu', help='Device to run: cpu or cuda')
-parser.add_argument('--tag', type=str, default='cpu', help='Device to run: cpu or gpu')
+parser.add_argument('--tag', type=str, default='ladder_hdqn', help='Device to run: cpu or gpu')
 
 # Experiment params
 experiment_params = ['nruns', 'frames', 'test_episodes', 'seed', 'logdir', 'name', 'device', 'max_frames_per_episode']
 
 parser.add_argument('--nruns', type=int, default=1, help='Number of Runs')
-parser.add_argument('--frames', type=int, default=100000, help='Max number of timesteps')
+parser.add_argument('--frames', type=int, default=800000, help='Max number of timesteps')
 parser.add_argument('--test_episodes', type=int, default=10, help='Episodes to evaluate Agent')
 parser.add_argument('--seed', type=int, default=argparse.SUPPRESS, help='Random Generator seed')
 parser.add_argument('--logdir', type=str, default='results/craftworld/runs', help='Result logging directory')
@@ -60,6 +80,10 @@ parser.add_argument('--goal', type=str, default='ladder', help='Craftworld Goal'
 # params dicts
 params = vars(parser.parse_args())
 params['logdir'] += '_' + params['tag']
+
+# save params
+save_params(params, params['logdir'])
+
 exp_params = _get_args(experiment_params, params)
 
 inner_agent_params = _get_args(inner_agent_params, params)
@@ -94,5 +118,9 @@ experiment = RLangExperiment(rlang_programs=[program()],
                              rlang_agents=[_hdqn], 
                              agents=[], 
                              experiment_runner=runner)
+
+if 'seed' in params:
+    set_seeds(params['seed'])
+
 for _ in range(exp_params['nruns']):
     experiment.run(envs, exp_params)
