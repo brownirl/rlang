@@ -31,6 +31,9 @@ class State(Vector):
     def numpy(self):
         return self.data
 
+    def __hash__(self):
+        return hash(str(self.data))
+
 
 class BatchedState(BatchedVector, State):
     def __init__(self, data):
