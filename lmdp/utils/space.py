@@ -57,6 +57,28 @@ class Vector:
     def dim(self):
         return self._dim
 
+    def __add__(self, other):
+        return self.data.__add__(other)
+    def __sub__(self, other):
+        return self.data.__sub__(other)
+    def __mul__(self, other):
+        return self.data.__mul__(other)
+    def __truediv__(self, other):
+        return self.data.__truediv__(other)
+
+    def __lt__(self, other):
+        return self.data.__lt__(other)
+    def __le__(self, other):
+        return self.data.__le__(other)
+    def __gt__(self, other):
+        return self.data.__gt__(other)
+    def __ge__(self, other):
+        return self.data.__ge__(other)
+    def __eq__(self, other):
+        return (self.data == other).all(-1)
+    def __ne__(self, other):
+        return self.data != other
+
 class BatchedVector(Vector):
 
     def __init__(self, data):

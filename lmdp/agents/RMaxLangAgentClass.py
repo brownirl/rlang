@@ -7,7 +7,7 @@ from lmdp.agents.LangAgentClass import LangAgent
 from lmdp.utils.collections import defaultdict
 
 from functools import reduce
-
+from lmdp.grounding.states.StateClass import State as RLangState
 
 class RMaxLangAgent(LangAgent):
     def __init__(self, actions, gamma=0.95, s_a_threshold=2, epsilon_one=0.99,
@@ -60,15 +60,18 @@ class RMaxLangAgent(LangAgent):
 
 
     def default_transition(self, state, action, state_prime):
-        next_states = tuple(map(lambda x: x[1], filter(lambda x: x[0], self.lmdp.transition(state, action))))
+        s = RLangState(state.features())
+        s_prime =  RLangState(state_prime.features())
+        next_states = tuple(map(lambda x: x[1], filter(lambda x: x[0], self.lmdp.transition(s, action))))
         if (next_states is not None and len(next_states) > 0):
-            transitions = reduce(lambda x, y: x or y, map(lambda n_state: n_state(state_prime), next_states), False)
+            transitions = reduce(lambda x, y: x or y, map(lambda n_state: n_state(s_prime), next_states), False)
             if transitions:
                 self.t_s_a_counts[state][action] += 1
             return int(transitions)
         return int(0)
 
     def default_rewards(self, state, action):
+        s = RLangState(state.features())
         r = tuple(map(lambda x: x[1], filter(lambda x: x[0], self.lmdp.reward(state, action, state))))
         if len(r) > 0:
             self.r_s_a_counts[state][action] += 1
@@ -86,12 +89,14 @@ class RMaxLangAgent(LangAgent):
                     r = self.rewards[s][a]
                     if (self.rewards[s][a] is not None and len(r) > 0):
                         q_function[s][a] = float(sum(r))/len(r)
-                        s_primes = [s_prime for s_prime in state_space() if self.rmax_agent.transitions[s][a][s_prime] != 0]
+                        s_primes = [s_prime for s_prime in state_space() if self.transitions[s][a][s_prime] != 0]
                         if len(s_primes) > 0:
                             q_function[s][a] += self.rmax_agent.gamma *  sum(map(lambda s_prime: self.__get_max_q(q_function, s_prime), s_primes))/len(s_primes)
         return q_function
 
     def __get_max_q(self, q, s):
+        if s not in q:
+            return self.rmax_agent.rmax
         return max(q[s].values())
 
     def update_from_lang(self, state_space=None):
