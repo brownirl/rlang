@@ -56,28 +56,27 @@ class QLearningLangAgent(LangAgent):
         from lmdp.grounding.states.StateClass import BatchedState
         from lmdp.utils.space import BatchedTuple
 
-
-        t = self.indices.state_space.objects()
-        s_ = BatchedState(tuple(t))
+        t = list(self.indices.state_space.objects())
+        s_ = BatchedState(t)
         s, s_prime = _cartesian(s_.numpy(), s_.numpy())
         s, s_prime = BatchedState(s), BatchedState(s_prime)
-        
 
         r = self.rewards.numpy()
         t = self.transitions.numpy()
         q = self.q_func.numpy()
         for a, i  in tqdm(self.indices.action_space.elems()):
             print("Init rewards...")
-            r[:,i] = self.default_rewards(s, a, s_prime).reshape(len(s_), len(s_))     
+            n_states = s_.batch_size()
+            r[:,i] = self.default_rewards(s, a, s_prime).reshape(n_states, n_states)     
             print("Init transitions...")
-            t[:,i] = self.default_transition(s, a, s_prime).reshape(len(s_), len(s_))
+            t[:,i] = self.default_transition(s, a, s_prime).reshape(n_states, n_states)
             print("Init values...")
-            q[:,i] = self.default_q_func(s_,a).reshape(len(s_))
+            q[:,i] = self.default_q_func(s_,a).reshape(n_states)
 
 
     def default_transition(self, state, action, state_prime):
         next_states = self.lmdp.transition(state, action)
-        t = np.zeros(len(state), dtype=bool)
+        t = np.zeros(state.batch_size(), dtype=bool)
         if len(next_states) > 0:
             for bs, ns in next_states:
                 ns = ns(state_prime)
@@ -86,10 +85,11 @@ class QLearningLangAgent(LangAgent):
 
     def default_rewards(self, state, action, s_prime):
         rewards = self.lmdp.reward(state, action, s_prime)
-        r = np.zeros(len(state))  # return zero by default
+        n_states = state.batch_size()
+        r = np.zeros(n_states)  # return zero by default
         if len(rewards) > 0:
-            n = np.zeros(len(state))
-            b = np.zeros(len(state), dtype=bool)
+            n = np.zeros(n_states)
+            b = np.zeros(n_states, dtype=bool)
             for bs, fs in rewards:
                 n += bs
                 b = b | np.logical_not(bs)
@@ -100,17 +100,18 @@ class QLearningLangAgent(LangAgent):
 
     def default_q_func(self, state, action):  # default q_function is the same value for all actions
         values = self.lmdp.value(state)
+        n_states = state.batch_size()
         if len(values)>0:
-            r = np.zeros(len(state))  # return zero by default
-            n = np.zeros(len(state))
-            b = np.zeros(len(state), dtype=bool)
-            for bs, fs in values:
+            r = np.zeros(n_states)  # return zero by default
+            n = np.zeros(n_states)
+            b = np.zeros(n_states, dtype=bool)
+            for bs, fs in values: # boolean function, function to get reward
                 n += bs
                 b = b | np.logical_not(bs)
                 r[bs] += fs[bs]
             n[b] = 1
             return r / b
-        return np.zeros(len(state))
+        return np.zeros(n_states)
 
     def initialize_q_function(self): # Value iteration initialization
         q_function = self.q_func.numpy()

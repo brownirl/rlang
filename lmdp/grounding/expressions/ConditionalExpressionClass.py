@@ -56,14 +56,11 @@ class Conditional:
 
     #### Context Handling
     def __enter__(self):  
-        # self._boolean_expression = reduce(lambda a, b: a & b, self.conditional_stack)
-        # self.contexts.append(self._boolean_expression)
+
         return self
 
     def __exit__(self, type, value, traceback):
-        # self._boolean_expression = self.contexts.pop()
-        # if (len(self.conditional_stack) > 0):
-        #     self.conditional_stack.pop()
+
         self._boolean_expression = self.current_context.outer_ctx # back to the outer context
         self.__is_otherwise_available = self.current_context.is_when
         if(self.lmdp is not None):
@@ -79,7 +76,7 @@ class Conditional:
     def otherwise(self):
         if (self.__is_otherwise_available):
             self.current_context = Context(OTHERWISE_CTX, bool_not(self.current_context.boolean), self.current_context.outer_ctx)
-            self._boolean_expression = self.current_context.outer_ctx & self.current_context.boolean
+            self._boolean_expression = self.current_context.boolean.__and__(self.current_context.outer_ctx)
             self.__is_otherwise_available = False
         else:
             raise ValueError("Otherwise Statement does not correspond to a When Statement")

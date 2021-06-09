@@ -17,10 +17,10 @@ import torch
 def __bool_true(state):
     if(isinstance(state, BatchedState)):
         if isinstance(state.data, np.ndarray):
-            return np.ones(state.shape[0], dtype=bool)
+            return np.ones(state.batch_size(), dtype=bool)
         if state.data.get_device() >= 0:
-            return torch.ones(state.data.shape[0], dtype=bool).to(state.data.get_device())
-        return torch.ones(state.data.shape[0], dtype=bool)
+            return torch.ones(state.batch_size(), dtype=bool).to(state.data.get_device())
+        return torch.ones(state.batch_size(), dtype=bool)
         
     else:
         if isinstance(state.data, np.ndarray):

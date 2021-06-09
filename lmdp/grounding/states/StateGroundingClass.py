@@ -176,7 +176,7 @@ class StateFactor(Grounding, RealExpression):
             
             t = []
             for e in seq:
-                t.append((s == e).all(-1))
+                t.append((s == e))
             return reduce(lambda x, y: x | y , t)
         return partial(__in, l)
 

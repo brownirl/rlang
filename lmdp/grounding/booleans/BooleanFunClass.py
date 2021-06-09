@@ -9,6 +9,8 @@ sys.path.append(os.path.abspath("./"))
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import reduce, partial
 import numpy as np
+import torch
+
 
 class BooleanExpression(Expression):
     _id = 0
@@ -83,11 +85,30 @@ class BooleanExpression(Expression):
                 return f"{self._operator} {repr(self._operands[0])}"
         return self._name
 
+
+def grounded_or(result_1, result_2):
+    if isinstance(result_1, bool) and isinstance(result_2, bool): # boolean operation
+        return result_1 or result_2
+    if isinstance(result_1, bool) and isinstance(result_2, (np.ndarray, torch.Tensor)):
+        return result_2.__or__(result_1)
+    if isinstance(result_2, bool) and isinstance(result_1, (np.ndarray, torch.Tensor)):
+        return result_1.__or__(result_2)
+    return result_1 | result_2
+
+def grounded_and(result_1, result_2):
+    if isinstance(result_1, bool) and isinstance(result_2, bool): # boolean operation
+        return result_1 and result_2
+    if isinstance(result_1, bool) and isinstance(result_2, (np.ndarray, torch.Tensor)):
+        return result_2.__and__(result_1)
+    if isinstance(result_2, bool) and isinstance(result_1, (np.ndarray, torch.Tensor)):
+        return result_1.__and__(result_2)
+    return result_1 & result_2    
+
 def _disj(f1, f2, **args):
-    return f1(**args).__or__(f2(**args))
+    return grounded_or(f1(**args), f2(**args))
 
 def _conj(f1, f2, **args):
-    return f1(**args).__and__(f2(**args))
+    return grounded_and(f1(**args), f2(**args))
 
 def _neg(f, **args):
     import numpy as np

@@ -35,7 +35,7 @@ class Effect(Expression):
         elif(isinstance(self._effect, dict)): # factored effects
             f = lambda state, action, next_state: self._domain_sa(state, action) & self.__verify_transformation(self._effect, state, action, next_state)
         elif(isinstance(self._effect, Expression) and  Codomain(["state"]) == self._effect.codomain): # predictive effect
-            f = lambda state, action, next_state: self._domain_sa(state, action) & (self._effect(state=state, action=action) == next_state)
+            f = lambda state, action, next_state: self._domain_sa(state, action) & ((self._effect(state=state, action=action) == next_state).all(-1))
         else:
             raise ValueError("Error: Unexpected Effect Expression")
         return partial(EffectSymbol(f), state, action)

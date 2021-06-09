@@ -319,10 +319,10 @@ class RealConstant(RealExpression):
         batch_size = 1
         if (Domain(["state"]) <= self.domain):
             if isinstance(kwargs["state"], BatchedVector):
-                batch_size = len(kwargs["state"])
+                batch_size = kwargs["state"].batch_size()
         elif (Domain(["action"]) <= self.domain):
             if isinstance(kwargs["action"], (BatchedVector, BatchedTuple)):
-                batch_size = len(kwargs["action"])
+                batch_size = kwargs["action"].batch_size()
         if batch_size > 1:
             return np.array((self._constant,)*batch_size)
         return self._constant

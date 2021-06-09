@@ -2,6 +2,7 @@ import numpy as np
 import torch 
 from collections import UserList
 
+from simple_rl.mdp import State as SimpleRLState
 class DiscreteSpace:
     def __init__(self, domains, dim=None):
         if dim is not None:
@@ -38,6 +39,9 @@ class Vector:
 
     def reshape(self, shape):
         return Vector(self.data.reshape(shape))
+    
+    def batch_size(self):
+        return 1
 
     def __len__(self):
         return 1
@@ -62,6 +66,11 @@ class BatchedVector(Vector):
             self.data = np.array(data)
         elif isinstance(data[0], torch.Tensor):
             self.data = torch.stack(data)
+        elif isinstance(data[0], (tuple, list)):
+            self.data = torch.Tensor(data)
+        elif isinstance(data[0], SimpleRLState):
+            _s = list(map(lambda x: x.features(), data))
+            self.data = np.array(_s)
         else:
             raise ValueError('unexpected datatype!')
         self._dim = self.data.shape[1:] # assume first dimension to be batch dimension
@@ -69,13 +78,15 @@ class BatchedVector(Vector):
     def __len__(self):
         return len(self.data[0])
 
+    def batch_size(self):
+        return self.data.shape[0]
+
     def reshape(self, shape):
         # assume first dimension to be batch dim
         return BatchedVector(self.data.reshape((self.data.shape[0],)+shape))
 
     def nonzero(self, as_tuple=True):
         return self.data.nonzero()[1:] if isinstance(self.data, np.ndarray) else self.data.nonzero(as_tuple=as_tuple)[1:]
-
     
     @property
     def shape(self):
@@ -122,6 +133,10 @@ class BatchedTuple(tuple):
 
     def __len__(self):
         return len(self.data)
+    
+    def batch_size(self):
+        return len(self.data)
+    
     def __eq__(self, other):
         if(isinstance(other, (tuple, list)) and len(other) == len(self)): # elementwise comparison
             return tuple(map(lambda t: t[0] == t[1], zip(self.data, other)))
