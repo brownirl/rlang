@@ -1,3 +1,11 @@
+'''
+    Base Agent class
+    Agent Factory (Given an initialized agent, it create copies)
+    author: Rafael Rodriguez-Sanchez
+
+    TODO: to refactor 
+'''
+
 from abc import abstractmethod
 from copy import deepcopy
 
