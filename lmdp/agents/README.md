@@ -16,6 +16,6 @@
 * rlang_agent_builder.py: Abstract Interface for RLang-informed Agent Factories.
 * rlang_hdqn.py: RLang-informed hierarchical DDQN
 * RMaxLangAgentClass.py: RLang-informed RMax agent based on Simple RL
-* SarsaAgentClass.py (possibly **to be deleted): SARSA agent implementation for Simple RL
-* SarsaLangAgentClass.py (possibly **to be deleted): RLang-informed SARSA agent 
+* SarsaAgentClass.py (possibly **to be deleted**): SARSA agent implementation for Simple RL
+* SarsaLangAgentClass.py (possibly **to be deleted**): RLang-informed SARSA agent 
 * simple_rl_agent.py: Adapts Agent Interface (above) to Simple RL Agent interface.
