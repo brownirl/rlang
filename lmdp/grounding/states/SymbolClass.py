@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath("./"))
 
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
-from lmdp.grounding.states.StateClass import BatchedState
+from lmdp.grounding.states.StateClass import BatchedState, State
 
 import numpy as np
 import torch 
@@ -22,12 +22,14 @@ def __bool_true(state):
             return torch.ones(state.batch_size(), dtype=bool).to(state.data.get_device())
         return torch.ones(state.batch_size(), dtype=bool)
         
-    else:
+    elif isinstance(state, State):
         if isinstance(state.data, np.ndarray):
             return np.array([True]).squeeze() 
         if state.data.get_device() >= 0:
             return torch.tensor(True).to(state.data.get_device())
         return torch.tensor(True)
+    else:
+        raise ValueError("State is not of type (lmdp.grounding.states.StateClass.State or BatchedState)")
 
 class Symbol(Grounding, BooleanExpression):
     counter = 0

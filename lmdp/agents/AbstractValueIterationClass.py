@@ -5,9 +5,19 @@
 
 '''
 from lmdp.agents.LangAgentClass import LangAgent
+from lmdp.grounding.states.StateClass import State as RLangState
+
 from simple_rl.planning.ValueIterationClass import ValueIteration
 from simple_rl.abstraction.AbstractValueIterationClass import AbstractValueIteration as AVI
 from simple_rl.abstraction.action_abs.ActionAbstractionClass import ActionAbstraction
+from simple_rl.abstraction.action_abs.OptionClass import Option as SimpleRLOption
+from simple_rl.abstraction.action_abs.PredicateClass import Predicate as SimpleRLPredicate
+
+def simplerl_to_rlang_predicate(predicate):
+    def __predicate(state):
+        s = RLangState(state.features())
+        return predicate(s)
+    return __predicate
 
 class AAValueInteration(LangAgent):
 
@@ -19,6 +29,12 @@ class AAValueInteration(LangAgent):
 def _subpolicies_to_aa(subpolicies, primitive_actions):
     o = []
     for s in subpolicies:
-        o.append(s.to_option())
+        o.append(
+            SimpleRLOption(
+                SimpleRLPredicate(simplerl_to_rlang_predicate(s._init)), 
+                SimpleRLPredicate(simplerl_to_rlang_predicate(s._termination)), 
+                s.policy_fun, 
+                name=s.name)
+            )
 
     return ActionAbstraction(options=o, prim_actions=primitive_actions, prims_on_failure=True)
