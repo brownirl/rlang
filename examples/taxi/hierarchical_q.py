@@ -70,10 +70,6 @@ if __name__ == "__main__":
     with lmdp_none.when(passenger_1_intaxi) as c:
         c.subpolicy(name='dropoff-passenger-1', 
                     until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
-    
-    # with lmdp.when(bool_and(passenger_0_in_dest, passenger_0_pos == agent_position)) as c:
-    #     # do not pick up.
-    #  
 
     #### full options
 

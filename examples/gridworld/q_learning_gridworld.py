@@ -23,7 +23,7 @@ def experiment_params():
             "open_plot":True,
             "verbose":False,
             "reset_at_terminal":False,
-            "cumulative_plot":not False,
+            "cumulative_plot": True,
             "dir_for_plot":"results",
             "experiment_name_prefix":"",
             "track_success":False,

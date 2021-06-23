@@ -7,8 +7,6 @@ from lmdp.grounding import *
 
 from simple_rl.tasks import TaxiOOMDP, TaxiState
 from simple_rl.mdp.oomdp.OOMDPObjectClass import OOMDPObject
-
-from envs.TaxiDensifiedReward import TaxiDense
 from functools import partial
 from collections import deque
 import copy
