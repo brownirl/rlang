@@ -1,17 +1,12 @@
 grammar predicate;
 
-expr: PREDICATE EOF;
+expr: predicate EOF;
 
 /*
-LEXER RULES
+PARSER RULES
 */
 
-PREDICATE: PREDICATE_TYPE IDENTIFIER ASSIGNMENT boolean_expression EOF;
-
-fragment PREDICATE_TYPE: 'Predicate';
-fragment IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
-fragment ASSIGNMENT: ':=';
-
+predicate: PREDICATE_TYPE IDENTIFIER ASSIGNMENT boolean_expression;
 
 boolean_expression
     : boolean_expression boolean_operator boolean_expression
@@ -39,11 +34,18 @@ operand
     : 
     | NUMBER
     | IDENTIFIER
+    | SLICED
     ;
 
-/*
+
+/* 
 LEXER RULES
  */
+
+
+PREDICATE_TYPE: 'Predicate';
+IDENTIFIER: [a-z][A-Za-z0-9_]*;
+ASSIGNMENT: ':=';
 
 // boolean operators
 AND: 'and';
@@ -63,6 +65,8 @@ NOT_EQUAL: '!=';
 
 // operands
 NUMBER: [0-9]+;
+SLICED: IDENTIFIER'['NUMBER']';
+
 
 WHITESPACE: [ \t\f\r\n]+ -> channel(HIDDEN); // skip whitespaces
 DISCARDABLE: . -> channel(HIDDEN); // keeping whitespace tokenised makes it easier for syntax highlighting
