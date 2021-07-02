@@ -31,8 +31,7 @@ operator
     ;
 
 operand
-    : 
-    | NUMBER
+    : NUMBER
     | IDENTIFIER
     | SLICED
     ;
