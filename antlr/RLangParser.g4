@@ -4,4 +4,4 @@ options {
     tokenVocab=RLangLexer;
 }
 
-proposition: PROPOSITION IDENTIFIER ASSIGN IDENTIFIER;
+predicate: PREDICATE IDENTIFIER ASSIGN IDENTIFIER;

@@ -4,7 +4,7 @@ lexer grammar RLangLexer;
  * lexer rules
  */
 
-PROPOSITION: 'Proposition';
+PREDICATE: 'Predicate';
 
 IDENTIFIER
     : LETTER ANY_CHAR*

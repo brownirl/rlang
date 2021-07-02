@@ -4,4 +4,6 @@
 .java
 .antlr
 .idea
-/antlr/classfiles/
+antlr/classfiles/
+gen/
+antlr/RLangLexer.tokens
