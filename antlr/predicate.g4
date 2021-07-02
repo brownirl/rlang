@@ -1,24 +1,16 @@
 grammar predicate;
 
-expr: predicate EOF;
-
-/* 
-PARSER RULES
- */
-predicate: PREDICATE_TYPE IDENTIFIER ASSIGNMENT boolean_expression;
+expr: PREDICATE EOF;
 
 /*
 LEXER RULES
 */
 
-PREDICATE_TYPE: 'Predicate';
-IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
-ASSIGNMENT: ':=';
-// FEATURE: 'a';
-// //aren't we using boolean expressions to define predicts? 
-// //how can a predicate also be a part of boolean expression? distinguish the two
-// PREDICATE: 'b';
+PREDICATE: PREDICATE_TYPE IDENTIFIER ASSIGNMENT boolean_expression EOF;
 
+fragment PREDICATE_TYPE: 'Predicate';
+fragment IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
+fragment ASSIGNMENT: ':=';
 
 
 boolean_expression
@@ -26,6 +18,7 @@ boolean_expression
     | OPEN_PAREN boolean_expression CLOSE_PAREN
     | operand operator operand
     | NOT boolean_expression
+    | IDENTIFIER
     ;
 
 boolean_operator
@@ -45,6 +38,7 @@ operator
 operand
     : 
     | NUMBER
+    | IDENTIFIER
     ;
 
 /*
