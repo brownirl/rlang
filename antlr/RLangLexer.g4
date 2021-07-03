@@ -6,10 +6,6 @@ lexer grammar RLangLexer;
 
 PREDICATE: 'Predicate';
 
-IDENTIFIER
-    : LETTER ANY_CHAR*
-    ;
-
 /*
  *
  */
@@ -18,17 +14,40 @@ AND: 'and';
 OR: 'or';
 NOT: 'not';
 
+TRUE: 'True';
+FALSE: 'False';
+
 ASSIGN : ':=';
 
-OPEN_PAREN: '(';
-CLOSE_PAREN: ')';
+L_BRK: '[';
+R_BRK: ']';
 
-LESS_THAN : '<';
-GREATER_THAN : '>';
+L_PAR: '(';
+R_PAR: ')';
+
+LT : '<';
+GT : '>';
 EQUALS : '==';
 GT_EQ : '>=';
 LT_EQ : '<=';
 NOT_EQ : '!=';
+
+TIMES : '*';
+DIVIDE : '/';
+PLUS : '+';
+MINUS : '-';
+
+IDENTIFIER
+    : LETTER ANY_CHAR*
+    ;
+
+DECIMAL
+    : DIGIT+ '.' DIGIT+
+    ;
+
+INTEGER
+    : DIGIT+
+    ;
 
 /*
  * fragments + skip

@@ -7,3 +7,4 @@
 antlr/classfiles/
 gen/
 antlr/RLangLexer.tokens
+antlr/clean.sh
