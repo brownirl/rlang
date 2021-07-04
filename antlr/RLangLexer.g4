@@ -17,6 +17,8 @@ FALSE: 'False';
 
 ASSIGN : ':=';
 
+COL: ':';
+
 L_BRK: '[';
 R_BRK: ']';
 

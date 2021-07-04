@@ -31,7 +31,11 @@ arithmetic_expression
     | arithmetic_expression (TIMES | DIVIDE) arithmetic_expression
     | arithmetic_expression (PLUS | MINUS) arithmetic_expression
     | (MINUS)? (DECIMAL | INTEGER)
-    | IDENTIFIER L_BRK INTEGER R_BRK
-    | IDENTIFIER
+    | IDENTIFIER trailer*
+    ;
+
+trailer
+    : L_BRK (MINUS)? INTEGER R_BRK
+    | L_BRK ((MINUS)? INTEGER)? COL ((MINUS)? INTEGER)? R_BRK
     ;
 
