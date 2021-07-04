@@ -5,6 +5,7 @@ lexer grammar RLangLexer;
  */
 
 PREDICATE: 'Predicate';
+FEATURE: 'Feature';
 
 /*
  *
