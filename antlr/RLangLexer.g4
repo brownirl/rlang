@@ -6,6 +6,7 @@ lexer grammar RLangLexer;
 
 PREDICATE: 'Predicate';
 FEATURE: 'Feature';
+GOAL: 'Goal';
 
 AND: 'and';
 OR: 'or';
