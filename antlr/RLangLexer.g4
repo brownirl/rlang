@@ -6,10 +6,6 @@ lexer grammar RLangLexer;
 
 PREDICATE: 'Predicate';
 
-/*
- *
- */
-
 AND: 'and';
 OR: 'or';
 NOT: 'not';
@@ -36,6 +32,10 @@ TIMES : '*';
 DIVIDE : '/';
 PLUS : '+';
 MINUS : '-';
+
+/*
+ *
+ */
 
 IDENTIFIER
     : LETTER ANY_CHAR*
