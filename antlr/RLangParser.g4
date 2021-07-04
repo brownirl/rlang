@@ -8,9 +8,11 @@ program: stat*;
 
 stat
     : predicate
+    | feature
     ;
 
 predicate: PREDICATE IDENTIFIER ASSIGN boolean_expression;
+feature: FEATURE IDENTIFIER ASSIGN arithmetic_expression;
 
 boolean_expression
     : L_PAR boolean_expression R_PAR
