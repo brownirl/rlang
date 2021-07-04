@@ -10,11 +10,13 @@ stat
     : predicate
     | feature
     | goal
+    | literal
     ;
 
 predicate: PREDICATE IDENTIFIER ASSIGN boolean_expression;
 feature: FEATURE IDENTIFIER ASSIGN arithmetic_expression;
 goal: GOAL IDENTIFIER ASSIGN boolean_expression;
+literal: IDENTIFIER ASSIGN (boolean_expression | arithmetic_expression);
 
 boolean_expression
     : L_PAR boolean_expression R_PAR
