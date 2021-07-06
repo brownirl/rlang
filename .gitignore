@@ -4,7 +4,4 @@
 .java
 .antlr
 .idea
-antlr/classfiles/
-gen/
-antlr/RLangLexer.tokens
-antlr/clean.sh
+rlang/target
