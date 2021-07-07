@@ -19,3 +19,10 @@
     - agents: module containing rlang-informed agent implementations and supporting classes (**to refactor** and to move outside lmdp directory)
     - grounding: contains relevant modules to support expressions for RLang
     - utils: supporting classes and functions for __lmdp.grounding__
+    
+## Building the Lexer and Parser with Antlr4
+
+Simply run `mvn compile` from the root directory. 
+Clean with `mvn clean`. Check out `antlr/README.md` 
+and `antlr/pom.xml` for more info on the parser and 
+lexer development process.
