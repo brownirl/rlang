@@ -7,7 +7,7 @@ from antlr_denter.DenterHelper import DenterHelper
 from RLangParser import RLangParser
 }
 @lexer::members {
-class MyCoolDenter(DenterHelper):
+class SimpleDenter(DenterHelper):
     def __init__(self, lexer, nl_token, indent_token, dedent_token, ignore_eof):
         super().__init__(nl_token, indent_token, dedent_token, ignore_eof)
         self.lexer: RLangLexer = lexer
@@ -19,7 +19,7 @@ denter = None
 
 def nextToken(self):
     if not self.denter:
-        self.denter = self.MyCoolDenter(self, self.NL, RLangParser.INDENT, RLangParser.DEDENT, False)
+        self.denter = self.SimpleDenter(self, self.NL, RLangParser.INDENT, RLangParser.DEDENT, False)
     return self.denter.next_token()
 
 }
@@ -115,10 +115,6 @@ fragment SPACES
 fragment COMMENT
     : '#' ~[\r\n\f]*
     ;
-
-//fragment NEWLINE
-//    : '\r' '\n' | '\n' | '\r'
-//    ;
 
 SKIP_
     : (SPACES | COMMENT) -> skip

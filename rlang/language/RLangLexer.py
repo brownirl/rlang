@@ -228,7 +228,7 @@ class RLangLexer(Lexer):
         self._predicates = None
 
 
-    class MyCoolDenter(DenterHelper):
+    class SimpleDenter(DenterHelper):
         def __init__(self, lexer, nl_token, indent_token, dedent_token, ignore_eof):
             super().__init__(nl_token, indent_token, dedent_token, ignore_eof)
             self.lexer: RLangLexer = lexer
@@ -240,7 +240,7 @@ class RLangLexer(Lexer):
 
     def nextToken(self):
         if not self.denter:
-            self.denter = self.MyCoolDenter(self, self.NL, RLangParser.INDENT, RLangParser.DEDENT, False)
+            self.denter = self.SimpleDenter(self, self.NL, RLangParser.INDENT, RLangParser.DEDENT, False)
         return self.denter.next_token()
 
 
