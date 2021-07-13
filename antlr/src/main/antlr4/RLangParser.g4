@@ -24,7 +24,7 @@ stat
 
 predicate: PREDICATE IDENTIFIER BIND boolean_expression;
 feature: FEATURE IDENTIFIER BIND arithmetic_expression;
-factor: FACTOR IDENTIFIER BIND S trailer;
+factor: FACTOR IDENTIFIER BIND S trailer?;
 goal: GOAL IDENTIFIER BIND boolean_expression;
 action: ACTION IDENTIFIER BIND INTEGER;
 effect: EFFECT boolean_expression COL INDENT (stat NL*)* DEDENT;
