@@ -6,3 +6,4 @@
 .idea
 gen/
 antlr/target
+*__pychache__/
