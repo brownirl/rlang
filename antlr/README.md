@@ -1,13 +1,13 @@
 ## Advice for working on the lexer and parser grammar
 
-It's easy to use `grun` to test out grammar productions, 
+~~It's easy to use `grun` to test out grammar productions, 
 but `grun` only works on java files. Our target build is 
 in Python 3, but `pygrun` (the Python analog to `grun`) 
 does not support the `-gui` option, so to build Lexer/Parser 
-in java temporarily to use `grun` do the following:
-1. In `antlr/pom.xml` comment out the entire `<configuration>` 
-tag on line 32.
-2. Run from the `antlr/` directory:
+in java temporarily to use `grun` do the following:~~
+1. ~~In `antlr/pom.xml` comment out the entire `<configuration>` 
+tag on line 32.~~
+2. ~~Run from the `antlr/` directory:~~
 ```
 mvn clean
 mvn antlr4:antlr4
@@ -16,5 +16,19 @@ cd target/generate-sources/antlr4/
 grun RLang predicate -gui
 ```
 
-Please un-comment the `<configuration>` tag before pushing 
-and run `mvn clean` from the root directory before pushing.
+~~Please un-comment the `<configuration>` tag before pushing 
+and run `mvn clean` from the root directory before pushing.~~
+
+### Update
+
+After adding `antlr-denter` to the lexer to support Pythonic
+ indentation, we can no longer compile using `javac`...
+ so no more `grun`. Instead, use `pygrun` with the `-t` option
+ and pipe it into `prettyprint.py` from `rlang/language/`:
+```
+pygrun RLang program -t | ./prettyprint.py
+```
+`prettyprint.py` probably should not make it into the final
+ package (or it at least should be in a utils folder), but
+ it's helpful for developing purposes. It runs [`nltk` under
+ the hood to pretty-print](http://www.nltk.org/howto/tree.html) ASTs.

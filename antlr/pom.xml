@@ -12,18 +12,28 @@
                     <filesets>
                         <fileset>
                             <directory>../rlang/language</directory>
-<!--                            <includes>-->
-<!--                                <include>**/*.tmp</include>-->
-<!--                                <include>**/*.log</include>-->
-<!--                            </includes>-->
+                            <!--                            <includes>-->
+                            <!--                                <include>**/*.tmp</include>-->
+                            <!--                                <include>**/*.log</include>-->
+                            <!--                            </includes>-->
                             <excludes>
                                 <exclude>**/__init__.py</exclude>
                                 <exclude>**/RLangListener.py</exclude>
+                                <exclude>**/prettyprint.py</exclude>
                             </excludes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                     </filesets>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>

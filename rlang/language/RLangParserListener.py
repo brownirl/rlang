@@ -17,6 +17,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#dec.
+    def enterDec(self, ctx:RLangParser.DecContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#dec.
+    def exitDec(self, ctx:RLangParser.DecContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#stat.
     def enterStat(self, ctx:RLangParser.StatContext):
         pass
@@ -44,6 +53,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#factor.
+    def enterFactor(self, ctx:RLangParser.FactorContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#factor.
+    def exitFactor(self, ctx:RLangParser.FactorContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#goal.
     def enterGoal(self, ctx:RLangParser.GoalContext):
         pass
@@ -53,12 +71,48 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#literal.
-    def enterLiteral(self, ctx:RLangParser.LiteralContext):
+    # Enter a parse tree produced by RLangParser#action.
+    def enterAction(self, ctx:RLangParser.ActionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#literal.
-    def exitLiteral(self, ctx:RLangParser.LiteralContext):
+    # Exit a parse tree produced by RLangParser#action.
+    def exitAction(self, ctx:RLangParser.ActionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#effect.
+    def enterEffect(self, ctx:RLangParser.EffectContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect.
+    def exitEffect(self, ctx:RLangParser.EffectContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#reward.
+    def enterReward(self, ctx:RLangParser.RewardContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#reward.
+    def exitReward(self, ctx:RLangParser.RewardContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#constant.
+    def enterConstant(self, ctx:RLangParser.ConstantContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#constant.
+    def exitConstant(self, ctx:RLangParser.ConstantContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#assignment.
+    def enterAssignment(self, ctx:RLangParser.AssignmentContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#assignment.
+    def exitAssignment(self, ctx:RLangParser.AssignmentContext):
         pass
 
 
