@@ -123,7 +123,7 @@ __all__ = vocab_terms + ['vocab']
 
 def main(device='cpu'):
     from envs.craftworld.craftworld_gym import Craftworld
-    from lmdp.grounding.states.StateClass import State, BatchedState
+    from lmdp.grounding import State, BatchedState
     from envs.craftworld.craft import neighbors
     from all.environments.gym import GymEnvironment as allgym
     import random

@@ -3,13 +3,9 @@ sys.path.append(os.path.abspath("./"))
 
 from lmdp import *
 from lmdp.agents.AbstractValueIterationClass import AAValueInteration
-import simple_rl as rl
-import math
-import numpy as np
 
 if __name__=="__main__":
-    from simple_rl.mdp.StateClass import State
-    from lmdp.grounding.states.StateClass import State as RLangState
+    from lmdp.grounding import State as RLangState
     from vocab import *
     
     lmdp = LMDP(four_room_mdp, factor_names=["x", "y"]) # mdp is given to bind factors

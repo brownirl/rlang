@@ -5,7 +5,7 @@
     date: January 2021
 '''
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import reduce, partial
 import numpy as np

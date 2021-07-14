@@ -6,7 +6,7 @@
     date: January 2021
 '''
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 from lmdp.utils.expression_utils import Domain
 from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp.grounding.real.RealExpressionClass import RealExpression

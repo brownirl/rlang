@@ -1,17 +1,13 @@
 import sys, os
 sys.path.append(os.path.abspath("./"))
 # envs
-from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
 #agents
 from lmdp.agents import RandomAgent, QLearningAgent, QLearningLangAgent
 #lmdp
-from lmdp import *
-from lmdp.experiment_runner import *
 from lmdp.experiment_runner import run_agents
 from functools import partial
 
-import numpy as np
 
 def experiment_params():
     return {"instances":2, 
@@ -35,8 +31,6 @@ def gridworld_state_space(width, height): # state space iterator
             yield GridWorldState(x, y)
 
 if __name__ == "__main__":
-    from grounding import *
-
     #### Run agents
     random = RandomAgent(mdp.get_actions())
     epsilon = 0.1

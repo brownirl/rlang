@@ -5,7 +5,7 @@
     date: January 2021
 '''
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 from lmdp.grounding.actions.PolicyGroundingClass import Policy
 from lmdp.grounding.actions.PolicyFromDictClass import PolicyFromDict
 from lmdp.grounding.PartialFunctionClass import PartialFunction

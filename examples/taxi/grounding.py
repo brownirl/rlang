@@ -135,7 +135,7 @@ def dropoff_passenger(passenger, state):
     return actions["dropoff"]
 
 import numpy as np
-from lmdp.grounding.states.StateClass import State
+from lmdp.grounding import State
 terminal_state = State(np.array((4,1,0,2,2,2,1,2,1,0,4,1,4,1,0)))
 passenger_1_in_dest = (passenger_1_dest == passenger_1_pos)
 # assert (passenger_1_in_dest & bool_not(passenger_1_intaxi))(terminal_state) == True

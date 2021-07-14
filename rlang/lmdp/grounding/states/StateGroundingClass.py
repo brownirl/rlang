@@ -9,7 +9,7 @@
 """
 
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 
 import numpy as np
 from functools import reduce, partial

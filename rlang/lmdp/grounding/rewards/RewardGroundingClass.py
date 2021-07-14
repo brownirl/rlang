@@ -5,7 +5,7 @@
           v1 January 2021 (Partial Function)
 '''
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 from lmdp.grounding.GroundingClass import Grounding
 from lmdp.grounding.PartialFunctionClass import PartialFunction
 from lmdp.grounding.real.RealExpressionClass import RealExpression, real_exp

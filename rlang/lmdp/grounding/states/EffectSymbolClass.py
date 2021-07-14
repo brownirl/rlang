@@ -7,7 +7,7 @@
           v1 January 2021
 '''
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 
 from lmdp.grounding.states.SymbolClass import Symbol
 from lmdp.grounding.expressions.ExpressionsClass import Expression

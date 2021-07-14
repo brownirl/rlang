@@ -1,17 +1,13 @@
 import sys, os
 sys.path.append(os.path.abspath("./"))
 # envs
-from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
-from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
 #agents
-from lmdp.agents import RandomAgent, QLearningAgent, QLearningLangAgent
+from lmdp.agents import QLearningAgent
 #lmdp
 from lmdp import *
-from lmdp.experiment_runner import *
 from lmdp.experiment_runner import run_agents
 from functools import partial
 
-import numpy as np
 
 def experiment_params(**kwargs):
     default_params = {
@@ -35,7 +31,7 @@ def experiment_params(**kwargs):
 
 if __name__ == "__main__":
     from lmdp.agents.factories import QLearningFactory
-    from lmdp.agents.lang_hierarchical import RLangIntraoptionQAgent, RLangSMDPQAgent
+    from lmdp.agents.lang_hierarchical import RLangSMDPQAgent
     from lmdp.agents.simple_rl_agent import SimpleRLAgent
     from vocab import *
 

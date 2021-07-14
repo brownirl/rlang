@@ -5,7 +5,7 @@
     date: January 2021
 '''
 import sys, os
-sys.path.append(os.path.abspath("./"))
+sys.path.append(os.path.abspath("/"))
 import numpy as np
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
