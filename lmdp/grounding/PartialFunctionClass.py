@@ -8,10 +8,11 @@
 '''
 from lmdp.utils.expression_utils import Domain, Codomain
 
+
 class PartialFunction:
 
     def __init__(self, domain=[], codomain=[]):
-        self.specification = [] # list of (boolean, expression) specification
+        self.specification = []  # list of (boolean, expression) specification
         self.domain = Domain(domain)
         self.codomain = Codomain(codomain)
 
@@ -23,9 +24,11 @@ class PartialFunction:
         return r
 
     def add_specification(self, boolean_cond, function):
-        if (boolean_cond.domain <= self.domain  and self.codomain == function.codomain and function.domain <= self.domain):
+        if (
+                boolean_cond.domain <= self.domain and self.codomain == function.codomain and function.domain <= self.domain):
             self.specification.append((boolean_cond, function))
-        elif (self.domain == boolean_cond.domain):
+        elif self.domain == boolean_cond.domain:
             raise "Domains are not compatible: " + str(self.domain) + "~=" + str(boolean_cond.domain)
         else:
-            raise "Codomains are not compatible: " + str(self.codomain) + "~=" + str(boolean_cond.codomain) + " or " + str(self.codomain) + "~=" + str(function.codomain)
+            raise "Codomains are not compatible: " + str(self.codomain) + "~=" + str(
+                boolean_cond.codomain) + " or " + str(self.codomain) + "~=" + str(function.codomain)

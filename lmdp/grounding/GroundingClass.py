@@ -5,6 +5,7 @@
 """
 from lmdp.utils.expression_utils import Domain, Codomain
 
+
 class Grounding(object):
     def __init__(self, name=None):
         self._name = name
