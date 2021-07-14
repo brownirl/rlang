@@ -1,0 +1,91 @@
+{
+	"domain": "taxi",
+	"state space": {
+			"size": [10, 4],
+			"dtype": ""
+	},
+	"action space": {
+			"number of actions": 6
+	},
+	"modules": {
+		"grounding module":"/path/to/python/module"
+	},
+	"vocabulary":[
+		{
+            "type": "action",
+            "up": {
+                "mdp action": 0,
+                "grounding": ""
+            },
+            "down": {
+                "mdp action": 1,
+                "grounding": ""
+            },
+            "left": {
+                "mdp action": 2,
+                "grounding": ""
+            },
+            "right": {
+                "mdp action": 3,
+                "grounding": ""
+            }
+		},
+        {
+            "type": "policy",
+            "pick up": {
+                "grounding": "module.pick_up_passenger"
+            },
+            "drop off": {
+                "grounding": "module.drop_off_passenger"
+            },
+            "move to cell": {
+                "grounding": "module.move_to_cell"
+            }
+        }, 
+        {
+            "type": "state feature",
+            "passenger state": {
+                "grounding": ""
+            },
+            "taxi state": {
+                "grounding": ""
+            },
+            "wall state": {
+                "grounding": ""
+            },
+            "agent state": {
+                
+            }
+        },
+        {
+            "type": "symbol",
+            "in taxi": {
+                "grounding": ""
+            },
+            "has passenger": {
+                "grounding": ""
+            }
+        },
+		{
+            "type":"effect",
+            "down effect": {
+                "grounding": ""
+            },
+            "up effect": {
+                "grounding": ""
+            },
+            "left effect": {
+                "grounding": ""
+            },
+            "right effect": {
+                "grounding": ""
+            },
+            "pick up effect": {
+                "grounding": ""
+            },
+            "drop off effect": {
+                "grounding": ""
+            }
+        }
+	]
+}

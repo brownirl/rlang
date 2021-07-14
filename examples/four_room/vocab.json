@@ -1,0 +1,145 @@
+{
+	"domain": "four room",
+	"state space": {
+			"size": [],
+			"dtype": ""
+	},
+	"action space": {
+			"number of actions": 4
+	},
+	"modules": {
+		"grounding module":"/path/to/python/module"
+	},
+	"vocabulary":[
+		{
+            "type": "action",
+            "up": {
+                "mdp action": 0,
+                "grounding": ""
+            },
+            "down": {
+                "mdp action": 1,
+                "grounding": ""
+            },
+            "left": {
+                "mdp action": 2,
+                "grounding": ""
+            },
+            "right": {
+                "mdp action": 3,
+                "grounding": ""
+            }
+		},
+        {
+            "type": "policy",
+            "hallway policy": {
+                "grounding": ""
+            },
+            "o-room1-room2": {
+                "grounding": ""
+            },
+            "o-room1-room3": {
+                "grounding": ""
+            },
+            "o-room2-room1": {
+                "grounding": ""
+            },
+            "o-room2-room4": {
+                "grounding": ""
+            },
+            "o-room3-room1": {
+                "grounding": ""
+            },
+            "o-room3-room4": {
+                "grounding": ""
+            },
+            "o-room4-room2": {
+                "grounding": ""
+            },
+            "o-room4-room3": {
+                "grounding": ""
+            }
+        },
+        {
+            "type": "state feature",
+            "height": {
+                "grounding": ""
+            },
+            "width": {
+                "grounding": ""
+            },
+            "goal locs": {
+                "grounding": ""
+            },
+            "agent locs": {
+                "grounding": ""
+            },
+            "walls": {
+                "grounding": ""
+            },
+            "room 1": {
+                "grounding": ""
+            },
+            "room 2": {
+                "grounding": ""
+            },
+            "room 3": {
+                "grounding": ""
+            },
+            "room 4": {
+                "grounding": ""
+            },
+            "goal x": {
+                "grounding" : ""
+            },
+            "goal y": {
+                "grounding" : ""
+            },
+            "agent x": {
+                "grounding" : ""
+            },
+            "agent y": {
+                "grounding" : ""
+            },
+            "hallways": {
+                "grounding" : ""
+            }
+        },
+        {
+            "type": "symbol",
+            "is goal": {
+                "grounding": ""
+            },
+            "is wall": {
+                "grounding": ""
+            },
+            "in room 1": {
+                "grounding": ""
+            },
+            "in room 2": {
+                "grounding": ""
+            },
+            "in room 3": {
+                "grounding": ""
+            },
+            "in room 4": {
+                "grounding": ""
+            }
+        },
+        {
+            "type":"effect",
+            "down effect": {
+                "grounding": ""
+            },
+            "up effect": {
+                "grounding": ""
+            },
+            "left effect": {
+                "grounding": ""
+            },
+            "right effect": {
+                "grounding": ""
+            }
+        }
+    ]
+}

@@ -29,15 +29,27 @@ agent_n_features = len(agent)
 #-----factors
 # agent
 
+# [0, 1, 2]
 agent_state = StateFactor(list(range(agent_n_features)), name="agent")
 
 # walls
 walls_state = {}
+
+""" 
+init_idx = 3
+len(walls) = 1
+wall_n_features = 2
+{"wall_0"": StateFactor([3, 4], "wall_0")}
+
+
+"""
+
 init_idx = agent_n_features
 for i in range(len(walls)):
     walls_state.update({"wall_"+str(i): 
                         StateFactor(list(range(init_idx, init_idx + (i+1)*wall_n_features)), "wall_"+str(i))})
     init_idx += (i+1)*wall_n_features
+
 # passengers
 passenger_state = {}
 for p in range(len(passengers)):

@@ -4,6 +4,9 @@
 .java
 .antlr
 .idea
+.project
+.core.prefs
+.classpath
 gen/
 antlr/target
 *__pychache__/

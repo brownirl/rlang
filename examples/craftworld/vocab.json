@@ -1,0 +1,155 @@
+{
+	"domain": "craftworld",
+	"state space": {
+			"size": [],
+			"dtype": ""
+	},
+	"action space": {
+			"number of actions": 4
+	},
+	"modules": {
+		"grounding module":"/path/to/python/module"
+	},
+	"vocabulary":[
+		{
+            "type": "action",
+            "up": {
+                "mdp action": 0,
+                "grounding": ""
+            },
+            "down": {
+                "mdp action": 1,
+                "grounding": ""
+            },
+            "left": {
+                "mdp action": 2,
+                "grounding": ""
+            },
+            "right": {
+                "mdp action": 3,
+                "grounding": ""
+            }
+		},
+        {
+            "type": "state feature",
+            "height": {
+                "grounding": ""
+            },
+            "width": {
+                "grounding": ""
+            },
+            "wood": {
+                "grounding": ""
+            },
+            "iron": {
+                "grounding": ""
+            },
+            "bridge": {
+                "grounding": ""
+            },
+            "ladder": {
+                "grounding": ""
+            },
+            "gold": {
+                "grounding": ""
+            },
+            "plank": {
+                "grounding": ""
+            },
+            "stick": {
+                "grounding": ""
+            }
+        },
+        {
+            "type": "policy",
+            "builde bridge": {
+                "grounding": ""
+            },
+            "go to workshop 0": {
+                "grounding": ""
+            },
+            "get iron": {
+                "grounding": ""
+            },
+            "get wood": {
+                "grounding": ""
+            },
+            "get gold": {
+                "grounding": ""
+            },
+            "go to workshop 1": {
+                "grounding": ""
+            },
+            "go to workshop 2": {
+                "grounding": ""
+            },
+            "build stick": {
+                "grounding": ""
+            },
+            "build ladder": {
+                "grounding": ""
+            },
+            "build plank": {
+                "grounding": ""
+            }
+        },
+        {
+            "type": "markov feature",
+            "delta wood": {
+                "grounding" : ""
+            },
+            "delta bridge": {
+                "grounding" : ""
+            },
+            "delta gold": {
+                "grounding" : ""
+            },
+            "delta iron": {
+                "grounding" : ""
+            },
+            "delta stick": {
+                "grounding": ""
+            },
+            "delta ladder": {
+                "grounding": ""
+            },
+            "delta plank": {
+                "grounding": ""
+            }
+
+        },
+        {
+            "type": "symbol",
+            "at workshop 0": {
+                "grounding": ""
+            },
+            "there is iron": {
+                "grounding": ""
+            },
+            "there is wood": {
+                "grounding": ""
+            },
+            "at workshop 1": {
+                "grounding": ""
+            },
+            "at workshop 2": {
+                "grounding": ""
+            }
+        },
+        {
+            "type":"effect",
+            "down effect": {
+                "grounding": ""
+            },
+            "up effect": {
+                "grounding": ""
+            },
+            "left effect": {
+                "grounding": ""
+            },
+            "right effect": {
+                "grounding": ""
+            }
+        }
+    ]
+}
