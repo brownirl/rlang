@@ -6,7 +6,7 @@
 '''
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
 from lmdp.agents.LangAgentClass import LangAgent
-from lmdp.utils.collections import defaultdict, arraydict, Index, _cartesian
+from lmdp.utils.collections import DefaultDict, ArrayDict, Index, _cartesian
 from functools import reduce
 from collections import namedtuple
 import numpy as np
@@ -38,13 +38,13 @@ class QLearningLangAgent(LangAgent):
         self.base_agent.reset()
         if self.q_func is None:
             self.indices = _indices(self.state_space, self.base_agent.actions)
-            self.transitions = arraydict(len(self.indices.state_space), len(self.indices.action_space), len(self.indices.state_space), 
-                                        index=self.indices + (self.indices.state_space,))
+            self.transitions = ArrayDict(len(self.indices.state_space), len(self.indices.action_space), len(self.indices.state_space),
+                                         index=self.indices + (self.indices.state_space,))
             
-            self.rewards = arraydict(len(self.indices.state_space), len(self.indices.action_space), len(self.indices.state_space), 
-                                        index=self.indices + (self.indices.state_space,))
-            self.q_func = arraydict(len(self.indices.state_space), len(self.indices.action_space), 
-                                        index=self.indices)
+            self.rewards = ArrayDict(len(self.indices.state_space), len(self.indices.action_space), len(self.indices.state_space),
+                                     index=self.indices + (self.indices.state_space,))
+            self.q_func = ArrayDict(len(self.indices.state_space), len(self.indices.action_space),
+                                    index=self.indices)
 
             self.__init_functions()
             self.q_func.data = self.initialize_q_function()

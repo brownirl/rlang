@@ -4,7 +4,7 @@ from simple_rl.agents.AgentClass import Agent
 from simple_rl.agents.RMaxAgentClass import RMaxAgent
 
 from lmdp.agents.LangAgentClass import LangAgent
-from lmdp.utils.collections import defaultdict
+from lmdp.utils.collections import DefaultDict
 
 from functools import reduce
 from lmdp.grounding.states.StateClass import State as RLangState
@@ -16,17 +16,17 @@ class RMaxLangAgent(LangAgent):
                                 max_reward=max_reward, name=name, custom_q_init=custom_q_init)
         LangAgent.__init__(self, base_agent=rmax_agent, lmdp=lmdp)
         self.rmax_agent = self.base_agent
-        self.r_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
-        self.t_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
+        self.r_s_a_counts = DefaultDict(lambda *args: DefaultDict(lambda *args: int(0)))
+        self.t_s_a_counts = DefaultDict(lambda *args: DefaultDict(lambda *args: int(0)))
 
     def reset(self):
         self.rmax_agent.reset()
         
-        self.transitions = defaultdict(lambda state: defaultdict(lambda action: defaultdict(lambda state_prime: self.default_transition(state, action, state_prime))))
-        self.rewards = defaultdict(lambda state: defaultdict(lambda action: self.default_rewards(state, action)))
+        self.transitions = DefaultDict(lambda state: DefaultDict(lambda action: DefaultDict(lambda state_prime: self.default_transition(state, action, state_prime))))
+        self.rewards = DefaultDict(lambda state: DefaultDict(lambda action: self.default_rewards(state, action)))
         self.q_func = self.initialize_q_function(self.state_space, self.rmax_agent.actions)
-        self.r_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
-        self.t_s_a_counts = defaultdict(lambda *args: defaultdict(lambda *args: int(0)))
+        self.r_s_a_counts = DefaultDict(lambda *args: DefaultDict(lambda *args: int(0)))
+        self.t_s_a_counts = DefaultDict(lambda *args: DefaultDict(lambda *args: int(0)))
         self.rmax_agent.q_func = self.q_func
 
 
@@ -81,7 +81,7 @@ class RMaxLangAgent(LangAgent):
     
 
     def initialize_q_function(self, state_space, action_space):
-        q_function = defaultdict(lambda *args: defaultdict(lambda *args: self.rmax_agent.rmax))
+        q_function = DefaultDict(lambda *args: DefaultDict(lambda *args: self.rmax_agent.rmax))
         lim = int(np.log(1/(self.rmax_agent.epsilon_one * (1 - self.rmax_agent.gamma))) / (1 - self.rmax_agent.gamma))
         for _ in range(1, lim):
             for s in state_space():

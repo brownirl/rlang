@@ -3,21 +3,22 @@ from simple_rl.experiments import Experiment
 from collections import defaultdict
 from tqdm import tqdm
 
+
 def experiment_params():
-    return {"instances":3, 
-            "episodes": 100, 
-            "steps":100,
-            "clear_old_results":True,
-            "rew_step_count":1,
-            "track_disc_reward":False,
-            "open_plot":True,
-            "verbose":False,
-            "reset_at_terminal":False,
-            "cumulative_plot":False,
-            "dir_for_plot":"results",
-            "experiment_name_prefix":"",
-            "track_success":False,
-            "success_reward":None}
+    return {"instances": 3,
+            "episodes": 100,
+            "steps": 100,
+            "clear_old_results": True,
+            "rew_step_count": 1,
+            "track_disc_reward": False,
+            "open_plot": True,
+            "verbose": False,
+            "reset_at_terminal": False,
+            "cumulative_plot": False,
+            "dir_for_plot": "results",
+            "experiment_name_prefix": "",
+            "track_success": False,
+            "success_reward": None}
 
 
 def _make_step_progress_bar():
@@ -30,8 +31,9 @@ def _make_step_progress_bar():
     progress_bar_width = 20
     sys.stdout.write("\t\t[%s]" % (" " * progress_bar_width))
     sys.stdout.flush()
-    sys.stdout.write("\b" * (progress_bar_width+1)) # return to start of line, after '['
+    sys.stdout.write("\b" * (progress_bar_width + 1))  # return to start of line, after '['
     return progress_bar_width
+
 
 def _increment_bar():
     sys.stdout.write("-")
@@ -54,7 +56,7 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
 
     value_per_episode = [0] * episodes
     gamma = mdp.get_gamma()
-    
+
     # For each episode.
     for episode in tqdm(range(1, episodes + 1)):
         cumulative_episodic_reward = 0
@@ -78,8 +80,8 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
             prog_bar_len = _make_step_progress_bar()
 
         for step in range(1, steps + 1):
-            if verbose and int(prog_bar_len*float(step) / steps) > int(
-                    prog_bar_len*float(step-1) / steps):
+            if verbose and int(prog_bar_len * float(step) / steps) > int(
+                    prog_bar_len * float(step - 1) / steps):
                 _increment_bar()
 
             # step time
@@ -89,7 +91,7 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
             action = agent.act(state, reward)
             # Terminal check.
             if state.is_terminal():
-                
+
                 if verbose:
                     sys.stdout.write("x")
 
@@ -97,7 +99,7 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
                         is not None and action != "terminate":
                     # Self loop if we're not episodic or resetting and in a terminal state.
                     experiment.add_experience(agent, state, action, 0, state,
-                                              time_taken=time.clock()-step_start)
+                                              time_taken=time.clock() - step_start)
                     continue
                 if reset_at_terminal:
                     # Reset the MDP.
@@ -118,8 +120,8 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
 
             # Record the experience.
             if experiment is not None:
-                reward_to_track = mdp.get_gamma()**(
-                        step + 1 + episode*steps) * reward if \
+                reward_to_track = mdp.get_gamma() ** (
+                        step + 1 + episode * steps) * reward if \
                     track_disc_reward else reward
                 reward_to_track = round(reward_to_track, 5)
                 experiment.add_experience(agent, state, action,
@@ -159,7 +161,8 @@ def run_single_agent_on_mdp(agent, mdp, episodes, steps, experiment=None,
     if verbose:
         print("\tLast episode reward:", cumulative_episodic_reward)
     return False, steps, value_per_episode
-    
+
+
 def run_agents(agents, mdp, exp_params=None):
     exp_params = experiment_params() if exp_params is None else exp_params
     params = {"instances": exp_params["instances"],
@@ -170,7 +173,7 @@ def run_agents(agents, mdp, exp_params=None):
         agents=agents,
         mdp=mdp,
         params=params,
-        is_episodic= exp_params["episodes"] > 1,
+        is_episodic=exp_params["episodes"] > 1,
         clear_old_results=exp_params["clear_old_results"],
         track_disc_reward=exp_params["track_disc_reward"],
         count_r_per_n_timestep=exp_params["rew_step_count"],
@@ -205,10 +208,9 @@ def run_agents(agents, mdp, exp_params=None):
             mdp.reset()
             mdp.end_of_instance()
             end = time.clock()
-            times[instance] = end-start
+            times[instance] = end - start
             print(f"{instance}: {times[instance]}")
 
-        
     print("\n--- TIMES ---")
     for agent in time_dict.keys():
         print(str(agent) + " agent took " + str(round(time_dict[agent], 2)) \

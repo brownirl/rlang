@@ -1,12 +1,15 @@
 import numpy as np
 
-class defaultdict(dict):
+
+class DefaultDict(dict):
     '''
-        Custom defaultdict class that allows to have default values
+        Custom DefaultDict class that allows to have default values
         be a function of the key.
     '''
+
     def __init__(self, dict_factory):
         self._dict_factory = dict_factory
+
     def __missing__(self, key):
         v = self._dict_factory(key)
         self[key] = v
@@ -38,28 +41,29 @@ class Index:
             return key in self.idx_to_obj
         else:
             return key in self.obj_to_idx
-    
+
     def __len__(self):
         return len(self.objects())
-    
+
     def objects(self):
         return self.obj_to_idx.keys()
-        
+
     def elems(self):
         return self.obj_to_idx.items()
 
 
-class arraydict:
+class ArrayDict:
     def __init__(self, *dims, iterators=None, default_value=0, data=None, index=None, dtype=np.float):
         self.data = np.zeros(dims) + default_value if data is None else data
-        if not index: # index per dimension
+        if not index:  # index per dimension
             if not iterators:
-                self.index = [Index()] * len(dims) 
+                self.index = [Index()] * len(dims)
             else:
                 self.index = [Index(i) for i in iterators]
-                self.index = self.index + [Index() for _ in range(len(dims)-len(self.index))]
+                self.index = self.index + [Index() for _ in range(len(dims) - len(self.index))]
         else:
             self.index = index
+
     def __len__(self):
         return len(self.data.shape)
 
@@ -78,46 +82,48 @@ class arraydict:
         # if all dimensions given then return value
         if len(keys) == len(self):
             return self.data[idx_k]
-        else: # if not return slice as arraydict
+        else:  # if not return slice as ArrayDict
             d = self.data
             for i in idx_k:
                 d = d[i]
-            return arraydict(*self.data.shape[len(keys):], data=d, index=self.index[len(keys):])
+            return ArrayDict(*self.data.shape[len(keys):], data=d, index=self.index[len(keys):])
 
     def __setitem__(self, keys, value):
         keys, idx_k = self.__get_indices(keys)
         if len(keys) == len(self):
             self.data[idx_k] = value
-    
+
     def __str__(self):
         return str(self.data)
-    
+
     def keys(self):
         return self.index[0].objects()
 
     def numpy(self):
         return self.data
 
+
 def _cartesian(a1, a2):
-    r2 = np.tile(a2, (a1.shape[0],1))
-    r1 = np.repeat(a1, a2.shape[0], 0) 
+    r2 = np.tile(a2, (a1.shape[0], 1))
+    r1 = np.repeat(a1, a2.shape[0], 0)
     return r1, r2
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
 
-    def gridworld_state_space(width, height): # state space iterator
-        for x in range(1,width+1):
-            for y in range(1, height+1):
+
+    def gridworld_state_space(width, height):  # state space iterator
+        for x in range(1, width + 1):
+            for y in range(1, height + 1):
                 yield GridWorldState(x, y)
 
-    
+
     actions = ("up", "down", "left", "right")
 
-    Q = arraydict(4, 4, iterators=[gridworld_state_space(2,2), actions])
-    s = GridWorldState(1,1)
+    Q = ArrayDict(4, 4, iterators=[gridworld_state_space(2, 2), actions])
+    s = GridWorldState(1, 1)
     a = "up"
     Q[s][a] = 1
     print(Q[s][a])
     print(Q)
-    

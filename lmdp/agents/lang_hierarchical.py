@@ -1,7 +1,7 @@
 from copy import deepcopy
 from lmdp.agents.LangAgentClass import LangAgent
 from lmdp.agents.HierarchicalAgent import IntraoptionQAgent, SMDPQAgent
-from lmdp.utils.collections import defaultdict
+from lmdp.utils.collections import DefaultDict
 
 
 class RLangSMDPQAgent(SMDPQAgent, LangAgent):
@@ -69,7 +69,7 @@ class RLangSMDPQAgent_PriorPolicy(SMDPQAgent, LangAgent):
 
     def __initialize_options_policy(self):
         agent = self._outer_agent._agent
-        agent.q_func = defaultdict(lambda state: defaultdict(lambda action: self._default_q(state, action)))
+        agent.q_func = DefaultDict(lambda state: DefaultDict(lambda action: self._default_q(state, action)))
 
     def _default_q(self, state, action):
         o = filter(lambda p: p[0], self._lmdp.policy(state))

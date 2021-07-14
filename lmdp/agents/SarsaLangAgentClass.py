@@ -5,7 +5,7 @@
 '''
 from lmdp.agents.SarsaAgentClass import SarsaAgent
 from lmdp.agents.LangAgentClass import LangAgent
-from lmdp.utils.collections import defaultdict
+from lmdp.utils.collections import DefaultDict
 
 class SarsaLangAgent(LangAgent):
     DEFAULT_Q = 0
@@ -42,4 +42,4 @@ class SarsaLangAgent(LangAgent):
             return SarsaLangAgent.DEFAULT_Q
             
     def update_from_language(self):
-        self.base_agent.q_func = defaultdict(lambda state: defaultdict(lambda action: self.lang_q_func(state, action)))
+        self.base_agent.q_func = DefaultDict(lambda state: DefaultDict(lambda action: self.lang_q_func(state, action)))
