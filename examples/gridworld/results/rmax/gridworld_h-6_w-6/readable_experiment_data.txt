@@ -1,0 +1,10 @@
+(MDP)
+	gridworld_h-6_w-6
+(Agents)
+	LangRMax,0
+	RMax,1
+(Params)
+	instances : 3
+	episodes : 300
+	steps : 100
+	track_disc_reward : False
