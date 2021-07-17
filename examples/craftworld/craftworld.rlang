@@ -1,0 +1,94 @@
+Feature x  = position[0]
+Feature y  = position[1]
+
+# unsure
+Action up := 
+Action down :=
+Action left :=
+Action right :=
+Action use :=
+
+Effect A == up:
+    position += [0,1]
+
+Effect A == down:
+    position += [0,-1]
+
+Effect A == left:
+    position += [-1,0]
+
+Effect A == right:
+    position += [0,1]
+
+```
+Feature iron := primitive_elements[0]
+Feature grass := primitive_elements[1]
+Feature wood := primitive_elements[2]
+Feature gold := primitive_elements[3]
+Featue gem := primitive_elements[4]
+``
+
+# unsure
+Predicate at_workshop0 := 
+Predicate at_workshop1 := 
+Predicate at_workshop2 := 
+
+```
+MarkovFeature delta_gold := gold - gold'
+MarkovFeature delta_iron := iron - iron'
+MarkovFeature delta_wood := wood - wood'
+MarkovFeature delta_bridge := bridge - bridge'
+MarkovFeature delta_stick := stick - stick'
+MarkovFeature delta_plank := plank - plank'
+MarkovFeature delta_ladder := ladder - ladder'
+```
+
+Option go_to_workshop_2:
+    init(True)
+        Find
+    until at_workshop2
+
+Option build_bridge:
+    init(wood >= 1 and iron >=1 and at_workshop2)
+        Execute use
+    until delta_bridge > 0
+
+Option get_iron:
+    init(there_is_iron)
+        Find
+    until delta_iron > 0
+
+Option get_gold:
+    init(bridge >= 1)
+        Find
+    until delta_gold > 0
+
+Option get_wood:
+    init(there_is_wood)
+        Find
+    until delta_wood > 0
+
+Option build_ladder:
+    init(stick >= 1 and plank >= 1 and at_workshop2)
+        Execute use
+    until delta_ladder > 0
+
+Option build_plank:
+    init(wood >= 1 and at_workshop0)
+        Execute use
+    until delta_plank > 0
+
+Option build_stick:
+    init(wood >= 1 and iron == 0 and at_workshop1)
+        Execute use
+    until delta_stick > 0
+
+Option go_to_workshop_0:
+    init(True)
+        Find
+    until at_workshop0
+
+Option go_to_workshop_1:
+    init(True)
+        Find
+    until at_workshop1

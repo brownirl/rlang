@@ -46,6 +46,7 @@ delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 
 end_inv = end_map_idx + 2*n_objects
 position = StateFactor(list(range(end_inv, end_inv+2)), 'position')
 direction = StateFactor(list(range(end_inv+2, end_inv+6)), 'direction')
+
 #-----features
 
 x, y = position[0], position[1]  
@@ -73,7 +74,7 @@ environment_elements = {}
 for p in recipes['environment']:
     environment_elements.update({"at_"+p: Symbol(elements_to_use[objects_to_idx[p]] > 0, name="at_"+p)})
 
-environment_symbols = list(environment_elements.keys())
+environment_predicates = list(environment_elements.keys())
 locals().update(environment_elements)
 
 # resource availability
@@ -88,7 +89,7 @@ def primitive_available(object):
 elements = {}
 for p in recipes['primitives']:
     elements.update({'there_is_' + p: primitive_available(p)})
-availability_symbols = list(elements.keys())
+availability_predicates = list(elements.keys())
 locals().update(elements) 
 
 #-----subpolicies
@@ -115,7 +116,7 @@ def go_to_cell(state, x, y):
 
 #======== clean up
 vocab_terms = ['grid_map', 'inventory', 'delta_inventory', 'position', 'elements_to_use'] + built_elements + delta_elements + primitives_elements   \
-        + environment_symbols + availability_symbols + actions
+        + environment_predicates + availability_predicates + actions
 l = locals()
 vocab = [l[p] for p in vocab_terms]
 __all__ = vocab_terms + ['vocab']

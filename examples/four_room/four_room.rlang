@@ -1,0 +1,24 @@
+Feature x = position[0]
+Feature y = position[1]
+Predicate goal = x == 8 and y == 4
+Predicate in_room1 = x <= half_width and y < half_height
+Predicate in_room2 = x >= half_width and y < half_height
+Predicate in_room3 = x <= half_width and y >= half_height
+Predicate in_room4 = x ?= half_width and y >= half_height
+
+Action up := 
+Action down :=
+Action left :=
+Action right :=
+
+Effect up:
+    y += 1
+
+Effect down:
+    y -= 1
+
+Effect left:
+    x -= 1
+
+Effect right: 
+    x += 1

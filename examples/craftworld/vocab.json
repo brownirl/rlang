@@ -28,112 +28,55 @@
             "right": {
                 "mdp action": 3,
                 "grounding": ""
+            },
+            "use": {
+                "mdp action": 4,
+                "grounding": "use"
             }
 		},
         {
+            "type": "state factor",
+            "end_map_idx": {
+                "grounding": "end_map_idx"
+            },
+            "grid_map": {
+                "grounding": "grid_map"
+            },
+            "inventory": {
+                "grounding": "inventory"
+            },
+            "delta_inventory": {
+                "grounding": "delta_inventory"
+            },
+            "direction": {
+                "grounding": "direction"
+            },
+            "position": {
+                "grounding": "position"
+            }
+        },
+        {
             "type": "state feature",
-            "height": {
-                "grounding": ""
+            "elements_to_use": {
+                "grounding": "elements_to_use"
             },
-            "width": {
-                "grounding": ""
+            "environment_elements":{
+                "grounding": "environment_elements"
             },
-            "wood": {
-                "grounding": ""
+            "materials":{
+                "grounding": "materials"
             },
-            "iron": {
-                "grounding": ""
-            },
-            "bridge": {
-                "grounding": ""
-            },
-            "ladder": {
-                "grounding": ""
-            },
-            "gold": {
-                "grounding": ""
-            },
-            "plank": {
-                "grounding": ""
-            },
-            "stick": {
-                "grounding": ""
+            "delta_elements": {
+                "grounding": "delta_elements"
             }
         },
         {
-            "type": "policy",
-            "builde bridge": {
-                "grounding": ""
+            "type": "predicate",
+            "environment_predicates": {
+                "grounding": "environment_predicates"
             },
-            "go to workshop 0": {
-                "grounding": ""
-            },
-            "get iron": {
-                "grounding": ""
-            },
-            "get wood": {
-                "grounding": ""
-            },
-            "get gold": {
-                "grounding": ""
-            },
-            "go to workshop 1": {
-                "grounding": ""
-            },
-            "go to workshop 2": {
-                "grounding": ""
-            },
-            "build stick": {
-                "grounding": ""
-            },
-            "build ladder": {
-                "grounding": ""
-            },
-            "build plank": {
-                "grounding": ""
-            }
-        },
-        {
-            "type": "markov feature",
-            "delta wood": {
-                "grounding" : ""
-            },
-            "delta bridge": {
-                "grounding" : ""
-            },
-            "delta gold": {
-                "grounding" : ""
-            },
-            "delta iron": {
-                "grounding" : ""
-            },
-            "delta stick": {
-                "grounding": ""
-            },
-            "delta ladder": {
-                "grounding": ""
-            },
-            "delta plank": {
-                "grounding": ""
-            }
-
-        },
-        {
-            "type": "symbol",
-            "at workshop 0": {
-                "grounding": ""
-            },
-            "there is iron": {
-                "grounding": ""
-            },
-            "there is wood": {
-                "grounding": ""
-            },
-            "at workshop 1": {
-                "grounding": ""
-            },
-            "at workshop 2": {
-                "grounding": ""
+            "resource_availability": {
+                "grounding": "availability_predicates"
             }
         },
         {

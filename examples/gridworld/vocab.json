@@ -28,15 +28,6 @@
             "lava locs": {
                 "grounding": "lava_locs"
             }
-        },
-        {
-            "type": "effect",
-            "fall in lava effect": {
-                "grounding": ""
-            },
-            "goal effect": {
-                "grounding": ""
-            }
         }
     ]
 }

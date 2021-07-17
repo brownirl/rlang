@@ -1,11 +1,22 @@
+```
 Feature agent_position := agent_state[:2]
 Predicate passenger_in_taxi = agent_state[2] == 1
-Feature direction := [0,1]
+
 Action up := 
 Action down :=
+Action left :=
+Action right :=
 
-Policy move_vertically :=
-    if direction[1] < 0 and is_free_to-move(agent_position + (1, 0), state):
-        up
-    elif is_free_to-move(agent_position + (0, -1), state):
-        down
+Effect A == up:
+    position += [0,1]
+
+Effect A == down:
+    position += [0,-1]
+
+Effect A == left:
+    position += [-1,0]
+
+Effect A == right:
+    position += [0,1]
+
+```
