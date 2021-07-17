@@ -8,21 +8,21 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"/path/to/python/module"
+		"grounding module":"grounding.py"
 	},
 	"vocabulary":[
-        {
-           "type": "mdp_paramters",
-            "width": {
-                "grounding": "WIDTH"
-            },
-            "height": {
-                "grounding": "HEIGHT"
-            },
-            "goals": {
-                "grounding": "goals"
-            }
-        },
+//        {
+//           "type": "mdp_paramters",
+//            "width": {
+//                "grounding": "WIDTH"
+//            },
+//            "height": {
+//                "grounding": "HEIGHT"
+//            },
+//            "goals": {
+//                "grounding": "goals"
+//            }
+//        },
         {
             "type": "state factor",
             "hallways": {

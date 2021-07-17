@@ -1,6 +1,6 @@
 ```
 Feature agent_position := agent_state[:2]
-Predicate passenger_in_taxi = agent_state[2] == 1
+Predicate passenger_in_taxi := agent_state[2] == 1
 
 Action up := 
 Action down :=

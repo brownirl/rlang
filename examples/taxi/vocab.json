@@ -51,24 +51,24 @@
                 "grounding": "taxi_states"
             }
         },
-        {
-            "type": "mdp parameters",
-            "width": {
-                "grounding": "WIDTH"
-            },
-            "height": {
-                "grounding": "HEIGHT"
-            },
-            "passengers": {
-                "grounding": "passengers"
-            },
-            "walls": {
-                "grounding": "walls"
-            },
-            "agent": {
-                "grounding": "agent"
-            }
-        },
+//        {
+//            "type": "mdp parameters",
+//            "width": {
+//                "grounding": "WIDTH"
+//            },
+//            "height": {
+//                "grounding": "HEIGHT"
+//            },
+//            "passengers": {
+//                "grounding": "passengers"
+//            },
+//            "walls": {
+//                "grounding": "walls"
+//            },
+//            "agent": {
+//                "grounding": "agent"
+//            }
+//        },
         {
             "type": "predicate",
             "in taxi": {
