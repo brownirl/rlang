@@ -12,10 +12,10 @@ from lmdp.utils.expression_utils import Domain
 from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp.grounding.real.RealExpressionClass import RealExpression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from lmdp.grounding.states.SymbolClass import Symbol
+from lmdp.grounding.states.SymbolClass import Predicate
 
 
-class NextStateSymbol(Symbol, BooleanExpression):
+class NextStatePredicate(Predicate, BooleanExpression):
     def __init__(self, symbol):
         self._symbol = symbol
         self._domain = Domain(["next_state"])
@@ -58,8 +58,8 @@ class NextStateGrounding(StateFactor, RealExpression):
 
 
 def next_state(grounding):
-    if (isinstance(grounding, Symbol)):
-        return NextStateSymbol(grounding)
+    if (isinstance(grounding, Predicate)):
+        return NextStatePredicate(grounding)
     elif (isinstance(grounding, (StateFactor, StateFeature))):
         return NextStateGrounding(grounding)
 

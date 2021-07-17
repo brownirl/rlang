@@ -37,7 +37,7 @@ class TransitionGrounding(Grounding, PartialFunction):
             Args:
                 - symbol (starting symbol)
                 - action 
-                - Effect Symbol
+                - Effect Predicate
         '''
         if (effect is None):
             raise "Effect must be specified"

@@ -109,7 +109,7 @@ class Conditional:
     def symbol(self, expression=any_state, name=None):
         self.__close_context()
         if (self._boolean_expression.domain.is_s() and expression.domain.is_s()):  # only a set of state
-            ss = Symbol(expression & self._boolean_expression, name=name)
+            ss = Predicate(expression & self._boolean_expression, name=name)
             self.symbols.append(ss)
         else:
             raise ValueError("Boolean Expression must be a function of the State")

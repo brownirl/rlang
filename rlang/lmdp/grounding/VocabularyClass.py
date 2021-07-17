@@ -24,7 +24,7 @@ class Vocabulary:
         self.TYPES_TO_LIST = (
             (StateFactor, self._state_factors),
             (StateFeature, self._state_features),
-            (Symbol, self._symbols),
+            (Predicate, self._symbols),
             (ActionGrounding, self._actions),
             (Subpolicy, self._subpolicies),
             (MarkovFeature, self._markov_features)
@@ -62,8 +62,8 @@ if __name__ == "__main__":
     # 2-dimension state vector in gridworld
     position = StateFactor([0, 1], "position")
 
-    goal = Symbol(position == np.array([10, 10]), "goal")
-    not_goal = Symbol(position != np.array([10, 10]))
+    goal = Predicate(position == np.array([10, 10]), "goal")
+    not_goal = Predicate(position != np.array([10, 10]))
     up = DiscreteActionGrounding("up")
     v = Vocabulary()
     v.add("position", position)

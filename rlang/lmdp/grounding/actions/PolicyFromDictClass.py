@@ -19,7 +19,7 @@ class PolicyFromDict:
         elif (isinstance(policy, dict)):
             self.__policy = policy
         else:
-            raise "Argument must be dict Symbol->Action or list of tuples (symbol, action)"
+            raise "Argument must be dict Predicate->Action or list of tuples (symbol, action)"
 
     def __call__(self, state):
         '''

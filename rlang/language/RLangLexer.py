@@ -2,15 +2,14 @@
 from antlr4 import *
 from io import StringIO
 import sys
+
 if sys.version_info[1] > 5:
     from typing import TextIO
 else:
     from typing.io import TextIO
 
-
 from antlr_denter.DenterHelper import DenterHelper
 from RLangParser import RLangParser
-
 
 
 def serializedATN():
@@ -141,10 +140,9 @@ def serializedATN():
 
 
 class RLangLexer(Lexer):
-
     atn = ATNDeserializer().deserialize(serializedATN())
 
-    decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
+    decisionsToDFA = [DFA(ds, i) for i, ds in enumerate(atn.decisionToState)]
 
     INDENT = 1
     DEDENT = 2
@@ -189,44 +187,43 @@ class RLangLexer(Lexer):
     INTEGER = 41
     SKIP_ = 42
 
-    channelNames = [ u"DEFAULT_TOKEN_CHANNEL", u"HIDDEN" ]
+    channelNames = [u"DEFAULT_TOKEN_CHANNEL", u"HIDDEN"]
 
-    modeNames = [ "DEFAULT_MODE" ]
+    modeNames = ["DEFAULT_MODE"]
 
-    literalNames = [ "<INVALID>",
-            "'Predicate'", "'Feature'", "'Factor'", "'Goal'", "'Constant'", 
-            "'Action'", "'Effect'", "'Reward'", "'S'", "'and'", "'or'", 
-            "'not'", "'True'", "'False'", "':='", "'='", "'*='", "'/='", 
-            "'+='", "'-='", "'=='", "'>='", "'<='", "'!='", "':'", "'['", 
-            "']'", "'('", "')'", "'<'", "'>'", "'*'", "'/'", "'+'", "'-'" ]
+    literalNames = ["<INVALID>",
+                    "'Predicate'", "'Feature'", "'Factor'", "'Goal'", "'Constant'",
+                    "'Action'", "'Effect'", "'Reward'", "'S'", "'and'", "'or'",
+                    "'not'", "'True'", "'False'", "':='", "'='", "'*='", "'/='",
+                    "'+='", "'-='", "'=='", "'>='", "'<='", "'!='", "':'", "'['",
+                    "']'", "'('", "')'", "'<'", "'>'", "'*'", "'/'", "'+'", "'-'"]
 
-    symbolicNames = [ "<INVALID>",
-            "INDENT", "DEDENT", "NL", "PREDICATE", "FEATURE", "FACTOR", 
-            "GOAL", "CONSTANT", "ACTION", "EFFECT", "REWARD", "S", "AND", 
-            "OR", "NOT", "TRUE", "FALSE", "BIND", "ASIGN", "TIMES_EQ", "DIV_EQ", 
-            "PLUS_EQ", "MINUS_EQ", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ", 
-            "COL", "L_BRK", "R_BRK", "L_PAR", "R_PAR", "LT", "GT", "TIMES", 
-            "DIVIDE", "PLUS", "MINUS", "IDENTIFIER", "DECIMAL", "INTEGER", 
-            "SKIP_" ]
+    symbolicNames = ["<INVALID>",
+                     "INDENT", "DEDENT", "NL", "PREDICATE", "FEATURE", "FACTOR",
+                     "GOAL", "CONSTANT", "ACTION", "EFFECT", "REWARD", "S", "AND",
+                     "OR", "NOT", "TRUE", "FALSE", "BIND", "ASIGN", "TIMES_EQ", "DIV_EQ",
+                     "PLUS_EQ", "MINUS_EQ", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ",
+                     "COL", "L_BRK", "R_BRK", "L_PAR", "R_PAR", "LT", "GT", "TIMES",
+                     "DIVIDE", "PLUS", "MINUS", "IDENTIFIER", "DECIMAL", "INTEGER",
+                     "SKIP_"]
 
-    ruleNames = [ "NL", "PREDICATE", "FEATURE", "FACTOR", "GOAL", "CONSTANT", 
-                  "ACTION", "EFFECT", "REWARD", "S", "AND", "OR", "NOT", 
-                  "TRUE", "FALSE", "BIND", "ASIGN", "TIMES_EQ", "DIV_EQ", 
-                  "PLUS_EQ", "MINUS_EQ", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ", 
-                  "COL", "L_BRK", "R_BRK", "L_PAR", "R_PAR", "LT", "GT", 
-                  "TIMES", "DIVIDE", "PLUS", "MINUS", "IDENTIFIER", "DECIMAL", 
-                  "INTEGER", "LETTER", "ANY_CHAR", "DIGIT", "SPACES", "COMMENT", 
-                  "SKIP_" ]
+    ruleNames = ["NL", "PREDICATE", "FEATURE", "FACTOR", "GOAL", "CONSTANT",
+                 "ACTION", "EFFECT", "REWARD", "S", "AND", "OR", "NOT",
+                 "TRUE", "FALSE", "BIND", "ASIGN", "TIMES_EQ", "DIV_EQ",
+                 "PLUS_EQ", "MINUS_EQ", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ",
+                 "COL", "L_BRK", "R_BRK", "L_PAR", "R_PAR", "LT", "GT",
+                 "TIMES", "DIVIDE", "PLUS", "MINUS", "IDENTIFIER", "DECIMAL",
+                 "INTEGER", "LETTER", "ANY_CHAR", "DIGIT", "SPACES", "COMMENT",
+                 "SKIP_"]
 
     grammarFileName = "RLangLexer.g4"
 
-    def __init__(self, input=None, output:TextIO = sys.stdout):
+    def __init__(self, input=None, output: TextIO = sys.stdout):
         super().__init__(input, output)
         self.checkVersion("4.9.2")
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None
         self._predicates = None
-
 
     class SimpleDenter(DenterHelper):
         def __init__(self, lexer, nl_token, indent_token, dedent_token, ignore_eof):
@@ -242,6 +239,3 @@ class RLangLexer(Lexer):
         if not self.denter:
             self.denter = self.SimpleDenter(self, self.NL, RLangParser.INDENT, RLangParser.DEDENT, False)
         return self.denter.next_token()
-
-
-

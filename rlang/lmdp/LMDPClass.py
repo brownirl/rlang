@@ -112,8 +112,8 @@ class LMDP:
             if symbol in self._vocabulary:
                 self.__goals.append(self.__call__(symbol))
             else:
-                raise "Symbol " + symbol + " not defined"
-        elif isinstance(symbol, Symbol):
+                raise "Predicate " + symbol + " not defined"
+        elif isinstance(symbol, Predicate):
             self.__goals.append(symbol)
 
     def state_groundings(self, state_groundings_list):
@@ -154,9 +154,9 @@ if __name__ == '__main__':
     position = StateFactor([0, 1], "position")
     lmdp.add_state_feature(position)
 
-    diagonal = Symbol(lmdp('x') + 1 == lmdp('y'), "diagonal")
-    goal = Symbol(position == np.array([10, 10]), "goal")
-    not_goal = Symbol(position != np.array([10, 10]))
+    diagonal = Predicate(lmdp('x') + 1 == lmdp('y'), "diagonal")
+    goal = Predicate(position == np.array([10, 10]), "goal")
+    not_goal = Predicate(position != np.array([10, 10]))
     lmdp.add_symbol([diagonal, goal, not_goal])
 
     # transitions (deterministic)
