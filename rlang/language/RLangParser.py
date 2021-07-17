@@ -3,10 +3,11 @@
 from antlr4 import *
 from io import StringIO
 import sys
+
 if sys.version_info[1] > 5:
-	from typing import TextIO
+    from typing import TextIO
 else:
-	from typing.io import TextIO
+    from typing.io import TextIO
 
 
 def serializedATN():
@@ -103,32 +104,31 @@ def serializedATN():
         return buf.getvalue()
 
 
-class RLangParser ( Parser ):
-
+class RLangParser(Parser):
     grammarFileName = "RLangParser.g4"
 
     atn = ATNDeserializer().deserialize(serializedATN())
 
-    decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
+    decisionsToDFA = [DFA(ds, i) for i, ds in enumerate(atn.decisionToState)]
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "'Predicate'", "'Feature'", "'Factor'", "'Goal'", "'Constant'", 
-                     "'Action'", "'Effect'", "'Reward'", "'S'", "'and'", 
-                     "'or'", "'not'", "'True'", "'False'", "':='", "'='", 
-                     "'*='", "'/='", "'+='", "'-='", "'=='", "'>='", "'<='", 
-                     "'!='", "':'", "'['", "']'", "'('", "')'", "'<'", "'>'", 
-                     "'*'", "'/'", "'+'", "'-'" ]
+    literalNames = ["<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                    "'Predicate'", "'Feature'", "'Factor'", "'Goal'", "'Constant'",
+                    "'Action'", "'Effect'", "'Reward'", "'S'", "'and'",
+                    "'or'", "'not'", "'True'", "'False'", "':='", "'='",
+                    "'*='", "'/='", "'+='", "'-='", "'=='", "'>='", "'<='",
+                    "'!='", "':'", "'['", "']'", "'('", "')'", "'<'", "'>'",
+                    "'*'", "'/'", "'+'", "'-'"]
 
-    symbolicNames = [ "<INVALID>", "INDENT", "DEDENT", "NL", "PREDICATE", 
-                      "FEATURE", "FACTOR", "GOAL", "CONSTANT", "ACTION", 
-                      "EFFECT", "REWARD", "S", "AND", "OR", "NOT", "TRUE", 
-                      "FALSE", "BIND", "ASIGN", "TIMES_EQ", "DIV_EQ", "PLUS_EQ", 
-                      "MINUS_EQ", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ", 
-                      "COL", "L_BRK", "R_BRK", "L_PAR", "R_PAR", "LT", "GT", 
-                      "TIMES", "DIVIDE", "PLUS", "MINUS", "IDENTIFIER", 
-                      "DECIMAL", "INTEGER", "SKIP_" ]
+    symbolicNames = ["<INVALID>", "INDENT", "DEDENT", "NL", "PREDICATE",
+                     "FEATURE", "FACTOR", "GOAL", "CONSTANT", "ACTION",
+                     "EFFECT", "REWARD", "S", "AND", "OR", "NOT", "TRUE",
+                     "FALSE", "BIND", "ASIGN", "TIMES_EQ", "DIV_EQ", "PLUS_EQ",
+                     "MINUS_EQ", "EQUALS", "GT_EQ", "LT_EQ", "NOT_EQ",
+                     "COL", "L_BRK", "R_BRK", "L_PAR", "R_PAR", "LT", "GT",
+                     "TIMES", "DIVIDE", "PLUS", "MINUS", "IDENTIFIER",
+                     "DECIMAL", "INTEGER", "SKIP_"]
 
     RULE_program = 0
     RULE_dec = 1
@@ -146,108 +146,101 @@ class RLangParser ( Parser ):
     RULE_arithmetic_expression = 13
     RULE_trailer = 14
 
-    ruleNames =  [ "program", "dec", "stat", "predicate", "feature", "factor", 
-                   "goal", "action", "effect", "reward", "constant", "assignment", 
-                   "boolean_expression", "arithmetic_expression", "trailer" ]
+    ruleNames = ["program", "dec", "stat", "predicate", "feature", "factor",
+                 "goal", "action", "effect", "reward", "constant", "assignment",
+                 "boolean_expression", "arithmetic_expression", "trailer"]
 
     EOF = Token.EOF
-    INDENT=1
-    DEDENT=2
-    NL=3
-    PREDICATE=4
-    FEATURE=5
-    FACTOR=6
-    GOAL=7
-    CONSTANT=8
-    ACTION=9
-    EFFECT=10
-    REWARD=11
-    S=12
-    AND=13
-    OR=14
-    NOT=15
-    TRUE=16
-    FALSE=17
-    BIND=18
-    ASIGN=19
-    TIMES_EQ=20
-    DIV_EQ=21
-    PLUS_EQ=22
-    MINUS_EQ=23
-    EQUALS=24
-    GT_EQ=25
-    LT_EQ=26
-    NOT_EQ=27
-    COL=28
-    L_BRK=29
-    R_BRK=30
-    L_PAR=31
-    R_PAR=32
-    LT=33
-    GT=34
-    TIMES=35
-    DIVIDE=36
-    PLUS=37
-    MINUS=38
-    IDENTIFIER=39
-    DECIMAL=40
-    INTEGER=41
-    SKIP_=42
+    INDENT = 1
+    DEDENT = 2
+    NL = 3
+    PREDICATE = 4
+    FEATURE = 5
+    FACTOR = 6
+    GOAL = 7
+    CONSTANT = 8
+    ACTION = 9
+    EFFECT = 10
+    REWARD = 11
+    S = 12
+    AND = 13
+    OR = 14
+    NOT = 15
+    TRUE = 16
+    FALSE = 17
+    BIND = 18
+    ASIGN = 19
+    TIMES_EQ = 20
+    DIV_EQ = 21
+    PLUS_EQ = 22
+    MINUS_EQ = 23
+    EQUALS = 24
+    GT_EQ = 25
+    LT_EQ = 26
+    NOT_EQ = 27
+    COL = 28
+    L_BRK = 29
+    R_BRK = 30
+    L_PAR = 31
+    R_PAR = 32
+    LT = 33
+    GT = 34
+    TIMES = 35
+    DIVIDE = 36
+    PLUS = 37
+    MINUS = 38
+    IDENTIFIER = 39
+    DECIMAL = 40
+    INTEGER = 41
+    SKIP_ = 42
 
-    def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
+    def __init__(self, input: TokenStream, output: TextIO = sys.stdout):
         super().__init__(input, output)
         self.checkVersion("4.9.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
-
-
-
     class ProgramContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def NL(self, i:int=None):
+        def NL(self, i: int = None):
             if i is None:
                 return self.getTokens(RLangParser.NL)
             else:
                 return self.getToken(RLangParser.NL, i)
 
-        def dec(self, i:int=None):
+        def dec(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.DecContext)
             else:
-                return self.getTypedRuleContext(RLangParser.DecContext,i)
-
+                return self.getTypedRuleContext(RLangParser.DecContext, i)
 
         def getRuleIndex(self):
             return RLangParser.RULE_program
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterProgram" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterProgram"):
                 listener.enterProgram(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitProgram" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitProgram"):
                 listener.exitProgram(self)
-
-
-
 
     def program(self):
 
         localctx = RLangParser.ProgramContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_program)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 33
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==RLangParser.NL:
+            while _la == RLangParser.NL:
                 self.state = 30
                 self.match(RLangParser.NL)
                 self.state = 35
@@ -257,13 +250,16 @@ class RLangParser ( Parser ):
             self.state = 45
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.PREDICATE) | (1 << RLangParser.FEATURE) | (1 << RLangParser.FACTOR) | (1 << RLangParser.GOAL) | (1 << RLangParser.CONSTANT) | (1 << RLangParser.ACTION) | (1 << RLangParser.EFFECT))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & (
+                    (1 << RLangParser.PREDICATE) | (1 << RLangParser.FEATURE) | (1 << RLangParser.FACTOR) | (
+                    1 << RLangParser.GOAL) | (1 << RLangParser.CONSTANT) | (1 << RLangParser.ACTION) | (
+                            1 << RLangParser.EFFECT))) != 0):
                 self.state = 36
                 self.dec()
                 self.state = 40
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==RLangParser.NL:
+                while _la == RLangParser.NL:
                     self.state = 37
                     self.match(RLangParser.NL)
                     self.state = 42
@@ -282,55 +278,44 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class DecContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def predicate(self):
-            return self.getTypedRuleContext(RLangParser.PredicateContext,0)
-
+            return self.getTypedRuleContext(RLangParser.PredicateContext, 0)
 
         def feature(self):
-            return self.getTypedRuleContext(RLangParser.FeatureContext,0)
-
+            return self.getTypedRuleContext(RLangParser.FeatureContext, 0)
 
         def factor(self):
-            return self.getTypedRuleContext(RLangParser.FactorContext,0)
-
+            return self.getTypedRuleContext(RLangParser.FactorContext, 0)
 
         def goal(self):
-            return self.getTypedRuleContext(RLangParser.GoalContext,0)
-
+            return self.getTypedRuleContext(RLangParser.GoalContext, 0)
 
         def action(self):
-            return self.getTypedRuleContext(RLangParser.ActionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.ActionContext, 0)
 
         def effect(self):
-            return self.getTypedRuleContext(RLangParser.EffectContext,0)
-
+            return self.getTypedRuleContext(RLangParser.EffectContext, 0)
 
         def constant(self):
-            return self.getTypedRuleContext(RLangParser.ConstantContext,0)
-
+            return self.getTypedRuleContext(RLangParser.ConstantContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_dec
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterDec" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterDec"):
                 listener.enterDec(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitDec" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitDec"):
                 listener.exitDec(self)
-
-
-
 
     def dec(self):
 
@@ -386,39 +371,32 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class StatContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def reward(self):
-            return self.getTypedRuleContext(RLangParser.RewardContext,0)
-
+            return self.getTypedRuleContext(RLangParser.RewardContext, 0)
 
         def assignment(self):
-            return self.getTypedRuleContext(RLangParser.AssignmentContext,0)
-
+            return self.getTypedRuleContext(RLangParser.AssignmentContext, 0)
 
         def constant(self):
-            return self.getTypedRuleContext(RLangParser.ConstantContext,0)
-
+            return self.getTypedRuleContext(RLangParser.ConstantContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_stat
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStat" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterStat"):
                 listener.enterStat(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStat" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitStat"):
                 listener.exitStat(self)
-
-
-
 
     def stat(self):
 
@@ -454,11 +432,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class PredicateContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -472,22 +449,18 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.BIND, 0)
 
         def boolean_expression(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_predicate
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterPredicate" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterPredicate"):
                 listener.enterPredicate(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitPredicate" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitPredicate"):
                 listener.exitPredicate(self)
-
-
-
 
     def predicate(self):
 
@@ -511,11 +484,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class FeatureContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -529,22 +501,18 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.BIND, 0)
 
         def arithmetic_expression(self):
-            return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_feature
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFeature" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterFeature"):
                 listener.enterFeature(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFeature" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitFeature"):
                 listener.exitFeature(self)
-
-
-
 
     def feature(self):
 
@@ -568,11 +536,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class FactorContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -589,28 +556,24 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.S, 0)
 
         def trailer(self):
-            return self.getTypedRuleContext(RLangParser.TrailerContext,0)
-
+            return self.getTypedRuleContext(RLangParser.TrailerContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_factor
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFactor" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterFactor"):
                 listener.enterFactor(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFactor" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitFactor"):
                 listener.exitFactor(self)
-
-
-
 
     def factor(self):
 
         localctx = RLangParser.FactorContext(self, self._ctx, self.state)
         self.enterRule(localctx, 10, self.RULE_factor)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 72
@@ -624,7 +587,7 @@ class RLangParser ( Parser ):
             self.state = 77
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==RLangParser.L_BRK:
+            if _la == RLangParser.L_BRK:
                 self.state = 76
                 self.trailer()
 
@@ -637,11 +600,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class GoalContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -655,22 +617,18 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.BIND, 0)
 
         def boolean_expression(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_goal
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterGoal" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterGoal"):
                 listener.enterGoal(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitGoal" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitGoal"):
                 listener.exitGoal(self)
-
-
-
 
     def goal(self):
 
@@ -694,11 +652,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class ActionContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -717,16 +674,13 @@ class RLangParser ( Parser ):
         def getRuleIndex(self):
             return RLangParser.RULE_action
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterAction" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterAction"):
                 listener.enterAction(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitAction" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitAction"):
                 listener.exitAction(self)
-
-
-
 
     def action(self):
 
@@ -750,11 +704,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class EffectContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -762,8 +715,7 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.EFFECT, 0)
 
         def boolean_expression(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext, 0)
 
         def COL(self):
             return self.getToken(RLangParser.COL, 0)
@@ -774,14 +726,13 @@ class RLangParser ( Parser ):
         def DEDENT(self):
             return self.getToken(RLangParser.DEDENT, 0)
 
-        def stat(self, i:int=None):
+        def stat(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.StatContext)
             else:
-                return self.getTypedRuleContext(RLangParser.StatContext,i)
+                return self.getTypedRuleContext(RLangParser.StatContext, i)
 
-
-        def NL(self, i:int=None):
+        def NL(self, i: int = None):
             if i is None:
                 return self.getTokens(RLangParser.NL)
             else:
@@ -790,22 +741,19 @@ class RLangParser ( Parser ):
         def getRuleIndex(self):
             return RLangParser.RULE_effect
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterEffect" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterEffect"):
                 listener.enterEffect(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitEffect" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitEffect"):
                 listener.exitEffect(self)
-
-
-
 
     def effect(self):
 
         localctx = RLangParser.EffectContext(self, self._ctx, self.state)
         self.enterRule(localctx, 16, self.RULE_effect)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 89
@@ -819,13 +767,14 @@ class RLangParser ( Parser ):
             self.state = 102
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.CONSTANT) | (1 << RLangParser.REWARD) | (1 << RLangParser.IDENTIFIER))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & (
+                    (1 << RLangParser.CONSTANT) | (1 << RLangParser.REWARD) | (1 << RLangParser.IDENTIFIER))) != 0):
                 self.state = 93
                 self.stat()
                 self.state = 97
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==RLangParser.NL:
+                while _la == RLangParser.NL:
                     self.state = 94
                     self.match(RLangParser.NL)
                     self.state = 99
@@ -846,11 +795,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class RewardContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -866,29 +814,26 @@ class RLangParser ( Parser ):
         def getRuleIndex(self):
             return RLangParser.RULE_reward
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterReward" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterReward"):
                 listener.enterReward(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitReward" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitReward"):
                 listener.exitReward(self)
-
-
-
 
     def reward(self):
 
         localctx = RLangParser.RewardContext(self, self._ctx, self.state)
         self.enterRule(localctx, 18, self.RULE_reward)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 107
             self.match(RLangParser.REWARD)
             self.state = 108
             _la = self._input.LA(1)
-            if not(_la==RLangParser.DECIMAL or _la==RLangParser.INTEGER):
+            if not (_la == RLangParser.DECIMAL or _la == RLangParser.INTEGER):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -901,11 +846,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class ConstantContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -919,26 +863,21 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.BIND, 0)
 
         def boolean_expression(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext, 0)
 
         def arithmetic_expression(self):
-            return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_constant
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterConstant" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterConstant"):
                 listener.enterConstant(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitConstant" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitConstant"):
                 listener.exitConstant(self)
-
-
-
 
     def constant(self):
 
@@ -954,7 +893,7 @@ class RLangParser ( Parser ):
             self.match(RLangParser.BIND)
             self.state = 115
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,8,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input, 8, self._ctx)
             if la_ == 1:
                 self.state = 113
                 self.boolean_expression(0)
@@ -974,11 +913,10 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class AssignmentContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -1001,36 +939,30 @@ class RLangParser ( Parser ):
             return self.getToken(RLangParser.MINUS_EQ, 0)
 
         def boolean_expression(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Boolean_expressionContext, 0)
 
         def arithmetic_expression(self):
-            return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext,0)
-
+            return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext, 0)
 
         def trailer(self):
-            return self.getTypedRuleContext(RLangParser.TrailerContext,0)
-
+            return self.getTypedRuleContext(RLangParser.TrailerContext, 0)
 
         def getRuleIndex(self):
             return RLangParser.RULE_assignment
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterAssignment" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterAssignment"):
                 listener.enterAssignment(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitAssignment" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitAssignment"):
                 listener.exitAssignment(self)
-
-
-
 
     def assignment(self):
 
         localctx = RLangParser.AssignmentContext(self, self._ctx, self.state)
         self.enterRule(localctx, 22, self.RULE_assignment)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 117
@@ -1038,21 +970,22 @@ class RLangParser ( Parser ):
             self.state = 119
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==RLangParser.L_BRK:
+            if _la == RLangParser.L_BRK:
                 self.state = 118
                 self.trailer()
 
-
             self.state = 121
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.ASIGN) | (1 << RLangParser.TIMES_EQ) | (1 << RLangParser.DIV_EQ) | (1 << RLangParser.PLUS_EQ) | (1 << RLangParser.MINUS_EQ))) != 0)):
+            if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & (
+                    (1 << RLangParser.ASIGN) | (1 << RLangParser.TIMES_EQ) | (1 << RLangParser.DIV_EQ) | (
+                    1 << RLangParser.PLUS_EQ) | (1 << RLangParser.MINUS_EQ))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
             self.state = 124
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,10,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input, 10, self._ctx)
             if la_ == 1:
                 self.state = 122
                 self.boolean_expression(0)
@@ -1072,23 +1005,21 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class Boolean_expressionContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def L_PAR(self):
             return self.getToken(RLangParser.L_PAR, 0)
 
-        def boolean_expression(self, i:int=None):
+        def boolean_expression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.Boolean_expressionContext)
             else:
-                return self.getTypedRuleContext(RLangParser.Boolean_expressionContext,i)
-
+                return self.getTypedRuleContext(RLangParser.Boolean_expressionContext, i)
 
         def R_PAR(self):
             return self.getToken(RLangParser.R_PAR, 0)
@@ -1096,12 +1027,11 @@ class RLangParser ( Parser ):
         def NOT(self):
             return self.getToken(RLangParser.NOT, 0)
 
-        def arithmetic_expression(self, i:int=None):
+        def arithmetic_expression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.Arithmetic_expressionContext)
             else:
-                return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext,i)
-
+                return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext, i)
 
         def EQUALS(self):
             return self.getToken(RLangParser.EQUALS, 0)
@@ -1139,29 +1069,27 @@ class RLangParser ( Parser ):
         def getRuleIndex(self):
             return RLangParser.RULE_boolean_expression
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterBoolean_expression" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterBoolean_expression"):
                 listener.enterBoolean_expression(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitBoolean_expression" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitBoolean_expression"):
                 listener.exitBoolean_expression(self)
 
-
-
-    def boolean_expression(self, _p:int=0):
+    def boolean_expression(self, _p: int = 0):
         _parentctx = self._ctx
         _parentState = self.state
         localctx = RLangParser.Boolean_expressionContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 24
         self.enterRecursionRule(localctx, 24, self.RULE_boolean_expression, _p)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 139
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,11,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input, 11, self._ctx)
             if la_ == 1:
                 self.state = 127
                 self.match(RLangParser.L_PAR)
@@ -1183,7 +1111,9 @@ class RLangParser ( Parser ):
                 self.arithmetic_expression(0)
                 self.state = 134
                 _la = self._input.LA(1)
-                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.EQUALS) | (1 << RLangParser.GT_EQ) | (1 << RLangParser.LT_EQ) | (1 << RLangParser.NOT_EQ) | (1 << RLangParser.LT) | (1 << RLangParser.GT))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & (
+                        (1 << RLangParser.EQUALS) | (1 << RLangParser.GT_EQ) | (1 << RLangParser.LT_EQ) | (
+                        1 << RLangParser.NOT_EQ) | (1 << RLangParser.LT) | (1 << RLangParser.GT))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -1195,7 +1125,7 @@ class RLangParser ( Parser ):
             elif la_ == 4:
                 self.state = 137
                 _la = self._input.LA(1)
-                if not(_la==RLangParser.TRUE or _la==RLangParser.FALSE):
+                if not (_la == RLangParser.TRUE or _la == RLangParser.FALSE):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -1207,19 +1137,18 @@ class RLangParser ( Parser ):
                 self.match(RLangParser.IDENTIFIER)
                 pass
 
-
             self._ctx.stop = self._input.LT(-1)
             self.state = 152
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
-            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
-                if _alt==1:
+            _alt = self._interp.adaptivePredict(self._input, 13, self._ctx)
+            while _alt != 2 and _alt != ATN.INVALID_ALT_NUMBER:
+                if _alt == 1:
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
                     self.state = 150
                     self._errHandler.sync(self)
-                    la_ = self._interp.adaptivePredict(self._input,12,self._ctx)
+                    la_ = self._interp.adaptivePredict(self._input, 12, self._ctx)
                     if la_ == 1:
                         localctx = RLangParser.Boolean_expressionContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_boolean_expression)
@@ -1255,7 +1184,7 @@ class RLangParser ( Parser ):
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
                         self.state = 148
                         _la = self._input.LA(1)
-                        if not(_la==RLangParser.EQUALS or _la==RLangParser.NOT_EQ):
+                        if not (_la == RLangParser.EQUALS or _la == RLangParser.NOT_EQ):
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
@@ -1264,10 +1193,9 @@ class RLangParser ( Parser ):
                         self.boolean_expression(5)
                         pass
 
-             
                 self.state = 154
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input, 13, self._ctx)
 
         except RecognitionException as re:
             localctx.exception = re
@@ -1277,23 +1205,21 @@ class RLangParser ( Parser ):
             self.unrollRecursionContexts(_parentctx)
         return localctx
 
-
     class Arithmetic_expressionContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def L_PAR(self):
             return self.getToken(RLangParser.L_PAR, 0)
 
-        def arithmetic_expression(self, i:int=None):
+        def arithmetic_expression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.Arithmetic_expressionContext)
             else:
-                return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext,i)
-
+                return self.getTypedRuleContext(RLangParser.Arithmetic_expressionContext, i)
 
         def R_PAR(self):
             return self.getToken(RLangParser.R_PAR, 0)
@@ -1310,12 +1236,11 @@ class RLangParser ( Parser ):
         def IDENTIFIER(self):
             return self.getToken(RLangParser.IDENTIFIER, 0)
 
-        def trailer(self, i:int=None):
+        def trailer(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.TrailerContext)
             else:
-                return self.getTypedRuleContext(RLangParser.TrailerContext,i)
-
+                return self.getTypedRuleContext(RLangParser.TrailerContext, i)
 
         def TIMES(self):
             return self.getToken(RLangParser.TIMES, 0)
@@ -1329,24 +1254,22 @@ class RLangParser ( Parser ):
         def getRuleIndex(self):
             return RLangParser.RULE_arithmetic_expression
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterArithmetic_expression" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterArithmetic_expression"):
                 listener.enterArithmetic_expression(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitArithmetic_expression" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitArithmetic_expression"):
                 listener.exitArithmetic_expression(self)
 
-
-
-    def arithmetic_expression(self, _p:int=0):
+    def arithmetic_expression(self, _p: int = 0):
         _parentctx = self._ctx
         _parentState = self.state
         localctx = RLangParser.Arithmetic_expressionContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 26
         self.enterRecursionRule(localctx, 26, self.RULE_arithmetic_expression, _p)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 171
@@ -1364,14 +1287,13 @@ class RLangParser ( Parser ):
                 self.state = 161
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==RLangParser.MINUS:
+                if _la == RLangParser.MINUS:
                     self.state = 160
                     self.match(RLangParser.MINUS)
 
-
                 self.state = 163
                 _la = self._input.LA(1)
-                if not(_la==RLangParser.DECIMAL or _la==RLangParser.INTEGER):
+                if not (_la == RLangParser.DECIMAL or _la == RLangParser.INTEGER):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -1382,14 +1304,14 @@ class RLangParser ( Parser ):
                 self.match(RLangParser.IDENTIFIER)
                 self.state = 168
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,15,self._ctx)
-                while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
-                    if _alt==1:
+                _alt = self._interp.adaptivePredict(self._input, 15, self._ctx)
+                while _alt != 2 and _alt != ATN.INVALID_ALT_NUMBER:
+                    if _alt == 1:
                         self.state = 165
-                        self.trailer() 
+                        self.trailer()
                     self.state = 170
                     self._errHandler.sync(self)
-                    _alt = self._interp.adaptivePredict(self._input,15,self._ctx)
+                    _alt = self._interp.adaptivePredict(self._input, 15, self._ctx)
 
                 pass
             else:
@@ -1398,15 +1320,15 @@ class RLangParser ( Parser ):
             self._ctx.stop = self._input.LT(-1)
             self.state = 181
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,18,self._ctx)
-            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
-                if _alt==1:
+            _alt = self._interp.adaptivePredict(self._input, 18, self._ctx)
+            while _alt != 2 and _alt != ATN.INVALID_ALT_NUMBER:
+                if _alt == 1:
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
                     self.state = 179
                     self._errHandler.sync(self)
-                    la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
+                    la_ = self._interp.adaptivePredict(self._input, 17, self._ctx)
                     if la_ == 1:
                         localctx = RLangParser.Arithmetic_expressionContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_arithmetic_expression)
@@ -1416,7 +1338,7 @@ class RLangParser ( Parser ):
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
                         self.state = 174
                         _la = self._input.LA(1)
-                        if not(_la==RLangParser.TIMES or _la==RLangParser.DIVIDE):
+                        if not (_la == RLangParser.TIMES or _la == RLangParser.DIVIDE):
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
@@ -1434,7 +1356,7 @@ class RLangParser ( Parser ):
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
                         self.state = 177
                         _la = self._input.LA(1)
-                        if not(_la==RLangParser.PLUS or _la==RLangParser.MINUS):
+                        if not (_la == RLangParser.PLUS or _la == RLangParser.MINUS):
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
@@ -1443,10 +1365,9 @@ class RLangParser ( Parser ):
                         self.arithmetic_expression(4)
                         pass
 
-             
                 self.state = 183
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,18,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input, 18, self._ctx)
 
         except RecognitionException as re:
             localctx.exception = re
@@ -1456,18 +1377,17 @@ class RLangParser ( Parser ):
             self.unrollRecursionContexts(_parentctx)
         return localctx
 
-
     class TrailerContext(ParserRuleContext):
         __slots__ = 'parser'
 
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def L_BRK(self):
             return self.getToken(RLangParser.L_BRK, 0)
 
-        def INTEGER(self, i:int=None):
+        def INTEGER(self, i: int = None):
             if i is None:
                 return self.getTokens(RLangParser.INTEGER)
             else:
@@ -1476,7 +1396,7 @@ class RLangParser ( Parser ):
         def R_BRK(self):
             return self.getToken(RLangParser.R_BRK, 0)
 
-        def MINUS(self, i:int=None):
+        def MINUS(self, i: int = None):
             if i is None:
                 return self.getTokens(RLangParser.MINUS)
             else:
@@ -1488,26 +1408,23 @@ class RLangParser ( Parser ):
         def getRuleIndex(self):
             return RLangParser.RULE_trailer
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterTrailer" ):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterTrailer"):
                 listener.enterTrailer(self)
 
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitTrailer" ):
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitTrailer"):
                 listener.exitTrailer(self)
-
-
-
 
     def trailer(self):
 
         localctx = RLangParser.TrailerContext(self, self._ctx, self.state)
         self.enterRule(localctx, 28, self.RULE_trailer)
-        self._la = 0 # Token type
+        self._la = 0  # Token type
         try:
             self.state = 205
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,24,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input, 24, self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 184
@@ -1515,10 +1432,9 @@ class RLangParser ( Parser ):
                 self.state = 186
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==RLangParser.MINUS:
+                if _la == RLangParser.MINUS:
                     self.state = 185
                     self.match(RLangParser.MINUS)
-
 
                 self.state = 188
                 self.match(RLangParser.INTEGER)
@@ -1533,36 +1449,32 @@ class RLangParser ( Parser ):
                 self.state = 195
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==RLangParser.MINUS or _la==RLangParser.INTEGER:
+                if _la == RLangParser.MINUS or _la == RLangParser.INTEGER:
                     self.state = 192
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if _la==RLangParser.MINUS:
+                    if _la == RLangParser.MINUS:
                         self.state = 191
                         self.match(RLangParser.MINUS)
 
-
                     self.state = 194
                     self.match(RLangParser.INTEGER)
-
 
                 self.state = 197
                 self.match(RLangParser.COL)
                 self.state = 202
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==RLangParser.MINUS or _la==RLangParser.INTEGER:
+                if _la == RLangParser.MINUS or _la == RLangParser.INTEGER:
                     self.state = 199
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if _la==RLangParser.MINUS:
+                    if _la == RLangParser.MINUS:
                         self.state = 198
                         self.match(RLangParser.MINUS)
 
-
                     self.state = 201
                     self.match(RLangParser.INTEGER)
-
 
                 self.state = 204
                 self.match(RLangParser.R_BRK)
@@ -1577,9 +1489,7 @@ class RLangParser ( Parser ):
             self.exitRule()
         return localctx
 
-
-
-    def sempred(self, localctx:RuleContext, ruleIndex:int, predIndex:int):
+    def sempred(self, localctx: RuleContext, ruleIndex: int, predIndex: int):
         if self._predicates == None:
             self._predicates = dict()
         self._predicates[12] = self.boolean_expression_sempred
@@ -1590,28 +1500,19 @@ class RLangParser ( Parser ):
         else:
             return pred(localctx, predIndex)
 
-    def boolean_expression_sempred(self, localctx:Boolean_expressionContext, predIndex:int):
-            if predIndex == 0:
-                return self.precpred(self._ctx, 7)
-         
+    def boolean_expression_sempred(self, localctx: Boolean_expressionContext, predIndex: int):
+        if predIndex == 0:
+            return self.precpred(self._ctx, 7)
 
-            if predIndex == 1:
-                return self.precpred(self._ctx, 6)
-         
+        if predIndex == 1:
+            return self.precpred(self._ctx, 6)
 
-            if predIndex == 2:
-                return self.precpred(self._ctx, 4)
-         
+        if predIndex == 2:
+            return self.precpred(self._ctx, 4)
 
-    def arithmetic_expression_sempred(self, localctx:Arithmetic_expressionContext, predIndex:int):
-            if predIndex == 3:
-                return self.precpred(self._ctx, 4)
-         
+    def arithmetic_expression_sempred(self, localctx: Arithmetic_expressionContext, predIndex: int):
+        if predIndex == 3:
+            return self.precpred(self._ctx, 4)
 
-            if predIndex == 4:
-                return self.precpred(self._ctx, 3)
-         
-
-
-
-
+        if predIndex == 4:
+            return self.precpred(self._ctx, 3)

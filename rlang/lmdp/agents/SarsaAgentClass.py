@@ -186,7 +186,7 @@ class SarsaAgent(Agent):
         max_q_curr_state = self.get_max_q_value(next_state)
         prev_q_val = self.get_q_value(state, action)
         self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (
-                    reward + self.gamma * max_q_curr_state)
+                reward + self.gamma * max_q_curr_state)
 
     def _anneal(self):
         # Taken from "Note on learning rate schedules for stochastic optimization, by Darken and Moody (Yale)":

@@ -95,7 +95,7 @@ class QLearning(QLearningAgent):
         max_q_curr_state = self.get_max_q_value(next_state['observation'])
         if not next_state['done']:
             self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (
-                        reward + self.gamma * max_q_curr_state)
+                    reward + self.gamma * max_q_curr_state)
         else:
             self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward
 
@@ -178,7 +178,7 @@ class OptQLearning(QLearning):
         if not next_state['done']:
             max_q_curr_state = self.get_max_q_value(next_state['observation'])
             self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (
-                        reward + (self.gamma ** timestep) * max_q_curr_state)
+                    reward + (self.gamma ** timestep) * max_q_curr_state)
         else:
             self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward
 

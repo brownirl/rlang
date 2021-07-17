@@ -20,11 +20,11 @@ class RLangListener(RLangParserListener):
         print("Entering Program")
         self.statements.append("Entering Program 2")
 
-    def exitProgram(self, ctx:RLangParser.ProgramContext):
+    def exitProgram(self, ctx: RLangParser.ProgramContext):
         print("Exiting Program")
         self.statements.append("Exiting Program 2")
 
-    def enterPredicate(self, ctx:RLangParser.PredicateContext):
+    def enterPredicate(self, ctx: RLangParser.PredicateContext):
         print(f"Entering Predicate with ctx: {ctx}")
         self.statements.append("Entering Predicate 2")
 

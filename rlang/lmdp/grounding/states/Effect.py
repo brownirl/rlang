@@ -33,7 +33,7 @@ class Effect(Expression):
             f = lambda state, action, next_state: self._domain_sa(state, action) & (next_state in self._effect)
         elif (isinstance(self._effect, Expression) and self._effect.codomain == Codomain(
                 ["boolean"]) and self._effect.domain <= Domain(
-                ["state", "action", "next_state"])):  # set of states as symbols
+            ["state", "action", "next_state"])):  # set of states as symbols
             f = lambda state, action, next_state: self._domain_sa(state, action) & self._effect(state=state,
                                                                                                 action=action,
                                                                                                 next_state=next_state)
