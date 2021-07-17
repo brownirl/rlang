@@ -13,10 +13,10 @@ import numpy as np
 #                                 N=5, hidden_size=16, n_hidden_layers=1):
 #         self._agent = ReinforceAgent(actions, state_dim=1, name="", gamma=0.95, alpha=0.01, 
 #                                 N=5, hidden_size=16, n_hidden_layers=1)
-    
-    
+
+
 # class ReinforceAgent(ReinforceMLPAgent):
-    
+
 #     def act(self, state):
 #         action = super().act(state['observation'], state['reward'])
 #         return action
@@ -27,31 +27,33 @@ import numpy as np
 #     def stop(self, state):
 #         self.end_of_episode()
 
-#=================================================================
+# =================================================================
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
 from simple_rl.agents import LinearQAgent
 from simple_rl.abstraction import FeatureWrapper
 
+
 class QLearningFactory(AgentFactory):
-    def __init__(self, 
-                actions, name="qlearning", alpha=0.1, gamma=0.99,
-                epsilon=0.1, explore="uniform", anneal=False,
-                custom_q_init=None, default_q=0):
-        self._agent = QLearning(actions, 
-                                name=name, 
-                                alpha=alpha, 
+    def __init__(self,
+                 actions, name="qlearning", alpha=0.1, gamma=0.99,
+                 epsilon=0.1, explore="uniform", anneal=False,
+                 custom_q_init=None, default_q=0):
+        self._agent = QLearning(actions,
+                                name=name,
+                                alpha=alpha,
                                 gamma=gamma,
                                 epsilon=epsilon,
-                                explore=explore, 
+                                explore=explore,
                                 anneal=anneal,
-                                custom_q_init=custom_q_init, 
+                                custom_q_init=custom_q_init,
                                 default_q=default_q)
+
 
 class QLearning(QLearningAgent):
     def __init__(self, *args, beta=0.2, **kwargs):
         self._beta = beta
         QLearningAgent.__init__(self, *args, **kwargs)
-    
+
     def act(self, state, timestep=1, learning=True):
         if learning:
             self.update(self.prev_state, self.prev_action, state['reward'], state)
@@ -92,9 +94,10 @@ class QLearning(QLearningAgent):
         prev_q_val = self.get_q_value(state, action)
         max_q_curr_state = self.get_max_q_value(next_state['observation'])
         if not next_state['done']:
-            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (reward + self.gamma*max_q_curr_state)
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (
+                        reward + self.gamma * max_q_curr_state)
         else:
-            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward 
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward
 
     def eval(self, state):
         return super().act(state['observation'], state['reward'], learning=False)
@@ -174,7 +177,8 @@ class OptQLearning(QLearning):
         prev_q_val = self.get_q_value(state, action)
         if not next_state['done']:
             max_q_curr_state = self.get_max_q_value(next_state['observation'])
-            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (reward + (self.gamma**timestep)*max_q_curr_state)
+            self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (
+                        reward + (self.gamma ** timestep) * max_q_curr_state)
         else:
             self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * reward
 
@@ -215,44 +219,47 @@ class OptQLearning(QLearning):
         # Find best action (action w/ current max predicted Q value)
         for action in shuffled_action_list:
             q_s_a = self.get_q_value(state, action)
-            
+
             if q_s_a > max_q_val:
                 max_q_val = q_s_a
                 best_action = action
 
         return max_q_val, best_action
 
-
     def _get_active_options(self, state):
         return [o for o in self.actions if o.initiation(RLState(state.features()))]
 
+
 class OptQLearningFactory(AgentFactory):
-    def __init__(self, 
-                actions, name="option-qlearning", alpha=0.1, gamma=0.99,
-                epsilon=0.1, explore="uniform", anneal=False,
-                custom_q_init=None, default_q=0):
-        self._agent = OptQLearning(actions, 
-                                    name=name, 
-                                    alpha=alpha, 
-                                    gamma=gamma,
-                                    epsilon=epsilon,
-                                    explore=explore, 
-                                    anneal=anneal,
-                                    custom_q_init=custom_q_init, 
-                                    default_q=default_q)
+    def __init__(self,
+                 actions, name="option-qlearning", alpha=0.1, gamma=0.99,
+                 epsilon=0.1, explore="uniform", anneal=False,
+                 custom_q_init=None, default_q=0):
+        self._agent = OptQLearning(actions,
+                                   name=name,
+                                   alpha=alpha,
+                                   gamma=gamma,
+                                   epsilon=epsilon,
+                                   explore=explore,
+                                   anneal=anneal,
+                                   custom_q_init=custom_q_init,
+                                   default_q=default_q)
+
 
 class LinearQLearningFactory(AgentFactory):
-    def __init__(self, actions, features, rand_init=True, name="Linear-Q", alpha=0.2, gamma=0.99, epsilon=0.2, explore="uniform", anneal=True):
-            params = {"actions": actions, 
-                        "name":name, 
-                        "num_features": features.num_features(),
-                        "rand_init":rand_init,
-                        "alpha":alpha, 
-                        "gamma":gamma,
-                        "epsilon":epsilon, 
-                        "explore":explore, 
-                        "anneal":anneal}
-            self._agent = LinearQLearning(LinearQAgent, agent_params=params, feature_mapper=features)        
+    def __init__(self, actions, features, rand_init=True, name="Linear-Q", alpha=0.2, gamma=0.99, epsilon=0.2,
+                 explore="uniform", anneal=True):
+        params = {"actions": actions,
+                  "name": name,
+                  "num_features": features.num_features(),
+                  "rand_init": rand_init,
+                  "alpha": alpha,
+                  "gamma": gamma,
+                  "epsilon": epsilon,
+                  "explore": explore,
+                  "anneal": anneal}
+        self._agent = LinearQLearning(LinearQAgent, agent_params=params, feature_mapper=features)
+
 
 class LinearQLearning(FeatureWrapper):
     def act(self, state):
@@ -266,18 +273,18 @@ class LinearQLearning(FeatureWrapper):
         self.end_of_episode()
 
 
-
-
-#=====================================================================
+# =====================================================================
 from lmdp.agents.Agent import Agent
 from all.presets.classic_control import vqn
 from all.core.state import State
 from collections import namedtuple
 from copy import deepcopy
 import torch
+
 action_space = namedtuple('action_space', ['n', 'actions'])
 state_space = namedtuple('state_space', ['shape'])
 environment = namedtuple('environment', ['action_space', 'state_space'])
+
 
 class QN(Agent):
     def __init__(self, actions, state_s, gamma=0.99, alpha=0.1, epsilon=0.1):
@@ -289,15 +296,16 @@ class QN(Agent):
         state = _all_state_wrapper(state)
         action = self._vqn.act(state).item()
         return self._actions[action]
-    
+
     def eval(self, state):
         state = _all_state_wrapper(state)
         action = self._vqn.eval(state).item()
         return self._actions[action]
-    
+
     def stop(self, state):
         pass
-    
+
+
 def _all_state_wrapper(state):
     state = deepcopy(state)
     state['observation'] = torch.from_numpy(state['observation'].features()).float()
@@ -305,25 +313,28 @@ def _all_state_wrapper(state):
     state['done'] = torch.Tensor([state['done']]).squeeze()
     return State(state)
 
+
 class QNFactory(AgentFactory):
     def __init__(self, actions, state_space, gamma=0.99, alpha=0.1, epsilon=0.1):
         AgentFactory.__init__(self, QN(actions, state_space, gamma, alpha, epsilon))
 
 
-#===================================================================================================
+# ===================================================================================================
 from all.presets.classic_control import dqn
 from lmdp.agents.option_dqn import dqn as odqn
+
+
 class DQN(Agent):
-    def __init__(self, actions, state_s, gamma=0.99, 
-                alpha=0.1, epsilon=0.1, replay_start_size=1000, 
-                replay_buffer_size=2000, final_exploration_frame=5000, 
-                target_update_frequency=10, model=fc_relu_q):
+    def __init__(self, actions, state_s, gamma=0.99,
+                 alpha=0.1, epsilon=0.1, replay_start_size=1000,
+                 replay_buffer_size=2000, final_exploration_frame=5000,
+                 target_update_frequency=10, model=fc_relu_q):
         envs = [environment(action_space(len(actions), actions), state_space(state_s))]
-        self._dqn = dqn(discount_factor=gamma, 
-                        lr=alpha, 
-                        replay_start_size=replay_start_size, 
-                        replay_buffer_size=replay_buffer_size, 
-                        final_exploration_frame=final_exploration_frame, 
+        self._dqn = dqn(discount_factor=gamma,
+                        lr=alpha,
+                        replay_start_size=replay_start_size,
+                        replay_buffer_size=replay_buffer_size,
+                        final_exploration_frame=final_exploration_frame,
                         model_constructor=model)(envs[0])
         self._actions = dict(enumerate(actions))
 
@@ -331,69 +342,70 @@ class DQN(Agent):
         state = _all_state_wrapper(state)
         action = self._dqn.act(state)
         return self._actions[action]
-    
+
     def eval(self, state):
         state = _all_state_wrapper(state)
         action = self._dqn.eval(state)
         return self._actions[action]
-    
+
     def stop(self, state):
         pass
 
+
 class OptDQN(DQN):
-    def __init__(self, actions, state_s, gamma=0.99, alpha=0.1, 
-                epsilon=0.1, replay_start_size=7000, 
-                final_exploration_frame=10000, replay_buffer_size=2000,  
-                target_update_frequency=5, model=fc_relu_q):
+    def __init__(self, actions, state_s, gamma=0.99, alpha=0.1,
+                 epsilon=0.1, replay_start_size=7000,
+                 final_exploration_frame=10000, replay_buffer_size=2000,
+                 target_update_frequency=5, model=fc_relu_q):
         envs = [environment(action_space(len(actions), actions), state_space(state_s))]
-        self._dqn = odqn(discount_factor=gamma, 
-                        lr=alpha, 
-                        replay_start_size=replay_start_size, 
-                        replay_buffer_size=replay_buffer_size, 
-                        final_exploration_frame=final_exploration_frame, 
-                        model_constructor=model, 
-                        target_update_frequency=target_update_frequency)(envs[0])
+        self._dqn = odqn(discount_factor=gamma,
+                         lr=alpha,
+                         replay_start_size=replay_start_size,
+                         replay_buffer_size=replay_buffer_size,
+                         final_exploration_frame=final_exploration_frame,
+                         model_constructor=model,
+                         target_update_frequency=target_update_frequency)(envs[0])
         self._actions = dict(enumerate(actions))
 
+
 class OptDQNFactory(AgentFactory):
-    def __init__(self, actions, state_space, 
-                gamma=0.99, 
-                alpha=0.1, 
-                epsilon=0.1, 
-                replay_start_size=1000, 
-                replay_buffer_size=2000, 
-                final_exploration_frame=10000, 
-                model_constructor=fc_relu_q, 
-                target_update_frequency=5,
-                model=fc_relu_q):
-        AgentFactory.__init__(self, OptDQN(actions, state_space, 
-                            gamma, 
-                            alpha, 
-                            epsilon, 
-                            model=model,
-                            replay_start_size=replay_start_size, 
-                            replay_buffer_size=replay_buffer_size, 
-                            final_exploration_frame=final_exploration_frame, 
-                            target_update_frequency=target_update_frequency))
+    def __init__(self, actions, state_space,
+                 gamma=0.99,
+                 alpha=0.1,
+                 epsilon=0.1,
+                 replay_start_size=1000,
+                 replay_buffer_size=2000,
+                 final_exploration_frame=10000,
+                 model_constructor=fc_relu_q,
+                 target_update_frequency=5,
+                 model=fc_relu_q):
+        AgentFactory.__init__(self, OptDQN(actions, state_space,
+                                           gamma,
+                                           alpha,
+                                           epsilon,
+                                           model=model,
+                                           replay_start_size=replay_start_size,
+                                           replay_buffer_size=replay_buffer_size,
+                                           final_exploration_frame=final_exploration_frame,
+                                           target_update_frequency=target_update_frequency))
+
 
 class DQNFactory(AgentFactory):
-    def __init__(self, actions, state_space, 
-                gamma=0.99, alpha=0.1, epsilon=0.1, 
-                replay_start_size=1000, 
-                replay_buffer_size=2000, 
-                final_exploration_frame=5000, 
-                model_constructor=fc_relu_q, 
-                target_update_frequency=10,
-                model=fc_relu_q):
-        AgentFactory.__init__(self, DQN(actions, 
-                                        state_space, gamma, alpha, epsilon, 
+    def __init__(self, actions, state_space,
+                 gamma=0.99, alpha=0.1, epsilon=0.1,
+                 replay_start_size=1000,
+                 replay_buffer_size=2000,
+                 final_exploration_frame=5000,
+                 model_constructor=fc_relu_q,
+                 target_update_frequency=10,
+                 model=fc_relu_q):
+        AgentFactory.__init__(self, DQN(actions,
+                                        state_space, gamma, alpha, epsilon,
                                         model=model,
-                                        replay_start_size=replay_start_size, 
-                                        replay_buffer_size=replay_buffer_size, 
-                                        final_exploration_frame=final_exploration_frame, 
+                                        replay_start_size=replay_start_size,
+                                        replay_buffer_size=replay_buffer_size,
+                                        final_exploration_frame=final_exploration_frame,
                                         target_update_frequency=target_update_frequency))
-
-
 
 
 class OptionInitMask(nn.Module):
@@ -403,7 +415,7 @@ class OptionInitMask(nn.Module):
 
     def forward(self, states):
         mask = torch.from_numpy(np.array([o.initiation(RLangState(states)) for o in self._options]))
-        return mask.transpose(1,0)
+        return mask.transpose(1, 0)
 
 
 class masked_q(nn.Module):
@@ -416,8 +428,9 @@ class masked_q(nn.Module):
         mask = self._option_mask(states)
         return mask * self._policy(states)
 
+
 def masked_fc_relu_q(options):
     def _q(env):
         return masked_q(fc_relu_q(env), options)
-    return _q
 
+    return _q

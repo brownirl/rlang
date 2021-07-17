@@ -11,6 +11,7 @@ from collections import defaultdict
 # Other imports.
 from simple_rl.agents.AgentClass import Agent
 
+
 class SarsaAgent(Agent):
     """Implementation of SARSA.
     Main difference from q-learning is in the update function. For Q learning,
@@ -18,6 +19,7 @@ class SarsaAgent(Agent):
     Q(s_t, a_t) = Q(s_t, a_t) + alpha (r_t+1 + gamma Q(s_t+1, a) - Q(s_t, a_t))
 
     """
+
     def __init__(self, actions, name="SARSA", alpha=0.1, gamma=0.99,
                  epsilon=0.1, explore="uniform", anneal=False,
                  custom_q_init=None, default_q=0):
@@ -43,7 +45,7 @@ class SarsaAgent(Agent):
         self.epsilon, self.epsilon_init = epsilon, epsilon
         self.step_number = 0
         self.anneal = anneal
-        self.default_q = default_q # 0 # 1 / (1 - self.gamma)
+        self.default_q = default_q  # 0 # 1 / (1 - self.gamma)
         self.explore = explore
         self.custom_q_init = custom_q_init
 
@@ -55,9 +57,8 @@ class SarsaAgent(Agent):
 
         # Key: state
         # Val: dict
-            #   Key: action
-            #   Val: q-value
-
+        #   Key: action
+        #   Val: q-value
 
     def get_parameters(self):
         '''
@@ -164,7 +165,7 @@ class SarsaAgent(Agent):
         next_q_val = self.get_q_value(next_state, next_action)
 
         self.q_func[state][action] = (1 - self.alpha) * prev_q_val + \
-                                     self.alpha * (reward + self.gamma*next_q_val)
+                                     self.alpha * (reward + self.gamma * next_q_val)
 
     def q_update(self, state, action, reward, next_state):
         '''
@@ -184,13 +185,13 @@ class SarsaAgent(Agent):
         # Update the Q Function.
         max_q_curr_state = self.get_max_q_value(next_state)
         prev_q_val = self.get_q_value(state, action)
-        self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (reward + self.gamma*max_q_curr_state)
-
+        self.q_func[state][action] = (1 - self.alpha) * prev_q_val + self.alpha * (
+                    reward + self.gamma * max_q_curr_state)
 
     def _anneal(self):
         # Taken from "Note on learning rate schedules for stochastic optimization, by Darken and Moody (Yale)":
-        self.alpha = self.alpha_init / (1.0 +  (self.step_number / 1000.0)*(self.episode_number + 1) / 2000.0 )
-        self.epsilon = self.epsilon_init / (1.0 + (self.step_number / 1000.0)*(self.episode_number + 1) / 2000.0 )
+        self.alpha = self.alpha_init / (1.0 + (self.step_number / 1000.0) * (self.episode_number + 1) / 2000.0)
+        self.epsilon = self.epsilon_init / (1.0 + (self.step_number / 1000.0) * (self.episode_number + 1) / 2000.0)
 
     def _compute_max_qval_action_pair(self, state):
         '''
@@ -289,7 +290,7 @@ class SarsaAgent(Agent):
         if self.custom_q_init:
             self.q_func = self.custom_q_init
         else:
-            self.q_func = defaultdict(lambda : defaultdict(lambda: self.default_q))
+            self.q_func = defaultdict(lambda: defaultdict(lambda: self.default_q))
         Agent.reset(self)
 
     def end_of_episode(self):

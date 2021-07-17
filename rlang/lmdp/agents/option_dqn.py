@@ -10,13 +10,16 @@ from lmdp.grounding.states.StateClass import State
 import numpy as np
 import torch
 
-import dill 
+import dill
 from all.approximation.checkpointer import PeriodicCheckpointer
+
+
 class DillPeriodicCheckpointer(PeriodicCheckpointer):
     def __call__(self):
         if self._updates % self.frequency == 0:
             torch.save(self._model, self._filename, pickle_module=dill)
         self._updates += 1
+
 
 def dqn(
         # Common settings
@@ -56,6 +59,7 @@ def dqn(
         final_exploration_frame (int): The frame where the exploration decay stops.
         model_constructor (function): The function used to construct the neural model.
     """
+
     def _dqn(env, writer=DummyWriter()):
         model = model_constructor(env).to(device)
         optimizer = Adam(model.parameters(), lr=lr)
@@ -89,6 +93,7 @@ def dqn(
             replay_start_size=replay_start_size,
             update_frequency=update_frequency,
         )
+
     return _dqn
 
 
@@ -115,7 +120,7 @@ class OptionGreedyPolicy(GreedyPolicy):
     def __get_active_options(self, state):
         active = torch.Tensor([o._id for o in self._options if o.initiation(State(state.observation)).squeeze()]).long()
         return active
-    
+
     def __random_action(self, state):
         active_opts = self.__get_active_options(state)
         return np.random.choice(active_opts)

@@ -46,7 +46,6 @@ default_outer_cli_parameters = {
     "test_exploration": 0.001
 }
 
-
 default_inner_params = {
     # Common settings
     "discount_factor": 0.99,
@@ -91,21 +90,23 @@ default_outer_params = {
 }
 
 default_hyperparameters = {
-     'discount_factor': 0.99, 
-     'outer_dqn_params': default_outer_params,
-     'inner_dqn_params': default_inner_params
+    'discount_factor': 0.99,
+    'outer_dqn_params': default_outer_params,
+    'inner_dqn_params': default_inner_params
 }
+
 
 def adapt_hyperparams(default_hyperparams, hyperparameters):
     pattern = re.compile('^(inner|outer)?')
     prefix = pattern.match(list(hyperparameters.keys())[0]).group(0)
-    if len(prefix)>0:
+    if len(prefix) > 0:
         prefix += '_'
     h = copy.deepcopy(default_hyperparams)
     for k in h.keys():
-        k_ = prefix+k
+        k_ = prefix + k
         h[k] = hyperparameters[k_] if k_ in hyperparameters else h[k]
     return h
+
 
 def hdqn_hyperparameters(**hyperparameters):
     h = copy.deepcopy(default_hyperparameters)
@@ -129,12 +130,11 @@ class RLangHDQNFactory(RLangBuilderFactory):
         self._options['learnable'] = self.__get_learnable_options(lmdp)
         self._options['non_learnable'] = self.__get_non_learnable_options(lmdp)
         self.hyperparams['options'] = self._options
-        return PresetBuilder(   
-                                default_name=self.name, 
-                                default_hyperparameters=self.hyperparams,
-                                constructor=HDQNPreset
-                            )
-    
+        return PresetBuilder(
+            default_name=self.name,
+            default_hyperparameters=self.hyperparams,
+            constructor=HDQNPreset
+        )
 
     def __get_learnable_options(self, lmdp):
         opts = [s.to_option() for s in lmdp.get_subpolicies()]

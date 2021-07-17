@@ -11,6 +11,7 @@ from lmdp.grounding.expressions.ExpressionsClass import Expression
 
 class ActionGrounding(Expression, Grounding):
     counter = 0
+
     def __init__(self, action_function, name=None):
         if (name is None):
             name = "action-" + str(ActionGrounding.counter)

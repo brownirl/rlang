@@ -11,8 +11,8 @@ from all.approximation.checkpointer import PeriodicCheckpointer
 from all.presets import PresetBuilder, Preset
 
 from lmdp.agents.dqn import DQNPreset
-from lmdp.grounding.states.StateClass import  State, BatchedState
-from lmdp.grounding.states.StateClass import  state_builder as RLangState
+from lmdp.grounding.states.StateClass import State, BatchedState
+from lmdp.grounding.states.StateClass import state_builder as RLangState
 import numpy as np
 import torch
 import torch.nn as nn
@@ -20,11 +20,13 @@ import torch.nn as nn
 from functools import partial
 from collections import namedtuple
 
+
 def state_builder(state):
     if isinstance(state, StateArray):
         return BatchedState(state.observation)
     else:
         return State(state.observation)
+
 
 class OptionInitMask(nn.Module):
     def __init__(self, options):
@@ -35,7 +37,7 @@ class OptionInitMask(nn.Module):
         s = RLangState(states)
         _m = [o.initiation(s) for o in self._options]
         mask = torch.stack(_m)
-        return mask.transpose(1,0)
+        return mask.transpose(1, 0)
 
 
 class masked_q(nn.Module):
@@ -52,6 +54,7 @@ class masked_q(nn.Module):
             mask = self._option_mask(states)
         return mask * self._policy(states)
 
+
 class OptionGreedyPolicy(GreedyPolicy):
     def __init__(
             self,
@@ -66,7 +69,7 @@ class OptionGreedyPolicy(GreedyPolicy):
         if np.random.rand() < self.epsilon:
             return self.__random_action(state)
         active = self.get_active_options_mask(state)
-        q_values = self.q(state) 
+        q_values = self.q(state)
         min_q = torch.min(q_values)
         q_values = q_values * active + (min_q - 1) * ~active
         return torch.argmax(q_values).item()
@@ -91,9 +94,9 @@ class OptionGreedyPolicy(GreedyPolicy):
 
     def get_active_options_mask(self, states):
         s = state_builder(states)
-        active = [o.initiation(s) & ~o.terminated(s) for o in self._options] # (batch x 1)
-        return torch.stack(active) # batch x action
-    
+        active = [o.initiation(s) & ~o.terminated(s) for o in self._options]  # (batch x 1)
+        return torch.stack(active)  # batch x action
+
     def __random_action(self, state):
         active_opts = self.__get_active_options(state)
         return active_opts[torch.randint(len(active_opts), (1,))].item()
@@ -149,26 +152,23 @@ class OptionDQNPreset(Preset):
         )
 
 
-
-
 class OptionDDQN(DQN):
 
     def __init__(self, options, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._options = options
 
-
     def _train(self):
         if self._should_train():
             # sample transitions from buffer
             (states, actions, rewards, next_states, weights) = self.replay_buffer.sample(self.minibatch_size)
             # forward pass
-            values = self.q(states, actions) # batch x action
+            values = self.q(states, actions)  # batch x action
             # compute targets
-            _q_values  = self.q.no_grad(next_states)
+            _q_values = self.q.no_grad(next_states)
             active_mask = self._get_active_options(next_states)
             min_q_values, _ = torch.min(_q_values, dim=1, keepdim=True)
-            next_actions = torch.argmax(~active_mask * (min_q_values-1)  + _q_values * active_mask, dim=1)
+            next_actions = torch.argmax(~active_mask * (min_q_values - 1) + _q_values * active_mask, dim=1)
             done_mask = next_states['done']
             targets = rewards + self.discount_factor * self.q.target(next_states, next_actions) * ~done_mask
             # compute loss
@@ -181,8 +181,8 @@ class OptionDDQN(DQN):
 
     def _get_active_options(self, states):
         s = state_builder(states)
-        active = [o.initiation(s) & ~o.terminated(s) for o in self._options] # (batch x 1)
-        return torch.stack(active).transpose(1,0) # batch x action
+        active = [o.initiation(s) & ~o.terminated(s) for o in self._options]  # (batch x 1)
+        return torch.stack(active).transpose(1, 0)  # batch x action
 
     def _train_step(self, curr_state, action, next_state):
         self.replay_buffer.store(curr_state, action, next_state)

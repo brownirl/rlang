@@ -5,8 +5,8 @@
     date: January 2021
 '''
 
-
 from lmdp.grounding.real.RealExpressionClass import RealExpression
+
 
 class MarkovFeature(RealExpression):
 

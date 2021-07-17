@@ -31,7 +31,7 @@ default_hyperparameters = {
     "test_exploration": 0.001,
     # Model construction
     "model_constructor": fc_relu_q
-    }
+}
 
 default_cli_args = {
     # Common settings
@@ -50,7 +50,7 @@ default_cli_args = {
     "final_exploration": 0.,
     "final_exploration_step": 10000,
     "test_exploration": 0.001,
-    }
+}
 
 
 def dqn_hyperparameters(**hyperparameters):
@@ -127,7 +127,6 @@ class DQNPreset(Preset):
             replay_start_size=self.hyperparameters['replay_start_size'],
             update_frequency=self.hyperparameters['update_frequency'],
         )
-        
 
     def test_agent(self):
         q = QNetwork(copy.deepcopy(self.model))
@@ -136,5 +135,6 @@ class DQNPreset(Preset):
     def save(self, filename):
         del self.hyperparameters['model_constructor']
         super().save(filename)
+
 
 dqn = partial(PresetBuilder, constructor=DQNPreset)

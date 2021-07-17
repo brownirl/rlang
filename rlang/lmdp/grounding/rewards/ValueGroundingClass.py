@@ -12,6 +12,7 @@ from lmdp.grounding.real.RealExpressionClass import RealExpression
 
 class ValueGrounding(Grounding, PartialFunction):
     id = 0
+
     def __init__(self, symbols_values=[], name=None):
         '''
             Args:
@@ -32,7 +33,7 @@ class ValueGrounding(Grounding, PartialFunction):
                 - list of rewards for all symbol matches
         '''
         return super().__call__(state)
-    
+
     def add(self, symbol, value):
         '''
             Add a reward to the dictionary. Overrides if it already exists.        

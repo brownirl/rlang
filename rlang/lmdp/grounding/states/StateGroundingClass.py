@@ -9,6 +9,7 @@
 """
 
 import sys, os
+
 sys.path.append(os.path.abspath("/"))
 
 import numpy as np
@@ -24,11 +25,12 @@ from lmdp.grounding.states.StateClass import State, BatchedState
 
 class StateFactor(Grounding, RealExpression):
     counter = 0
+
     def __init__(self, feature_positions, name=None):
         '''
             Args: feature_positions is an array-like of indices (list, tuple or np.array)
         '''
-        if(name is None):
+        if (name is None):
             name = "state-factor-" + str(StateFactor.counter)
         if (isinstance(feature_positions, int)):
             feature_positions = [feature_positions, ]
@@ -37,12 +39,12 @@ class StateFactor(Grounding, RealExpression):
         RealExpression.__init__(self, self.executor, len(self.feature_positions), domain=["state"], name=name)
         StateFactor.counter += 1
         self._rest = None
-    
+
     def number_of_features(self):
         return len(self.feature_positions)
-    
+
     def variables(self):
-        return [self,]
+        return [self, ]
 
     def executor(self, state):
         '''
@@ -52,7 +54,7 @@ class StateFactor(Grounding, RealExpression):
                 - args[0] must be the state from MDP
         '''
         if (isinstance(state, np.ndarray)):
-            if(len(state.shape) > 1):
+            if (len(state.shape) > 1):
                 state = BatchedState(state)
             else:
                 state = State(state)
@@ -63,12 +65,13 @@ class StateFactor(Grounding, RealExpression):
     #         feature_positions = [i for i in range(state_dim) if i not in self.feature_positions]
     #         self._rest = StateFactor(feature_positions, name=self.name + "-rest") # cache it
     #     return self._rest
-    
+
     def concat(self, *others, name=None):
         if name is None:
             names = list(map(lambda x: x.name, others))
-            name = '(' + self.name +',' + ','.join(names) + ')'
-        feature_positions = set(self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
+            name = '(' + self.name + ',' + ','.join(names) + ')'
+        feature_positions = set(
+            self.feature_positions + reduce(lambda x, y: x + y, map(lambda x: x.feature_positions, others)))
         return StateFactor(sorted(list(feature_positions)), name=name)
 
     def real_expression(self):
@@ -79,11 +82,11 @@ class StateFactor(Grounding, RealExpression):
         if (isinstance(other, StateFactor) or isinstance(other, StateFeature)):
             variables = other.variables() + self.variables()
             return StateFeature(super().__add__(other), self.number_of_features(), variables, operator='+')
-        elif(isinstance(other, RealExpression) or isinstance(other, (float, int, Sequence))):
+        elif (isinstance(other, RealExpression) or isinstance(other, (float, int, Sequence))):
             return super().__add__(other)
         else:
             return NotImplemented
-    
+
     def __radd__(self, other):
         return self.__add__(other)
 
@@ -93,7 +96,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__sub__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables, operator='-')
-        elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
+        elif (isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__sub__(other)
         else:
             return NotImplemented
@@ -107,7 +110,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__mul__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables, operator='*')
-        elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
+        elif (isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__mul__(other)
         else:
             return NotImplemented
@@ -121,7 +124,7 @@ class StateFactor(Grounding, RealExpression):
             f = super().__truediv__(other)
             variables = other.variables() + self.variables()
             return StateFeature(f, self.number_of_features(), variables, operator='/')
-        elif(isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
+        elif (isinstance(other, (float, int, np.ndarray, RealExpression, Sequence))):
             return super().__truediv__(other)
         else:
             return NotImplemented
@@ -138,10 +141,11 @@ class StateFactor(Grounding, RealExpression):
             idx = np.mgrid[idx].astype(int)
         elif idx >= self.number_of_features():
             raise ValueError("Index out of bounds")
-        
+
         n_features = 1 if isinstance(idx, int) else len(idx)
         # return StateFeature(RealExpression.__getitem__(self, idx), n_features, self.variables(), operator='[]')
         return _cast_real_exp_to_state_feature(RealExpression.__getitem__(self, idx))
+
     @classmethod
     def check_concat(self, sequence, state_dim):
         '''
@@ -163,68 +167,76 @@ class StateFactor(Grounding, RealExpression):
 
     def __indices_within_bounds(self, array_like, dim):
         for i in range(len(array_like)):
-            if array_like[i] >= dim or  array_like[i] < 0:
+            if array_like[i] >= dim or array_like[i] < 0:
                 return False
         return True
-    
+
     def dim(self):
         return self.number_of_features()
 
     def in_(self, l):
         def __in(seq, **args):
             s = self.__call__(**args)
-            
+
             t = []
             for e in seq:
                 t.append((s == e))
-            return reduce(lambda x, y: x | y , t)
+            return reduce(lambda x, y: x | y, t)
+
         return partial(__in, l)
 
 
 class StateFeature(StateFactor):
     _id = 0
+
     def __init__(self, function, number_of_features, variables=None, name=None, operator=None):
         if name is None:
-            name= "state-feature-" + str(StateFeature._id)
+            name = "state-feature-" + str(StateFeature._id)
         self._operator = operator
         StateFeature._id += 1
         StateFactor.__init__(self, list(range(number_of_features)), name=name)
         self._variables = variables
         self.__function = function
         self.number_features = number_of_features
-        RealExpression.__init__(self, self.executor, 
-                                dimension=self.number_features, 
+        RealExpression.__init__(self, self.executor,
+                                dimension=self.number_features,
                                 domain=['state'],
                                 name=name,
                                 operator=operator,
                                 operands=self._variables)
-    
+
     def executor(self, state):
         return self.__function(state)
+
     def number_of_features(self):
         return self.number_features
+
     def variables(self):
-        return self._variables 
+        return self._variables
+
     def __repr__(self):
         return RealExpression.__repr__(self)
 
 
 def _cast_real_exp_to_state_feature(real_exp):
-    if(real_exp.domain.is_s()):
-        return StateFeature(real_exp, number_of_features=real_exp.dim(), variables=real_exp._operands, operator=real_exp._operator)
+    if (real_exp.domain.is_s()):
+        return StateFeature(real_exp, number_of_features=real_exp.dim(), variables=real_exp._operands,
+                            operator=real_exp._operator)
     return None
+
 
 if __name__ == '__main__':
     import numpy as np
     from lmdp.grounding.states.StateClass import BatchedState
     from lmdp.grounding.booleans.BooleanFunClass import bool_and, bool_not
+
     s1 = State(data=np.array([1, 1]))
     s2 = State(data=np.array([0, 1]))
     x = StateFactor(0, "x")
     y = StateFactor(1, "y")
-    position = StateFactor([0,1], "position")
+    position = StateFactor([0, 1], "position")
     diag = x == y
-    x_0 = x == 0 
+    x_0 = x == 0
     x_1 = x + 1
 
     print(f"s1 in diag: {diag(s1)} == True")
@@ -235,10 +247,10 @@ if __name__ == '__main__':
     print(f"s2.x + 1:  {x_1(s2)} == 1")
 
     print(StateFactor.check_concat([x, y, position], 2))
-    print((position + (0,1))(s1))
+    print((position + (0, 1))(s1))
 
-    s3 = BatchedState(data=np.random.rand(4,2))
+    s3 = BatchedState(data=np.random.rand(4, 2))
     print(s3)
     print(y(s3))
-    print((y+1)(s3))
+    print((y + 1)(s3))
     print(bool_and((y < 1.5), bool_not(x < 3))(s3))

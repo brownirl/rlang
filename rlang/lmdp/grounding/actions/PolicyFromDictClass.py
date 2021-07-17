@@ -6,6 +6,8 @@
 '''
 
 from collections.abc import Iterable
+
+
 class PolicyFromDict:
 
     def __init__(self, policy=[]):
@@ -18,7 +20,7 @@ class PolicyFromDict:
             self.__policy = policy
         else:
             raise "Argument must be dict Symbol->Action or list of tuples (symbol, action)"
-    
+
     def __call__(self, state):
         '''
             Args: state (MDP state)

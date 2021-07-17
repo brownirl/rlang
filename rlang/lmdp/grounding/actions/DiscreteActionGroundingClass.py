@@ -4,10 +4,10 @@
     date: August 2020
 '''
 
-
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from lmdp.grounding.expressions.ExpressionsClass import Expression
+
 
 class DiscreteActionGrounding(ActionGrounding):
 
@@ -18,10 +18,11 @@ class DiscreteActionGrounding(ActionGrounding):
         self.__mdp_action = mdp_action
 
     def __eq__(self, other):
-        if(isinstance(other, ActionGrounding) or isinstance(other, Expression)):
+        if (isinstance(other, ActionGrounding) or isinstance(other, Expression)):
             return BooleanExpression(lambda **args: self.__call__(**args) == other(**args), domain=["action"])
         else:
             return NotImplemented
+
 
 if __name__ == "__main__":
     down = DiscreteActionGrounding("down")

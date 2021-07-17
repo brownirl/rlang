@@ -21,11 +21,13 @@ import copy
 
 import dill
 
+
 class RLangOptionAgent(Iterable, Agent):
     '''
         Wrapper of an option as an Agent for 
         RLang-derived subpolicies.
     '''
+
     def __init__(self, non_learnable_option):
         self.option = non_learnable_option
 
@@ -34,10 +36,10 @@ class RLangOptionAgent(Iterable, Agent):
 
     def eval(self, state):
         return self.option.policy(RLangState(state['observation']))
-    
+
     def stop(self, state):
         pass
-    
+
     def __getitem__(self, key):
         if key == 0:
             return self.option.get_id()
@@ -49,6 +51,7 @@ class RLangOptionAgent(Iterable, Agent):
 
     def _train_step(self):
         pass
+
 
 class InnerAgent(Agent):
     def __init__(self, actions, options, agent_factory):
@@ -65,7 +68,7 @@ class InnerAgent(Agent):
     def act(self, state):
         action = self._executing_agent.act(state)
         return action
-    
+
     def stop(self, state):
         self._executing_agent.stop(state)
 
@@ -76,9 +79,10 @@ class InnerAgent(Agent):
         if (self._executing_option.terminated(RLangState(state['observation']))):
             return False
         return True
-    
+
     def eval(self, state):
         return self._executing_agent.eval(state)
+
 
 class RLangInnerAgent(InnerAgent):
     def __init__(self, options, agent_factory, writer=DummyWriter()):
@@ -103,7 +107,7 @@ class RLangInnerAgent(InnerAgent):
                 if o._id == self._executing_option._id:
                     action = a
         return a
-    
+
     def execute(self, option):
         ## log return for currently executing option
         if self._executing_option is not None:
@@ -119,7 +123,7 @@ class RLangInnerAgent(InnerAgent):
         for o_id, agent in self._option_agents.items():
             if self._executing_option is not None and o_id != self._executing_option._id:
                 agent._train_step()
-    
+
 
 class HierarchicalAgent(Agent):
     def __init__(self, options, outer_agent, inner_agent, discount_factor=0.99):
@@ -134,20 +138,19 @@ class HierarchicalAgent(Agent):
         self._past_rewards = []
         self._r = 0
 
-
     def act(self, state):
         r = state['reward']
-        
+
         # s = State({'observation': state['observation'], 'reward': self._r, 'done': state['done']})
-        self._r += r * self._gamma ** self._t # accumulates discounted reward
-        self._past_states.append(state) # add state to list
+        self._r += r * self._gamma ** self._t  # accumulates discounted reward
+        self._past_states.append(state)  # add state to list
         self._past_rewards.append(r)
-        
-        if self._curr_option is None or not self.inner_is_executing(state): # change option
-            o = self.outer_agent_act(state) # outer agent act
+
+        if self._curr_option is None or not self.inner_is_executing(state):  # change option
+            o = self.outer_agent_act(state)  # outer agent act
             self._curr_option = self._options[o]
             self._curr_option_idx = o
-            self._inner_agent.execute(self._curr_option) # start option o
+            self._inner_agent.execute(self._curr_option)  # start option o
         self._steps += 1
         self._t += 1
         return self.inner_agent_act(state)
@@ -155,11 +158,11 @@ class HierarchicalAgent(Agent):
     def eval(self, state):
         r = state['reward']
         s = {'observation': state['observation'], 'reward': self._r, 'done': state['done']}
-        self._r += r * self._gamma ** self._t # accumulates discounted reward
-        if self._curr_option is None or not self.inner_is_executing(state): 
-            o = self.outer_agent_eval(s) # outer agent act
+        self._r += r * self._gamma ** self._t  # accumulates discounted reward
+        if self._curr_option is None or not self.inner_is_executing(state):
+            o = self.outer_agent_eval(s)  # outer agent act
             self._curr_option = o
-            self._inner_agent.execute(o) # start option o
+            self._inner_agent.execute(o)  # start option o
         self._steps += 1
         self._t += 1
         return self._inner_agent.eval(state)
@@ -177,18 +180,18 @@ class HierarchicalAgent(Agent):
         return o
 
     def _outer_train(self, state):
-        _t = 0#len(self._past_states)-1#0
+        _t = 0  # len(self._past_states)-1#0
         rewards = torch.Tensor(self._past_rewards)
         t = torch.arange(_t, len(self._past_states))
         discount = self._gamma ** t
         states = []
         for t in range(len(t) - 1):
             _s = State({'observation': self._past_states[t]['observation'],
-                          'reward': self._past_states[t]['reward'],
-                          'done': self._past_states[t]['done']})
+                        'reward': self._past_states[t]['reward'],
+                        'done': self._past_states[t]['done']})
             _next_s = State({'observation': state['observation'],
-                          'reward': (rewards[t:] * discount[t:]).sum(),
-                          'done': state['done']})
+                             'reward': (rewards[t:] * discount[t:]).sum(),
+                             'done': state['done']})
             self._outer_agent._train_step(_s, self._curr_option_idx, _next_s)
 
     def inner_agent_act(self, state):
@@ -196,13 +199,13 @@ class HierarchicalAgent(Agent):
 
     def inner_is_executing(self, state):
         return self._inner_agent.is_executing(state)
-    
+
     def get_options(self):
         return self._inner_agent._option_agents
-    
+
     def get_inner_agent(self):
         return self._inner_agent
-        
+
     def get_active_options(self, state):
         return [o for o in self._options if o.initiation(RLangState(state['observation']))]
 
@@ -213,8 +216,8 @@ class HierarchicalAgent(Agent):
         self._past_rewards = []
         self._curr_option = None
         self._steps = 0
-        
-        
+
+
 class SubgoalHierarchicalAgent(HierarchicalAgent):
     def __init__(self, *args, **kwargs):
         self._step_cost = 0.
@@ -222,35 +225,36 @@ class SubgoalHierarchicalAgent(HierarchicalAgent):
         super().__init__(*args, **kwargs)
 
     def inner_is_executing(self, state):
-        if self._inner_agent.is_executing(state): # not terminated
-            if (not self._curr_option.is_executable(RLangState(state['observation']))): # initiation condition if false -> Interrupt
-                s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
-                self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+        if self._inner_agent.is_executing(state):  # not terminated
+            if (not self._curr_option.is_executable(
+                    RLangState(state['observation']))):  # initiation condition if false -> Interrupt
+                s = State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
+                self._inner_agent.act(s)  # extra step to update inner agent with intrinsic reward
                 self._inner_agent.stop(state)
                 self._curr_option = None
                 return False
             return True
-        elif (self._curr_option.terminated(RLangState(state['observation']))): # goal reached.
-            s =  State({'observation': state['observation'], 'reward': self._goal_reward, 'done': True})
-            self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+        elif (self._curr_option.terminated(RLangState(state['observation']))):  # goal reached.
+            s = State({'observation': state['observation'], 'reward': self._goal_reward, 'done': True})
+            self._inner_agent.act(s)  # extra step to update inner agent with intrinsic reward
             # self._inner_agent.stop(state)
             self._curr_option = None
             return False
-    
+
     def inner_agent_act(self, state):
-        s = State( {'observation': state['observation'], 'reward': self._step_cost, 'done': state['done']} )
+        s = State({'observation': state['observation'], 'reward': self._step_cost, 'done': state['done']})
         return self._inner_agent.act(s)
 
 
 class HDQNAgent(SubgoalHierarchicalAgent):
-    HDQN_PARAMS = [ 'q', 
-                    'policy', 
-                    'replay_buffer', 
-                    'discount_factor',
-                    'loss',
-                    'minibatch_size',
-                    'replay_start_size',
-                    'update_frequency']
+    HDQN_PARAMS = ['q',
+                   'policy',
+                   'replay_buffer',
+                   'discount_factor',
+                   'loss',
+                   'minibatch_size',
+                   'replay_start_size',
+                   'update_frequency']
 
     def __init__(self, options, discount_factor, outer_dqn_params, inner_dqn_params, writer=DummyWriter(), timeout=100):
         ## initialize OptionDQN 
@@ -267,26 +271,30 @@ class HDQNAgent(SubgoalHierarchicalAgent):
         def _factory(option):
             params = inner_params(repr(option))
             return _DQN(**params)
+
         return _factory
 
     def inner_is_executing(self, state):
-        if self._inner_agent.is_executing(state): # not terminated
-            if (not self._curr_option.is_executable(RLangState(state['observation'])) or self._t > self._timeout): # initiation condition if false -> Interrupt             
-                s =  State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
-                self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+        if self._inner_agent.is_executing(state):  # not terminated
+            if (not self._curr_option.is_executable(RLangState(state[
+                                                                   'observation'])) or self._t > self._timeout):  # initiation condition if false -> Interrupt
+                s = State({'observation': state['observation'], 'reward': self._step_cost, 'done': False})
+                self._inner_agent.act(s)  # extra step to update inner agent with intrinsic reward
                 self._inner_agent.stop(state)
                 self._curr_option = None
                 return False
             return True
-        elif (self._curr_option.terminated(RLangState(state['observation']))): # goal reached.
-            s =  State({'observation': state['observation'], 'reward': self._goal_reward, 'done': True})
-            self._inner_agent.act(s) # extra step to update inner agent with intrinsic reward
+        elif (self._curr_option.terminated(RLangState(state['observation']))):  # goal reached.
+            s = State({'observation': state['observation'], 'reward': self._goal_reward, 'done': True})
+            self._inner_agent.act(s)  # extra step to update inner agent with intrinsic reward
             # self._inner_agent.stop(state)
             self._curr_option = None
             return False
 
+
 class HDQNPreset(Preset):
     HDQN_hyperparams = ['options', 'discount_factor', 'outer_dqn_params', 'inner_dqn_params']
+
     def __init__(self, env, device, name, **hyperparameters):
         super().__init__(name, device, hyperparameters)
         self._env = env
@@ -299,7 +307,7 @@ class HDQNPreset(Preset):
         self._inner_dqn_params = lambda name: self.__inner_params(writer, name)
 
         self._agent = HDQNAgent(
-            self.hyperparameters['options'], 
+            self.hyperparameters['options'],
             self.hyperparameters['discount_factor'],
             self._outer_dqn_params,
             self._inner_dqn_params,
@@ -308,7 +316,6 @@ class HDQNPreset(Preset):
         )
 
         return self._agent
-
 
     def __get_options(self):
         return self.hyperparameters['options']['learnable'] + self.hyperparameters['options']['non_learnable']
@@ -322,7 +329,7 @@ class HDQNPreset(Preset):
         hyperparameters = self.hyperparameters['outer_dqn_params']
 
         optimizer = Adam(_model.parameters(), lr=hyperparameters['lr'])
-        
+
         q = QNetwork(
             # masked_q(_model, self.__get_options()),
             _model,
@@ -363,10 +370,7 @@ class HDQNPreset(Preset):
 
         return params
 
-
-
     def __inner_params(self, writer, name):
-
         inner_model = self.hyperparameters['inner_dqn_params']['model_constructor'](self._env).to(self.device)
 
         hyperparameters = self.hyperparameters['inner_dqn_params']
@@ -378,7 +382,7 @@ class HDQNPreset(Preset):
             optimizer,
             target=FixedTarget(hyperparameters['target_update_frequency']),
             writer=writer,
-            name=name+'/option/q'
+            name=name + '/option/q'
         )
 
         policy = GreedyPolicy(
@@ -405,8 +409,8 @@ class HDQNPreset(Preset):
             'replay_buffer': replay_buffer,
             'discount_factor': self.hyperparameters['discount_factor'],
             'minibatch_size': hyperparameters['minibatch_size'],
-            'replay_start_size':hyperparameters['replay_start_size'],
-            'update_frequency':hyperparameters['update_frequency']
+            'replay_start_size': hyperparameters['replay_start_size'],
+            'update_frequency': hyperparameters['update_frequency']
         }
 
         return params
@@ -418,7 +422,8 @@ class HDQNPreset(Preset):
         # del self.hyperparameters['outer_dqn_params']['model_constructor']
         # del self.hyperparameters['inner_dqn_params']['model_constructor']
         pass
-        #return torch.save(self, filename, pickle_module=dill)
+        # return torch.save(self, filename, pickle_module=dill)
+
 
 class HDQNTestAgent(Agent):
     def __init__(self, agent):
@@ -426,9 +431,10 @@ class HDQNTestAgent(Agent):
 
     def act(self, state):
         return self._agent.eval(state)
-    
+
     def eval(self, state):
         return self._agent.eval(state)
+
 
 class _DQN(DQN):
     def _train_step(self):
@@ -446,6 +452,6 @@ class _DQN(DQN):
 
     def __should_train(self):
         return (self._frames_seen > self.replay_start_size and self._frames_seen % self.update_frequency == 0)
-    
+
     def stop(self, *args):
         pass
