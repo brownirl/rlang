@@ -52,7 +52,7 @@ all = ['PolicyElements']
 
 if __name__ == "__main__":
     from lmdp.grounding.states.StateGroundingClass import StateFactor
-    from lmdp.grounding.states.SymbolClass import Symbol
+    from lmdp.grounding.states.SymbolClass import Predicate
     from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
 
     import numpy as np
@@ -63,9 +63,9 @@ if __name__ == "__main__":
     x = StateFactor(0, "x")
     y = StateFactor(1, "y")
     position = StateFactor([0, 1], "position")
-    diagonal = Symbol(x == y, "diagonal")
-    goal = Symbol(position == np.array([10, 10]), "goal")
-    not_goal = Symbol(position != np.array([10, 10]))
+    diagonal = Predicate(x == y, "diagonal")
+    goal = Predicate(position == np.array([10, 10]), "goal")
+    not_goal = Predicate(position != np.array([10, 10]))
 
     # Actions in gridworld
     up = DiscreteActionGrounding("up", "up")

@@ -5,7 +5,7 @@
             -Boolean expresion in SxA to determine if the effect is applicable
             -Effect Expression among:
                 - List of States
-                - Symbol
+                - Predicate
                 - Dictionary of Factor name to expression
 
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
@@ -15,7 +15,7 @@
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_true, bool_false
 from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
-from lmdp.grounding.states.SymbolClass import Symbol
+from lmdp.grounding.states.SymbolClass import Predicate
 from lmdp.grounding.states.StateGroundingClass import StateFactor
 from lmdp.utils.expression_utils import Domain, Codomain
 from functools import partial

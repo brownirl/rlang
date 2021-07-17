@@ -1,5 +1,5 @@
 '''
-    Symbol Base Class
+    Predicate Base Class
     author: Rafael Rodriguez-Sanchez
     date: v0 August 2020
           v1 January 2021 
@@ -34,42 +34,42 @@ def __bool_true(state):
         raise ValueError("State is not of type (lmdp.grounding.states.StateClass.State or BatchedState)")
 
 
-class Symbol(Grounding, BooleanExpression):
+class Predicate(Grounding, BooleanExpression):
     counter = 0
 
     def __init__(self, boolean_fun, name=None, operator=None, operands=None):
         if (name is None):
-            name = "symbol-" + str(Symbol.counter)
+            name = "symbol-" + str(Predicate.counter)
         Grounding.__init__(self, name)
         BooleanExpression.__init__(self, boolean_fun, domain=["state"],
                                    name=name, operator=operator, operands=operands)
-        Symbol.counter += 1
+        Predicate.counter += 1
 
     def and_(self, other):
-        if (isinstance(other, Symbol)):
-            return Symbol(super().and_(other), operator='and', operands=[self, other])
+        if (isinstance(other, Predicate)):
+            return Predicate(super().and_(other), operator='and', operands=[self, other])
         elif (isinstance(other, bool)):
             return super().and_(other)
         else:
             return NotImplemented
 
     def or_(self, other):
-        if (isinstance(other, Symbol)):
-            return Symbol(super().or_(other), operator='and', operands=[self, other])
+        if (isinstance(other, Predicate)):
+            return Predicate(super().or_(other), operator='and', operands=[self, other])
         elif (isinstance(other, bool)):
             return super().or_(other)
         else:
             return NotImplemented
 
     def not_(self):
-        return Symbol(super().not_(), operator='not', operands=[self])
+        return Predicate(super().not_(), operator='not', operands=[self])
 
     def __repr__(self):
         return BooleanExpression.__repr__(self)
 
 
-Any = Symbol(lambda *args: True, name='any-symbol')
-None_ = Symbol(lambda *args: False, name='none-symbol')
+Any = Predicate(lambda *args: True, name='any-symbol')
+None_ = Predicate(lambda *args: False, name='none-symbol')
 any_state = BooleanExpression(__bool_true, domain=["state"], name='any_state')
 any_next_state = BooleanExpression(__bool_true, domain=["next_state"], name='any_next_state')
 
@@ -83,9 +83,9 @@ if __name__ == "__main__":
     x = StateFactor(0, "x")
     y = StateFactor(1, "y")
     s = StateFactor([0, 1], "s1")
-    start = Symbol(s == np.array([0, 0]))
-    not_goal = Symbol(s != np.array([1, 1]))
-    diag = Symbol(x == y, "diag")
+    start = Predicate(s == np.array([0, 0]))
+    not_goal = Predicate(s != np.array([1, 1]))
+    diag = Predicate(x == y, "diag")
     diag_not_start = bool_and(bool_not(start), diag)
     d = diag & bool_not(start)
     print(repr(d))

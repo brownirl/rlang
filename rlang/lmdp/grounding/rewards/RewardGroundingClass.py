@@ -57,7 +57,7 @@ class RewardGrounding(Grounding, PartialFunction):
 
 
 if __name__ == "__main__":
-    from lmdp.grounding.states.SymbolClass import Symbol
+    from lmdp.grounding.states.SymbolClass import Predicate
     from lmdp.grounding.states.StateGroundingClass import StateFactor
     from simple_rl.mdp.StateClass import State
     import numpy as np
@@ -67,9 +67,9 @@ if __name__ == "__main__":
     x = StateFactor(0, "x")
     y = StateFactor(1, "y")
     s = StateFactor([0, 1], "s1")
-    start = Symbol(s == np.array([0, 0]))
-    not_goal = Symbol(s != np.array([1, 1]))
-    diag = Symbol(x == y, "diag")
+    start = Predicate(s == np.array([0, 0]))
+    not_goal = Predicate(s != np.array([1, 1]))
+    diag = Predicate(x == y, "diag")
     r = RewardGrounding([(start, 0.0), (diag, 1.0)])
     print(f"{r.name} for {diag.name} symbol: {r(s1, 'up', s1)} == 1")
     print(f"{r.name} for {diag.name} symbol: {r(s2, 'up', s2)} == []")

@@ -1,5 +1,5 @@
 '''
-    Effect Symbol class 
+    Effect Predicate class
         - This class defines a set of states parameterized by a (state, action)
           pair.
     author: Rafael Rodriguez-Sanchez
@@ -10,7 +10,7 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 
-from lmdp.grounding.states.SymbolClass import Symbol
+from lmdp.grounding.states.SymbolClass import Predicate
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import partial
 
@@ -18,8 +18,8 @@ from functools import partial
 class EffectSymbol(Expression):
     def __init__(self, boolean_fun):
         # if (name is None):
-        #     name = "effect-symbol-" + str(Symbol.counter)
-        # Symbol.__init__(self, boolean_fun, name)
+        #     name = "effect-symbol-" + str(Predicate.counter)
+        # Predicate.__init__(self, boolean_fun, name)
         # self.__fun = boolean_fun  
         self._boolean_fun = boolean_fun
         Expression.__init__(self, self._boolean_fun, domain=["state", "action", "next_state"], codomain=["boolean"])

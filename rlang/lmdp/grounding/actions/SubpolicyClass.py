@@ -86,9 +86,9 @@ if __name__ == "__main__":
     x = StateFactor(0, "x")
     y = StateFactor(1, "y")
     position = StateFactor([0, 1], "position")
-    diagonal = Symbol(x + 1 == y, "diagonal")
-    goal = Symbol(position == np.array([10, 10]), "goal")
-    not_goal = Symbol(position != np.array([10, 10]))
+    diagonal = Predicate(x + 1 == y, "diagonal")
+    goal = Predicate(position == np.array([10, 10]), "goal")
+    not_goal = Predicate(position != np.array([10, 10]))
 
     # Actions in gridworld
     up = DiscreteActionGrounding("up", "up")
