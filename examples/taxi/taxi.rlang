@@ -1,4 +1,7 @@
 ```
+# agent_position referenced in grounding file as well
+# so unsure about defining it here
+
 Feature agent_position := agent_state[:2]
 Predicate passenger_in_taxi := agent_state[2] == 1
 
@@ -20,3 +23,25 @@ Effect A == right:
     position += [0,1]
 
 ```
+
+Predicate passenger_0_in_dest := passenger_0_dest == passenger_0_pos
+
+Option pick_up_passenger0:
+    init(not(passenger_in_taxi) and not(passenger_0_in_dest))
+        Execute pick_up_passenger
+    until passenger_0_intaxi
+
+Option dropoff_passenger0:
+    init(passenger_0_intaxi)
+        Execute dropoff_passenger
+    until passenger_0_in_dest and not(passenger_0_intaxi)
+
+Option pick_up_passenger1:
+    init(not(passenger_in_taxi) and not(passenger_1_in_dest))
+        Execute pick_up_passenger
+    until passenger_1_intaxi
+
+Option dropoff_passenger1:
+    init(passenger_1_intaxi)
+        Execute dropoff_passenger
+    until passenger_1_in_dest and not(passenger_1_intaxi)

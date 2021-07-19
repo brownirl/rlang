@@ -8,25 +8,13 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"/path/to/python/module"
+		"grounding module":"./grounding"
 	},
 	"vocabulary":[
         {
-            "type": "state feature",
-            "height": {
-                "grounding": "height"
-            },
-            "width": {
-                "grounding": "width"
-            },
-            "goal locs": {
-                "grounding": "goal_locs"
-            },
-            "walls": {
-                "grounding": "walls"
-            },
-            "lava locs": {
-                "grounding": "lava_locs"
+            "type": "Predicate",
+            "in_lava": {
+                "grounding": "lava"
             }
         }
     ]

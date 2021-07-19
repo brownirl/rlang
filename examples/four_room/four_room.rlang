@@ -1,5 +1,7 @@
+Factor position = S[0,1]
 Feature x := position[0]
 Feature y := position[1]
+
 Predicate goal := x == 8 and y == 4
 Predicate in_room1 := x <= half_width and y < half_height
 Predicate in_room2 := x >= half_width and y < half_height

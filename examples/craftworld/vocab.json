@@ -8,34 +8,11 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"/path/to/python/module"
+		"grounding module":"./grounding"
 	},
 	"vocabulary":[
-		{
-            "type": "action",
-            "up": {
-                "mdp action": 0,
-                "grounding": ""
-            },
-            "down": {
-                "mdp action": 1,
-                "grounding": ""
-            },
-            "left": {
-                "mdp action": 2,
-                "grounding": ""
-            },
-            "right": {
-                "mdp action": 3,
-                "grounding": ""
-            },
-            "use": {
-                "mdp action": 4,
-                "grounding": "use"
-            }
-		},
         {
-            "type": "state factor",
+            "type": "Factor",
             "end_map_idx": {
                 "grounding": "end_map_idx"
             },
@@ -56,7 +33,7 @@
             }
         },
         {
-            "type": "state feature",
+            "type": "Feature",
             "elements_to_use": {
                 "grounding": "elements_to_use"
             },
@@ -71,27 +48,12 @@
             }
         },
         {
-            "type": "predicate",
+            "type": "Predicate",
             "environment_predicates": {
                 "grounding": "environment_predicates"
             },
             "resource_availability": {
                 "grounding": "availability_predicates"
-            }
-        },
-        {
-            "type":"effect",
-            "down effect": {
-                "grounding": ""
-            },
-            "up effect": {
-                "grounding": ""
-            },
-            "left effect": {
-                "grounding": ""
-            },
-            "right effect": {
-                "grounding": ""
             }
         }
     ]

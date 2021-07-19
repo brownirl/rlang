@@ -8,62 +8,23 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"grounding.py"
+		"grounding module":"./grounding.py"
 	},
 	"vocabulary":[
-//        {
-//           "type": "mdp_paramters",
-//            "width": {
-//                "grounding": "WIDTH"
-//            },
-//            "height": {
-//                "grounding": "HEIGHT"
-//            },
-//            "goals": {
-//                "grounding": "goals"
-//            }
-//        },
         {
-            "type": "state factor",
+            "type": "Factor",
             "hallways": {
                 "grounding" : ""
             }
         },
         {
-            "type": "policy",
+            "type": "Policy",
             "hallway policy": {
                 "grounding": ""
             }
-            // "o-room1-room2": {
-            //     "grounding": ""
-            // },
-            // "o-room1-room3": {
-            //     "grounding": ""
-            // },
-            // "o-room2-room1": {
-            //     "grounding": ""
-            // },
-            // "o-room2-room4": {
-            //     "grounding": ""
-            // },
-            // "o-room3-room1": {
-            //     "grounding": ""
-            // },
-            // "o-room3-room4": {
-            //     "grounding": ""
-            // },
-            // "o-room4-room2": {
-            //     "grounding": ""
-            // },
-            // "o-room4-room3": {
-            //     "grounding": ""
-            // }
         },
         {
-            "type": "state feature",
-            "position": {
-                "grounding": "position"
-            },
+            "type": "Constant",
             "half_width": {
                 "grounding": "half_width"
             },

@@ -8,36 +8,17 @@
 			"number of actions": 6
 	},
 	"modules": {
-		"grounding module":"/lmdp/examples/taxi/grounding.py"
+		"grounding module":"./grounding.py"
 	},
 	"vocabulary":[
-		{
-            "type": "action",
-            "up": {
-                "mdp action": 0,
-                "grounding": ""
-            },
-            "down": {
-                "mdp action": 1,
-                "grounding": ""
-            },
-            "left": {
-                "mdp action": 2,
-                "grounding": ""
-            },
-            "right": {
-                "mdp action": 3,
-                "grounding": ""
-            }
-		},
         {
-            "type": "policy",
+            "type": "Policy",
             "move_to_cell": {
                 "grounding": "move_to_cell"
             }
         }, 
         {
-            "type": "state factor",
+            "type": "Factor",
             "passenger_state": {
                 "grounding": "passenger_state"
             },
@@ -51,42 +32,15 @@
                 "grounding": "taxi_states"
             }
         },
-//        {
-//            "type": "mdp parameters",
-//            "width": {
-//                "grounding": "WIDTH"
-//            },
-//            "height": {
-//                "grounding": "HEIGHT"
-//            },
-//            "passengers": {
-//                "grounding": "passengers"
-//            },
-//            "walls": {
-//                "grounding": "walls"
-//            },
-//            "agent": {
-//                "grounding": "agent"
-//            }
-//        },
         {
-            "type": "predicate",
-            "in taxi": {
-                "grounding": ""
-            },
-            "has passenger": {
-                "grounding": ""
-            }
-        },
-        {
-            "type": "state feature",
+            "type": "Feature",
             "passenger_pos_dest": {
                 "grounding": "passenger_pos_dest"
             }
 
         },
         {
-            "type": "option",
+            "type": "Option",
             "pick_up_passenger": {
                 "grounding": "pick_up_passenger"
             },
