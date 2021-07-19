@@ -49,7 +49,7 @@ direction = StateFactor(list(range(end_inv+2, end_inv+6)), 'direction')
 
 #-----features
 
-# x, y = position[0], position[1]  
+x, y = position[0], position[1]  
 
 @state_feature(dim=n_objects+1)
 def elements_to_use(state):
@@ -95,12 +95,12 @@ locals().update(elements)
 #-----subpolicies
 
 # primitive actions
-# actions = ["down", "up", "left", "right", "use"]
-# down = DiscreteActionGrounding(0, name='down')
-# up = DiscreteActionGrounding(1, name='up')
-# left = DiscreteActionGrounding(2, name='left')
-# right = DiscreteActionGrounding(3, name='right')
-# use = DiscreteActionGrounding(4, name='use')
+actions = ["down", "up", "left", "right", "use"]
+down = DiscreteActionGrounding(0, name='down')
+up = DiscreteActionGrounding(1, name='up')
+left = DiscreteActionGrounding(2, name='left')
+right = DiscreteActionGrounding(3, name='right')
+use = DiscreteActionGrounding(4, name='use')
 
 
 # go to cell

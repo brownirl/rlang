@@ -46,35 +46,35 @@ x, y = position[0], position[1]
 
 
 ### Symbols
-# goal = Symbol(bool_and(x == 8, y == 4))
+goal = Symbol(bool_and(x == 8, y == 4))
 
 half_width = math.ceil(width / 2.0)
 half_height = math.ceil(height / 2.0)
 
-# room_1 = Symbol(bool_and(x <= half_width, y < half_height), "room_1")
-# room_2 = Symbol(bool_and(x >= half_width, y < half_height), "room_2")
-# room_3 = Symbol(bool_and(x <= half_width, y >= half_height), "room_3")
-# room_4 = Symbol(bool_and(x >= half_width, y >= half_height-1), "room_4")
+room_1 = Symbol(bool_and(x <= half_width, y < half_height), "room_1")
+room_2 = Symbol(bool_and(x >= half_width, y < half_height), "room_2")
+room_3 = Symbol(bool_and(x <= half_width, y >= half_height), "room_3")
+room_4 = Symbol(bool_and(x >= half_width, y >= half_height-1), "room_4")
 
 hallways = compute_hallways(width, height)
 
 ## Effects
 
-# def action_effect(state, action): # actions effects on state/Transition Dynamics
-#         if action == 'up':
-#             return  GridWorldState(state.x, state.y + 1)
-#         if action == 'down':
-#             return  GridWorldState(state.x, state.y-1)
-#         if action == 'left':
-#             return GridWorldState(state.x - 1, state.y)
-#         if action == 'right':
-#             return GridWorldState(state.x + 1, state.y)
+def action_effect(state, action): # actions effects on state/Transition Dynamics
+        if action == 'up':
+            return  GridWorldState(state.x, state.y + 1)
+        if action == 'down':
+            return  GridWorldState(state.x, state.y-1)
+        if action == 'left':
+            return GridWorldState(state.x - 1, state.y)
+        if action == 'right':
+            return GridWorldState(state.x + 1, state.y)
 
-# effect_action = PredictiveEffect(bool_and(any_state, any_action), action_effect)
+effect_action = PredictiveEffect(bool_and(any_state, any_action), action_effect)
 
 ### actions
-# actions = ("up", "down", "left", "right")
-# locals().update(dict(zip(actions, actions)))
+actions = ("up", "down", "left", "right")
+locals().update(dict(zip(actions, actions)))
 ### Subpolicies
 
 def hallway_policy(hallway, wall_type):

@@ -24,3 +24,43 @@ Effect left:
 
 Effect right: 
     x += 1
+
+Option o_room1_rooom2:
+    init(in_room1)
+        Find
+    until in_room2
+
+Option o_room1_room3:
+    init(in_room1)
+        Find
+    until in_room3
+
+Option o_room2_rooom1:
+    init(in_room2)
+        Find
+    until in_room1
+
+Option o_room2_room4:
+    init(in_room2)
+        Find
+    until in_room4
+
+Option o_room3_rooom4:
+    init(in_room3)
+        Find
+    until in_room4
+
+Option o_room3_room1:
+    init(in_room3)
+        Find
+    until in_room1
+
+Option o_room4_room2:
+    init(in_room4)
+        Find
+    until in_room2
+
+Option o_room4_room3:
+    init(in_room4)
+        Find
+    until in_room3

@@ -28,20 +28,41 @@ Predicate passenger_0_in_dest := passenger_0_dest == passenger_0_pos
 
 Option pick_up_passenger0:
     init(not(passenger_in_taxi) and not(passenger_0_in_dest))
-        Execute pick_up_passenger
+        Execute pick_up_passenger0
     until passenger_0_intaxi
 
 Option dropoff_passenger0:
     init(passenger_0_intaxi)
-        Execute dropoff_passenger
+        Execute dropoff_passenger0
     until passenger_0_in_dest and not(passenger_0_intaxi)
 
 Option pick_up_passenger1:
     init(not(passenger_in_taxi) and not(passenger_1_in_dest))
-        Execute pick_up_passenger
+        Execute pick_up_passenger1
     until passenger_1_intaxi
 
 Option dropoff_passenger1:
     init(passenger_1_intaxi)
-        Execute dropoff_passenger
+        Execute dropoff_passenger1
     until passenger_1_in_dest and not(passenger_1_intaxi)
+
+Option find_pick_up_passenger0:
+    init(not(passenger_in_taxi) and not(passenger_0_in_dest))
+        Find
+    until passenger_0_intaxi
+
+Option find_dropoff_passenger0:
+    init(passenger_0_intaxi)
+        Find
+    until passenger_0_in_dest and not(passenger_0_intaxi)
+
+Option find_pick_up_passenger1:
+    init(not(passenger_in_taxi) and not(passenger_1_in_dest))
+        Find
+    until passenger_1_intaxi
+
+Option find_dropoff_passenger1:
+    init(passenger_1_intaxi)
+        Find
+    until passenger_1_in_dest and not(passenger_1_intaxi)
+

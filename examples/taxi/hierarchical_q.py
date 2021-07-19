@@ -39,55 +39,55 @@ if __name__ == "__main__":
     lmdp_full = LMDP(taxi_mdp)
     
     ############ policy structure
-    passenger_0_in_dest = (passenger_0_dest == passenger_0_pos)
-    init_passenger_0_pick_up = bool_and(
-                                        bool_not(passenger_in_taxi), # taxi is free
-                                        bool_not(passenger_0_in_dest) # passenger 0 need to be taken to dest
-                                        )
+    # passenger_0_in_dest = (passenger_0_dest == passenger_0_pos)
+    # init_passenger_0_pick_up = bool_and(
+    #                                     bool_not(passenger_in_taxi), # taxi is free
+    #                                     bool_not(passenger_0_in_dest) # passenger 0 need to be taken to dest
+    #                                     )
 
-    with lmdp_none.when(init_passenger_0_pick_up) as c:
-        c.subpolicy(name='pickup-passenger-0', 
-                    until=passenger_0_intaxi) # take passenger 0 to dest 
+    # with lmdp_none.when(init_passenger_0_pick_up) as c:
+    #     c.subpolicy(name='pickup-passenger-0', 
+    #                 until=passenger_0_intaxi) # take passenger 0 to dest 
     
-    with lmdp_none.when(passenger_0_intaxi) as c:
-        c.subpolicy(name='dropoff-passenger-0', 
-                    until=passenger_0_in_dest & bool_not(passenger_0_intaxi))
+    # with lmdp_none.when(passenger_0_intaxi) as c:
+    #     c.subpolicy(name='dropoff-passenger-0', 
+    #                 until=passenger_0_in_dest & bool_not(passenger_0_intaxi))
 
-    passenger_1_in_dest = (passenger_1_dest == passenger_1_pos)
-    init_passenger_1_pick_up = bool_and(
-                                        bool_not(passenger_in_taxi), # taxi is free
-                                        bool_not(passenger_1_in_dest) # passenger 0 need to be taken to dest
-                                        )
+    # passenger_1_in_dest = (passenger_1_dest == passenger_1_pos)
+    # init_passenger_1_pick_up = bool_and(
+    #                                     bool_not(passenger_in_taxi), # taxi is free
+    #                                     bool_not(passenger_1_in_dest) # passenger 0 need to be taken to dest
+    #                                     )
 
-    with lmdp_none.when(init_passenger_1_pick_up) as c:
-        c.subpolicy(name='pickup-passenger-1', 
-                    until=passenger_1_intaxi) # take passenger 1 to dest 
+    # with lmdp_none.when(init_passenger_1_pick_up) as c:
+    #     c.subpolicy(name='pickup-passenger-1', 
+    #                 until=passenger_1_intaxi) # take passenger 1 to dest 
     
-    with lmdp_none.when(passenger_1_intaxi) as c:
-        c.subpolicy(name='dropoff-passenger-1', 
-                    until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
+    # with lmdp_none.when(passenger_1_intaxi) as c:
+    #     c.subpolicy(name='dropoff-passenger-1', 
+    #                 until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
 
-    #### full options
+    # #### full options
 
-    with lmdp_full.when(init_passenger_0_pick_up) as c:
-        c.subpolicy(name='pickup-passenger-0', 
-                    policy= partial(pick_up_passenger, passenger_0),
-                    until=passenger_0_intaxi) # take passenger 0 to dest 
+    # with lmdp_full.when(init_passenger_0_pick_up) as c:
+    #     c.subpolicy(name='pickup-passenger-0', 
+    #                 policy= partial(pick_up_passenger, passenger_0),
+    #                 until=passenger_0_intaxi) # take passenger 0 to dest 
     
-    with lmdp_full.when(passenger_0_intaxi) as c:
-        c.subpolicy(name='dropoff-passenger-0', 
-                    policy=partial(dropoff_passenger, passenger_0), 
-                    until=passenger_0_in_dest & bool_not(passenger_0_intaxi))
+    # with lmdp_full.when(passenger_0_intaxi) as c:
+    #     c.subpolicy(name='dropoff-passenger-0', 
+    #                 policy=partial(dropoff_passenger, passenger_0), 
+    #                 until=passenger_0_in_dest & bool_not(passenger_0_intaxi))
 
-    with lmdp_full.when(init_passenger_1_pick_up) as c:
-        c.subpolicy(name='pickup-passenger-1', 
-                    policy=partial(pick_up_passenger, passenger_1),
-                    until=passenger_1_intaxi) # take passenger 1 to dest 
+    # with lmdp_full.when(init_passenger_1_pick_up) as c:
+    #     c.subpolicy(name='pickup-passenger-1', 
+    #                 policy=partial(pick_up_passenger, passenger_1),
+    #                 until=passenger_1_intaxi) # take passenger 1 to dest 
     
-    with lmdp_full.when(passenger_1_intaxi) as c:
-        c.subpolicy(name='dropoff-passenger-1', 
-                    policy=partial(dropoff_passenger, passenger_1), 
-                    until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
+    # with lmdp_full.when(passenger_1_intaxi) as c:
+    #     c.subpolicy(name='dropoff-passenger-1', 
+    #                 policy=partial(dropoff_passenger, passenger_1), 
+    #                 until=passenger_1_in_dest & bool_not(passenger_1_intaxi))
 
     #### Run agents
     inner_factory = QLearningFactory(taxi_mdp.get_actions(), alpha=0.1, epsilon=0.1, anneal=True)

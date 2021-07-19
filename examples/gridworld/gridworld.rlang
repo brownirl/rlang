@@ -4,8 +4,7 @@ Feature y := position[1]
 
 Predicate reached_goal := x == 5 and y == 1
 Predicate reached_wall := x == 3 and y == 1
-
-# Predicate in_lava := position in lava_locs
+Predicate in_lava := position in lava_locs
 
 # define action
 

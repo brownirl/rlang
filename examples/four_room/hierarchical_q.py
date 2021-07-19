@@ -33,30 +33,30 @@ if __name__=="__main__":
     
     lmdp = LMDP(four_room_mdp, factor_names=["x", "y"]) # mdp is given to bind factors
 
-    lmdp.add(position) # add position to lmdp symbols
-    room_1 = Symbol(bool_and(x <= half_width, y <= half_height), "room_1")
-    room_2 = Symbol(bool_and(x > half_width, y < half_height), "room_2")
-    room_3 = Symbol(bool_and(x < half_width, y > half_height), "room_3")
-    room_4 = Symbol(bool_and(x >= half_width, y > half_height-1), "room_4")
-    rooms = (room_1, room_2, room_3, room_4)
+    # lmdp.add(position) # add position to lmdp symbols
+    # room_1 = Symbol(bool_and(x <= half_width, y <= half_height), "room_1")
+    # room_2 = Symbol(bool_and(x > half_width, y < half_height), "room_2")
+    # room_3 = Symbol(bool_and(x < half_width, y > half_height), "room_3")
+    # room_4 = Symbol(bool_and(x >= half_width, y > half_height-1), "room_4")
+    # rooms = (room_1, room_2, room_3, room_4)
     
-    for r in rooms:
-        lmdp.add(r) # add room symbols to lmdp
+    # for r in rooms:
+    #     lmdp.add(r) # add room symbols to lmdp
 
     # options to navigate to neighboring rooms
     
-    with lmdp.when(room_1) as c: 
-        c.subpolicy(until=room_2, name='o-room1-room2')
-        c.subpolicy(until=room_3, name='o-room1-room3')
-    with lmdp.when(room_2) as c: 
-        c.subpolicy(until=room_1, name='o-room2-room1')
-        c.subpolicy(until=room_4, name='o-room2-room4')
-    with lmdp.when(room_3) as c: 
-        c.subpolicy(until=room_1, name='o-room3-room1')
-        c.subpolicy(until=room_4, name='o-room3-room4')
-    with lmdp.when(room_4) as c: 
-        c.subpolicy(until=room_2, name='o-room4-room2')
-        c.subpolicy(until=room_3, name='o-room4-room3')
+    # with lmdp.when(room_1) as c: 
+    #     c.subpolicy(until=room_2, name='o-room1-room2')
+    #     c.subpolicy(until=room_3, name='o-room1-room3')
+    # with lmdp.when(room_2) as c: 
+    #     c.subpolicy(until=room_1, name='o-room2-room1')
+    #     c.subpolicy(until=room_4, name='o-room2-room4')
+    # with lmdp.when(room_3) as c: 
+    #     c.subpolicy(until=room_1, name='o-room3-room1')
+    #     c.subpolicy(until=room_4, name='o-room3-room4')
+    # with lmdp.when(room_4) as c: 
+    #     c.subpolicy(until=room_2, name='o-room4-room2')
+    #     c.subpolicy(until=room_3, name='o-room4-room3')
 
     # initial policy
     with lmdp.when(room_1) as c:
