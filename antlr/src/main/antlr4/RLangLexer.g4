@@ -39,11 +39,14 @@ ACTION: 'Action';
 EFFECT: 'Effect';
 REWARD: 'Reward';
 POLICY: 'Policy';
+EXECUTE: 'Execute';
 
 S: 'S';
 A: 'A';
 
 IN: 'in';
+INIT: 'init';
+UNTIL: 'until';
 
 AND: 'and';
 OR: 'or';

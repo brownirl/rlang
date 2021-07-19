@@ -14,12 +14,17 @@ dec
     | action
     | effect
     | constant
+    | policy
     ;
 
-stat
+effect_stat
     : reward
     | assignment
     | constant
+    ;
+
+policy_stat
+    : execute
     ;
 
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
@@ -27,13 +32,14 @@ feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 factor: FACTOR IDENTIFIER BIND S trailer?;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 action: ACTION IDENTIFIER BIND INTEGER;
-effect: EFFECT boolean_exp COL INDENT (stat NL*)* DEDENT;
-
+effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
+policy: POLICY IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL*)* DEDENT UNTIL boolean_exp;
 
 reward: REWARD (DECIMAL | INTEGER);
 constant: CONSTANT IDENTIFIER BIND (boolean_exp | arithmetic_exp | array_exp);
 assignment
     : IDENTIFIER trailer? (ASIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) (boolean_exp | arithmetic_exp | array_exp);
+execute: EXECUTE IDENTIFIER;
 
 boolean_exp
     : L_PAR boolean_exp R_PAR
