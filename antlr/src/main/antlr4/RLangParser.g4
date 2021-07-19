@@ -39,6 +39,8 @@ boolean_expression
     | boolean_expression AND boolean_expression
     | boolean_expression OR boolean_expression
     | NOT boolean_expression
+    | IDENTIFIER IN IDENTIFIER trailer?
+    | A (EQUALS | NOT_EQ) IDENTIFIER
     | boolean_expression (EQUALS | NOT_EQ) boolean_expression
     | arithmetic_expression (EQUALS | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_expression
     | (TRUE | FALSE)

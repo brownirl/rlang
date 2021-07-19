@@ -40,6 +40,9 @@ EFFECT: 'Effect';
 REWARD: 'Reward';
 
 S: 'S';
+A: 'A';
+
+IN: 'in';
 
 AND: 'and';
 OR: 'or';
