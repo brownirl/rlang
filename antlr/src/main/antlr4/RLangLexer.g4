@@ -40,10 +40,14 @@ EFFECT: 'Effect';
 REWARD: 'Reward';
 POLICY: 'Policy';
 EXECUTE: 'Execute';
+OPTION: 'Option';
 
 S: 'S';
 A: 'A';
 
+IF: 'if';
+ELSE: 'else';
+ELIF: 'elif';
 IN: 'in';
 INIT: 'init';
 UNTIL: 'until';

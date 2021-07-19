@@ -14,8 +14,18 @@ dec
     | action
     | effect
     | constant
+    | option
     | policy
     ;
+
+predicate: PREDICATE IDENTIFIER BIND boolean_exp;
+feature: FEATURE IDENTIFIER BIND arithmetic_exp;
+factor: FACTOR IDENTIFIER BIND S trailer?;
+goal: GOAL IDENTIFIER BIND boolean_exp;
+action: ACTION IDENTIFIER BIND INTEGER;
+effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
+option: OPTION IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL*)* DEDENT UNTIL boolean_exp;
+policy: POLICY IDENTIFIER COL INDENT (policy_stat NL*)* DEDENT;
 
 effect_stat
     : reward
@@ -25,15 +35,8 @@ effect_stat
 
 policy_stat
     : execute
+    | IF boolean_exp COL INDENT (policy_stat NL*)* DEDENT (ELIF boolean_exp COL INDENT (policy_stat NL*)* DEDENT)* (ELSE COL INDENT (policy_stat NL*)* DEDENT)*
     ;
-
-predicate: PREDICATE IDENTIFIER BIND boolean_exp;
-feature: FEATURE IDENTIFIER BIND arithmetic_exp;
-factor: FACTOR IDENTIFIER BIND S trailer?;
-goal: GOAL IDENTIFIER BIND boolean_exp;
-action: ACTION IDENTIFIER BIND INTEGER;
-effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
-policy: POLICY IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL*)* DEDENT UNTIL boolean_exp;
 
 reward: REWARD (DECIMAL | INTEGER);
 constant: CONSTANT IDENTIFIER BIND (boolean_exp | arithmetic_exp | array_exp);
