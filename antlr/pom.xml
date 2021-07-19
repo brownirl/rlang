@@ -3,13 +3,6 @@
     <groupId>cs.brown</groupId>
     <artifactId>rlang</artifactId>
     <version>0.1</version>
-    <!--    <dependencies>-->
-    <!--        <dependency>-->
-    <!--            <groupId>com.khubla.antlr</groupId>-->
-    <!--            <artifactId>antlr4test-maven-plugin</artifactId>-->
-    <!--            <version>1.18</version>-->
-    <!--        </dependency>-->
-    <!--    </dependencies>-->
     <build>
         <plugins>
             <plugin>
