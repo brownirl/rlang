@@ -49,7 +49,7 @@ direction = StateFactor(list(range(end_inv+2, end_inv+6)), 'direction')
 
 #-----features
 
-# x, y = position[0], position[1]  
+x, y = position[0], position[1]  
 
 @state_feature(dim=n_objects+1)
 def elements_to_use(state):
@@ -79,7 +79,7 @@ locals().update(environment_elements)
 
 # resource availability
 def primitive_available(object):
-    @predicate(name=f'there_is_{object}')
+    @symbol(name=f'there_is_{object}')
     def _there_is(state):
         _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
         _m = _map[objects_to_idx[object]].data.sum()
@@ -95,12 +95,12 @@ locals().update(elements)
 #-----subpolicies
 
 # primitive actions
-# actions = ["down", "up", "left", "right", "use"]
-# down = DiscreteActionGrounding(0, name='down')
-# up = DiscreteActionGrounding(1, name='up')
-# left = DiscreteActionGrounding(2, name='left')
-# right = DiscreteActionGrounding(3, name='right')
-# use = DiscreteActionGrounding(4, name='use')
+actions = ["down", "up", "left", "right", "use"]
+down = DiscreteActionGrounding(0, name='down')
+up = DiscreteActionGrounding(1, name='up')
+left = DiscreteActionGrounding(2, name='left')
+right = DiscreteActionGrounding(3, name='right')
+use = DiscreteActionGrounding(4, name='use')
 
 
 # go to cell

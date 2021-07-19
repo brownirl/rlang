@@ -8,147 +8,52 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"/path/to/python/module"
+		"grounding module":"./grounding"
 	},
 	"vocabulary":[
-		{
-            "type": "action",
-            "up": {
-                "mdp action": 0,
-                "grounding": ""
-            },
-            "down": {
-                "mdp action": 1,
-                "grounding": ""
-            },
-            "left": {
-                "mdp action": 2,
-                "grounding": ""
-            },
-            "right": {
-                "mdp action": 3,
-                "grounding": ""
-            }
-		},
         {
-            "type": "state feature",
-            "height": {
-                "grounding": ""
+            "type": "Factor",
+            "end_map_idx": {
+                "grounding": "end_map_idx"
             },
-            "width": {
-                "grounding": ""
+            "grid_map": {
+                "grounding": "grid_map"
             },
-            "wood": {
-                "grounding": ""
+            "inventory": {
+                "grounding": "inventory"
             },
-            "iron": {
-                "grounding": ""
+            "delta_inventory": {
+                "grounding": "delta_inventory"
             },
-            "bridge": {
-                "grounding": ""
+            "direction": {
+                "grounding": "direction"
             },
-            "ladder": {
-                "grounding": ""
-            },
-            "gold": {
-                "grounding": ""
-            },
-            "plank": {
-                "grounding": ""
-            },
-            "stick": {
-                "grounding": ""
+            "position": {
+                "grounding": "position"
             }
         },
         {
-            "type": "policy",
-            "builde bridge": {
-                "grounding": ""
+            "type": "Feature",
+            "elements_to_use": {
+                "grounding": "elements_to_use"
             },
-            "go to workshop 0": {
-                "grounding": ""
+            "environment_elements":{
+                "grounding": "environment_elements"
             },
-            "get iron": {
-                "grounding": ""
+            "materials":{
+                "grounding": "materials"
             },
-            "get wood": {
-                "grounding": ""
-            },
-            "get gold": {
-                "grounding": ""
-            },
-            "go to workshop 1": {
-                "grounding": ""
-            },
-            "go to workshop 2": {
-                "grounding": ""
-            },
-            "build stick": {
-                "grounding": ""
-            },
-            "build ladder": {
-                "grounding": ""
-            },
-            "build plank": {
-                "grounding": ""
+            "delta_elements": {
+                "grounding": "delta_elements"
             }
         },
         {
-            "type": "markov feature",
-            "delta wood": {
-                "grounding" : ""
+            "type": "Predicate",
+            "environment_predicates": {
+                "grounding": "environment_predicates"
             },
-            "delta bridge": {
-                "grounding" : ""
-            },
-            "delta gold": {
-                "grounding" : ""
-            },
-            "delta iron": {
-                "grounding" : ""
-            },
-            "delta stick": {
-                "grounding": ""
-            },
-            "delta ladder": {
-                "grounding": ""
-            },
-            "delta plank": {
-                "grounding": ""
-            }
-
-        },
-        {
-            "type": "symbol",
-            "at workshop 0": {
-                "grounding": ""
-            },
-            "there is iron": {
-                "grounding": ""
-            },
-            "there is wood": {
-                "grounding": ""
-            },
-            "at workshop 1": {
-                "grounding": ""
-            },
-            "at workshop 2": {
-                "grounding": ""
-            }
-        },
-        {
-            "type":"effect",
-            "down effect": {
-                "grounding": ""
-            },
-            "up effect": {
-                "grounding": ""
-            },
-            "left effect": {
-                "grounding": ""
-            },
-            "right effect": {
-                "grounding": ""
+            "resource_availability": {
+                "grounding": "availability_predicates"
             }
         }
     ]

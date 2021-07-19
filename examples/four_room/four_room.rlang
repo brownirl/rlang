@@ -1,0 +1,66 @@
+Factor position = S[0,1]
+Feature x := position[0]
+Feature y := position[1]
+
+Predicate goal := x == 8 and y == 4
+Predicate in_room1 := x <= half_width and y < half_height
+Predicate in_room2 := x >= half_width and y < half_height
+Predicate in_room3 := x <= half_width and y >= half_height
+Predicate in_room4 := x ?= half_width and y >= half_height
+
+Action up := 
+Action down :=
+Action left :=
+Action right :=
+
+Effect up:
+    y += 1
+
+Effect down:
+    y -= 1
+
+Effect left:
+    x -= 1
+
+Effect right: 
+    x += 1
+
+Option o_room1_rooom2:
+    init(in_room1)
+        Find
+    until in_room2
+
+Option o_room1_room3:
+    init(in_room1)
+        Find
+    until in_room3
+
+Option o_room2_rooom1:
+    init(in_room2)
+        Find
+    until in_room1
+
+Option o_room2_room4:
+    init(in_room2)
+        Find
+    until in_room4
+
+Option o_room3_rooom4:
+    init(in_room3)
+        Find
+    until in_room4
+
+Option o_room3_room1:
+    init(in_room3)
+        Find
+    until in_room1
+
+Option o_room4_room2:
+    init(in_room4)
+        Find
+    until in_room2
+
+Option o_room4_room3:
+    init(in_room4)
+        Find
+    until in_room3

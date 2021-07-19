@@ -1,90 +1,51 @@
 {
 	"domain": "taxi",
 	"state space": {
-			"size": [10, 4],
+			"size": [],
 			"dtype": ""
 	},
 	"action space": {
 			"number of actions": 6
 	},
 	"modules": {
-		"grounding module":"/path/to/python/module"
+		"grounding module":"./grounding.py"
 	},
 	"vocabulary":[
-		{
-            "type": "action",
-            "up": {
-                "mdp action": 0,
-                "grounding": ""
-            },
-            "down": {
-                "mdp action": 1,
-                "grounding": ""
-            },
-            "left": {
-                "mdp action": 2,
-                "grounding": ""
-            },
-            "right": {
-                "mdp action": 3,
-                "grounding": ""
-            }
-		},
         {
-            "type": "policy",
-            "pick up": {
-                "grounding": "module.pick_up_passenger"
-            },
-            "drop off": {
-                "grounding": "module.drop_off_passenger"
-            },
-            "move to cell": {
-                "grounding": "module.move_to_cell"
+            "type": "Policy",
+            "move_to_cell": {
+                "grounding": "move_to_cell"
             }
         }, 
         {
-            "type": "state feature",
-            "passenger state": {
-                "grounding": ""
+            "type": "Factor",
+            "passenger_state": {
+                "grounding": "passenger_state"
             },
-            "taxi state": {
-                "grounding": ""
+            "walls_state": {
+                "grounding": "walls_state"
             },
-            "wall state": {
-                "grounding": ""
+            "agent_state": {
+                "grounding": "agent_state"
             },
-            "agent state": {
-                
+            "taxi_states": {
+                "grounding": "taxi_states"
             }
         },
         {
-            "type": "symbol",
-            "in taxi": {
-                "grounding": ""
-            },
-            "has passenger": {
-                "grounding": ""
+            "type": "Feature",
+            "passenger_pos_dest": {
+                "grounding": "passenger_pos_dest"
             }
+
         },
-		{
-            "type":"effect",
-            "down effect": {
-                "grounding": ""
+        {
+            "type": "Option",
+            "pick_up_passenger": {
+                "grounding": "pick_up_passenger"
             },
-            "up effect": {
-                "grounding": ""
-            },
-            "left effect": {
-                "grounding": ""
-            },
-            "right effect": {
-                "grounding": ""
-            },
-            "pick up effect": {
-                "grounding": ""
-            },
-            "drop off effect": {
-                "grounding": ""
+            "dropoff_passenger": {
+                "grounding": "dropoff_passenger"
             }
         }
 	]

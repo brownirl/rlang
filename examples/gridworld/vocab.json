@@ -8,35 +8,15 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"/path/to/python/module"
+		"grounding module":"./grounding"
 	},
 	"vocabulary":[
-        {
-            "type": "state feature",
-            "height": {
-                "grounding": "height"
-            },
-            "width": {
-                "grounding": "width"
-            },
-            "goal locs": {
-                "grounding": "goal_locs"
-            },
-            "walls": {
-                "grounding": "walls"
-            },
-            "lava locs": {
-                "grounding": "lava_locs"
-            }
-        },
-        {
-            "type": "effect",
-            "fall in lava effect": {
-                "grounding": ""
-            },
-            "goal effect": {
-                "grounding": ""
-            }
-        }
+		{
+		"Policy": {
+			"go_to_cell": {
+			"grounding": "go_to_cell"
+				}
+			}
+		}
     ]
 }

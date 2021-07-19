@@ -1,4 +1,4 @@
-Feature position := S[0,1]
+Factor position := S[0,1]
 Feature x := position[0]
 Feature y := position[1]
 
@@ -8,7 +8,7 @@ Predicate in_lava := position in lava_locs
 
 # define action
 
-Action up := [0, 1]
+Action up := [1, 0, 0]
 Action down := 
 Action left :=
 Action right :=
@@ -24,4 +24,14 @@ Effect A == left:
 
 Effect A == right:
     position += [0,1]
+
+Effect in_lava:
+    Reward -1
+
+Effect reached_goal:
+    Reward 1
+
+Effect reached_wall:
+    S = S' 
+
 
