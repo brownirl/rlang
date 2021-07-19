@@ -61,6 +61,7 @@ LT_EQ : '<=';
 NOT_EQ : '!=';
 
 COL: ':';
+COM: ',';
 
 L_BRK: '[';
 R_BRK: ']';

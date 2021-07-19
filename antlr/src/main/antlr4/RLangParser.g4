@@ -54,7 +54,7 @@ arithmetic_expression
     ;
 
 trailer
-    : L_BRK (MINUS)? INTEGER R_BRK
+    : L_BRK (MINUS)? (COM (MINUS)? INTEGER)* R_BRK
     | L_BRK ((MINUS)? INTEGER)? COL ((MINUS)? INTEGER)? R_BRK
     ;
 
