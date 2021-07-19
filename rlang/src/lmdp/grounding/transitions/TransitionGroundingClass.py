@@ -59,7 +59,7 @@ if __name__ == "__main__":
     from lmdp.grounding.states.NextStateGroundingClass import next_state
     from lmdp.grounding import StateFactor
     from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
-    from lmdp.grounding.states.Effect import Effect
+    from grounding.states.Effect import Effect
     import numpy as np
 
     x = StateFactor(0, "x")

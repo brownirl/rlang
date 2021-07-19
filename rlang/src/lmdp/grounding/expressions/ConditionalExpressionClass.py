@@ -13,13 +13,11 @@
 import sys, os
 
 sys.path.append(os.path.abspath("./lmdp"))
-from collections import deque, namedtuple
-from functools import reduce
-from lmdp.grounding.expressions.ExpressionsClass import Expression
+from collections import namedtuple
 from lmdp.grounding.states.PredicateClass import any_state
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_action, bool_not, bool_and, bool_or
+from lmdp.grounding.booleans.BooleanFunClass import any_action, bool_not
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
-from lmdp.grounding.states.Effect import Effect
+from grounding.states.Effect import Effect
 from lmdp.grounding import *
 from lmdp.grounding.booleans.BooleanFunClass import bool_true
 
@@ -160,7 +158,7 @@ if __name__ == "__main__":
     from lmdp.grounding import StateFactor
     from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
     from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
-    from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
+    from lmdp.grounding.expressions.ExpressionsClass import A
     import numpy as np
 
     x = StateFactor(0, "x")
