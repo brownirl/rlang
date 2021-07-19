@@ -9,7 +9,7 @@ from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp.grounding.real.MarkovFeatureClass import MarkovFeature
 from lmdp.grounding.states.NextStateGroundingClass import next_state
 from lmdp.grounding.states.Effect import Effect, PredictiveEffect
-from lmdp.grounding.states.SymbolClass import Predicate, Any, None_, any_state, any_next_state
+from lmdp.grounding.states.PredicateClass import Predicate, Any, None_, any_state, any_next_state
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, any_action, bool_true, bool_false, bool_and, \
     bool_not, bool_or
 from lmdp.grounding.expressions.ExpressionsClass import A, S_prime, S
@@ -19,4 +19,4 @@ from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 from lmdp.grounding.actions.options import Option
 
 from lmdp.grounding.actions import policy, subpolicy
-from lmdp.grounding.states import effect, state_feature, symbol
+from lmdp.grounding.states import effect, state_feature, predicate

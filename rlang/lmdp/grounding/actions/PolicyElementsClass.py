@@ -52,7 +52,7 @@ all = ['PolicyElements']
 
 if __name__ == "__main__":
     from lmdp.grounding.states.StateGroundingClass import StateFactor
-    from lmdp.grounding.states.SymbolClass import Predicate
+    from lmdp.grounding.states.PredicateClass import Predicate
     from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
 
     import numpy as np

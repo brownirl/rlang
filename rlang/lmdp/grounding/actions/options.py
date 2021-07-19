@@ -1,4 +1,4 @@
-from lmdp.grounding.states.SymbolClass import any_state
+from lmdp.grounding.states.PredicateClass import any_state
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 
 

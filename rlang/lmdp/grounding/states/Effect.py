@@ -15,7 +15,7 @@
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_true, bool_false
 from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
-from lmdp.grounding.states.SymbolClass import Predicate
+from lmdp.grounding.states.PredicateClass import Predicate
 from lmdp.grounding.states.StateGroundingClass import StateFactor
 from lmdp.utils.expression_utils import Domain, Codomain
 from functools import partial

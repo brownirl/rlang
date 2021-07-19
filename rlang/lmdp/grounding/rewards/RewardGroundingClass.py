@@ -34,18 +34,18 @@ class RewardGrounding(Grounding, PartialFunction):
             Args:
                 - MDP Transition tuple
             return:
-                - list of rewards for all symbol matches
+                - list of rewards for all predicate matches
         '''
         return super().__call__(state, action, next_state)
 
     def __matmul__(self, s_a_s):
         return self.__call__(*s_a_s)
 
-    def add(self, symbol, reward):
+    def add(self, predicate, reward):
         '''
             Add a reward to the dictionary. Overrides if it already exists.        
             Args:
-                - symbol 
+                - predicate
                 - reward
         '''
         if (isinstance(reward, (float, int))):
@@ -57,7 +57,7 @@ class RewardGrounding(Grounding, PartialFunction):
 
 
 if __name__ == "__main__":
-    from lmdp.grounding.states.SymbolClass import Predicate
+    from lmdp.grounding.states.PredicateClass import Predicate
     from lmdp.grounding.states.StateGroundingClass import StateFactor
     from simple_rl.mdp.StateClass import State
     import numpy as np
@@ -71,5 +71,5 @@ if __name__ == "__main__":
     not_goal = Predicate(s != np.array([1, 1]))
     diag = Predicate(x == y, "diag")
     r = RewardGrounding([(start, 0.0), (diag, 1.0)])
-    print(f"{r.name} for {diag.name} symbol: {r(s1, 'up', s1)} == 1")
-    print(f"{r.name} for {diag.name} symbol: {r(s2, 'up', s2)} == []")
+    print(f"{r.name} for {diag.name} predicate: {r(s1, 'up', s1)} == 1")
+    print(f"{r.name} for {diag.name} predicate: {r(s2, 'up', s2)} == []")

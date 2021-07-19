@@ -1,14 +1,14 @@
 from lmdp.grounding.states.StateGroundingClass import StateFeature
-from lmdp.grounding.states.SymbolClass import Predicate, any_state
+from lmdp.grounding.states.PredicateClass import Predicate, any_state
 from lmdp.grounding.states.Effect import PredictiveEffect
 from lmdp.grounding.booleans.BooleanFunClass import bool_true
 
 
-def symbol(name=None):
-    def __symbol(func):
+def predicate(name=None):
+    def __predicate(func):
         return Predicate(func, name=func.__name__ if name is None else name)
 
-    return __symbol
+    return __predicate
 
 
 def effect(func):

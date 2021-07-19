@@ -12,7 +12,7 @@ from lmdp.utils.expression_utils import Domain
 from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp.grounding.real.RealExpressionClass import RealExpression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from lmdp.grounding.states.SymbolClass import Predicate
+from lmdp.grounding.states.PredicateClass import Predicate
 
 
 class NextStatePredicate(Predicate, BooleanExpression):

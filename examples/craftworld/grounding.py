@@ -78,7 +78,7 @@ locals().update(environment_elements)
 
 # resource availability
 def primitive_available(object):
-    @symbol(name=f'there_is_{object}')
+    @predicate(name=f'there_is_{object}')
     def _there_is(state):
         _map = grid_map(state).reshape(((n_objects+1), WIDTH, HEIGHT))
         _m = _map[objects_to_idx[object]].data.sum()
