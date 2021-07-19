@@ -4,7 +4,7 @@ options {
     tokenVocab=RLangLexer;
 }
 
-program: NL* (dec NL*)*;
+program: NL* (dec NL+)*;
 
 dec
     : predicate
@@ -23,9 +23,9 @@ feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 factor: FACTOR IDENTIFIER BIND S trailer?;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 action: ACTION IDENTIFIER BIND INTEGER;
-effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
-option: OPTION IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL*)* DEDENT UNTIL boolean_exp;
-policy: POLICY IDENTIFIER COL INDENT (policy_stat NL*)* DEDENT;
+effect: EFFECT boolean_exp COL INDENT (effect_stat NL+)* DEDENT;
+option: OPTION IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL+)* DEDENT UNTIL boolean_exp;
+policy: POLICY IDENTIFIER COL INDENT (policy_stat NL+)* DEDENT;
 
 effect_stat
     : reward
@@ -35,7 +35,7 @@ effect_stat
 
 policy_stat
     : execute
-    | IF boolean_exp COL INDENT (policy_stat NL*)* DEDENT (ELIF boolean_exp COL INDENT (policy_stat NL*)* DEDENT)* (ELSE COL INDENT (policy_stat NL*)* DEDENT)*
+    | IF boolean_exp COL INDENT (policy_stat NL+)* DEDENT (ELIF boolean_exp COL INDENT (policy_stat NL+)* DEDENT)* (ELSE COL INDENT (policy_stat NL+)* DEDENT)*
     ;
 
 reward: REWARD (DECIMAL | INTEGER);
