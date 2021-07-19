@@ -11,5 +11,12 @@
 		"grounding module":"./grounding"
 	},
 	"vocabulary":[
+		{
+		"Policy": {
+			"go_to_cell": {
+			"grounding": "go_to_cell"
+				}
+			}
+		}
     ]
 }
