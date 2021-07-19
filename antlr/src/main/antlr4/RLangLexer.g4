@@ -38,8 +38,19 @@ CONSTANT: 'Constant';
 ACTION: 'Action';
 EFFECT: 'Effect';
 REWARD: 'Reward';
+POLICY: 'Policy';
+EXECUTE: 'Execute';
+OPTION: 'Option';
 
 S: 'S';
+A: 'A';
+
+IF: 'if';
+ELSE: 'else';
+ELIF: 'elif';
+IN: 'in';
+INIT: 'init';
+UNTIL: 'until';
 
 AND: 'and';
 OR: 'or';
@@ -61,6 +72,7 @@ LT_EQ : '<=';
 NOT_EQ : '!=';
 
 COL: ':';
+COM: ',';
 
 L_BRK: '[';
 R_BRK: ']';
