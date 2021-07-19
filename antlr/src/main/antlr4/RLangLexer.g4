@@ -38,6 +38,7 @@ CONSTANT: 'Constant';
 ACTION: 'Action';
 EFFECT: 'Effect';
 REWARD: 'Reward';
+POLICY: 'Policy';
 
 S: 'S';
 A: 'A';

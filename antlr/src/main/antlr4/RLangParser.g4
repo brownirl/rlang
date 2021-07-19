@@ -22,41 +22,43 @@ stat
     | constant
     ;
 
-predicate: PREDICATE IDENTIFIER BIND boolean_expression;
-feature: FEATURE IDENTIFIER BIND arithmetic_expression;
+predicate: PREDICATE IDENTIFIER BIND boolean_exp;
+feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 factor: FACTOR IDENTIFIER BIND S trailer?;
-goal: GOAL IDENTIFIER BIND boolean_expression;
+goal: GOAL IDENTIFIER BIND boolean_exp;
 action: ACTION IDENTIFIER BIND INTEGER;
-effect: EFFECT boolean_expression COL INDENT (stat NL*)* DEDENT;
+effect: EFFECT boolean_exp COL INDENT (stat NL*)* DEDENT;
+
+
 reward: REWARD (DECIMAL | INTEGER);
-constant: CONSTANT IDENTIFIER BIND (boolean_expression | arithmetic_expression);
-
+constant: CONSTANT IDENTIFIER BIND (boolean_exp | arithmetic_exp | array_exp);
 assignment
-    : IDENTIFIER trailer? (ASIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) (boolean_expression | arithmetic_expression);
+    : IDENTIFIER trailer? (ASIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) (boolean_exp | arithmetic_exp | array_exp);
 
-boolean_expression
-    : L_PAR boolean_expression R_PAR
-    | boolean_expression AND boolean_expression
-    | boolean_expression OR boolean_expression
-    | NOT boolean_expression
+boolean_exp
+    : L_PAR boolean_exp R_PAR
+    | boolean_exp AND boolean_exp
+    | boolean_exp OR boolean_exp
+    | NOT boolean_exp
     | IDENTIFIER IN IDENTIFIER trailer?
     | A (EQUALS | NOT_EQ) IDENTIFIER
-    | boolean_expression (EQUALS | NOT_EQ) boolean_expression
-    | arithmetic_expression (EQUALS | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_expression
+    | boolean_exp (EQUALS | NOT_EQ) boolean_exp
+    | arithmetic_exp (EQUALS | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp
     | (TRUE | FALSE)
     | IDENTIFIER
     ;
 
-arithmetic_expression
-    : L_PAR arithmetic_expression R_PAR
-    | arithmetic_expression (TIMES | DIVIDE) arithmetic_expression
-    | arithmetic_expression (PLUS | MINUS) arithmetic_expression
+arithmetic_exp
+    : L_PAR arithmetic_exp R_PAR
+    | arithmetic_exp (TIMES | DIVIDE) arithmetic_exp
+    | arithmetic_exp (PLUS | MINUS) arithmetic_exp
     | (MINUS)? (DECIMAL | INTEGER)
     | IDENTIFIER trailer*
     ;
 
 trailer
-    : L_BRK (MINUS)? (COM (MINUS)? INTEGER)* R_BRK
+    : L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK
     | L_BRK ((MINUS)? INTEGER)? COL ((MINUS)? INTEGER)? R_BRK
     ;
 
+array_exp: L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK;
