@@ -42,7 +42,10 @@
                 <configuration>
                     <outputDirectory>../rlang/src/language</outputDirectory>
                     <arguments>
+                        <argument>-Xexact-output-dir</argument>
                         <argument>-Dlanguage=Python3</argument>
+                        <argument>-package</argument>
+                        <argument>testoo</argument>
                     </arguments>
                 </configuration>
                 <executions>
