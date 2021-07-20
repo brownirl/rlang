@@ -18,3 +18,7 @@ def tokenize_from_string(input_string):
 def test_something():
     tokens = tokenize_from_string("Predicate f := True")
     assert len(tokens) == 6
+
+
+def test_this():
+    assert 4 == 4
