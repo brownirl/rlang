@@ -24,7 +24,7 @@
     
 ## Building the Lexer and Parser with Antlr4
 
-Simply run `mvn compile` from the root directory. 
-Clean with `mvn clean`. Check out `antlr/README.md` 
-and `antlr/pom.xml` for more info on the parser and 
-lexer development process.
+- Run `mvn compile` from the root directory to run Antlr4.
+- Clean with `mvn clean`, though it should do it automatically in each build cycle.
+- Run tests with `mvn test`.
+- Check out `antlr/README.md` and `antlr/pom.xml` for more info on grammar development.

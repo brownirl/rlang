@@ -17,7 +17,7 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
-                        <id>Switch Lexer to explicit local import</id>
+                        <id>fix relative imports</id>
                         <phase>process-sources</phase>
                         <goals>
                             <goal>exec</goal>
