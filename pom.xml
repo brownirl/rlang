@@ -23,17 +23,19 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>build_scripts/import_fix.sh</executable>
+                            <executable>python</executable>
+                            <arguments>build_scripts/fix_imports.py</arguments>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>Pytest</id>
+                        <id>pytest</id>
                         <phase>test</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>build_scripts/run_tests.sh</executable>
+                            <executable>python</executable>
+                            <arguments>build_scripts/run_tests.py</arguments>
                         </configuration>
                     </execution>
                 </executions>

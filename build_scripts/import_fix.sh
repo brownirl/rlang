@@ -1,1 +1,0 @@
-sed -i '' 's/from RLangParser import RLangParser/from .RLangParser import RLangParser/' rlang/src/language/RLangLexer.py

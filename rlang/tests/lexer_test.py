@@ -1,5 +1,4 @@
 from antlr4 import CommonTokenStream, InputStream, Token
-
 from rlang.src.language.RLangLexer import RLangLexer
 
 
