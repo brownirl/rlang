@@ -8,4 +8,26 @@
     <modules>
         <module>antlr</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>Run Script</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>build_scripts/import_fix.sh</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
