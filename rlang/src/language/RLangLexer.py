@@ -9,7 +9,7 @@ else:
 
 
 from antlr_denter.DenterHelper import DenterHelper
-from .RLangParser import RLangParser
+from RLangParser import RLangParser
 
 
 
