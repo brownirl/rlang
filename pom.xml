@@ -17,13 +17,23 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
-                        <id>Run Script</id>
+                        <id>Switch Lexer to explicit local import</id>
                         <phase>process-sources</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
                             <executable>build_scripts/import_fix.sh</executable>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Pytest</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>build_scripts/run_tests.sh</executable>
                         </configuration>
                     </execution>
                 </executions>
