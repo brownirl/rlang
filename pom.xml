@@ -1,11 +1,45 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany.app</groupId>
-    <artifactId>my-app</artifactId>
-    <version>1</version>
+    <groupId>cs.brown.rlang</groupId>
+    <artifactId>rlang</artifactId>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>antlr</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>fix relative imports</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>python</executable>
+                            <arguments>build_scripts/fix_imports.py</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pytest</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>python</executable>
+                            <arguments>build_scripts/run_tests.py</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
