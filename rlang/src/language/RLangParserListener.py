@@ -17,6 +17,24 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#grounding.
+    def enterGrounding(self, ctx:RLangParser.GroundingContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#grounding.
+    def exitGrounding(self, ctx:RLangParser.GroundingContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#vocab.
+    def enterVocab(self, ctx:RLangParser.VocabContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#vocab.
+    def exitVocab(self, ctx:RLangParser.VocabContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#dec.
     def enterDec(self, ctx:RLangParser.DecContext):
         pass

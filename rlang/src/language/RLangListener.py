@@ -1,7 +1,7 @@
 from antlr4 import *
-from RLangLexer import RLangLexer
-from RLangParser import RLangParser
-from RLangParserListener import RLangParserListener
+from .RLangLexer import RLangLexer
+from .RLangParser import RLangParser
+from .RLangParserListener import RLangParserListener
 
 
 class RLangListener(RLangParserListener):
