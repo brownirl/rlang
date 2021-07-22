@@ -16,6 +16,7 @@ dec
     | constant
     | option
     | policy
+    | markov_feature
     ;
 
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
@@ -26,6 +27,7 @@ action: ACTION IDENTIFIER BIND INTEGER;
 effect: EFFECT boolean_exp COL INDENT (effect_stat NL+)* DEDENT;
 option: OPTION IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL+)* DEDENT UNTIL boolean_exp;
 policy: POLICY IDENTIFIER COL INDENT (policy_stat NL+)* DEDENT;
+markov_feature: MARKOVFEATURE IDENTIFIER BIND (boolean_exp | arithmetic_exp);
 
 effect_stat
     : reward
@@ -54,7 +56,7 @@ boolean_exp
     | boolean_exp (EQUALS | NOT_EQ) boolean_exp
     | arithmetic_exp (EQUALS | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp
     | (TRUE | FALSE)
-    | IDENTIFIER
+    | (IDENTIFIER | temporal_identifier)
     ;
 
 arithmetic_exp
@@ -62,8 +64,10 @@ arithmetic_exp
     | arithmetic_exp (TIMES | DIVIDE) arithmetic_exp
     | arithmetic_exp (PLUS | MINUS) arithmetic_exp
     | (MINUS)? (DECIMAL | INTEGER)
-    | IDENTIFIER trailer*
+    | (IDENTIFIER | temporal_identifier) trailer*
     ;
+
+temporal_identifier: IDENTIFIER PRIME;
 
 trailer
     : L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK

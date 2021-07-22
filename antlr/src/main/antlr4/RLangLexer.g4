@@ -41,6 +41,7 @@ REWARD: 'Reward';
 POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
+MARKOVFEATURE: 'MarkovFeature';
 
 S: 'S';
 A: 'A';
@@ -87,6 +88,8 @@ TIMES : '*';
 DIVIDE : '/';
 PLUS : '+';
 MINUS : '-';
+
+PRIME : '\'';
 
 /*
  *

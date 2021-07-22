@@ -98,6 +98,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#markov_feature.
+    def enterMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#markov_feature.
+    def exitMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#effect_stat.
     def enterEffect_stat(self, ctx:RLangParser.Effect_statContext):
         pass
@@ -167,6 +176,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#arithmetic_exp.
     def exitArithmetic_exp(self, ctx:RLangParser.Arithmetic_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#temporal_identifier.
+    def enterTemporal_identifier(self, ctx:RLangParser.Temporal_identifierContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#temporal_identifier.
+    def exitTemporal_identifier(self, ctx:RLangParser.Temporal_identifierContext):
         pass
 
 
