@@ -128,7 +128,7 @@ def serializedATN():
         buf.write("\7\17\2\2\u00f1\u00f2\7\64\2\2\u00f2!\3\2\2\2\u00f3\u00f4")
         buf.write("\b\22\1\2\u00f4\u00f5\7,\2\2\u00f5\u00f6\5\"\22\2\u00f6")
         buf.write("\u00f7\7-\2\2\u00f7\u010a\3\2\2\2\u00f8\u00f9\7\33\2\2")
-        buf.write("\u00f9\u010a\5\"\22\t\u00fa\u00fb\7\64\2\2\u00fb\u00fc")
+        buf.write("\u00f9\u010a\5\"\22\13\u00fa\u00fb\7\64\2\2\u00fb\u00fc")
         buf.write("\7\26\2\2\u00fc\u00fe\7\64\2\2\u00fd\u00ff\5&\24\2\u00fe")
         buf.write("\u00fd\3\2\2\2\u00fe\u00ff\3\2\2\2\u00ff\u010a\3\2\2\2")
         buf.write("\u0100\u0101\7\22\2\2\u0101\u0102\t\4\2\2\u0102\u010a")
@@ -137,10 +137,10 @@ def serializedATN():
         buf.write("\u0108\u010a\7\64\2\2\u0109\u00f3\3\2\2\2\u0109\u00f8")
         buf.write("\3\2\2\2\u0109\u00fa\3\2\2\2\u0109\u0100\3\2\2\2\u0109")
         buf.write("\u0103\3\2\2\2\u0109\u0107\3\2\2\2\u0109\u0108\3\2\2\2")
-        buf.write("\u010a\u0116\3\2\2\2\u010b\u010c\f\13\2\2\u010c\u010d")
-        buf.write("\7\31\2\2\u010d\u0115\5\"\22\f\u010e\u010f\f\n\2\2\u010f")
-        buf.write("\u0110\7\32\2\2\u0110\u0115\5\"\22\13\u0111\u0112\f\6")
-        buf.write("\2\2\u0112\u0113\t\4\2\2\u0113\u0115\5\"\22\7\u0114\u010b")
+        buf.write("\u010a\u0116\3\2\2\2\u010b\u010c\f\n\2\2\u010c\u010d\7")
+        buf.write("\31\2\2\u010d\u0115\5\"\22\13\u010e\u010f\f\t\2\2\u010f")
+        buf.write("\u0110\7\32\2\2\u0110\u0115\5\"\22\n\u0111\u0112\f\6\2")
+        buf.write("\2\u0112\u0113\t\4\2\2\u0113\u0115\5\"\22\7\u0114\u010b")
         buf.write("\3\2\2\2\u0114\u010e\3\2\2\2\u0114\u0111\3\2\2\2\u0115")
         buf.write("\u0118\3\2\2\2\u0116\u0114\3\2\2\2\u0116\u0117\3\2\2\2")
         buf.write("\u0117#\3\2\2\2\u0118\u0116\3\2\2\2\u0119\u011a\b\23\1")
@@ -1816,7 +1816,7 @@ class RLangParser ( Parser ):
                 self.state = 246
                 self.match(RLangParser.NOT)
                 self.state = 247
-                self.boolean_exp(7)
+                self.boolean_exp(9)
                 pass
 
             elif la_ == 3:
@@ -1896,26 +1896,26 @@ class RLangParser ( Parser ):
                         localctx = RLangParser.Boolean_expContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_boolean_exp)
                         self.state = 265
-                        if not self.precpred(self._ctx, 9):
+                        if not self.precpred(self._ctx, 8):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 9)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
                         self.state = 266
                         self.match(RLangParser.AND)
                         self.state = 267
-                        self.boolean_exp(10)
+                        self.boolean_exp(9)
                         pass
 
                     elif la_ == 2:
                         localctx = RLangParser.Boolean_expContext(self, _parentctx, _parentState)
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_boolean_exp)
                         self.state = 268
-                        if not self.precpred(self._ctx, 8):
+                        if not self.precpred(self._ctx, 7):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
                         self.state = 269
                         self.match(RLangParser.OR)
                         self.state = 270
-                        self.boolean_exp(9)
+                        self.boolean_exp(8)
                         pass
 
                     elif la_ == 3:
@@ -2385,11 +2385,11 @@ class RLangParser ( Parser ):
 
     def boolean_exp_sempred(self, localctx:Boolean_expContext, predIndex:int):
             if predIndex == 0:
-                return self.precpred(self._ctx, 9)
+                return self.precpred(self._ctx, 8)
          
 
             if predIndex == 1:
-                return self.precpred(self._ctx, 8)
+                return self.precpred(self._ctx, 7)
          
 
             if predIndex == 2:

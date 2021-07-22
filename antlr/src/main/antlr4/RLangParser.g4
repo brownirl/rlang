@@ -46,9 +46,9 @@ execute: EXECUTE IDENTIFIER;
 
 boolean_exp
     : L_PAR boolean_exp R_PAR
+    | NOT boolean_exp
     | boolean_exp AND boolean_exp
     | boolean_exp OR boolean_exp
-    | NOT boolean_exp
     | IDENTIFIER IN IDENTIFIER trailer?
     | A (EQUALS | NOT_EQ) IDENTIFIER
     | boolean_exp (EQUALS | NOT_EQ) boolean_exp
