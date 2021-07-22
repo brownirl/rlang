@@ -43,7 +43,6 @@ EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
 VOCAB: 'vocab';
-GROUNDING: 'grounding';
 
 S: 'S';
 A: 'A';

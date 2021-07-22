@@ -7,11 +7,11 @@ Predicate reached_wall := x == 3 and y == 1
 Predicate in_lava := position in lava_locs
 
 # define action
-
-Action up := [1, 0, 0]
-Action down := 
-Action left :=
-Action right :=
+# these may not be the correct action values
+Action up := 0
+Action down := 1
+Action left := 2
+Action right := 3
 
 Effect A == up:
     position += [0,1]
@@ -32,6 +32,6 @@ Effect reached_goal:
     Reward 1
 
 Effect reached_wall:
-    S = S' 
+    S = S'
 
 

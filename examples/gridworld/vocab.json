@@ -8,7 +8,7 @@
 			"number of actions": 4
 	},
 	"modules": {
-		"grounding module":"./grounding"
+		"grounding module":"grounding.py"
 	},
 	"vocabulary":[
 		{

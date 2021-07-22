@@ -4,9 +4,8 @@ options {
     tokenVocab=RLangLexer;
 }
 
-program: NL* (grounding NL+)* (vocab NL+)* (dec NL+)*;
+program: NL* (vocab NL+)* (dec NL+)*;
 
-grounding: GROUNDING FNAME;
 vocab: VOCAB FNAME;
 
 dec
