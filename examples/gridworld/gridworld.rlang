@@ -32,6 +32,6 @@ Effect reached_goal:
     Reward 1
 
 Effect reached_wall:
-    S = S'
+    S' = S
 
 

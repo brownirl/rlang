@@ -44,6 +44,7 @@ OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
 VOCAB: 'vocab';
 
+S_PRIME: 'S\'';
 S: 'S';
 A: 'A';
 
@@ -62,13 +63,13 @@ TRUE: 'True';
 FALSE: 'False';
 
 BIND : ':=';
-ASIGN: '=';
+ASSIGN: '=';
 TIMES_EQ: '*=';
 DIV_EQ: '/=';
 PLUS_EQ: '+=';
 MINUS_EQ: '-=';
 
-EQUALS : '==';
+EQ_TO : '==';
 GT_EQ : '>=';
 LT_EQ : '<=';
 NOT_EQ : '!=';
@@ -89,8 +90,6 @@ TIMES : '*';
 DIVIDE : '/';
 PLUS : '+';
 MINUS : '-';
-
-PRIME : '\'';
 
 /*
  *

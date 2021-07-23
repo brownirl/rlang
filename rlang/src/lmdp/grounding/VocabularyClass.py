@@ -6,6 +6,9 @@
 import os
 import sys
 
+from lmdp.grounding.states import Predicate
+from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
+
 sys.path.append(os.path.abspath("/"))
 from collections import defaultdict
 from lmdp.grounding import *
