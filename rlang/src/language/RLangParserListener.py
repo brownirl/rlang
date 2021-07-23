@@ -17,12 +17,30 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#imprt.
-    def enterImprt(self, ctx:RLangParser.ImprtContext):
+    # Enter a parse tree produced by RLangParser#imports.
+    def enterImports(self, ctx:RLangParser.ImportsContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#imprt.
-    def exitImprt(self, ctx:RLangParser.ImprtContext):
+    # Exit a parse tree produced by RLangParser#imports.
+    def exitImports(self, ctx:RLangParser.ImportsContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#import_stat.
+    def enterImport_stat(self, ctx:RLangParser.Import_statContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#import_stat.
+    def exitImport_stat(self, ctx:RLangParser.Import_statContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#decs.
+    def enterDecs(self, ctx:RLangParser.DecsContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#decs.
+    def exitDecs(self, ctx:RLangParser.DecsContext):
         pass
 
 

@@ -4,10 +4,12 @@ options {
     tokenVocab=RLangLexer;
 }
 
-program: NL* (imprt NL+)* dec* NL*;
+program: NL* imports decs NL*;
 
-imprt: IMPORT FNAME;
+imports: (import_stat NL+)*;
+import_stat: IMPORT FNAME;
 
+decs: dec*;
 dec
     : constant NL+
     | factor NL+
