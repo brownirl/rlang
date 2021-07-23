@@ -15,7 +15,7 @@ null
 'Execute'
 'Option'
 'MarkovFeature'
-'vocab'
+'import'
 'S\''
 'S'
 'A'
@@ -75,7 +75,7 @@ POLICY
 EXECUTE
 OPTION
 MARKOVFEATURE
-VOCAB
+IMPORT
 S_PRIME
 S
 A
@@ -120,7 +120,7 @@ SKIP_
 
 rule names:
 program
-vocab
+imprt
 dec
 factor
 feature

@@ -17,12 +17,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#vocab.
-    def enterVocab(self, ctx:RLangParser.VocabContext):
+    # Enter a parse tree produced by RLangParser#imprt.
+    def enterImprt(self, ctx:RLangParser.ImprtContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#vocab.
-    def exitVocab(self, ctx:RLangParser.VocabContext):
+    # Exit a parse tree produced by RLangParser#imprt.
+    def exitImprt(self, ctx:RLangParser.ImprtContext):
         pass
 
 

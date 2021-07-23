@@ -42,7 +42,7 @@ POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
-VOCAB: 'vocab';
+IMPORT: 'import';
 
 S_PRIME: 'S\'';
 S: 'S';

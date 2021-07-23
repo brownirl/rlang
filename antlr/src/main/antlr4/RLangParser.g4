@@ -4,9 +4,9 @@ options {
     tokenVocab=RLangLexer;
 }
 
-program: NL* (vocab NL+)* dec* NL*;
+program: NL* (imprt NL+)* dec* NL*;
 
-vocab: VOCAB FNAME;
+imprt: IMPORT FNAME;
 
 dec
     : constant NL+

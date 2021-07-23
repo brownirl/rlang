@@ -260,8 +260,8 @@ class RLangParser ( Parser ):
     literalNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                      "'Predicate'", "'Feature'", "'Factor'", "'Goal'", "'Constant'", 
                      "'Action'", "'Effect'", "'Reward'", "'Policy'", "'Execute'", 
-                     "'Option'", "'MarkovFeature'", "'vocab'", "'S''", "'S'", 
-                     "'A'", "'if'", "'else'", "'elif'", "'in'", "'init'", 
+                     "'Option'", "'MarkovFeature'", "'import'", "'S''", 
+                     "'S'", "'A'", "'if'", "'else'", "'elif'", "'in'", "'init'", 
                      "'until'", "'and'", "'or'", "'not'", "'True'", "'False'", 
                      "':='", "'='", "'*='", "'/='", "'+='", "'-='", "'=='", 
                      "'>='", "'<='", "'!='", "':'", "','", "'['", "']'", 
@@ -270,7 +270,7 @@ class RLangParser ( Parser ):
     symbolicNames = [ "<INVALID>", "INDENT", "DEDENT", "NL", "PREDICATE", 
                       "FEATURE", "FACTOR", "GOAL", "CONSTANT", "ACTION", 
                       "EFFECT", "REWARD", "POLICY", "EXECUTE", "OPTION", 
-                      "MARKOVFEATURE", "VOCAB", "S_PRIME", "S", "A", "IF", 
+                      "MARKOVFEATURE", "IMPORT", "S_PRIME", "S", "A", "IF", 
                       "ELSE", "ELIF", "IN", "INIT", "UNTIL", "AND", "OR", 
                       "NOT", "TRUE", "FALSE", "BIND", "ASSIGN", "TIMES_EQ", 
                       "DIV_EQ", "PLUS_EQ", "MINUS_EQ", "EQ_TO", "GT_EQ", 
@@ -280,7 +280,7 @@ class RLangParser ( Parser ):
                       "SKIP_" ]
 
     RULE_program = 0
-    RULE_vocab = 1
+    RULE_imprt = 1
     RULE_dec = 2
     RULE_factor = 3
     RULE_feature = 4
@@ -302,7 +302,7 @@ class RLangParser ( Parser ):
     RULE_array_exp = 20
     RULE_trailer = 21
 
-    ruleNames =  [ "program", "vocab", "dec", "factor", "feature", "predicate", 
+    ruleNames =  [ "program", "imprt", "dec", "factor", "feature", "predicate", 
                    "action", "goal", "markov_feature", "effect", "option", 
                    "policy", "effect_stat", "reward", "assignment", "constant", 
                    "policy_stat", "execute", "arithmetic_exp", "boolean_exp", 
@@ -324,7 +324,7 @@ class RLangParser ( Parser ):
     EXECUTE=13
     OPTION=14
     MARKOVFEATURE=15
-    VOCAB=16
+    IMPORT=16
     S_PRIME=17
     S=18
     A=19
@@ -389,11 +389,11 @@ class RLangParser ( Parser ):
             else:
                 return self.getToken(RLangParser.NL, i)
 
-        def vocab(self, i:int=None):
+        def imprt(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(RLangParser.VocabContext)
+                return self.getTypedRuleContexts(RLangParser.ImprtContext)
             else:
-                return self.getTypedRuleContext(RLangParser.VocabContext,i)
+                return self.getTypedRuleContext(RLangParser.ImprtContext,i)
 
 
         def dec(self, i:int=None):
@@ -438,9 +438,9 @@ class RLangParser ( Parser ):
             self.state = 58
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==RLangParser.VOCAB:
+            while _la==RLangParser.IMPORT:
                 self.state = 50
-                self.vocab()
+                self.imprt()
                 self.state = 52 
                 self._errHandler.sync(self)
                 _alt = 1
@@ -488,41 +488,41 @@ class RLangParser ( Parser ):
         return localctx
 
 
-    class VocabContext(ParserRuleContext):
+    class ImprtContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def VOCAB(self):
-            return self.getToken(RLangParser.VOCAB, 0)
+        def IMPORT(self):
+            return self.getToken(RLangParser.IMPORT, 0)
 
         def FNAME(self):
             return self.getToken(RLangParser.FNAME, 0)
 
         def getRuleIndex(self):
-            return RLangParser.RULE_vocab
+            return RLangParser.RULE_imprt
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterVocab" ):
-                listener.enterVocab(self)
+            if hasattr( listener, "enterImprt" ):
+                listener.enterImprt(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitVocab" ):
-                listener.exitVocab(self)
+            if hasattr( listener, "exitImprt" ):
+                listener.exitImprt(self)
 
 
 
 
-    def vocab(self):
+    def imprt(self):
 
-        localctx = RLangParser.VocabContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 2, self.RULE_vocab)
+        localctx = RLangParser.ImprtContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 2, self.RULE_imprt)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 73
-            self.match(RLangParser.VOCAB)
+            self.match(RLangParser.IMPORT)
             self.state = 74
             self.match(RLangParser.FNAME)
         except RecognitionException as re:
