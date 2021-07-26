@@ -15,8 +15,8 @@ class RLangListener(RLangParserListener):
         # they are packaged into an lmdp object?
         self.lmdp = lmdp
         self.vocab_fnames = []
+        self.grounded_vars = {}
         self.statements = []
-        self.vocab_assembler = VocabularyAssembler()
 
     # This function add the lmdp objects in the vocabulary files to self.lmdp
     # And probably keep track of object names in the vocab for later reference from the rlang file
@@ -26,9 +26,10 @@ class RLangListener(RLangParserListener):
             with open(fname, 'r') as f:
                 vocab = json.load(f)
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler callable
-                return self.vocab_assembler.parseVocab(vocab)
+                return VocabularyAssembler(vocab).lmdp_objects
 
-        lmdp_objects = [parseVocabFile(fname) for fname in self.vocab_fnames]
+        for fname in self.vocab_fnames:
+            self.grounded_vars.update(parseVocabFile(fname))
 
     def enterProgram(self, ctx: RLangParser.ProgramContext):
         print("Entering Program")
@@ -44,6 +45,7 @@ class RLangListener(RLangParserListener):
 
     # Exit a parse tree produced by RLangParser#imprts.
     def exitImports(self, ctx: RLangParser.ImportsContext):
+        self.vocab_fnames = list(set(self.vocab_fnames))    # Remove duplicates
         self.parseVocabFiles()
 
     def enterPredicate(self, ctx: RLangParser.PredicateContext):
