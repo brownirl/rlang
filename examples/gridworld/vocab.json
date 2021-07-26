@@ -1,22 +1,25 @@
 {
-	"domain": "gridworld",
-	"state space": {
-			"size": [],
-			"dtype": ""
-	},
-	"action space": {
-			"number of actions": 4
-	},
-	"modules": {
-		"grounding module":"./grounding"
-	},
-	"vocabulary":[
-		{
-		"Policy": {
-			"go_to_cell": {
-			"grounding": "go_to_cell"
-				}
-			}
-		}
-    ]
+  "domain": "gridworld",
+  "state space": {
+    "size": [],
+    "dtype": ""
+  },
+  "action space": {
+    "number of actions": 4
+  },
+  "modules": [
+    "grounding.py"
+  ],
+  "vocabulary": {
+    "Policy": {
+      "go_to_cell": {
+        "grounding": "go_to_cell"
+      }
+    },
+    "StateFactor": {
+      "position_test": {
+        "grounding": "position_test"
+      }
+    }
+  }
 }

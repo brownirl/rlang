@@ -1,6 +1,6 @@
 from lmdp.grounding.states.StateGroundingClass import StateFeature
 from lmdp.grounding.states.PredicateClass import Predicate, any_state
-from grounding.states.Effect import PredictiveEffect
+from lmdp.grounding.states.Effect import PredictiveEffect
 from lmdp.grounding.booleans.BooleanFunClass import bool_true
 
 

@@ -17,30 +17,39 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#imports.
+    def enterImports(self, ctx:RLangParser.ImportsContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#imports.
+    def exitImports(self, ctx:RLangParser.ImportsContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#import_stat.
+    def enterImport_stat(self, ctx:RLangParser.Import_statContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#import_stat.
+    def exitImport_stat(self, ctx:RLangParser.Import_statContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#decs.
+    def enterDecs(self, ctx:RLangParser.DecsContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#decs.
+    def exitDecs(self, ctx:RLangParser.DecsContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#dec.
     def enterDec(self, ctx:RLangParser.DecContext):
         pass
 
     # Exit a parse tree produced by RLangParser#dec.
     def exitDec(self, ctx:RLangParser.DecContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#predicate.
-    def enterPredicate(self, ctx:RLangParser.PredicateContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#predicate.
-    def exitPredicate(self, ctx:RLangParser.PredicateContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#feature.
-    def enterFeature(self, ctx:RLangParser.FeatureContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#feature.
-    def exitFeature(self, ctx:RLangParser.FeatureContext):
         pass
 
 
@@ -53,12 +62,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#goal.
-    def enterGoal(self, ctx:RLangParser.GoalContext):
+    # Enter a parse tree produced by RLangParser#feature.
+    def enterFeature(self, ctx:RLangParser.FeatureContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#goal.
-    def exitGoal(self, ctx:RLangParser.GoalContext):
+    # Exit a parse tree produced by RLangParser#feature.
+    def exitFeature(self, ctx:RLangParser.FeatureContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#predicate.
+    def enterPredicate(self, ctx:RLangParser.PredicateContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#predicate.
+    def exitPredicate(self, ctx:RLangParser.PredicateContext):
         pass
 
 
@@ -68,6 +86,24 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#action.
     def exitAction(self, ctx:RLangParser.ActionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#goal.
+    def enterGoal(self, ctx:RLangParser.GoalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#goal.
+    def exitGoal(self, ctx:RLangParser.GoalContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#markov_feature.
+    def enterMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#markov_feature.
+    def exitMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
         pass
 
 
@@ -98,30 +134,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#markov_feature.
-    def enterMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#markov_feature.
-    def exitMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#effect_stat.
     def enterEffect_stat(self, ctx:RLangParser.Effect_statContext):
         pass
 
     # Exit a parse tree produced by RLangParser#effect_stat.
     def exitEffect_stat(self, ctx:RLangParser.Effect_statContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#policy_stat.
-    def enterPolicy_stat(self, ctx:RLangParser.Policy_statContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#policy_stat.
-    def exitPolicy_stat(self, ctx:RLangParser.Policy_statContext):
         pass
 
 
@@ -134,6 +152,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#assignment.
+    def enterAssignment(self, ctx:RLangParser.AssignmentContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#assignment.
+    def exitAssignment(self, ctx:RLangParser.AssignmentContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#constant.
     def enterConstant(self, ctx:RLangParser.ConstantContext):
         pass
@@ -143,12 +170,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#assignment.
-    def enterAssignment(self, ctx:RLangParser.AssignmentContext):
+    # Enter a parse tree produced by RLangParser#policy_stat.
+    def enterPolicy_stat(self, ctx:RLangParser.Policy_statContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#assignment.
-    def exitAssignment(self, ctx:RLangParser.AssignmentContext):
+    # Exit a parse tree produced by RLangParser#policy_stat.
+    def exitPolicy_stat(self, ctx:RLangParser.Policy_statContext):
         pass
 
 
@@ -161,15 +188,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#boolean_exp.
-    def enterBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#boolean_exp.
-    def exitBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#arithmetic_exp.
     def enterArithmetic_exp(self, ctx:RLangParser.Arithmetic_expContext):
         pass
@@ -179,21 +197,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#temporal_identifier.
-    def enterTemporal_identifier(self, ctx:RLangParser.Temporal_identifierContext):
+    # Enter a parse tree produced by RLangParser#boolean_exp.
+    def enterBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#temporal_identifier.
-    def exitTemporal_identifier(self, ctx:RLangParser.Temporal_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#trailer.
-    def enterTrailer(self, ctx:RLangParser.TrailerContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#trailer.
-    def exitTrailer(self, ctx:RLangParser.TrailerContext):
+    # Exit a parse tree produced by RLangParser#boolean_exp.
+    def exitBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
         pass
 
 
@@ -203,6 +212,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#array_exp.
     def exitArray_exp(self, ctx:RLangParser.Array_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#trailer.
+    def enterTrailer(self, ctx:RLangParser.TrailerContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#trailer.
+    def exitTrailer(self, ctx:RLangParser.TrailerContext):
         pass
 
 

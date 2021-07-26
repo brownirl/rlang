@@ -2,9 +2,11 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 # envs
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
+from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 #agents
 from lmdp.agents import RandomAgent, QLearningAgent, QLearningLangAgent
 #lmdp
+from rlang.src.lmdp import RLMDP
 from lmdp.experiment_runner import run_agents
 from functools import partial
 
@@ -32,13 +34,24 @@ def gridworld_state_space(width, height): # state space iterator
 
 if __name__ == "__main__":
     #### Run agents
-    random = RandomAgent(mdp.get_actions())
-    epsilon = 0.1
-    alpha = 0.05
-    q_learning_agent = QLearningAgent(mdp.get_actions(), epsilon=epsilon, alpha=alpha, anneal=True)
-    lang_q_learning_agent = QLearningLangAgent(mdp.get_actions(), lmdp=lmdp, epsilon=epsilon/10, alpha=alpha, anneal=True)
-    lang_q_learning_agent.update_from_lang(partial(gridworld_state_space, width, height))
-    run_agents([lang_q_learning_agent , q_learning_agent], mdp, experiment_params())
+    # MDP parameters
+    width, height = 6, 6
+    lava_locs = [(3, 2), (1, 4), (2, 4), (2, 5)]
+    walls = [(3, 1)]
+    goal_locs = [(5, 1)]
+
+    mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0.33,
+                       step_cost=0)
+
+    lmdp = RLMDP(mdp, "gridworld.rlang", factor_names=["x", "y"])
+
+    # random = RandomAgent(mdp.get_actions())
+    # epsilon = 0.1
+    # alpha = 0.05
+    # q_learning_agent = QLearningAgent(mdp.get_actions(), epsilon=epsilon, alpha=alpha, anneal=True)
+    # lang_q_learning_agent = QLearningLangAgent(mdp.get_actions(), lmdp=lmdp, epsilon=epsilon/10, alpha=alpha, anneal=True)
+    # lang_q_learning_agent.update_from_lang(partial(gridworld_state_space, width, height))
+    # run_agents([lang_q_learning_agent , q_learning_agent], mdp, experiment_params())
 
     
 

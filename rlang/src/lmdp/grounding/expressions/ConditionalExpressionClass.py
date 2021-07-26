@@ -17,7 +17,7 @@ from collections import namedtuple
 from lmdp.grounding.states.PredicateClass import any_state
 from lmdp.grounding.booleans.BooleanFunClass import any_action, bool_not
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
-from grounding.states.Effect import Effect
+from lmdp.grounding.states.Effect import Effect
 from lmdp.grounding import *
 from lmdp.grounding.booleans.BooleanFunClass import bool_true
 

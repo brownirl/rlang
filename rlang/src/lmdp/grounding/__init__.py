@@ -6,7 +6,7 @@ from lmdp.grounding.actions.PolicyElementsClass import PolicyElements
 from lmdp.grounding.actions.PolicyFromDictClass import PolicyFromDict
 from lmdp.grounding.real.MarkovFeatureClass import MarkovFeature
 from lmdp.grounding.states.NextStateGroundingClass import next_state
-from grounding.states.Effect import Effect, PredictiveEffect
+from lmdp.grounding.states.Effect import Effect, PredictiveEffect
 from lmdp.grounding.actions.DiscreteActionGroundingClass import DiscreteActionGrounding
 from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy

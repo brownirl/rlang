@@ -19,6 +19,7 @@
                             <excludes>
                                 <exclude>**/__init__.py</exclude>
                                 <exclude>**/RLangListener.py</exclude>
+                                <exclude>**/VocabularyAssembler.py</exclude>
                                 <exclude>**/prettyprint.py</exclude>
                             </excludes>
                             <followSymlinks>false</followSymlinks>

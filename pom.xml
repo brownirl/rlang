@@ -16,17 +16,17 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <version>1.6.0</version>
                 <executions>
-                    <execution>
-                        <id>fix relative imports</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>python</executable>
-                            <arguments>build_scripts/fix_imports.py</arguments>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>fix relative imports</id>-->
+<!--                        <phase>process-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <executable>python</executable>-->
+<!--                            <arguments>build_scripts/fix_imports.py</arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                     <execution>
                         <id>pytest</id>
                         <phase>test</phase>

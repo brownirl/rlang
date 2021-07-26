@@ -4,7 +4,7 @@ tokens { INDENT, DEDENT }
 
 @lexer::header{
 from antlr_denter.DenterHelper import DenterHelper
-from RLangParser import RLangParser
+from .RLangParser import RLangParser
 }
 @lexer::members {
 class SimpleDenter(DenterHelper):
@@ -42,7 +42,9 @@ POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
+IMPORT: 'import';
 
+S_PRIME: 'S\'';
 S: 'S';
 A: 'A';
 
@@ -61,13 +63,13 @@ TRUE: 'True';
 FALSE: 'False';
 
 BIND : ':=';
-ASIGN: '=';
+ASSIGN: '=';
 TIMES_EQ: '*=';
 DIV_EQ: '/=';
 PLUS_EQ: '+=';
 MINUS_EQ: '-=';
 
-EQUALS : '==';
+EQ_TO : '==';
 GT_EQ : '>=';
 LT_EQ : '<=';
 NOT_EQ : '!=';
@@ -89,11 +91,13 @@ DIVIDE : '/';
 PLUS : '+';
 MINUS : '-';
 
-PRIME : '\'';
-
 /*
  *
  */
+
+FNAME
+    : IDENTIFIER '.' LETTER*
+    ;
 
 IDENTIFIER
     : LETTER ANY_CHAR*

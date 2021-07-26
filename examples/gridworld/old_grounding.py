@@ -1,4 +1,7 @@
 import sys, os
+
+from lmdp.grounding.states.StateGroundingClass import StateFactor
+
 sys.path.append(os.path.abspath("./"))
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 from lmdp import *
