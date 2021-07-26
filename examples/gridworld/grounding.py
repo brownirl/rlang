@@ -7,4 +7,4 @@ from lmdp import *
 from lmdp.grounding.states.StateGroundingClass import StateFactor
 
 # This is included for testing purposes
-position_test = StateFactor([0,1], "position_test")
+position_test = StateFactor([0, 1], "position_test")
