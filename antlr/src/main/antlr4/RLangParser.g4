@@ -4,12 +4,12 @@ options {
     tokenVocab=RLangLexer;
 }
 
-program: NL* imports decs NL*;
+program: NL* imports declarations NL*;
 
 imports: (import_stat NL+)*;
 import_stat: IMPORT FNAME;
 
-decs: dec*;
+declarations: dec*;
 dec
     : constant NL+
     | factor NL+
@@ -71,9 +71,11 @@ boolean_exp
     | (IDENTIFIER | S | S_PRIME) trailer*
     ;
 
-array_exp: L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK;
-
 trailer
-    : L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK
-    | L_BRK ((MINUS)? INTEGER)? COL ((MINUS)? INTEGER)? R_BRK
+    : array_exp     # array
+    | slice_exp     # slice
     ;
+
+array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)* R_BRK;
+slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
+any_integer: (MINUS)? INTEGER;

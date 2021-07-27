@@ -35,12 +35,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#decs.
-    def enterDecs(self, ctx:RLangParser.DecsContext):
+    # Enter a parse tree produced by RLangParser#declarations.
+    def enterDeclarations(self, ctx:RLangParser.DeclarationsContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#decs.
-    def exitDecs(self, ctx:RLangParser.DecsContext):
+    # Exit a parse tree produced by RLangParser#declarations.
+    def exitDeclarations(self, ctx:RLangParser.DeclarationsContext):
         pass
 
 
@@ -206,6 +206,24 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#array.
+    def enterArray(self, ctx:RLangParser.ArrayContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#array.
+    def exitArray(self, ctx:RLangParser.ArrayContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#slice.
+    def enterSlice(self, ctx:RLangParser.SliceContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#slice.
+    def exitSlice(self, ctx:RLangParser.SliceContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#array_exp.
     def enterArray_exp(self, ctx:RLangParser.Array_expContext):
         pass
@@ -215,12 +233,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#trailer.
-    def enterTrailer(self, ctx:RLangParser.TrailerContext):
+    # Enter a parse tree produced by RLangParser#slice_exp.
+    def enterSlice_exp(self, ctx:RLangParser.Slice_expContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#trailer.
-    def exitTrailer(self, ctx:RLangParser.TrailerContext):
+    # Exit a parse tree produced by RLangParser#slice_exp.
+    def exitSlice_exp(self, ctx:RLangParser.Slice_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_integer.
+    def enterAny_integer(self, ctx:RLangParser.Any_integerContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_integer.
+    def exitAny_integer(self, ctx:RLangParser.Any_integerContext):
         pass
 
 

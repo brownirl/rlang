@@ -45,6 +45,8 @@ if __name__ == "__main__":
 
     lmdp = RLMDP(mdp, "gridworld.rlang", factor_names=["x", "y"])
 
+    print(lmdp.listener.new_vars)
+
     # random = RandomAgent(mdp.get_actions())
     # epsilon = 0.1
     # alpha = 0.05

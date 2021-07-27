@@ -17,3 +17,4 @@ class RLMDP(LMDP):
         listener = RLangListener(self)
         walker = ParseTreeWalker()
         walker.walk(listener, tree)
+        self.listener = listener

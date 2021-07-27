@@ -1,7 +1,6 @@
 import vocab.json
-import vocab.json
 
-Factor position := S[0,1]
+Factor position := S[0, 1]
 Feature x := position[0]
 Feature y := position[1]
 

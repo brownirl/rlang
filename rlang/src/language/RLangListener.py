@@ -1,6 +1,7 @@
 from antlr4 import *
 import json
 
+from lmdp.grounding.states.StateGroundingClass import StateFactor
 from lmdp import LMDP
 from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
@@ -16,7 +17,7 @@ class RLangListener(RLangParserListener):
         self.lmdp = lmdp
         self.vocab_fnames = []
         self.grounded_vars = {}
-        self.statements = []
+        self.new_vars = {}
 
     # This function add the lmdp objects in the vocabulary files to self.lmdp
     # And probably keep track of object names in the vocab for later reference from the rlang file
@@ -31,14 +32,6 @@ class RLangListener(RLangParserListener):
         for fname in self.vocab_fnames:
             self.grounded_vars.update(parseVocabFile(fname))
 
-    def enterProgram(self, ctx: RLangParser.ProgramContext):
-        print("Entering Program")
-        self.statements.append("Entering Program 2")
-
-    def exitProgram(self, ctx: RLangParser.ProgramContext):
-        print("Exiting Program")
-        self.statements.append("Exiting Program 2")
-
     # Exit a parse tree produced by RLangParser#imprt.
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -48,9 +41,41 @@ class RLangListener(RLangParserListener):
         self.vocab_fnames = list(set(self.vocab_fnames))    # Remove duplicates
         self.parseVocabFiles()
 
-    def enterPredicate(self, ctx: RLangParser.PredicateContext):
-        print(f"Entering Predicate with ctx: {ctx}")
-        self.statements.append("Entering Predicate 2")
+    # Enter a parse tree produced by RLangParser#factor.
+    def exitFactor(self, ctx: RLangParser.FactorContext):
+        new_factor = StateFactor(ctx.trailer().value, ctx.IDENTIFIER().getText())
+        # TODO: should be some check that we are not over-writing an existing variable
+        # TODO: support slice trailers!
+        self.new_vars.update({new_factor.name: new_factor})
+
+    # Exit a parse tree produced by RLangParser#array.
+    def exitArray(self, ctx: RLangParser.ArrayContext):
+        ctx.value = ctx.array_exp().value
+
+    # Exit a parse tree produced by RLangParser#slice.
+    def exitSlice(self, ctx: RLangParser.SliceContext):
+        ctx.value = ctx.slice_exp().value
+
+    # Exit a parse tree produced by RLangParser#array_exp.
+    def exitArray_exp(self, ctx: RLangParser.Array_expContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
+
+    # Exit a parse tree produced by RLangParser#slice_exp.
+    def exitSlice_exp(self, ctx: RLangParser.Slice_expContext):
+        start_ind = None
+        stop_ind = None
+        step_size = 1
+        if isinstance(ctx.start_ind, RLangParser.Any_integerContext):
+            start_ind = ctx.start_ind.value
+
+        if isinstance(ctx.stop_ind, RLangParser.Any_integerContext):
+            stop_ind = ctx.stop_ind.value
+        slc = slice(start_ind, stop_ind, step_size)
+        ctx.value = slc
+
+    # Enter a parse tree produced by RLangParser#any_integer.
+    def enterAny_integer(self, ctx: RLangParser.Any_integerContext):
+        ctx.value = int(ctx.getText())
 
 
 def main():
