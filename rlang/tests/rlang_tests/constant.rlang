@@ -1,0 +1,3 @@
+Constant test := 5
+Constant test1 := [0, 1]
+Constant test2 := multiplier

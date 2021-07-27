@@ -1,0 +1,9 @@
+Effect A == right:
+    position += [0,1]
+
+Effect up:
+    y += 1
+    inventory[1] += 1
+
+Effect reached_goal:
+    Reward 1

@@ -1,0 +1,5 @@
+Goal gold >= 1
+Goal at_workshop
+Goal gold == 1
+Goal S[0] <= 4
+Goal gold < iron

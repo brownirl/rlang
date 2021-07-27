@@ -1,0 +1,9 @@
+Option go_to_workshop_2:
+    init(True)
+        Find
+    until at_workshop2
+
+Option build_bridge:
+    init(wood >= 1 and iron >=1 and at_workshop2)
+        Execute use
+    until delta_bridge > 0

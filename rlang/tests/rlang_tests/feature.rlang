@@ -1,0 +1,4 @@
+Feature iron := inventory[0]
+Feature elements := inventory[0] + inventory[2]
+Feature built_elements := inventory[3:5]
+Feature iron := iron
