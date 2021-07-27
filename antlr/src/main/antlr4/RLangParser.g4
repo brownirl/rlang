@@ -39,7 +39,7 @@ effect_stat
     | constant
     ;
 
-reward: REWARD (MINUS)? (DECIMAL | INTEGER);
+reward: REWARD any_number;
 assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) ((IDENTIFIER | S) trailer* | boolean_exp | arithmetic_exp | array_exp);
 constant: CONSTANT IDENTIFIER BIND ((IDENTIFIER | S | S_PRIME) trailer* | boolean_exp | arithmetic_exp | array_exp);
 
@@ -51,11 +51,11 @@ policy_stat
 execute: EXECUTE IDENTIFIER;
 
 arithmetic_exp
-    : L_PAR arithmetic_exp R_PAR
-    | arithmetic_exp (TIMES | DIVIDE) arithmetic_exp
-    | arithmetic_exp (PLUS | MINUS) arithmetic_exp
-    | (MINUS)? (DECIMAL | INTEGER)
-    | (IDENTIFIER | S | S_PRIME) trailer*
+    : L_PAR arithmetic_exp R_PAR                                # arith_paren
+    | lhs=arithmetic_exp (TIMES | DIVIDE) rhs=arithmetic_exp    # arith_times_divide
+    | lhs=arithmetic_exp (PLUS | MINUS) rhs=arithmetic_exp      # arith_plus_minus
+    | any_number                                                # arith_number
+    | (IDENTIFIER | S | S_PRIME) trailer*                       # arith_var_with_trailer
     ;
 
 boolean_exp
@@ -72,10 +72,16 @@ boolean_exp
     ;
 
 trailer
-    : array_exp     # array
-    | slice_exp     # slice
+    : array_exp     # trailer_array
+    | slice_exp     # trailer_slice
+    ;
+
+any_number
+    : any_integer   # integer
+    | any_decimal   # decimal
     ;
 
 array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)* R_BRK;
 slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
 any_integer: (MINUS)? INTEGER;
+any_decimal: (MINUS)? DECIMAL;

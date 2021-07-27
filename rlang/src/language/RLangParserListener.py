@@ -188,12 +188,48 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#arithmetic_exp.
-    def enterArithmetic_exp(self, ctx:RLangParser.Arithmetic_expContext):
+    # Enter a parse tree produced by RLangParser#arith_number.
+    def enterArith_number(self, ctx:RLangParser.Arith_numberContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#arithmetic_exp.
-    def exitArithmetic_exp(self, ctx:RLangParser.Arithmetic_expContext):
+    # Exit a parse tree produced by RLangParser#arith_number.
+    def exitArith_number(self, ctx:RLangParser.Arith_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_plus_minus.
+    def enterArith_plus_minus(self, ctx:RLangParser.Arith_plus_minusContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_plus_minus.
+    def exitArith_plus_minus(self, ctx:RLangParser.Arith_plus_minusContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_var_with_trailer.
+    def enterArith_var_with_trailer(self, ctx:RLangParser.Arith_var_with_trailerContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_var_with_trailer.
+    def exitArith_var_with_trailer(self, ctx:RLangParser.Arith_var_with_trailerContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_paren.
+    def enterArith_paren(self, ctx:RLangParser.Arith_parenContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_paren.
+    def exitArith_paren(self, ctx:RLangParser.Arith_parenContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_times_divide.
+    def enterArith_times_divide(self, ctx:RLangParser.Arith_times_divideContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_times_divide.
+    def exitArith_times_divide(self, ctx:RLangParser.Arith_times_divideContext):
         pass
 
 
@@ -206,21 +242,39 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#array.
-    def enterArray(self, ctx:RLangParser.ArrayContext):
+    # Enter a parse tree produced by RLangParser#trailer_array.
+    def enterTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#array.
-    def exitArray(self, ctx:RLangParser.ArrayContext):
+    # Exit a parse tree produced by RLangParser#trailer_array.
+    def exitTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#slice.
-    def enterSlice(self, ctx:RLangParser.SliceContext):
+    # Enter a parse tree produced by RLangParser#trailer_slice.
+    def enterTrailer_slice(self, ctx:RLangParser.Trailer_sliceContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#slice.
-    def exitSlice(self, ctx:RLangParser.SliceContext):
+    # Exit a parse tree produced by RLangParser#trailer_slice.
+    def exitTrailer_slice(self, ctx:RLangParser.Trailer_sliceContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#integer.
+    def enterInteger(self, ctx:RLangParser.IntegerContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#integer.
+    def exitInteger(self, ctx:RLangParser.IntegerContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#decimal.
+    def enterDecimal(self, ctx:RLangParser.DecimalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#decimal.
+    def exitDecimal(self, ctx:RLangParser.DecimalContext):
         pass
 
 
@@ -248,6 +302,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#any_integer.
     def exitAny_integer(self, ctx:RLangParser.Any_integerContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_decimal.
+    def enterAny_decimal(self, ctx:RLangParser.Any_decimalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_decimal.
+    def exitAny_decimal(self, ctx:RLangParser.Any_decimalContext):
         pass
 
 
