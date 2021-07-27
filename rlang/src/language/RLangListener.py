@@ -10,7 +10,7 @@ from .VocabularyAssembler import VocabularyAssembler
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self, lmdp: LMDP):
+    def __init__(self, lmdp: LMDP = None):
         # RLangListener needs to eventually construct an lmdp object.
         # Statements can be stored in a dict or list until
         # they are packaged into an lmdp object?
@@ -38,7 +38,7 @@ class RLangListener(RLangParserListener):
 
     # Exit a parse tree produced by RLangParser#imprts.
     def exitImports(self, ctx: RLangParser.ImportsContext):
-        self.vocab_fnames = list(set(self.vocab_fnames))    # Remove duplicates
+        self.vocab_fnames = list(set(self.vocab_fnames))  # Remove duplicates
         self.parseVocabFiles()
 
     # Enter a parse tree produced by RLangParser#factor.
