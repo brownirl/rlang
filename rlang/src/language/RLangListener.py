@@ -3,7 +3,7 @@ from functools import reduce
 from antlr4 import *
 import json
 
-from lmdp.grounding.states.StateGroundingClass import StateFactor
+from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp import LMDP
 from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
@@ -39,6 +39,11 @@ class RLangListener(RLangParserListener):
         else:
             raise UnknownVariableError(variable_name)
 
+    def addVariable(self, variable_name, variable):
+        if variable_name in self.new_vars.keys() or variable_name in self.grounded_vars.keys():
+            raise AlreadyBoundError(variable_name)
+        self.new_vars.update({variable_name: variable})
+
     def exitProgram(self, ctx: RLangParser.ProgramContext):
         # This is only for DEBUG purposes
         print(f"grounded_vars: {self.grounded_vars}")
@@ -52,24 +57,49 @@ class RLangListener(RLangParserListener):
         self.parseVocabFiles()
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        factor_arg = None
+        feature_positions = None
         if ctx.trailer() is not None:
             # TODO: support slice trailers! ctx.trailer() can be an index or a slice
-            factor_arg = ctx.trailer().value
+            feature_positions = ctx.trailer().value
         if ctx.array_exp() is not None:
-            factor_arg = ctx.array_exp().value
+            feature_positions = ctx.array_exp().value
+        new_factor = StateFactor(feature_positions, name=ctx.IDENTIFIER().getText())
+        self.addVariable(new_factor.name, new_factor)
 
-        new_factor = StateFactor(factor_arg, ctx.IDENTIFIER().getText())
-        if new_factor.name in self.new_vars.keys() or new_factor.name in self.grounded_vars.keys():
-            raise AlreadyBoundError(new_factor.name)
-        self.new_vars.update({new_factor.name: new_factor})
+    def exitFeature(self, ctx: RLangParser.FeatureContext):
+        function = None
+        number_of_features = None
+        # I'm unclear about the StateFeature Class constructor arguments
+        print(ctx.arithmetic_exp().value)
+
+    def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
+        ctx.value = ctx.arithmetic_exp().value
+
+    def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
+        operation = None
+        if ctx.TIMES() is not None:
+            operation = lambda a, b: a * b
+        elif ctx.DIVIDE() is not None:
+            operation = lambda a, b: a / b
+        ctx.value = operation(ctx.lhs.value, ctx.rhs.value)
+
+    def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
+        operation = None
+        if ctx.PLUS() is not None:
+            operation = lambda a, b: a + b
+        elif ctx.MINUS() is not None:
+            operation = lambda a, b: a - b
+        ctx.value = operation(ctx.lhs.value, ctx.rhs.value)
+
+    def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
+        ctx.value = ctx.any_number().value
 
     def exitArith_var_with_trailer(self, ctx: RLangParser.Arith_var_with_trailerContext):
         variable = None
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
         elif ctx.S() is not None:
-            # TODO: Support this
+            # TODO: Support this - look in ExpressionsClass.py
             # print(ctx.S())
             pass
         elif ctx.S_PRIME() is not None:
@@ -117,10 +147,10 @@ class RLangListener(RLangParserListener):
         slc = slice(start_ind, stop_ind, step_size)
         ctx.value = slc
 
-    def enterAny_num_int(self, ctx: RLangParser.Any_num_intContext):
+    def exitAny_num_int(self, ctx: RLangParser.Any_num_intContext):
         ctx.value = ctx.any_integer().value
 
-    def enterAny_num_dec(self, ctx: RLangParser.Any_num_decContext):
+    def exitAny_num_dec(self, ctx: RLangParser.Any_num_decContext):
         ctx.value = ctx.any_decimal().value
 
     def enterAny_integer(self, ctx: RLangParser.Any_integerContext):
