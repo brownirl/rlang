@@ -23,7 +23,7 @@ dec
     | policy
     ;
 
-factor: FACTOR IDENTIFIER BIND S trailer?;
+factor: FACTOR IDENTIFIER BIND S (trailer | array_exp)?;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
 action: ACTION IDENTIFIER BIND INTEGER;
@@ -72,16 +72,18 @@ boolean_exp
     ;
 
 trailer
-    : array_exp     # trailer_array
+    : index_exp     # trailer_index
     | slice_exp     # trailer_slice
     ;
 
+index_exp: L_BRK any_integer R_BRK;
+array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)+ R_BRK;
+slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
+
 any_number
-    : any_integer   # integer
-    | any_decimal   # decimal
+    : any_integer   # any_num_int
+    | any_decimal   # any_num_dec
     ;
 
-array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)* R_BRK;
-slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
 any_integer: (MINUS)? INTEGER;
 any_decimal: (MINUS)? DECIMAL;

@@ -1,3 +1,5 @@
+from functools import reduce
+
 from antlr4 import *
 import json
 
@@ -12,9 +14,6 @@ from .Exceptions import *
 
 class RLangListener(RLangParserListener):
     def __init__(self, lmdp: LMDP = None):
-        # RLangListener needs to eventually construct an lmdp object.
-        # Statements can be stored in a dict or list until
-        # they are packaged into an lmdp object?
         self.lmdp = lmdp
         self.vocab_fnames = []
         self.grounded_vars = {}
@@ -40,76 +39,49 @@ class RLangListener(RLangParserListener):
         else:
             raise UnknownVariableError(variable_name)
 
-    # Exit a parse tree produced by RLangParser#program.
     def exitProgram(self, ctx: RLangParser.ProgramContext):
         # This is only for DEBUG purposes
         print(f"grounded_vars: {self.grounded_vars}")
         print(f"new_vars: {self.new_vars}")
 
-    # Enter a parse tree produced by RLangParser#imprt.
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
 
-    # Exit a parse tree produced by RLangParser#imprts.
     def exitImports(self, ctx: RLangParser.ImportsContext):
         self.vocab_fnames = list(set(self.vocab_fnames))  # Remove duplicates
         self.parseVocabFiles()
 
-    # Exit a parse tree produced by RLangParser#factor.
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        new_factor = StateFactor(ctx.trailer().value, ctx.IDENTIFIER().getText())
-        # TODO: support slice trailers!
+        factor_arg = None
+        if ctx.trailer() is not None:
+            # TODO: support slice trailers! ctx.trailer() can be an index or a slice
+            factor_arg = ctx.trailer().value
+        if ctx.array_exp() is not None:
+            factor_arg = ctx.array_exp().value
+
+        new_factor = StateFactor(factor_arg, ctx.IDENTIFIER().getText())
         if new_factor.name in self.new_vars.keys() or new_factor.name in self.grounded_vars.keys():
             raise AlreadyBoundError(new_factor.name)
         self.new_vars.update({new_factor.name: new_factor})
 
-    # Enter a parse tree produced by RLangParser#arith_number.
-    def enterArith_number(self, ctx: RLangParser.Arith_numberContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#arith_number.
-    def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
-        pass
-
-    # Enter a parse tree produced by RLangParser#arith_plus_minus.
-    def enterArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#arith_plus_minus.
-    def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
-        pass
-
-    # Enter a parse tree produced by RLangParser#arith_var_with_trailer.
-    def enterArith_var_with_trailer(self, ctx: RLangParser.Arith_var_with_trailerContext):
-        pass
-
-    # # Exit a parse tree produced by RLangParser#arith_var_with_trailer.
-    # def exitArith_var_with_trailer(self, ctx: RLangParser.Arith_var_with_trailerContext):
-    #     variable = None
-    #     if ctx.IDENTIFIER() is not None:
-    #         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-    #     elif ctx.S() is not None:
-    #         print(ctx.S())
-    #     elif ctx.S_PRIME() is not None:
-    #         print(ctx.S_PRIME())
-    #     print(variable)
-    #     print(ctx.trailer())
-    #     if ctx.trailer():   # if it's not empty
-    #         print(ctx.trailer()[0].value)
-    #     else:
-    #         ctx.value = variable
-
-    # Enter a parse tree produced by RLangParser#arith_paren.
-    def enterArith_paren(self, ctx: RLangParser.Arith_parenContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#arith_paren.
-    def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
-        pass
-
-    # Enter a parse tree produced by RLangParser#arith_times_divide.
-    def enterArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
-        pass
+    def exitArith_var_with_trailer(self, ctx: RLangParser.Arith_var_with_trailerContext):
+        variable = None
+        if ctx.IDENTIFIER() is not None:
+            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        elif ctx.S() is not None:
+            # TODO: Support this
+            # print(ctx.S())
+            pass
+        elif ctx.S_PRIME() is not None:
+            # TODO: Support this
+            # print(ctx.S_PRIME())
+            pass
+        if ctx.trailer():  # if it's not empty
+            trailers = list(map(lambda x: x.value, ctx.trailer()))
+            trailers.insert(0, variable)
+            indexed_variable = reduce(lambda a, b: a[b], trailers)
+            variable = indexed_variable
+        ctx.value = variable
 
     # Exit a parse tree produced by RLangParser#arith_times_divide.
     # def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
@@ -121,17 +93,18 @@ class RLangListener(RLangParserListener):
     #     print(ctx.lhs)
     #     print(ctx.rhs)
 
-    def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
-        ctx.value = ctx.array_exp().value
+    def exitTrailer_index(self, ctx: RLangParser.Trailer_indexContext):
+        ctx.value = ctx.index_exp().value
 
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
 
-    # Exit a parse tree produced by RLangParser#array_exp.
+    def exitIndex_exp(self, ctx: RLangParser.Index_expContext):
+        ctx.value = ctx.any_integer().value
+
     def exitArray_exp(self, ctx: RLangParser.Array_expContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
 
-    # Exit a parse tree produced by RLangParser#slice_exp.
     def exitSlice_exp(self, ctx: RLangParser.Slice_expContext):
         start_ind = None
         stop_ind = None
@@ -144,10 +117,14 @@ class RLangListener(RLangParserListener):
         slc = slice(start_ind, stop_ind, step_size)
         ctx.value = slc
 
-    # Enter a parse tree produced by RLangParser#any_integer.
+    def enterAny_num_int(self, ctx: RLangParser.Any_num_intContext):
+        ctx.value = ctx.any_integer().value
+
+    def enterAny_num_dec(self, ctx: RLangParser.Any_num_decContext):
+        ctx.value = ctx.any_decimal().value
+
     def enterAny_integer(self, ctx: RLangParser.Any_integerContext):
         ctx.value = int(ctx.getText())
 
-    # Enter a parse tree produced by RLangParser#any_decimal.
     def enterAny_decimal(self, ctx: RLangParser.Any_decimalContext):
         ctx.value = float(ctx.getText())

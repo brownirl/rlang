@@ -4,6 +4,8 @@ import os
 
 class VocabularyAssembler:
     def __init__(self, vocab_json):
+        self.lmdp_objects = {}
+
         # Add grounding modules to self.modules
         modules_json = vocab_json['modules']
         modules = {}
@@ -17,7 +19,6 @@ class VocabularyAssembler:
             modules.update({mname: foo})
 
         self.modules = modules
-        self.lmdp_objects = {}
 
         # import the objects mentioned in vocabulary
         for k, v in vocab_json['vocabulary'].items():
