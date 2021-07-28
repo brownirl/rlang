@@ -1,9 +1,7 @@
 Predicate at_workshop := location == workshop               
 Predicate away := location != workshop and location != tree
-Predicate test1 := not (location != workshop and location == tree)
-Predicate test2 := location and workshop and tree and 1 == 1
+Predicate test2 := location and workshop or tree and 1 == 1
 Predicate test3 := S[0] > 3 and S[1] <= 5
 Predicate test3 := not (True)
 Predicate test4 := False
-Predicate test5 := location != workshop or iron > gold
 Predicate in_lava := position in lava_locs

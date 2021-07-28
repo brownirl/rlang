@@ -15,16 +15,58 @@ def tokenize_from_string(input_string):
 # All tests must begin with 'test_'
 
 def test_predicate_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/predicate.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/predicate.rlang", "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.PREDICATE
         assert tokens[1].type == RLangLexer.IDENTIFIER
         assert tokens[2].type == RLangLexer.BIND
+    
+    file.seek(0)
+
+    lines = file.readlines()
+    tokens = tokenize_from_string(lines[1])
+    assert tokens[4].type == RLangLexer.NOT_EQ
+    assert tokens[5].type == RLangLexer.IDENTIFIER
+    assert tokens[6].type == RLangLexer.AND
+    assert tokens[7].type == RLangLexer.IDENTIFIER
+    assert tokens[8].type == RLangLexer.NOT_EQ
+    assert tokens[9].type == RLangLexer.IDENTIFIER
+    assert len(tokens) == 12
+
+    tokens = tokenize_from_string(lines[4])
+    assert tokens[3].type == RLangLexer.NOT
+    assert tokens[4].type == RLangLexer.L_PAR
+    assert tokens[5].type == RLangLexer.TRUE
+    assert tokens[6].type == RLangLexer.R_PAR
+    assert len(tokens) == 9
+
+    tokens = tokenize_from_string(lines[5])
+    assert tokens[3].type == RLangLexer.FALSE
+    assert len(tokens) == 6
+
+    tokens = tokenize_from_string(lines[2])
+    assert tokens[3].type == RLangLexer.IDENTIFIER
+    assert tokens[4].type == RLangLexer.AND
+    assert tokens[5].type == RLangLexer.IDENTIFIER
+    assert tokens[6].type == RLangLexer.OR
+    assert tokens[7].type == RLangLexer.IDENTIFIER
+    assert tokens[8].type == RLangLexer.AND
+    assert tokens[9].type == RLangLexer.INTEGER
+    assert tokens[10].type == RLangLexer.EQ_TO
+    assert tokens[11].type == RLangLexer.INTEGER
+    assert len(tokens) == 14
+
+    tokens = tokenize_from_string(lines[6])
+    assert tokens[3].type == RLangLexer.IDENTIFIER
+    assert tokens[4].type == RLangLexer.IN
+    assert tokens[5].type == RLangLexer.IDENTIFIER
+    assert len(tokens) == 8
+
     file.close()
 
 def test_feature_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/feature.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/feature.rlang", "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.FEATURE
@@ -52,7 +94,7 @@ def test_feature_token():
     file.close()
 
 def test_factor_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/factor.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/factor.rlang", "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.FACTOR
@@ -63,21 +105,19 @@ def test_factor_token():
     file.seek(0)
 
     lines = file.readlines()
-    tokens = tokenize_from_string(lines[2])
+    tokens = tokenize_from_string(lines[3])
     assert tokens[4].type == RLangLexer.L_BRK
     assert tokens[5].type == RLangLexer.INTEGER
-    assert tokens[6].type == RLangLexer.R_BRK
-    assert tokens[7].type == RLangLexer.PLUS
-    assert tokens[8].type == RLangLexer.S
-    assert tokens[9].type == RLangLexer.L_BRK
-    assert tokens[10].type == RLangLexer.INTEGER
-    assert tokens[11].type == RLangLexer.R_BRK
-    assert len(tokens) == 14
+    assert tokens[6].type == RLangLexer.COL
+    assert tokens[7].type == RLangLexer.MINUS
+    assert tokens[8].type == RLangLexer.INTEGER
+    assert tokens[9].type == RLangLexer.R_BRK
+    assert len(tokens) == 12
     
     file.close()
 
 def test_goal_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/goal.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/goal.rlang", "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -101,15 +141,13 @@ def test_goal_token():
     assert len(tokens) == 6
 
     file.close()
-test_goal_token
 
 def test_constant_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/constant.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/constant.rlang", "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.CONSTANT
         assert tokens[1].type == RLangLexer.IDENTIFIER
-        assert tokens[2].type == RLangLexer.BIND
 
     file.seek(0)
     lines = file.readlines()
@@ -121,10 +159,28 @@ def test_constant_token():
     assert tokens[7].type == RLangLexer.R_BRK
     assert len(tokens) == 10
 
+    tokens = tokenize_from_string(lines[3])
+    assert tokens[3].type == RLangLexer.MINUS
+    assert tokens[4].type == RLangLexer.DECIMAL
+
+    tokens = tokenize_from_string(lines[4])
+    assert tokens[3].type == RLangLexer.DECIMAL
+    
+    tokens = tokenize_from_string(lines[5])
+    assert tokens[2].type == RLangLexer.ASSIGN
+    assert tokens[3].type == RLangLexer.INTEGER
+    assert tokens[4].type == RLangLexer.TIMES
+    assert tokens[5].type == RLangLexer.DECIMAL
+
+    tokens = tokenize_from_string(lines[6])
+    assert tokens[3].type == RLangLexer.INTEGER
+    assert tokens[4].type == RLangLexer.DIVIDE
+    assert tokens[5].type == RLangLexer.DECIMAL
+
     file.close()
 
 def test_action_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/action.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/action.rlang", "r")
     lines = file.readlines()
     tokens = tokenize_from_string(lines[0])
     assert tokens[0].type == RLangLexer.ACTION
@@ -142,7 +198,7 @@ def test_action_token():
     file.close()
 
 def test_effect_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/effect.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/effect.rlang", "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -205,7 +261,7 @@ def test_effect_token():
     file.close()
 
 def test_policy_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/policy.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/policy.rlang", "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -260,7 +316,7 @@ def test_policy_token():
     file.close()
 
 def test_option_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/rlang_tests/option.rlang", "r")
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/option.rlang", "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -270,14 +326,57 @@ def test_option_token():
 
     tokens = tokenize_from_string(lines[1])
     assert tokens[0].type == RLangLexer.INDENT
-    assert tokens[1].type == RLangLexer.L_PAR
-    assert tokens[2].type == RLangLexer.TRUE
-    assert tokens[3].type == RLangLexer.R_PAR
-    assert tokens[4].type == RLangLexer.NL
-    assert tokens[5].type == RLangLexer.DEDENT
+    assert tokens[1].type == RLangLexer.INIT
+    assert tokens[2].type == RLangLexer.L_PAR
+    assert tokens[3].type == RLangLexer.TRUE
+    assert tokens[4].type == RLangLexer.R_PAR
+    assert tokens[5].type == RLangLexer.NL
+    assert tokens[6].type == RLangLexer.DEDENT
 
-    tokens = tokenize_from_string(lines[2])
+    # tokens = tokenize_from_string(lines[2])
+    # assert tokens[0].type == RLangLexer.INDENT
+    # assert tokens[1].type == RLangLexer.FIND
+    # assert tokens[2].type == RLangLexer.NL
+    # assert tokens[3].type == RLangLexer.DEDENT
+    # assert len(tokens) == 5
+
+    tokens = tokenize_from_string(lines[3])
     assert tokens[0].type == RLangLexer.INDENT
-    assert tokens[1].type == RLangLexer.FIND
-    assert tokens[4].type == RLangLexer.NL
-    assert tokens[5].type == RLangLexer.DEDENT
+    assert tokens[1].type == RLangLexer.UNTIL
+    assert tokens[2].type == RLangLexer.IDENTIFIER
+    assert tokens[3].type == RLangLexer.NL
+    assert tokens[4].type == RLangLexer.DEDENT
+    assert len(tokens) == 6
+
+    # tokens = tokenize_from_string(lines[7])
+    # assert tokens[0].type == RLangLexer.INDENT
+    # assert tokens[1].type == RLangLexer.EXECUTE
+    # assert tokens[2].type == RLangLexer.USE
+    # assert tokens[3].type == RLangLexer.NL
+    # assert tokens[4].type == RLangLexer.DEDENT
+    # assert len(tokens) == 6
+
+    file.close()
+
+    def test_markov_feature():
+        file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/markov_feature.rlang", "r")
+        lines = file.readlines()
+        for line in file:
+            tokens = tokenize_from_string(line)
+            assert tokens[0].type == RLangLexer.MARKOVFEATURE
+            assert tokens[1].type == RLangLexer.IDENTIFIER
+            assert tokens[2].type == RLangLexer.BIND
+        
+        file.seek(0)
+        lines = file.readlines()
+        tokens = tokenize_from_string(lines[1])
+        assert tokens[3].type == RLangLexer.S_PRIME
+        assert tokens[4].type == RLangLexer.MINUS
+        assert tokens[5].type == RLangLexer.S
+        assert len(tokens) == 8
+
+    file.close()
+        
+    
+    
+
