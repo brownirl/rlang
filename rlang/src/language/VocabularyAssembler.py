@@ -1,7 +1,32 @@
+import importlib
+import os
+
+
 class VocabularyAssembler:
-    # Parse through objects in vocab, maybe return a list of lmdp objects
-    def parseVocab(self, vocab_json):
-        modules = vocab_json['modules']
-        vocabulary = vocab_json['vocabulary']
-        print(modules)
-        print(vocabulary)
+    def __init__(self, vocab_json):
+        self.lmdp_objects = {}
+
+        # Add grounding modules to self.modules
+        modules_json = vocab_json['modules']
+        modules = {}
+
+        for mod_info in modules_json:
+            mname = mod_info['module_name']
+            fname = f"{os.getcwd()}/{mod_info['file_name']}"
+            spec = importlib.util.spec_from_file_location(mname, fname)
+            foo = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(foo)
+            modules.update({mname: foo})
+
+        self.modules = modules
+
+        # import the objects mentioned in vocabulary
+        for k, v in vocab_json['vocabulary'].items():
+            # print(f"Importing {k}")
+            for var_info in v:
+                grounding_info = var_info['grounding'].split('.')
+                grounding_mod_name = grounding_info[0]
+                grounding_var_name = grounding_info[1]
+                grounding_mod = self.modules[grounding_mod_name]
+                the_var = vars(grounding_mod)[grounding_var_name]
+                self.lmdp_objects.update({var_info['name']: the_var})

@@ -1,25 +1,31 @@
 {
   "domain": "gridworld",
-  "state space": {
-    "size": [],
-    "dtype": ""
-  },
-  "action space": {
-    "number of actions": 4
+  "mdp_parameters": {
+    "state_space": {
+      "size": 10,
+      "dtype": "int"
+    },
+    "action_space": {
+      "shape": 5,
+      "dtype": "int"
+    }
   },
   "modules": [
-    "grounding.py"
+    {
+      "module_name": "grounding",
+      "file_name": "grounding.py"
+    }
   ],
   "vocabulary": {
-    "Policy": {
-      "go_to_cell": {
-        "grounding": "go_to_cell"
+    "StateFactor": [
+      {
+        "name": "position_test",
+        "grounding": "grounding.position_test"
+      },
+      {
+        "name": "position_test_2",
+        "grounding": "grounding.position_test_2"
       }
-    },
-    "StateFactor": {
-      "position_test": {
-        "grounding": "position_test"
-      }
-    }
+    ]
   }
 }
