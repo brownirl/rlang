@@ -99,7 +99,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.any_bound_var().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        pass
+        print(ctx.lhs)
 
     def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
         variable = None
