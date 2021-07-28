@@ -206,15 +206,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#arith_var_with_trailer.
-    def enterArith_var_with_trailer(self, ctx:RLangParser.Arith_var_with_trailerContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#arith_var_with_trailer.
-    def exitArith_var_with_trailer(self, ctx:RLangParser.Arith_var_with_trailerContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#arith_paren.
     def enterArith_paren(self, ctx:RLangParser.Arith_parenContext):
         pass
@@ -233,12 +224,102 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#boolean_exp.
-    def enterBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
+    # Enter a parse tree produced by RLangParser#arith_bound_var.
+    def enterArith_bound_var(self, ctx:RLangParser.Arith_bound_varContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#boolean_exp.
-    def exitBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
+    # Exit a parse tree produced by RLangParser#arith_bound_var.
+    def exitArith_bound_var(self, ctx:RLangParser.Arith_bound_varContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_bool_eq.
+    def enterBool_bool_eq(self, ctx:RLangParser.Bool_bool_eqContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_bool_eq.
+    def exitBool_bool_eq(self, ctx:RLangParser.Bool_bool_eqContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_not.
+    def enterBool_not(self, ctx:RLangParser.Bool_notContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_not.
+    def exitBool_not(self, ctx:RLangParser.Bool_notContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_in.
+    def enterBool_in(self, ctx:RLangParser.Bool_inContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_in.
+    def exitBool_in(self, ctx:RLangParser.Bool_inContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_or.
+    def enterBool_or(self, ctx:RLangParser.Bool_orContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_or.
+    def exitBool_or(self, ctx:RLangParser.Bool_orContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_paren.
+    def enterBool_paren(self, ctx:RLangParser.Bool_parenContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_paren.
+    def exitBool_paren(self, ctx:RLangParser.Bool_parenContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_arith_eq.
+    def enterBool_arith_eq(self, ctx:RLangParser.Bool_arith_eqContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_arith_eq.
+    def exitBool_arith_eq(self, ctx:RLangParser.Bool_arith_eqContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_bound_var.
+    def enterBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_bound_var.
+    def exitBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_tf.
+    def enterBool_tf(self, ctx:RLangParser.Bool_tfContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_tf.
+    def exitBool_tf(self, ctx:RLangParser.Bool_tfContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_and.
+    def enterBool_and(self, ctx:RLangParser.Bool_andContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_and.
+    def exitBool_and(self, ctx:RLangParser.Bool_andContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_bound_var.
+    def enterAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_bound_var.
+    def exitAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
         pass
 
 

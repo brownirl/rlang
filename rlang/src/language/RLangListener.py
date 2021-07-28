@@ -70,7 +70,8 @@ class RLangListener(RLangParserListener):
         function = None
         number_of_features = None
         # I'm unclear about the StateFeature Class constructor arguments
-        print(ctx.arithmetic_exp().value)
+        # print(ctx.arithmetic_exp().value)
+        self.addVariable(ctx.IDENTIFIER().getText(), None)
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -94,7 +95,13 @@ class RLangListener(RLangParserListener):
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
 
-    def exitArith_var_with_trailer(self, ctx: RLangParser.Arith_var_with_trailerContext):
+    def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
+        ctx.value = ctx.any_bound_var().value
+
+    def exitBool_in(self, ctx: RLangParser.Bool_inContext):
+        pass
+
+    def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
         variable = None
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -112,16 +119,6 @@ class RLangListener(RLangParserListener):
             indexed_variable = reduce(lambda a, b: a[b], trailers)
             variable = indexed_variable
         ctx.value = variable
-
-    # Exit a parse tree produced by RLangParser#arith_times_divide.
-    # def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
-    #     if ctx.DIVIDE() is not None:
-    #         ctx.lhs
-    #     print(type(ctx.DIVIDE()))
-    #     print(type(ctx.TIMES()))
-    #     print(ctx.DIVIDE())
-    #     print(ctx.lhs)
-    #     print(ctx.rhs)
 
     def exitTrailer_index(self, ctx: RLangParser.Trailer_indexContext):
         ctx.value = ctx.index_exp().value

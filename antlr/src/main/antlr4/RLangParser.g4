@@ -41,7 +41,7 @@ effect_stat
 
 reward: REWARD any_number;
 assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) ((IDENTIFIER | S) trailer* | boolean_exp | arithmetic_exp | array_exp);
-constant: CONSTANT IDENTIFIER BIND ((IDENTIFIER | S | S_PRIME) trailer* | boolean_exp | arithmetic_exp | array_exp);
+constant: CONSTANT IDENTIFIER BIND (any_bound_var | boolean_exp | arithmetic_exp | array_exp);
 
 policy_stat
     : execute
@@ -55,21 +55,22 @@ arithmetic_exp
     | lhs=arithmetic_exp (TIMES | DIVIDE) rhs=arithmetic_exp    # arith_times_divide
     | lhs=arithmetic_exp (PLUS | MINUS) rhs=arithmetic_exp      # arith_plus_minus
     | any_number                                                # arith_number
-    | (IDENTIFIER | S | S_PRIME) trailer*                       # arith_var_with_trailer
+    | any_bound_var                                             # arith_bound_var
     ;
 
 boolean_exp
-    : L_PAR boolean_exp R_PAR
-    | NOT boolean_exp
-    | boolean_exp AND boolean_exp
-    | boolean_exp OR boolean_exp
-    | (IDENTIFIER trailer* | array_exp | arithmetic_exp) IN (IDENTIFIER trailer* | array_exp)
-    | A (EQ_TO | NOT_EQ) IDENTIFIER trailer*
-    | boolean_exp (EQ_TO | NOT_EQ) boolean_exp
-    | arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp
-    | (TRUE | FALSE)
-    | (IDENTIFIER | S | S_PRIME) trailer*
+    : L_PAR boolean_exp R_PAR                                                   # bool_paren
+    | boolean_exp AND boolean_exp                                               # bool_and
+    | boolean_exp OR boolean_exp                                                # bool_or
+    | NOT boolean_exp                                                           # bool_not
+    | (lhs=array_exp | arithmetic_exp) IN (rhs=array_exp | any_bound_var)       # bool_in
+    | boolean_exp (EQ_TO | NOT_EQ) boolean_exp                                  # bool_bool_eq
+    | arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp  # bool_arith_eq
+    | any_bound_var                                                             # bool_bound_var
+    | (TRUE | FALSE)                                                            # bool_tf
     ;
+
+any_bound_var: (IDENTIFIER | S | S_PRIME | A) trailer*;
 
 trailer
     : index_exp     # trailer_index
