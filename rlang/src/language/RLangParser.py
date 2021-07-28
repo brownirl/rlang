@@ -2401,6 +2401,8 @@ class RLangParser ( Parser ):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a RLangParser.Boolean_expContext
             super().__init__(parser)
+            self.lhs = None # Boolean_expContext
+            self.rhs = None # Boolean_expContext
             self.copyFrom(ctx)
 
         def boolean_exp(self, i:int=None):
@@ -2448,23 +2450,25 @@ class RLangParser ( Parser ):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a RLangParser.Boolean_expContext
             super().__init__(parser)
-            self.lhs = None # Array_expContext
-            self.rhs = None # Array_expContext
+            self.lhs_arr = None # Array_expContext
+            self.lhs_arith = None # Arithmetic_expContext
+            self.rhs_arr = None # Array_expContext
+            self.rhs_bound_var = None # Any_bound_varContext
             self.copyFrom(ctx)
 
         def IN(self):
             return self.getToken(RLangParser.IN, 0)
-        def arithmetic_exp(self):
-            return self.getTypedRuleContext(RLangParser.Arithmetic_expContext,0)
-
-        def any_bound_var(self):
-            return self.getTypedRuleContext(RLangParser.Any_bound_varContext,0)
-
         def array_exp(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.Array_expContext)
             else:
                 return self.getTypedRuleContext(RLangParser.Array_expContext,i)
+
+        def arithmetic_exp(self):
+            return self.getTypedRuleContext(RLangParser.Arithmetic_expContext,0)
+
+        def any_bound_var(self):
+            return self.getTypedRuleContext(RLangParser.Any_bound_varContext,0)
 
 
         def enterRule(self, listener:ParseTreeListener):
@@ -2527,6 +2531,8 @@ class RLangParser ( Parser ):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a RLangParser.Boolean_expContext
             super().__init__(parser)
+            self.lhs = None # Arithmetic_expContext
+            self.rhs = None # Arithmetic_expContext
             self.copyFrom(ctx)
 
         def arithmetic_exp(self, i:int=None):
@@ -2666,11 +2672,11 @@ class RLangParser ( Parser ):
                 token = self._input.LA(1)
                 if token in [RLangParser.L_BRK]:
                     self.state = 361
-                    localctx.lhs = self.array_exp()
+                    localctx.lhs_arr = self.array_exp()
                     pass
                 elif token in [RLangParser.S_PRIME, RLangParser.S, RLangParser.A, RLangParser.L_PAR, RLangParser.MINUS, RLangParser.IDENTIFIER, RLangParser.DECIMAL, RLangParser.INTEGER]:
                     self.state = 362
-                    self.arithmetic_exp(0)
+                    localctx.lhs_arith = self.arithmetic_exp(0)
                     pass
                 else:
                     raise NoViableAltException(self)
@@ -2682,11 +2688,11 @@ class RLangParser ( Parser ):
                 token = self._input.LA(1)
                 if token in [RLangParser.L_BRK]:
                     self.state = 366
-                    localctx.rhs = self.array_exp()
+                    localctx.rhs_arr = self.array_exp()
                     pass
                 elif token in [RLangParser.S_PRIME, RLangParser.S, RLangParser.A, RLangParser.IDENTIFIER]:
                     self.state = 367
-                    self.any_bound_var()
+                    localctx.rhs_bound_var = self.any_bound_var()
                     pass
                 else:
                     raise NoViableAltException(self)
@@ -2698,7 +2704,7 @@ class RLangParser ( Parser ):
                 self._ctx = localctx
                 _prevctx = localctx
                 self.state = 370
-                self.arithmetic_exp(0)
+                localctx.lhs = self.arithmetic_exp(0)
                 self.state = 371
                 _la = self._input.LA(1)
                 if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.EQ_TO) | (1 << RLangParser.GT_EQ) | (1 << RLangParser.LT_EQ) | (1 << RLangParser.NOT_EQ) | (1 << RLangParser.LT) | (1 << RLangParser.GT))) != 0)):
@@ -2707,7 +2713,7 @@ class RLangParser ( Parser ):
                     self._errHandler.reportMatch(self)
                     self.consume()
                 self.state = 372
-                self.arithmetic_exp(0)
+                localctx.rhs = self.arithmetic_exp(0)
                 pass
 
             elif la_ == 5:
@@ -2772,6 +2778,7 @@ class RLangParser ( Parser ):
 
                     elif la_ == 3:
                         localctx = RLangParser.Bool_bool_eqContext(self, RLangParser.Boolean_expContext(self, _parentctx, _parentState))
+                        localctx.lhs = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_boolean_exp)
                         self.state = 384
                         if not self.precpred(self._ctx, 4):
@@ -2785,7 +2792,7 @@ class RLangParser ( Parser ):
                             self._errHandler.reportMatch(self)
                             self.consume()
                         self.state = 386
-                        self.boolean_exp(5)
+                        localctx.rhs = self.boolean_exp(5)
                         pass
 
              

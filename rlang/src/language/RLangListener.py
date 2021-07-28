@@ -67,6 +67,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_factor.name, new_factor)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
+        # TODO: What is ctx.value here?
         function = None
         number_of_features = None
         # I'm unclear about the StateFeature Class constructor arguments
@@ -98,8 +99,58 @@ class RLangListener(RLangParserListener):
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         ctx.value = ctx.any_bound_var().value
 
+    def exitBool_paren(self, ctx: RLangParser.Bool_parenContext):
+        ctx.value = ctx.boolean_exp().value
+
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        print(ctx.lhs)
+        # TODO: Investigate StateFactor .in_ method
+        lhs = None
+        rhs = None
+        if ctx.lhs_arr is not None:
+            lhs = ctx.lhs_arr.value
+        elif ctx.lhs_arith is not None:
+            lhs = ctx.lhs_arith.value
+        if ctx.rhs_arr is not None:
+            rhs = ctx.rhs_arr.value
+        elif ctx.rhs_bound_var is not None:
+            rhs = ctx.rhs_bound_var.value
+        print(lhs)
+        print(rhs)
+
+    def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
+        # TODO: Should ctx.value be a callable here as well? Check BooleanFunClass.py
+        bool_operation = None
+        if ctx.EQ_TO() is not None:
+            bool_operation = lambda a, b: a == b
+        elif ctx.NOT_EQ() is not None:
+            bool_operation = lambda a, b: a != b
+        ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+
+    def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
+        # TODO: Should ctx.value be a callable lambda function? A RealExpression?
+        bool_operation = None
+        if ctx.EQ_TO() is not None:
+            bool_operation = lambda a, b: a == b
+        elif ctx.LT() is not None:
+            bool_operation = lambda a, b: a < b
+        elif ctx.GT() is not None:
+            bool_operation = lambda a, b: a > b
+        elif ctx.LT_EQ() is not None:
+            bool_operation = lambda a, b: a <= b
+        elif ctx.GT_EQ() is not None:
+            bool_operation = lambda a, b: a >= b
+        elif ctx.NOT_EQ() is not None:
+            bool_operation = lambda a, b: a != b
+        ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+
+    def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
+        ctx.value = ctx.any_bound_var().value
+
+    def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
+        if ctx.TRUE() is not None:
+            ctx.value = True
+        elif ctx.FALSE() is not None:
+            ctx.value = False
 
     def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
         variable = None
