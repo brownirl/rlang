@@ -1,8 +1,11 @@
 from functools import reduce
 
+import numpy as np
 from antlr4 import *
 import json
 
+from lmdp.grounding.real.RealExpressionClass import RealConstant, RealExpression
+from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
 from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from lmdp import LMDP
 from .RLangLexer import RLangLexer
@@ -18,6 +21,7 @@ class RLangListener(RLangParserListener):
         self.vocab_fnames = []
         self.grounded_vars = {}
         self.new_vars = {}
+        self.state_size = None  # TODO: Refactor this with dataclass about the MDP
 
     # This function add the lmdp objects in the vocabulary files to self.grounded_vars
     # And probably keep track of object names in the vocab for later reference from the rlang file
@@ -26,10 +30,12 @@ class RLangListener(RLangParserListener):
             with open(fname, 'r') as f:
                 vocab = json.load(f)
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler callable
-                return VocabularyAssembler(vocab).lmdp_objects
+                voc_assembler = VocabularyAssembler(vocab)
+                self.grounded_vars.update(voc_assembler.lmdp_objects)
+                self.state_size = voc_assembler.state_size
 
         for fname in self.vocab_fnames:
-            self.grounded_vars.update(parseVocabFile(fname))
+            parseVocabFile(fname)
 
     def retrieveVariable(self, variable_name):
         if variable_name in self.grounded_vars.keys():
@@ -67,12 +73,16 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_factor.name, new_factor)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
-        # TODO: What is ctx.value here?
-        function = None
-        number_of_features = None
-        # I'm unclear about the StateFeature Class constructor arguments
-        # print(ctx.arithmetic_exp().value)
-        self.addVariable(ctx.IDENTIFIER().getText(), None)
+        arith_exp = ctx.arithmetic_exp().value
+        new_feature = None
+        if isinstance(arith_exp, StateFactor):
+            new_feature = StateFeature(lambda **args: arith_exp(args), arith_exp.number_of_features(),
+                                       variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
+        else:
+            # TODO: Keep track of size of arith_exp for number_of_features. hardcoded to 1
+            new_feature = StateFeature(arith_exp, 1, name=ctx.IDENTIFIER().getText())
+
+        self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -83,7 +93,7 @@ class RLangListener(RLangParserListener):
             operation = lambda a, b: a * b
         elif ctx.DIVIDE() is not None:
             operation = lambda a, b: a / b
-        ctx.value = operation(ctx.lhs.value, ctx.rhs.value)
+        ctx.value = lambda **args: operation(ctx.lhs.value(args), ctx.rhs.value(args))
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
         operation = None
@@ -91,7 +101,7 @@ class RLangListener(RLangParserListener):
             operation = lambda a, b: a + b
         elif ctx.MINUS() is not None:
             operation = lambda a, b: a - b
-        ctx.value = operation(ctx.lhs.value, ctx.rhs.value)
+        ctx.value = lambda **args: operation(ctx.lhs.value(args), ctx.rhs.value(args))
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
@@ -114,8 +124,8 @@ class RLangListener(RLangParserListener):
             rhs = ctx.rhs_arr.value
         elif ctx.rhs_bound_var is not None:
             rhs = ctx.rhs_bound_var.value
-        print(lhs)
-        print(rhs)
+        # print(lhs)
+        # print(rhs)
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
         # TODO: Should ctx.value be a callable here as well? Check BooleanFunClass.py
@@ -124,7 +134,7 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a == b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+        ctx.value = lambda: bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
         # TODO: Should ctx.value be a callable lambda function? A RealExpression?
@@ -141,7 +151,8 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a >= b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+        # TODO: What about if ctx.lhs.value is a StateFeature and needs a state variable?
+        ctx.value = lambda: bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         ctx.value = ctx.any_bound_var().value
@@ -157,19 +168,26 @@ class RLangListener(RLangParserListener):
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
         elif ctx.S() is not None:
-            # TODO: Support this - look in ExpressionsClass.py
-            # print(ctx.S())
+            # TODO: Support this
+            variable = S
             pass
         elif ctx.S_PRIME() is not None:
             # TODO: Support this
-            # print(ctx.S_PRIME())
+            variable = S_prime
             pass
+        elif ctx.A() is not None:
+            # TODO: Support this
+            variable = A
         if ctx.trailer():  # if it's not empty
-            trailers = list(map(lambda x: x.value, ctx.trailer()))
+            trailers = list(map(lambda x: x.value(), ctx.trailer()))
             trailers.insert(0, variable)
+            # TODO: this needs to change based on type(variable)
+            # print(variable)
+            # print(trailers)
             indexed_variable = reduce(lambda a, b: a[b], trailers)
             variable = indexed_variable
         ctx.value = variable
+        # print(type(variable))
 
     def exitTrailer_index(self, ctx: RLangParser.Trailer_indexContext):
         ctx.value = ctx.index_exp().value
@@ -202,7 +220,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.any_decimal().value
 
     def enterAny_integer(self, ctx: RLangParser.Any_integerContext):
-        ctx.value = int(ctx.getText())
+        ctx.value = RealConstant(int(ctx.getText()))
 
     def enterAny_decimal(self, ctx: RLangParser.Any_decimalContext):
-        ctx.value = float(ctx.getText())
+        ctx.value = RealConstant(float(ctx.getText()))
