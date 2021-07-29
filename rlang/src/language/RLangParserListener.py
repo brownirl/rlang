@@ -35,12 +35,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#decs.
-    def enterDecs(self, ctx:RLangParser.DecsContext):
+    # Enter a parse tree produced by RLangParser#declarations.
+    def enterDeclarations(self, ctx:RLangParser.DeclarationsContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#decs.
-    def exitDecs(self, ctx:RLangParser.DecsContext):
+    # Exit a parse tree produced by RLangParser#declarations.
+    def exitDeclarations(self, ctx:RLangParser.DeclarationsContext):
         pass
 
 
@@ -188,21 +188,165 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#arithmetic_exp.
-    def enterArithmetic_exp(self, ctx:RLangParser.Arithmetic_expContext):
+    # Enter a parse tree produced by RLangParser#arith_number.
+    def enterArith_number(self, ctx:RLangParser.Arith_numberContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#arithmetic_exp.
-    def exitArithmetic_exp(self, ctx:RLangParser.Arithmetic_expContext):
+    # Exit a parse tree produced by RLangParser#arith_number.
+    def exitArith_number(self, ctx:RLangParser.Arith_numberContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#boolean_exp.
-    def enterBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
+    # Enter a parse tree produced by RLangParser#arith_plus_minus.
+    def enterArith_plus_minus(self, ctx:RLangParser.Arith_plus_minusContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#boolean_exp.
-    def exitBoolean_exp(self, ctx:RLangParser.Boolean_expContext):
+    # Exit a parse tree produced by RLangParser#arith_plus_minus.
+    def exitArith_plus_minus(self, ctx:RLangParser.Arith_plus_minusContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_paren.
+    def enterArith_paren(self, ctx:RLangParser.Arith_parenContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_paren.
+    def exitArith_paren(self, ctx:RLangParser.Arith_parenContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_times_divide.
+    def enterArith_times_divide(self, ctx:RLangParser.Arith_times_divideContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_times_divide.
+    def exitArith_times_divide(self, ctx:RLangParser.Arith_times_divideContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_bound_var.
+    def enterArith_bound_var(self, ctx:RLangParser.Arith_bound_varContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_bound_var.
+    def exitArith_bound_var(self, ctx:RLangParser.Arith_bound_varContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_bool_eq.
+    def enterBool_bool_eq(self, ctx:RLangParser.Bool_bool_eqContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_bool_eq.
+    def exitBool_bool_eq(self, ctx:RLangParser.Bool_bool_eqContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_not.
+    def enterBool_not(self, ctx:RLangParser.Bool_notContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_not.
+    def exitBool_not(self, ctx:RLangParser.Bool_notContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_in.
+    def enterBool_in(self, ctx:RLangParser.Bool_inContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_in.
+    def exitBool_in(self, ctx:RLangParser.Bool_inContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_or.
+    def enterBool_or(self, ctx:RLangParser.Bool_orContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_or.
+    def exitBool_or(self, ctx:RLangParser.Bool_orContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_paren.
+    def enterBool_paren(self, ctx:RLangParser.Bool_parenContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_paren.
+    def exitBool_paren(self, ctx:RLangParser.Bool_parenContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_arith_eq.
+    def enterBool_arith_eq(self, ctx:RLangParser.Bool_arith_eqContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_arith_eq.
+    def exitBool_arith_eq(self, ctx:RLangParser.Bool_arith_eqContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_bound_var.
+    def enterBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_bound_var.
+    def exitBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_tf.
+    def enterBool_tf(self, ctx:RLangParser.Bool_tfContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_tf.
+    def exitBool_tf(self, ctx:RLangParser.Bool_tfContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_and.
+    def enterBool_and(self, ctx:RLangParser.Bool_andContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_and.
+    def exitBool_and(self, ctx:RLangParser.Bool_andContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_bound_var.
+    def enterAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_bound_var.
+    def exitAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#trailer_index.
+    def enterTrailer_index(self, ctx:RLangParser.Trailer_indexContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#trailer_index.
+    def exitTrailer_index(self, ctx:RLangParser.Trailer_indexContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#trailer_slice.
+    def enterTrailer_slice(self, ctx:RLangParser.Trailer_sliceContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#trailer_slice.
+    def exitTrailer_slice(self, ctx:RLangParser.Trailer_sliceContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#index_exp.
+    def enterIndex_exp(self, ctx:RLangParser.Index_expContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#index_exp.
+    def exitIndex_exp(self, ctx:RLangParser.Index_expContext):
         pass
 
 
@@ -215,12 +359,48 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#trailer.
-    def enterTrailer(self, ctx:RLangParser.TrailerContext):
+    # Enter a parse tree produced by RLangParser#slice_exp.
+    def enterSlice_exp(self, ctx:RLangParser.Slice_expContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#trailer.
-    def exitTrailer(self, ctx:RLangParser.TrailerContext):
+    # Exit a parse tree produced by RLangParser#slice_exp.
+    def exitSlice_exp(self, ctx:RLangParser.Slice_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_num_int.
+    def enterAny_num_int(self, ctx:RLangParser.Any_num_intContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_num_int.
+    def exitAny_num_int(self, ctx:RLangParser.Any_num_intContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_num_dec.
+    def enterAny_num_dec(self, ctx:RLangParser.Any_num_decContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_num_dec.
+    def exitAny_num_dec(self, ctx:RLangParser.Any_num_decContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_integer.
+    def enterAny_integer(self, ctx:RLangParser.Any_integerContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_integer.
+    def exitAny_integer(self, ctx:RLangParser.Any_integerContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_decimal.
+    def enterAny_decimal(self, ctx:RLangParser.Any_decimalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_decimal.
+    def exitAny_decimal(self, ctx:RLangParser.Any_decimalContext):
         pass
 
 

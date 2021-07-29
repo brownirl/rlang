@@ -1,5 +1,6 @@
 import sys, os
 
+from grounding.expressions.ExpressionsClass import S
 from lmdp.grounding.states.StateGroundingClass import StateFactor
 
 sys.path.append(os.path.abspath("./"))

@@ -4,12 +4,12 @@ options {
     tokenVocab=RLangLexer;
 }
 
-program: NL* imports decs NL*;
+program: NL* imports declarations NL*;
 
 imports: (import_stat NL+)*;
 import_stat: IMPORT FNAME;
 
-decs: dec*;
+declarations: dec*;
 dec
     : constant NL+
     | factor NL+
@@ -23,7 +23,7 @@ dec
     | policy
     ;
 
-factor: FACTOR IDENTIFIER BIND S trailer?;
+factor: FACTOR IDENTIFIER BIND S (trailer | array_exp)?;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
 action: ACTION IDENTIFIER BIND INTEGER;
@@ -39,9 +39,9 @@ effect_stat
     | constant
     ;
 
-reward: REWARD (MINUS)? (DECIMAL | INTEGER);
+reward: REWARD any_number;
 assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) ((IDENTIFIER | S) trailer* | boolean_exp | arithmetic_exp | array_exp);
-constant: CONSTANT IDENTIFIER BIND ((IDENTIFIER | S | S_PRIME) trailer* | boolean_exp | arithmetic_exp | array_exp);
+constant: CONSTANT IDENTIFIER BIND (any_bound_var | boolean_exp | arithmetic_exp | array_exp);
 
 policy_stat
     : execute
@@ -51,29 +51,40 @@ policy_stat
 execute: EXECUTE IDENTIFIER;
 
 arithmetic_exp
-    : L_PAR arithmetic_exp R_PAR
-    | arithmetic_exp (TIMES | DIVIDE) arithmetic_exp
-    | arithmetic_exp (PLUS | MINUS) arithmetic_exp
-    | (MINUS)? (DECIMAL | INTEGER)
-    | (IDENTIFIER | S | S_PRIME) trailer*
+    : L_PAR arithmetic_exp R_PAR                                # arith_paren
+    | lhs=arithmetic_exp (TIMES | DIVIDE) rhs=arithmetic_exp    # arith_times_divide
+    | lhs=arithmetic_exp (PLUS | MINUS) rhs=arithmetic_exp      # arith_plus_minus
+    | any_number                                                # arith_number
+    | any_bound_var                                             # arith_bound_var
     ;
 
 boolean_exp
-    : L_PAR boolean_exp R_PAR
-    | NOT boolean_exp
-    | boolean_exp AND boolean_exp
-    | boolean_exp OR boolean_exp
-    | (IDENTIFIER trailer* | array_exp | arithmetic_exp) IN (IDENTIFIER trailer* | array_exp)
-    | A (EQ_TO | NOT_EQ) IDENTIFIER trailer*
-    | boolean_exp (EQ_TO | NOT_EQ) boolean_exp
-    | arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp
-    | (TRUE | FALSE)
-    | (IDENTIFIER | S | S_PRIME) trailer*
+    : L_PAR boolean_exp R_PAR                                                   # bool_paren
+    | boolean_exp AND boolean_exp                                               # bool_and
+    | boolean_exp OR boolean_exp                                                # bool_or
+    | NOT boolean_exp                                                           # bool_not
+    | (lhs=array_exp | arithmetic_exp) IN (rhs=array_exp | any_bound_var)       # bool_in
+    | boolean_exp (EQ_TO | NOT_EQ) boolean_exp                                  # bool_bool_eq
+    | arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp  # bool_arith_eq
+    | any_bound_var                                                             # bool_bound_var
+    | (TRUE | FALSE)                                                            # bool_tf
     ;
 
-array_exp: L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK;
+any_bound_var: (IDENTIFIER | S | S_PRIME | A) trailer*;
 
 trailer
-    : L_BRK (MINUS)? INTEGER (COM (MINUS)? INTEGER)* R_BRK
-    | L_BRK ((MINUS)? INTEGER)? COL ((MINUS)? INTEGER)? R_BRK
+    : index_exp     # trailer_index
+    | slice_exp     # trailer_slice
     ;
+
+index_exp: L_BRK any_integer R_BRK;
+array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)+ R_BRK;
+slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
+
+any_number
+    : any_integer   # any_num_int
+    | any_decimal   # any_num_dec
+    ;
+
+any_integer: (MINUS)? INTEGER;
+any_decimal: (MINUS)? DECIMAL;
