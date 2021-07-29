@@ -1,7 +1,7 @@
 from lmdp.grounding.states.StateGroundingClass import StateFeature
 from lmdp.grounding.states.PredicateClass import Predicate, any_state
 from lmdp.grounding.states.Effect import PredictiveEffect
-from lmdp.grounding.booleans.BooleanFunClass import bool_true
+from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE
 
 
 def predicate(name=None):
@@ -12,7 +12,7 @@ def predicate(name=None):
 
 
 def effect(func):
-    return PredictiveEffect(bool_true, func)
+    return PredictiveEffect(BOOL_TRUE, func)
 
 
 def state_feature(dim=1):

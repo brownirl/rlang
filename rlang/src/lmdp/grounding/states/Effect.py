@@ -13,7 +13,7 @@
 '''
 
 from lmdp.grounding.expressions.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_true, bool_false
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, BOOL_TRUE, BOOL_FALSE
 from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
 from lmdp.grounding.states.PredicateClass import Predicate
 from lmdp.grounding.states.StateGroundingClass import StateFactor
@@ -92,6 +92,6 @@ if __name__ == "__main__":
     s = State(data=np.array([1, 0]))
     s_prime = State(data=np.array([2, 1]))
     s_prime_1 = State(data=np.array([1, 1]))
-    up = Effect(bool_true, next_state(x) == x + 1)
+    up = Effect(BOOL_TRUE, next_state(x) == x + 1)
     # up = EffectSymbol(next_state(x) == x + 1)(s, "up")
     print(f"{up(s, 'up')(s_prime)} == True")
