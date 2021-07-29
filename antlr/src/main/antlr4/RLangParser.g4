@@ -65,7 +65,7 @@ boolean_exp
     | NOT boolean_exp                                           # bool_not
     | (lhs_arr=array_exp | lhs_arith=arithmetic_exp) IN (rhs_arr=array_exp | rhs_bound_var=any_bound_var)   # bool_in
     | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq
-    | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp                      # bool_arith_eq
+    | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_arith_eq
     | any_bound_var                                             # bool_bound_var
     | (TRUE | FALSE)                                            # bool_tf
     ;

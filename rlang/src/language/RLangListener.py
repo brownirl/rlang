@@ -6,7 +6,7 @@ from antlr4 import *
 import json
 
 from lmdp.grounding.states import Predicate
-from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE
+from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
 from lmdp.grounding.real.RealExpressionClass import RealConstant, RealExpression
 from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
 from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
@@ -54,11 +54,12 @@ class RLangListener(RLangParserListener):
         self.new_vars.update({variable_name: variable})
 
     def exitProgram(self, ctx: RLangParser.ProgramContext):
-        # This is only for DEBUG purposes
+        # TODO: This is only for DEBUG purposes
         print(f"grounded_vars: {self.grounded_vars}")
         print(f"new_vars: {self.new_vars}")
         print(self.new_vars['position'](np.array([0, 0, 0, 0])))
         print(self.new_vars['x'](np.array([0, 1, 0, 0])))
+        print(self.new_vars['reached_goal'](np.array([4, 1, 0, 0])))
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -82,7 +83,7 @@ class RLangListener(RLangParserListener):
         new_feature = None
         # print(type(arith_exp))
         if isinstance(arith_exp, StateFactor):
-            new_feature = StateFeature(lambda *args: arith_exp(*args), arith_exp.number_of_features(),
+            new_feature = StateFeature(lambda *args, **kwargs: arith_exp(*args, **kwargs), arith_exp.number_of_features(),
                                        variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
         elif isinstance(arith_exp, types.FunctionType):
             # TODO: Keep track of size of arith_exp for number_of_features. hardcoded to 1
@@ -92,9 +93,11 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
 
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
+        # print(type(ctx.boolean_exp().value))
         new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
         self.addVariable(ctx.IDENTIFIER().getText(), new_predicate)
-        print(type(new_predicate))
+        # print(type(new_predicate))
+        # print(new_predicate(np.array([0, 0, 0, 0])))
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -105,7 +108,7 @@ class RLangListener(RLangParserListener):
             operation = lambda a, b: a * b
         elif ctx.DIVIDE() is not None:
             operation = lambda a, b: a / b
-        ctx.value = lambda *args: operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
+        ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
         operation = None
@@ -113,7 +116,7 @@ class RLangListener(RLangParserListener):
             operation = lambda a, b: a + b
         elif ctx.MINUS() is not None:
             operation = lambda a, b: a - b
-        ctx.value = lambda *args: operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
+        ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
@@ -125,13 +128,13 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.boolean_exp().value
 
     def exitBool_and(self, ctx: RLangParser.Bool_andContext):
-        ctx.value = ctx.lhs.value and ctx.rhs.value
+        ctx.value = ctx.lhs.value.and_(ctx.rhs.value)
 
     def exitBool_or(self, ctx: RLangParser.Bool_orContext):
-        ctx.value = ctx.lhs.value or ctx.rhs.value
+        ctx.value = ctx.lhs.value.or_(ctx.rhs.value)
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
-        ctx.value = not ctx.boolean_exp().value
+        ctx.value = ctx.boolean_exp().value.not_()
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
         # TODO: Investigate StateFactor .in_ method
@@ -155,7 +158,7 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a == b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = lambda *args: bool_operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
+        ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
         # TODO: Should ctx.value be a callable lambda function? A RealExpression?
@@ -173,10 +176,24 @@ class RLangListener(RLangParserListener):
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
         # TODO: What about if ctx.lhs.value is a StateFeature and needs a state variable?
-        print(type(ctx.lhs.value))
-        print(type(ctx.rhs.value))
+        # print(type(ctx.lhs.value))
+        # print(ctx.lhs.value(np.array([0, 1, 2])))
+        # print(type(ctx.rhs.value))
+        # print(ctx.rhs.value(state=np.array([0, 1, 2])))
         # TODO: This breaks with function and RealExpression
-        ctx.value = lambda *args: bool_operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
+        fun = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        ctx.value = BooleanExpression(fun, ["state"])
+
+        # def testooo(*args, **kwargs):
+        #     print(kwargs.items())
+        #
+        # def unwrap_args(*args, **kwargs):
+        #     return kwargs['state']
+        #
+        # g = BooleanExpression(unwrap_args, ["state"])
+        # print(g(np.array([0, 1, 2])))
+        # print(fun(np.array([0, 1, 2])))
+        # print(ctx.value(np.array([0, 1, 2])))
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         ctx.value = ctx.any_bound_var().value

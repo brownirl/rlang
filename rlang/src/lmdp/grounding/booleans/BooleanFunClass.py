@@ -31,12 +31,13 @@ class BooleanExpression(Expression):
         # if (self == BOOL_FALSE or other == BOOL_FALSE):
         #     return BOOL_FALSE
         # generate function 
-        if (isinstance(other, BooleanExpression) or isinstance(other, Expression)):
+        if isinstance(other, BooleanExpression) or isinstance(other, Expression):
+            # TODO: This breaks when self is False and other is True
             return BooleanExpression(partial(_conj, self, other),
                                      domain=self.domain() + other.domain(),
                                      operator='and',
                                      operands=[self, other])
-        elif (isinstance(other, bool)):
+        elif isinstance(other, bool):
             if not other:
                 return BOOL_FALSE
             return self
@@ -50,12 +51,12 @@ class BooleanExpression(Expression):
         # if (self == BOOL_FALSE or other == BOOL_FALSE):
         #     return self
         # generate function 
-        if (isinstance(other, BooleanExpression)):
+        if isinstance(other, BooleanExpression):
             return BooleanExpression(partial(_conj, self, other),
                                      domain=self.domain() + other.domain(),
                                      operator='or',
                                      operands=[self, other])
-        elif (isinstance(other, bool)):
+        elif isinstance(other, bool):
             if other:
                 return BOOL_TRUE
             return self
