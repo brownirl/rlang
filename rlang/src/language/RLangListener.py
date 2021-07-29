@@ -58,7 +58,7 @@ class RLangListener(RLangParserListener):
         print(f"grounded_vars: {self.grounded_vars}")
         print(f"new_vars: {self.new_vars}")
         print(self.new_vars['position'](np.array([0, 0, 0, 0])))
-        print(self.new_vars['x'](np.array([0, 0, 0, 0])))
+        print(self.new_vars['x'](np.array([0, 1, 0, 0])))
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -80,14 +80,15 @@ class RLangListener(RLangParserListener):
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value
         new_feature = None
+        # print(type(arith_exp))
         if isinstance(arith_exp, StateFactor):
-            # TODO: Fix this wrapping code, it does not work
-            new_feature = StateFeature(lambda **args: arith_exp(args), arith_exp.number_of_features(),
+            new_feature = StateFeature(lambda *args: arith_exp(*args), arith_exp.number_of_features(),
                                        variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
         elif isinstance(arith_exp, types.FunctionType):
             # TODO: Keep track of size of arith_exp for number_of_features. hardcoded to 1
             new_feature = StateFeature(arith_exp, 1, name=ctx.IDENTIFIER().getText())
-
+        else:
+            print(f"Something else: {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
 
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
@@ -104,7 +105,7 @@ class RLangListener(RLangParserListener):
             operation = lambda a, b: a * b
         elif ctx.DIVIDE() is not None:
             operation = lambda a, b: a / b
-        ctx.value = lambda **args: operation(ctx.lhs.value(args), ctx.rhs.value(args))
+        ctx.value = lambda *args: operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
         operation = None
@@ -112,7 +113,7 @@ class RLangListener(RLangParserListener):
             operation = lambda a, b: a + b
         elif ctx.MINUS() is not None:
             operation = lambda a, b: a - b
-        ctx.value = lambda **args: operation(ctx.lhs.value(args), ctx.rhs.value(args))
+        ctx.value = lambda *args: operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
@@ -154,7 +155,7 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a == b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = lambda **args: bool_operation(ctx.lhs.value(args), ctx.rhs.value(args))
+        ctx.value = lambda *args: bool_operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
         # TODO: Should ctx.value be a callable lambda function? A RealExpression?
@@ -175,7 +176,7 @@ class RLangListener(RLangParserListener):
         print(type(ctx.lhs.value))
         print(type(ctx.rhs.value))
         # TODO: This breaks with function and RealExpression
-        ctx.value = lambda **args: bool_operation(ctx.lhs.value(args), ctx.rhs.value(args))
+        ctx.value = lambda *args: bool_operation(ctx.lhs.value(*args), ctx.rhs.value(*args))
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         ctx.value = ctx.any_bound_var().value

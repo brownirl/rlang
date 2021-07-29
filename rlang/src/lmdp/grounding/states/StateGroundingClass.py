@@ -53,11 +53,14 @@ class StateFactor(Grounding, RealExpression):
             Args:
                 - args[0] must be the state from MDP
         '''
-        if (isinstance(state, np.ndarray)):
-            if (len(state.shape) > 1):
+        # print(type(state))
+        # print(state)
+        if isinstance(state, np.ndarray):
+            if len(state.shape) > 1:
                 state = BatchedState(state)
             else:
                 state = State(state)
+        # print(type(state))
         return state.features()[self.feature_positions]
 
     # def rest(self, state_dim):
