@@ -58,7 +58,7 @@ class RLangListener(RLangParserListener):
         print(f"grounded_vars: {self.grounded_vars}")
         print(f"new_vars: {self.new_vars}")
         print(self.new_vars['position'](np.array([0, 0, 0, 0])))
-        # print(self.new_vars['rr'](np.array([0, 0, 0, 0])))
+        print(self.new_vars['x'](np.array([0, 0, 0, 0])))
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -81,6 +81,7 @@ class RLangListener(RLangParserListener):
         arith_exp = ctx.arithmetic_exp().value
         new_feature = None
         if isinstance(arith_exp, StateFactor):
+            # TODO: Fix this wrapping code, it does not work
             new_feature = StateFeature(lambda **args: arith_exp(args), arith_exp.number_of_features(),
                                        variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
         elif isinstance(arith_exp, types.FunctionType):
@@ -201,7 +202,7 @@ class RLangListener(RLangParserListener):
             # TODO: Support this
             variable = A
         if ctx.trailer():  # if it's not empty
-            trailers = list(map(lambda x: x.value(), ctx.trailer()))
+            trailers = list(map(lambda x: x.value, ctx.trailer()))
             trailers.insert(0, variable)
             # TODO: this needs to change based on type(variable)
             # print(variable)
@@ -218,7 +219,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.slice_exp().value
 
     def exitIndex_exp(self, ctx: RLangParser.Index_expContext):
-        ctx.value = [ctx.any_integer().value()]
+        ctx.value = ctx.any_integer().value()
 
     def exitArray_exp(self, ctx: RLangParser.Array_expContext):
         ctx.value = list(map(lambda x: x.value(), ctx.arr))

@@ -4,7 +4,7 @@ Factor position := S[0]
 
 #Feature adf := (position[1] + 2) * 5 - 6
 #Feature d := (position[0] + 2)
-#Feature x := position[0]
+Feature x := position[0]
 #Feature y := position[1]
 
 #Predicate re := position in [2, 3]
