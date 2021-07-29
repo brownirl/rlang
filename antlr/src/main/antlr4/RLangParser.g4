@@ -60,8 +60,8 @@ arithmetic_exp
 
 boolean_exp
     : L_PAR boolean_exp R_PAR                                   # bool_paren
-    | boolean_exp AND boolean_exp                               # bool_and
-    | boolean_exp OR boolean_exp                                # bool_or
+    | lhs=boolean_exp AND rhs=boolean_exp                       # bool_and
+    | lhs=boolean_exp OR rhs=boolean_exp                        # bool_or
     | NOT boolean_exp                                           # bool_not
     | (lhs_arr=array_exp | lhs_arith=arithmetic_exp) IN (rhs_arr=array_exp | rhs_bound_var=any_bound_var)   # bool_in
     | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq

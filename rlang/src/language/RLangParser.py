@@ -2484,16 +2484,18 @@ class RLangParser ( Parser ):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a RLangParser.Boolean_expContext
             super().__init__(parser)
+            self.lhs = None # Boolean_expContext
+            self.rhs = None # Boolean_expContext
             self.copyFrom(ctx)
 
+        def OR(self):
+            return self.getToken(RLangParser.OR, 0)
         def boolean_exp(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.Boolean_expContext)
             else:
                 return self.getTypedRuleContext(RLangParser.Boolean_expContext,i)
 
-        def OR(self):
-            return self.getToken(RLangParser.OR, 0)
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterBool_or" ):
@@ -2606,16 +2608,18 @@ class RLangParser ( Parser ):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a RLangParser.Boolean_expContext
             super().__init__(parser)
+            self.lhs = None # Boolean_expContext
+            self.rhs = None # Boolean_expContext
             self.copyFrom(ctx)
 
+        def AND(self):
+            return self.getToken(RLangParser.AND, 0)
         def boolean_exp(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(RLangParser.Boolean_expContext)
             else:
                 return self.getTypedRuleContext(RLangParser.Boolean_expContext,i)
 
-        def AND(self):
-            return self.getToken(RLangParser.AND, 0)
 
         def enterRule(self, listener:ParseTreeListener):
             if hasattr( listener, "enterBool_and" ):
@@ -2752,6 +2756,7 @@ class RLangParser ( Parser ):
                     la_ = self._interp.adaptivePredict(self._input,40,self._ctx)
                     if la_ == 1:
                         localctx = RLangParser.Bool_andContext(self, RLangParser.Boolean_expContext(self, _parentctx, _parentState))
+                        localctx.lhs = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_boolean_exp)
                         self.state = 378
                         if not self.precpred(self._ctx, 8):
@@ -2760,11 +2765,12 @@ class RLangParser ( Parser ):
                         self.state = 379
                         self.match(RLangParser.AND)
                         self.state = 380
-                        self.boolean_exp(9)
+                        localctx.rhs = self.boolean_exp(9)
                         pass
 
                     elif la_ == 2:
                         localctx = RLangParser.Bool_orContext(self, RLangParser.Boolean_expContext(self, _parentctx, _parentState))
+                        localctx.lhs = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_boolean_exp)
                         self.state = 381
                         if not self.precpred(self._ctx, 7):
@@ -2773,7 +2779,7 @@ class RLangParser ( Parser ):
                         self.state = 382
                         self.match(RLangParser.OR)
                         self.state = 383
-                        self.boolean_exp(8)
+                        localctx.rhs = self.boolean_exp(8)
                         pass
 
                     elif la_ == 3:
