@@ -26,6 +26,7 @@ def test_predicate_token():
 
     lines = file.readlines()
     tokens = tokenize_from_string(lines[1])
+    assert tokens[3].type == RLangLexer.IDENTIFIER
     assert tokens[4].type == RLangLexer.NOT_EQ
     assert tokens[5].type == RLangLexer.IDENTIFIER
     assert tokens[6].type == RLangLexer.AND
