@@ -32,7 +32,7 @@ class StateFactor(Grounding, RealExpression):
         '''
         if (name is None):
             name = "state-factor-" + str(StateFactor.counter)
-        if (isinstance(feature_positions, int)):
+        if isinstance(feature_positions, int):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
         Grounding.__init__(self, name)

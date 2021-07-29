@@ -53,13 +53,13 @@ class RLangListener(RLangParserListener):
             raise AlreadyBoundError(variable_name)
         self.new_vars.update({variable_name: variable})
 
-    def exitProgram(self, ctx: RLangParser.ProgramContext):
-        # TODO: This is only for DEBUG purposes
-        print(f"grounded_vars: {self.grounded_vars}")
-        print(f"new_vars: {self.new_vars}")
-        print(self.new_vars['position'](np.array([0, 0, 0, 0])))
-        print(self.new_vars['x'](np.array([0, 1, 0, 0])))
-        print(self.new_vars['reached_goal'](np.array([4, 1, 0, 0])))
+    # def exitProgram(self, ctx: RLangParser.ProgramContext):
+    #     # TODO: This is only for DEBUG purposes
+    #     print(f"grounded_vars: {self.grounded_vars}")
+    #     print(f"new_vars: {self.new_vars}")
+    #     print(self.new_vars['position'](np.array([0, 0, 0, 0])))
+    #     print(self.new_vars['x'](np.array([0, 1, 0, 0])))
+    #     print(self.new_vars['reached_goal'](np.array([4, 1, 0, 0])))
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -69,7 +69,7 @@ class RLangListener(RLangParserListener):
         self.parseVocabFiles()
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        feature_positions = None
+        feature_positions = list(range(self.state_size)) if self.state_size is not None else None
         if ctx.trailer() is not None:
             # TODO: support slice trailers! ctx.trailer() can be an index or a slice
             feature_positions = ctx.trailer().value
@@ -161,7 +161,6 @@ class RLangListener(RLangParserListener):
         ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
-        # TODO: Should ctx.value be a callable lambda function? A RealExpression?
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
@@ -183,17 +182,6 @@ class RLangListener(RLangParserListener):
         # TODO: This breaks with function and RealExpression
         fun = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
         ctx.value = BooleanExpression(fun, ["state"])
-
-        # def testooo(*args, **kwargs):
-        #     print(kwargs.items())
-        #
-        # def unwrap_args(*args, **kwargs):
-        #     return kwargs['state']
-        #
-        # g = BooleanExpression(unwrap_args, ["state"])
-        # print(g(np.array([0, 1, 2])))
-        # print(fun(np.array([0, 1, 2])))
-        # print(ctx.value(np.array([0, 1, 2])))
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         ctx.value = ctx.any_bound_var().value
