@@ -96,7 +96,6 @@ class RLangListener(RLangParserListener):
         # print(type(ctx.boolean_exp().value))
         new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
         self.addVariable(ctx.IDENTIFIER().getText(), new_predicate)
-        # print(type(new_predicate))
         # print(new_predicate(np.array([0, 0, 0, 0])))
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):

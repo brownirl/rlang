@@ -1,6 +1,8 @@
 import numpy as np
 from antlr4 import *
 
+from rlang.src.lmdp.grounding.states import Predicate
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
 from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
@@ -64,8 +66,13 @@ def test_Feature():
 
 
 def test_Predicate():
-    pass
+    hi_parsed = listener_from_input("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False").new_vars['hi']
+    position = StateFactor([0, 1], "position")
+    x = StateFeature(position[0], 1)
+    hi = Predicate(x == 1 and BOOL_TRUE.or_(BOOL_FALSE))
+    assert hi_parsed == hi
+    assert hi_parsed(np.array([0, 1, 2])) == hi(np.array([0, 1, 2]))
 
 
 if __name__ == "__main__":
-    test_Feature()
+    test_Predicate()
