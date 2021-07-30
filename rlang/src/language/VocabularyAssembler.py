@@ -4,8 +4,15 @@ import os
 
 class VocabularyAssembler:
     def __init__(self, vocab_json):
+        self.modules = {}
         self.lmdp_objects = {}
+        self.state_size = None  # TODO: Replace this with a dataclass for MDP info (i.e. state size, dtype, etc.)
 
+        self.import_modules(vocab_json)
+        self.import_lmdp_objects(vocab_json)
+        self.retrieve_state_size(vocab_json)
+
+    def import_modules(self, vocab_json):
         # Add grounding modules to self.modules
         modules_json = vocab_json['modules']
         modules = {}
@@ -20,6 +27,7 @@ class VocabularyAssembler:
 
         self.modules = modules
 
+    def import_lmdp_objects(self, vocab_json):
         # import the objects mentioned in vocabulary
         for k, v in vocab_json['vocabulary'].items():
             # print(f"Importing {k}")
@@ -30,3 +38,6 @@ class VocabularyAssembler:
                 grounding_mod = self.modules[grounding_mod_name]
                 the_var = vars(grounding_mod)[grounding_var_name]
                 self.lmdp_objects.update({var_info['name']: the_var})
+
+    def retrieve_state_size(self, vocab_json):
+        self.state_size = vocab_json['mdp_parameters']['state_space']['size']

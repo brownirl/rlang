@@ -19,7 +19,7 @@ from lmdp.grounding.booleans.BooleanFunClass import any_action, bool_not
 from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 from lmdp.grounding.states.Effect import Effect
 from lmdp.grounding import *
-from lmdp.grounding.booleans.BooleanFunClass import bool_true
+from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE
 
 WHEN_CTX = True
 OTHERWISE_CTX = False
@@ -38,7 +38,7 @@ class Conditional:
         self.lmdp = lmdp
         # self.conditional_stack = deque([boolean_expression])
         self.contexts = list()
-        self.current_context = Context(WHEN_CTX, boolean_expression, bool_true)
+        self.current_context = Context(WHEN_CTX, boolean_expression, BOOL_TRUE)
 
         # definitions
         self.subpolicies = []

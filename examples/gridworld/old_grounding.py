@@ -1,6 +1,8 @@
 import sys, os
 
+from grounding.booleans.BooleanFunClass import bool_and
 from grounding.expressions.ExpressionsClass import S
+from grounding.states import Predicate
 from lmdp.grounding.states.StateGroundingClass import StateFactor
 
 sys.path.append(os.path.abspath("./"))
@@ -19,9 +21,9 @@ x, y = position[0], position[1]
 
 
 ### Symbols
-goal = Symbol(bool_and(x == 5, y == 1))
-wall = Symbol(bool_and(x == 3, y == 1))
-lava = Symbol(position.in_(lava_locs))
+goal = Predicate(bool_and(x == 5, y == 1))
+wall = Predicate(bool_and(x == 3, y == 1))
+lava = Predicate(position.in_(lava_locs))
 
 ### Effects
 @effect

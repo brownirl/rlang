@@ -32,8 +32,7 @@ class Vector:
             data: single dimension array-like
             dim: dimension of the state vector. 
         '''
-
-        self.data = data.squeeze() if isinstance(data, (np.ndarray, torch.Tensor)) else np.array(data).squeeze()
+        self.data = np.atleast_1d(data.squeeze()) if isinstance(data, (np.ndarray, torch.Tensor)) else np.atleast_1d(np.array(data).squeeze())
         assert len(self.data.shape) > 0  # number of dimensions
         self._dim = dim if dim is not None else len(self.data)
 

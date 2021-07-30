@@ -24,6 +24,7 @@ class Expression:
 
     def __call__(self, *args, **kwargs):
         fun_args = self.__get_arguments(args, kwargs)
+        # print(f"{**fun_args}")
         return self._fun(**fun_args)
 
     def __verify_arguments(self, kwords):
@@ -38,18 +39,18 @@ class Expression:
             for i in range(len(args)):
                 matched_args.append((args_names[i], args[i]))  # match positional arguments
         for i in range(len(args), len(args_names)):  # search for remaining arguments in kwords
-            if (kwords[args_names[i]] is not None):
+            if kwords[args_names[i]] is not None:
                 matched_args.append((args_names[i], kwords[args_names[i]]))
             else:
                 raise ValueError("Missing Function Argument: " + args_names[i])
         return dict(matched_args)
 
     def __matmul__(self, expression):  # function composition operator
-        if (isinstance(expression, Expression)):
+        if isinstance(expression, Expression):
             return self.__compose__(expression)
 
     def __eq__(self, expression):
-        if (isinstance(expression, Expression) and expression.codomain == self.codomain):
+        if isinstance(expression, Expression) and expression.codomain == self.codomain:
             return Expression(lambda **args: expression(**args) == self.__call__(**args),
                               domain=self.domain() + expression.domain(),
                               codomain=["boolean"])
@@ -60,7 +61,7 @@ class Expression:
 
     def __compose__(self, expression):
 
-        if (self.domain >= expression.codomain):  # composable
+        if self.domain >= expression.codomain:  # composable
             def composed_function(*args, **kwargs):
                 args = expression.__get_arguments(args, kwargs)
                 new_args = expression(**args)
