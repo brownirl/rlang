@@ -80,6 +80,13 @@ class BooleanExpression(Expression):
     def __not__(self):
         return self.not_()
 
+    # Python's "and" is not intuitive: https://docs.python.org/3.7/library/stdtypes.html#boolean-operations-and-or-not
+    def __bool__(self):
+        if self._name == 'True':
+            return True
+        elif self._name == 'False':
+            return False
+
     def __repr__(self):
         if self._operator is not None:  # derived boolean function
             if self._operator != 'not':
