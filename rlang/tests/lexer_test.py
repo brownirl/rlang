@@ -3,6 +3,9 @@ import sys, os
 sys.path.append(os.path.abspath("../"))
 from rlang.src.language.RLangLexer import RLangLexer
 
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 def tokenize_from_string(input_string):
     input_stream = InputStream(input_string)
     lexer = RLangLexer(input_stream)
@@ -14,8 +17,9 @@ def tokenize_from_string(input_string):
 
 # All tests must begin with 'test_'
 
+
 def test_predicate_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/predicate.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/predicate.rlang"), "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.PREDICATE
@@ -67,7 +71,7 @@ def test_predicate_token():
     file.close()
 
 def test_feature_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/feature.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/feature.rlang"), "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.FEATURE
@@ -95,7 +99,7 @@ def test_feature_token():
     file.close()
 
 def test_factor_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/factor.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/factor.rlang"), "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.FACTOR
@@ -118,7 +122,7 @@ def test_factor_token():
     file.close()
 
 def test_goal_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/goal.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/goal.rlang"), "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -144,7 +148,7 @@ def test_goal_token():
     file.close()
 
 def test_constant_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/constant.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/constant.rlang"), "r")
     for line in file:
         tokens = tokenize_from_string(line)
         assert tokens[0].type == RLangLexer.CONSTANT
@@ -168,7 +172,7 @@ def test_constant_token():
     assert tokens[3].type == RLangLexer.DECIMAL
     
     tokens = tokenize_from_string(lines[5])
-    assert tokens[2].type == RLangLexer.ASSIGN
+    assert tokens[2].type == RLangLexer.BIND
     assert tokens[3].type == RLangLexer.INTEGER
     assert tokens[4].type == RLangLexer.TIMES
     assert tokens[5].type == RLangLexer.DECIMAL
@@ -181,7 +185,7 @@ def test_constant_token():
     file.close()
 
 def test_action_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/action.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/action.rlang"), "r")
     lines = file.readlines()
     tokens = tokenize_from_string(lines[0])
     assert tokens[0].type == RLangLexer.ACTION
@@ -199,7 +203,7 @@ def test_action_token():
     file.close()
 
 def test_effect_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/effect.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/effect.rlang"), "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -262,27 +266,15 @@ def test_effect_token():
     file.close()
 
 def test_policy_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/policy.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/policy.rlang"), "r")
     lines = file.readlines()
 
-    tokens = tokenize_from_string(lines[0])
+    tokens = tokenize_from_string(lines[3])
     assert tokens[0].type == RLangLexer.POLICY
     assert tokens[1].type == RLangLexer.IDENTIFIER
-    assert tokens[2].type == RLangLexer.BIND
-    assert tokens[3].type == RLangLexer.EXECUTE
-    assert tokens[4].type == RLangLexer.L_PAR
-    assert tokens[5].type == RLangLexer.IDENTIFIER
-    assert tokens[6].type == RLangLexer.COM
-    assert tokens[7].type == RLangLexer.IDENTIFIER
-    assert tokens[8].type == RLangLexer.R_PAR
-    assert len(tokens) == 11
+    assert tokens[2].type == RLangLexer.COL
 
-    tokens = tokenize_from_string(lines[1])
-    assert tokens[0].type == RLangLexer.POLICY
-    assert tokens[1].type == RLangLexer.IDENTIFIER
-    assert tokens[2].type == RLangLexer.BIND
-
-    tokens = tokenize_from_string(lines[2])
+    tokens = tokenize_from_string(lines[4])
     assert tokens[0].type == RLangLexer.INDENT
     assert tokens[1].type == RLangLexer.IF
     assert tokens[2].type == RLangLexer.IDENTIFIER
@@ -290,7 +282,7 @@ def test_policy_token():
     assert tokens[4].type == RLangLexer.NL
     assert tokens[5].type == RLangLexer.DEDENT
 
-    tokens = tokenize_from_string(lines[4])
+    tokens = tokenize_from_string(lines[6])
     assert tokens[0].type == RLangLexer.INDENT
     assert tokens[1].type == RLangLexer.ELIF
     assert tokens[2].type == RLangLexer.IDENTIFIER
@@ -300,14 +292,14 @@ def test_policy_token():
     assert tokens[6].type == RLangLexer.NL
     assert tokens[7].type == RLangLexer.DEDENT
 
-    tokens = tokenize_from_string(lines[5])
+    tokens = tokenize_from_string(lines[7])
     assert tokens[0].type == RLangLexer.INDENT
     assert tokens[1].type == RLangLexer.EXECUTE
     assert tokens[2].type == RLangLexer.IDENTIFIER
     assert tokens[3].type == RLangLexer.NL
     assert tokens[4].type == RLangLexer.DEDENT
 
-    tokens = tokenize_from_string(lines[6])
+    tokens = tokenize_from_string(lines[8])
     assert tokens[0].type == RLangLexer.INDENT
     assert tokens[1].type == RLangLexer.ELSE
     assert tokens[2].type == RLangLexer.COL
@@ -317,7 +309,7 @@ def test_policy_token():
     file.close()
 
 def test_option_token():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/option.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/option.rlang"), "r")
     lines = file.readlines()
 
     tokens = tokenize_from_string(lines[0])
@@ -349,18 +341,18 @@ def test_option_token():
     assert tokens[4].type == RLangLexer.DEDENT
     assert len(tokens) == 6
 
-    # tokens = tokenize_from_string(lines[7])
-    # assert tokens[0].type == RLangLexer.INDENT
-    # assert tokens[1].type == RLangLexer.EXECUTE
-    # assert tokens[2].type == RLangLexer.USE
-    # assert tokens[3].type == RLangLexer.NL
-    # assert tokens[4].type == RLangLexer.DEDENT
-    # assert len(tokens) == 6
+    tokens = tokenize_from_string(lines[7])
+    assert tokens[0].type == RLangLexer.INDENT
+    assert tokens[1].type == RLangLexer.EXECUTE
+    assert tokens[2].type == RLangLexer.IDENTIFIER
+    assert tokens[3].type == RLangLexer.NL
+    assert tokens[4].type == RLangLexer.DEDENT
+    assert len(tokens) == 6
 
     file.close()
 
     def test_markov_feature():
-        file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/markov_feature.rlang", "r")
+        file = open(os.path.join(__location__, "tests_resources/markov_feature.rlang"), "r")
         lines = file.readlines()
         for line in file:
             tokens = tokenize_from_string(line)

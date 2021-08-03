@@ -2,17 +2,19 @@ from sre_constants import FAILURE
 from antlr4 import *
 
 import sys, os
-sys.path.append(os.path.abspath("../"))
+# sys.path.append(os.path.abspath("../"))
 from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
 from antlr4.tree.ParseTreePatternMatcher import ParseTreePatternMatcher
 from rlang.src.language.RlangErrorListener import RLangErrorListener
 from antlr4.error.Errors import *
-from rlang.src.language.RLangParserListener import RLangParserListener
 
 # from .lexer_test import tokenize_from_string
 
 # All tests must begin with 'test_'
+
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 def parse_from_input(input_string):
     input_stream = InputStream(input_string)
@@ -25,16 +27,16 @@ def parse_from_input(input_string):
     return parser
 
 def test_factor():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/factor.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/factor.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
             tree = parser.factor()
-        except RecognitionException as re:
-            assert re.message != ""
+        except Exception as re:
+            assert False
 
 def test_feature():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/feature.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/feature.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
@@ -45,7 +47,7 @@ def test_feature():
 
 def test_predicate():
     print(os.getcwd())
-    file = open("tests/tests_resources/predicate.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/predicate.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
@@ -55,7 +57,7 @@ def test_predicate():
 test_predicate()
 
 def test_action():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/action.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/action.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
@@ -64,7 +66,7 @@ def test_action():
             assert False
 
 def test_constant():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/constant.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/constant.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
@@ -74,7 +76,7 @@ def test_constant():
             # assert False
 
 def test_goal():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/goal.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/goal.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
@@ -84,7 +86,7 @@ def test_goal():
             # assert False
 
 def test_markov_feature():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/markov_feature.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/markov_feature.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
@@ -95,7 +97,7 @@ def test_markov_feature():
 
 
 def test_option():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/option.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/option.rlang"), "r")
     lines = file.readlines()
     option1 = ''.join(lines[0:4])
     # try:
@@ -112,7 +114,7 @@ def test_option():
         assert False, "option2 failed"    
 
 def test_effect():
-    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/effect.rlang", "r")
+    file = open(os.path.join(__location__, "tests_resources/effect.rlang"), "r")
     lines = file.readlines()
     effect1 = ''.join(lines[0:2])
     try:
@@ -135,22 +137,22 @@ def test_effect():
     except RecognitionException as re:
         assert False, "effect3 failed"  
 
-# def test_policy():
-#     file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/policy.rlang", "r")
-#     lines = file.readlines()
-#     policy1 = lines[0]
-#     try:
-#         parser= parse_from_input(policy1)
-#         tree = parser.policy()
-#     except RecognitionException as re:
-#         assert False, "policy1 failed"
+def test_policy():
+    file = open(os.path.join(__location__, "tests_resources/policy.rlang"), "r")
+    lines = file.readlines()
+    # policy1 = ''.join(lines[0:1])
+    # try:
+    #     parser= parse_from_input(policy1)
+    #     tree = parser.policy()
+    # except RecognitionException as re:
+    #     assert False, "policy1 failed"
 
-#     policy2 = ''.join(lines[1:])
-#     try:
-#         parser= parse_from_input(policy2)
-#         tree = parser.policy()
-#     except RecognitionException as re:
-#         assert False, "policy2 failed" 
+    policy2 = ''.join(lines[3:])
+    try:
+        parser= parse_from_input(policy2)
+        tree = parser.policy()
+    except RecognitionException as re:
+        assert False, "policy2 failed" 
 
 
 def test_incorrect_Factor(): 
