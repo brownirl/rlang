@@ -1,3 +1,4 @@
+from sre_constants import FAILURE
 from antlr4 import *
 
 import sys, os
@@ -6,40 +7,162 @@ from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
 from antlr4.tree.ParseTreePatternMatcher import ParseTreePatternMatcher
 from rlang.src.language.RlangErrorListener import RLangErrorListener
-from antlr4.error.Errors import CancellationException
+from antlr4.error.Errors import *
 from rlang.src.language.RLangParserListener import RLangParserListener
-import io
 
 # from .lexer_test import tokenize_from_string
 
 # All tests must begin with 'test_'
 
-def parser_from_input(input_string):
+def parse_from_input(input_string):
     input_stream = InputStream(input_string)
     lexer = RLangLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = RLangParser(stream)
-    # parseTree = parser.program()
-
-    # output = io.StringIO()
-    # error = io.StringIO()
-
     parser.removeErrorListeners()
-    errorListener = RLangErrorListener()
-    parser.addErrorListener(errorListener) 
+    parser.addErrorListener(RLangErrorListener())
 
-    return parser, errorListener
+    return parser
+
+def test_factor():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/factor.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.factor()
+        except RecognitionException as re:
+            assert re.message != ""
+
+def test_feature():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/feature.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.feature()
+        except Exception:
+            assert False
+        
+
+def test_predicate():
+    print(os.getcwd())
+    file = open("tests/tests_resources/predicate.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.predicate()
+        except Exception as re:
+            assert False
+test_predicate()
+
+def test_action():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/action.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.action()
+        except RecognitionException as re:
+            assert False
+
+def test_constant():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/constant.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.constant()
+        except RecognitionException as re:
+            print(re.message)
+            # assert False
+
+def test_goal():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/goal.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.goal()
+        except RecognitionException as re:
+            print(re.message)
+            # assert False
+
+def test_markov_feature():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/markov_feature.rlang", "r")
+    for line in file:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.markov_feature()
+        except RecognitionException as re:
+            print(re.message)
+            assert False
 
 
-def test_Factor(): 
+def test_option():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/option.rlang", "r")
+    lines = file.readlines()
+    option1 = ''.join(lines[0:4])
+    # try:
+    #     parser= parse_from_input(option1)
+    #     tree = parser.option()
+    # except RecognitionException as re:
+    #     assert False, "option1 failed"
+
+    option2 = ''.join(lines[4:])
     try:
-        parser, errorListener = parser_from_input("Factor position = S[0, 1]")
-        tree = parser.factor()
-    except CancellationException:
-        print("error")
-        print(errorListener.symbol)
-        # print(parser.getErrorHeader().symbol)
+        parser= parse_from_input(option2)
+        tree = parser.option()
+    except RecognitionException as re:
+        assert False, "option2 failed"    
 
+def test_effect():
+    file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/effect.rlang", "r")
+    lines = file.readlines()
+    effect1 = ''.join(lines[0:2])
+    try:
+        parser= parse_from_input(effect1)
+        tree = parser.effect()
+    except RecognitionException as re:
+        assert False, "effect1 failed"
+
+    effect2 = ''.join(lines[3:6])
+    try:
+        parser= parse_from_input(effect2)
+        tree = parser.effect()
+    except RecognitionException as re:
+        assert False, "effect2 failed"     
+
+    effect3 = ''.join(lines[7:9])
+    try:
+        parser= parse_from_input(effect3)
+        tree = parser.effect()
+    except RecognitionException as re:
+        assert False, "effect3 failed"  
+
+# def test_policy():
+#     file = open("/Users/jenniferwang/research/RL/lmdp/rlang/tests/tests_resources/policy.rlang", "r")
+#     lines = file.readlines()
+#     policy1 = lines[0]
+#     try:
+#         parser= parse_from_input(policy1)
+#         tree = parser.policy()
+#     except RecognitionException as re:
+#         assert False, "policy1 failed"
+
+#     policy2 = ''.join(lines[1:])
+#     try:
+#         parser= parse_from_input(policy2)
+#         tree = parser.policy()
+#     except RecognitionException as re:
+#         assert False, "policy2 failed" 
+
+
+def test_incorrect_Factor(): 
+    try:
+        parser= parse_from_input("Factor position = S[0, 1]")
+        tree = parser.factor()
+    except RecognitionException as re:
+        assert re.message != ""
+        offending_token = parser.getTokenErrorDisplay(re.offendingToken)
+        expected_token = re.getExpectedTokens().toString(parser.literalNames, parser.symbolicNames)
+        assert offending_token == "'='"
+        assert expected_token == "':='"
 
 
     # assert RLangErrorListener.symbol ==  0
@@ -59,5 +182,3 @@ def test_Factor():
     # print(parser.getCurrentToken())
     # print(parser.getExpectedTokensWithinCurrentRule())
     # position = StateFactor([0, 1], "position")
-
-test_Factor()

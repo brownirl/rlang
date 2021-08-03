@@ -1,5 +1,6 @@
-Policy test1 := Execute (up, left)
-Policy test2 := 
+Policy test1:
+	Execute up
+Policy test2:
 	if at_workshop:
 		Execute down
 	elif iron >= 1:
