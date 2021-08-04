@@ -1,0 +1,6 @@
+Action valid := [1, 0]
+Action eeff := 1 == 1.0
+Action S := [1, 2, 3]
+Action efffe() := (1, 2, 3)
+Action ef1ef := S[2] + [1, 0]
+Action ef1ef := 1 + 1

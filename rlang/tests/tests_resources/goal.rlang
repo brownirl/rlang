@@ -1,5 +1,9 @@
-Goal gold >= 1
-Goal at_workshop
-Goal gold == 1
-Goal S[0] <= 4
-Goal gold < iron
+Goal test := gold >= 1
+Goal test1 := at_workshop
+Goal test3 := gold == 1
+Goal test4 := S[0] <= 4
+Goal test5 := gold < iron
+Goal g := (1 == 1 - 1) and S[1]
+Goal test6 := not (-1 / 4) and 1 + 1 or S == A
+Goal test7 := a[1 : 2] in S[1] + S[2]
+Goal test8 := a[1] in S and not S[1] in S[1:] + S[1]

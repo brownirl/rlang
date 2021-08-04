@@ -1,0 +1,5 @@
+Factor test := Sinventory[1:3]
+Factor test2 := S[1:3] + inventory[1]
+Factor test := S(inventory[1:3] * 5) + [1, 2]
+Factor test5 := S[2] + S[1:5]
+Factor test2 := S[1:3] + inventory[1]

@@ -5,3 +5,8 @@ Constant test3 := -000.11
 Constant test4 := 10.0001
 Constant test5 := 10 * 10.5
 Constant test5 := 10/10.4
+Constant test6 := a == a
+Constant test7 := S
+Constant test8 := S[1:5]
+Constant test9 := A
+Constant test10 := S == S'

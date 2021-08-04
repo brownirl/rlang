@@ -2,6 +2,7 @@ from antlr4 import CommonTokenStream, InputStream, Token
 import sys, os
 sys.path.append(os.path.abspath("../"))
 from rlang.src.language.RLangLexer import RLangLexer
+from rlang.src.language.RLangErrorListener import RLangErrorListener
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -9,6 +10,7 @@ __location__ = os.path.realpath(
 def tokenize_from_string(input_string):
     input_stream = InputStream(input_string)
     lexer = RLangLexer(input_stream)
+    lexer.addErrorListener(RLangErrorListener())
     # lexer.addErrorListener(MyErrorListener)
     stream = CommonTokenStream(lexer)
     stream.fill()
@@ -77,7 +79,6 @@ def test_feature_token():
         assert tokens[0].type == RLangLexer.FEATURE
         assert tokens[1].type == RLangLexer.IDENTIFIER
         assert tokens[2].type == RLangLexer.BIND
-        assert tokens[3].type == RLangLexer.IDENTIFIER 
     
     file.seek(0)
 
@@ -125,25 +126,21 @@ def test_goal_token():
     file = open(os.path.join(__location__, "tests_resources/goal.rlang"), "r")
     lines = file.readlines()
 
-    tokens = tokenize_from_string(lines[0])
-    assert tokens[0].type == RLangLexer.GOAL
-    assert tokens[1].type == RLangLexer.IDENTIFIER
-    assert tokens[2].type == RLangLexer.GT_EQ
-    assert tokens[3].type == RLangLexer.INTEGER
-    assert len(tokens) == 6
+    for line in lines:
+        tokens = tokenize_from_string(line)
+        assert tokens[0].type == RLangLexer.GOAL
+        assert tokens[1].type == RLangLexer.IDENTIFIER
+        assert tokens[2].type == RLangLexer.BIND
 
-    tokens = tokenize_from_string(lines[1])
-    assert tokens[0].type == RLangLexer.GOAL
-    assert tokens[1].type == RLangLexer.IDENTIFIER
-    assert len(tokens) == 4
+    tokens = tokenize_from_string(lines[0])
+    assert tokens[4].type == RLangLexer.GT_EQ
+    assert tokens[5].type == RLangLexer.INTEGER
+    assert len(tokens) == 8
 
     tokens = tokenize_from_string(lines[2])
-    assert tokens[0].type == RLangLexer.GOAL
-    assert tokens[1].type == RLangLexer.IDENTIFIER
-    assert tokens[2].type == RLangLexer.EQ_TO
-    assert tokens[3].type == RLangLexer.INTEGER
-    print(tokens[5].type)
-    assert len(tokens) == 6
+    assert tokens[4].type == RLangLexer.EQ_TO
+    assert tokens[5].type == RLangLexer.INTEGER
+    assert len(tokens) == 8
 
     file.close()
 
@@ -187,10 +184,14 @@ def test_constant_token():
 def test_action_token():
     file = open(os.path.join(__location__, "tests_resources/action.rlang"), "r")
     lines = file.readlines()
-    tokens = tokenize_from_string(lines[0])
+    for line in lines:
+        tokens = tokenize_from_string(line)
     assert tokens[0].type == RLangLexer.ACTION
     assert tokens[1].type == RLangLexer.IDENTIFIER
     assert tokens[2].type == RLangLexer.BIND
+
+    file.seek(0)
+    tokens = tokenize_from_string(lines[0])
     assert tokens[3].type == RLangLexer.L_BRK
     assert tokens[4].type == RLangLexer.INTEGER
     assert tokens[5].type == RLangLexer.COM
@@ -371,5 +372,8 @@ def test_option_token():
     file.close()
         
     
+    # def test_invalid():
+
+        
     
 

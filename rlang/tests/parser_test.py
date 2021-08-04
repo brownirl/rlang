@@ -2,11 +2,11 @@ from sre_constants import FAILURE
 from antlr4 import *
 
 import sys, os
-# sys.path.append(os.path.abspath("../"))
+sys.path.append(os.path.abspath("../"))
 from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
 from antlr4.tree.ParseTreePatternMatcher import ParseTreePatternMatcher
-from rlang.src.language.RlangErrorListener import RLangErrorListener
+from rlang.src.language.RLangErrorListener import RLangErrorListener
 from antlr4.error.Errors import *
 
 # from .lexer_test import tokenize_from_string
@@ -31,7 +31,9 @@ def test_factor():
     for line in file:
         try:
             parser = parse_from_input(line)
-            tree = parser.factor()
+            tree = parser.dec()
+            # print(tree.getTokens())
+            # print(tree.toStringTree())
         except Exception as re:
             assert False
 
@@ -40,7 +42,7 @@ def test_feature():
     for line in file:
         try:
             parser = parse_from_input(line)
-            tree = parser.feature()
+            tree = parser.dec()
         except Exception:
             assert False
         
@@ -51,19 +53,20 @@ def test_predicate():
     for line in file:
         try:
             parser = parse_from_input(line)
-            tree = parser.predicate()
+            tree = parser.dec()
         except Exception as re:
             assert False
-test_predicate()
 
 def test_action():
     file = open(os.path.join(__location__, "tests_resources/action.rlang"), "r")
     for line in file:
         try:
             parser = parse_from_input(line)
-            tree = parser.action()
-        except RecognitionException as re:
+            tree = parser.dec()
+            print(tree.toStringTree())
+        except Exception as re:
             assert False
+test_action()
 
 def test_constant():
     file = open(os.path.join(__location__, "tests_resources/constant.rlang"), "r")
@@ -73,7 +76,7 @@ def test_constant():
             tree = parser.constant()
         except RecognitionException as re:
             print(re.message)
-            # assert False
+            assert False
 
 def test_goal():
     file = open(os.path.join(__location__, "tests_resources/goal.rlang"), "r")
@@ -83,7 +86,7 @@ def test_goal():
             tree = parser.goal()
         except RecognitionException as re:
             print(re.message)
-            # assert False
+            assert False
 
 def test_markov_feature():
     file = open(os.path.join(__location__, "tests_resources/markov_feature.rlang"), "r")
@@ -109,7 +112,7 @@ def test_option():
     option2 = ''.join(lines[4:])
     try:
         parser= parse_from_input(option2)
-        tree = parser.option()
+        tree = parser.dec()
     except RecognitionException as re:
         assert False, "option2 failed"    
 
@@ -119,14 +122,14 @@ def test_effect():
     effect1 = ''.join(lines[0:2])
     try:
         parser= parse_from_input(effect1)
-        tree = parser.effect()
+        tree = parser.dec()
     except RecognitionException as re:
         assert False, "effect1 failed"
 
     effect2 = ''.join(lines[3:6])
     try:
         parser= parse_from_input(effect2)
-        tree = parser.effect()
+        tree = parser.dec()
     except RecognitionException as re:
         assert False, "effect2 failed"     
 
@@ -150,7 +153,7 @@ def test_policy():
     policy2 = ''.join(lines[3:])
     try:
         parser= parse_from_input(policy2)
-        tree = parser.policy()
+        tree = parser.dec()
     except RecognitionException as re:
         assert False, "policy2 failed" 
 
@@ -158,13 +161,14 @@ def test_policy():
 def test_incorrect_Factor(): 
     try:
         parser= parse_from_input("Factor position = S[0, 1]")
-        tree = parser.factor()
+        tree = parser.dec()
     except RecognitionException as re:
         assert re.message != ""
         offending_token = parser.getTokenErrorDisplay(re.offendingToken)
         expected_token = re.getExpectedTokens().toString(parser.literalNames, parser.symbolicNames)
         assert offending_token == "'='"
         assert expected_token == "':='"
+
 
 
     # assert RLangErrorListener.symbol ==  0
