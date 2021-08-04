@@ -32,7 +32,7 @@ class StateFactor(Grounding, RealExpression):
         '''
         if (name is None):
             name = "state-factor-" + str(StateFactor.counter)
-        if (isinstance(feature_positions, int)):
+        if isinstance(feature_positions, int):
             feature_positions = [feature_positions, ]
         self.feature_positions = feature_positions
         Grounding.__init__(self, name)
@@ -53,11 +53,14 @@ class StateFactor(Grounding, RealExpression):
             Args:
                 - args[0] must be the state from MDP
         '''
-        if (isinstance(state, np.ndarray)):
-            if (len(state.shape) > 1):
+        # print(type(state))
+        # print(state)
+        if isinstance(state, np.ndarray):
+            if len(state.shape) > 1:
                 state = BatchedState(state)
             else:
                 state = State(state)
+        # print(type(state))
         return state.features()[self.feature_positions]
 
     # def rest(self, state_dim):

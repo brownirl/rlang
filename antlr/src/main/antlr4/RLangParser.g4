@@ -59,15 +59,15 @@ arithmetic_exp
     ;
 
 boolean_exp
-    : L_PAR boolean_exp R_PAR                                                   # bool_paren
-    | boolean_exp AND boolean_exp                                               # bool_and
-    | boolean_exp OR boolean_exp                                                # bool_or
-    | NOT boolean_exp                                                           # bool_not
-    | (lhs=array_exp | arithmetic_exp) IN (rhs=array_exp | any_bound_var)       # bool_in
-    | boolean_exp (EQ_TO | NOT_EQ) boolean_exp                                  # bool_bool_eq
-    | arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) arithmetic_exp  # bool_arith_eq
-    | any_bound_var                                                             # bool_bound_var
-    | (TRUE | FALSE)                                                            # bool_tf
+    : L_PAR boolean_exp R_PAR                                   # bool_paren
+    | lhs=boolean_exp AND rhs=boolean_exp                       # bool_and
+    | lhs=boolean_exp OR rhs=boolean_exp                        # bool_or
+    | NOT boolean_exp                                           # bool_not
+    | (lhs_arr=array_exp | lhs_arith=arithmetic_exp) IN (rhs_arr=array_exp | rhs_bound_var=any_bound_var)   # bool_in
+    | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq
+    | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_arith_eq
+    | any_bound_var                                             # bool_bound_var
+    | (TRUE | FALSE)                                            # bool_tf
     ;
 
 any_bound_var: (IDENTIFIER | S | S_PRIME | A) trailer*;

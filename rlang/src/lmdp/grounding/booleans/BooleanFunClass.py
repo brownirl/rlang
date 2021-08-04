@@ -26,38 +26,39 @@ class BooleanExpression(Expression):
 
     def and_(self, other):
         # Short-circuiting
-        # if (self == bool_true or other == bool_true):
+        # if (self == BOOL_TRUE or other == BOOL_TRUE):
         #     return self
-        # if (self == bool_false or other == bool_false):
-        #     return bool_false
+        # if (self == BOOL_FALSE or other == BOOL_FALSE):
+        #     return BOOL_FALSE
         # generate function 
-        if (isinstance(other, BooleanExpression) or isinstance(other, Expression)):
+        if isinstance(other, BooleanExpression) or isinstance(other, Expression):
+            # TODO: This breaks when self is False and other is True
             return BooleanExpression(partial(_conj, self, other),
                                      domain=self.domain() + other.domain(),
                                      operator='and',
                                      operands=[self, other])
-        elif (isinstance(other, bool)):
+        elif isinstance(other, bool):
             if not other:
-                return bool_false
+                return BOOL_FALSE
             return self
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
 
     def or_(self, other):
         # Short-circuiting
-        # if (self == bool_true or other == bool_true):
-        #     return bool_true
-        # if (self == bool_false or other == bool_false):
+        # if (self == BOOL_TRUE or other == BOOL_TRUE):
+        #     return BOOL_TRUE
+        # if (self == BOOL_FALSE or other == BOOL_FALSE):
         #     return self
         # generate function 
-        if (isinstance(other, BooleanExpression)):
+        if isinstance(other, BooleanExpression):
             return BooleanExpression(partial(_conj, self, other),
                                      domain=self.domain() + other.domain(),
                                      operator='or',
                                      operands=[self, other])
-        elif (isinstance(other, bool)):
+        elif isinstance(other, bool):
             if other:
-                return bool_true
+                return BOOL_TRUE
             return self
         else:
             raise other.__name__() + " must be a Boolean Expression or bool"
@@ -78,6 +79,13 @@ class BooleanExpression(Expression):
 
     def __not__(self):
         return self.not_()
+
+    # Python's "and" is not intuitive: https://docs.python.org/3.7/library/stdtypes.html#boolean-operations-and-or-not
+    def __bool__(self):
+        if self._name == 'True':
+            return True
+        elif self._name == 'False':
+            return False
 
     def __repr__(self):
         if self._operator is not None:  # derived boolean function
@@ -146,10 +154,10 @@ def cast_to_boolean(expression):
 
 
 ### CONSTANTS #####
-bool_true = BooleanExpression(lambda **args: True, domain=[], name='True')
-bool_false = BooleanExpression(lambda **args: False, domain=[], name='False')
-any_action = BooleanExpression(bool_true, domain=["action"], name='any_action')
-any_next_state = BooleanExpression(bool_true, domain=["next_state"], name='any_next_state')
+BOOL_TRUE = BooleanExpression(lambda **args: True, domain=[], name='True')
+BOOL_FALSE = BooleanExpression(lambda **args: False, domain=[], name='False')
+any_action = BooleanExpression(BOOL_TRUE, domain=["action"], name='any_action')
+any_next_state = BooleanExpression(BOOL_TRUE, domain=["next_state"], name='any_next_state')
 
 
 def boolean(domain=[]):

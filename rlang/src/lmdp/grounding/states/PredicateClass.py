@@ -38,7 +38,7 @@ class Predicate(Grounding, BooleanExpression):
     counter = 0
 
     def __init__(self, boolean_fun, name=None, operator=None, operands=None):
-        if (name is None):
+        if name is None:
             name = "symbol-" + str(Predicate.counter)
         Grounding.__init__(self, name)
         BooleanExpression.__init__(self, boolean_fun, domain=["state"],
