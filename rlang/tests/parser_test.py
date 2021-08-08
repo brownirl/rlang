@@ -107,16 +107,18 @@ def test_markov_feature():
         except Exception as re:
             assert False
 
+    # TODO: need to refine Markov feature parser rule to exclude statements like 
+    # MarkovFeature test2 := 2
 
 def test_option():
     file = open(os.path.join(__location__, "tests_resources/option.rlang"), "r")
     lines = file.readlines()
     option1 = ''.join(lines[0:4])
-    # try:
-    #     parser= parse_from_input(option1)
-    #     tree = parser.option()
-    # except RecognitionException as re:
-    #     assert False, "option1 failed"
+    try:
+        parser= parse_from_input(option1)
+        tree = parser.dec()
+    except Exception as re:
+        assert False, "option1 failed"
 
     option2 = ''.join(lines[4:])
     try:
@@ -152,12 +154,12 @@ def test_effect():
 def test_policy():
     file = open(os.path.join(__location__, "tests_resources/policy.rlang"), "r")
     lines = file.readlines()
-    # policy1 = ''.join(lines[0:1])
-    # try:
-    #     parser= parse_from_input(policy1)
-    #     tree = parser.policy()
-    # except RecognitionException as re:
-    #     assert False, "policy1 failed"
+    policy1 = ''.join(lines[:2])
+    try:
+        parser= parse_from_input(policy1)
+        tree = parser.policy()
+    except Exception as re:
+        assert False, "policy1 failed"
 
     policy2 = ''.join(lines[3:])
     try:
@@ -187,8 +189,19 @@ def test_invalid_action():
     assert expected_token == "IDENTIFIER"
 
 def test_invalid_constant():
-    #TODO: add more
-    pass
+    file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_constant.rlang"), "r")
+    lines = file.readlines()
+
+    # TODO: Figure out what to do with token recognition errors
+    offending_token, expected_token = get_invalid_tokens(lines[0])
+    offending_token, expected_token = get_invalid_tokens(lines[1])
+    assert offending_token == "'+'"
+    assert expected_token == None
+    offending_token, expected_token = get_invalid_tokens(lines[2])
+    assert offending_token == "'Effect'"
+    assert expected_token == "NL"
+    offending_token, expected_token = get_invalid_tokens(lines[3])
+    assert offending_token == "'-='"
 
 def test_invalid_factor():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_factor.rlang"), "r")
@@ -265,13 +278,19 @@ def test_invalid_option():
     assert offending_token == "'newLine'"
     assert expected_token == "IDENTIFIER"
 
-    # offending_token, expected_token = get_invalid_tokens("".join(lines[6:10]))
-    # assert offending_token == "'use'"
+    #TODO: option currently allows multiple execute/find statements, which is problematic
+    offending_token, expected_token = get_invalid_tokens("".join(lines[6:10]))
+    assert offending_token == "'use'"
     # assert expected_token == "DEDENT"
 
     offending_token, expected_token = get_invalid_tokens("".join(lines[11:14]))
     assert offending_token == "'Execute'"
     assert expected_token == "'init'"
+
+    offending_token, expected_token = get_invalid_tokens("".join(lines[15:19]))
+    # assert offending_token == "'Find'"
+    # assert expected_token == "DEDENT"
+
 
 def test_invalid_policy():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_policy.rlang"), "r")
@@ -279,19 +298,47 @@ def test_invalid_policy():
 
     offending_token, expected_token = get_invalid_tokens("".join(lines[:6]))
     assert offending_token == "'elif'"
-    assert expected_token == "{DEDENT, 'Execute', 'if'}"
+    assert expected_token == "{DEDENT, 'Execute', 'Find', 'if'}"
 
     offending_token, expected_token = get_invalid_tokens("".join(lines[6:11]))
     assert offending_token == "'init'"
-    assert expected_token == "{DEDENT, 'Execute', 'if'}"
+    assert expected_token == "{DEDENT, 'Execute', 'Find', 'if'}"
 
+    #TODO: Can Find be used in a policy?
     # offending_token, expected_token = get_invalid_tokens("".join(lines[13:17]))
     # assert offending_token == "'if'"
-    # assert expected_token == "{DEDENT, 'Execute', 'if'}"
-
-
-# test_invalid_policy()
+    # assert expected_token == "{DEDENT, 'Execute', 'Find', 'if'}"
 
 def test_invalid_predicate():
-    pass
+    file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_predicate.rlang"), "r")
+    lines = file.readlines()
 
+    #TODO: validity of test? Predicate test := location != workshop == b + workshop
+    print(get_invalid_tokens(lines[0]))
+
+    offending_token, expected_token = get_invalid_tokens(lines[1])
+    assert offending_token == "'in'"
+    assert expected_token == "{'S'', 'S', 'A', 'not', 'True', 'False', '[', '(', '-', IDENTIFIER, DECIMAL, INTEGER}"
+
+    offending_token, expected_token = get_invalid_tokens(lines[2])
+    assert offending_token == "'+'"
+    assert expected_token == "NL"
+
+def test_misc():
+    file = open(os.path.join(__location__, "tests_resources/miscellaneous.rlang"), "r")
+    lines = file.readlines()
+
+    # for line in lines[:3]:
+    #     try:
+    #         #TODO: change import parser rule
+    #         parser = parse_from_input(line)
+    #         tree = parser.imports()
+    #     except Exception as re:
+    #         # assert False
+    
+    for line in lines[4:]:
+        try:
+            parser = parse_from_input(line)
+            tree = parser.arithmetic_exp()
+        except Exception as re:
+            assert False

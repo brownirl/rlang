@@ -1,3 +1,4 @@
-Constant test := gold'
-Constant test1 := -12- -3
-
+Constant test := gold @ cave
+Constant test1 := (-12)--3++-2
+Constant test3 := 1.2Effect a:
+Constant test4 := -= 1

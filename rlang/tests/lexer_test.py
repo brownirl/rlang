@@ -315,13 +315,12 @@ def test_option_token():
     assert tokens[5].type == RLangLexer.NL
     assert tokens[6].type == RLangLexer.DEDENT
 
-    # TODO: add find
-    # tokens = tokenize_from_string(lines[2])
-    # assert tokens[0].type == RLangLexer.INDENT
-    # assert tokens[1].type == RLangLexer.FIND
-    # assert tokens[2].type == RLangLexer.NL
-    # assert tokens[3].type == RLangLexer.DEDENT
-    # assert len(tokens) == 5
+    tokens = tokenize_from_string(lines[2])
+    assert tokens[0].type == RLangLexer.INDENT
+    assert tokens[1].type == RLangLexer.FIND
+    assert tokens[2].type == RLangLexer.NL
+    assert tokens[3].type == RLangLexer.DEDENT
+    assert len(tokens) == 5
 
     tokens = tokenize_from_string(lines[3])
     assert tokens[0].type == RLangLexer.INDENT
@@ -354,7 +353,6 @@ def test_markov_feature():
     lines = file.readlines()
 
     #TODO: figure out what to do with MarkovFeature delta_gold := gold - gold'
-    # tokens = tokenize_from_string(lines[0])
 
     tokens = tokenize_from_string(lines[1])
     assert tokens[3].type == RLangLexer.S_PRIME
@@ -365,3 +363,25 @@ def test_markov_feature():
     file.close()
     
 
+def test_misc():
+    file = open(os.path.join(__location__, "tests_resources/miscellaneous.rlang"), "r")
+    lines = file.readlines()
+
+    for line in lines[:3]:
+        tokens = tokenize_from_string(lines[0])
+        assert tokens[0].type == RLangLexer.IMPORT
+
+    tokens = tokenize_from_string(lines[4])
+    assert tokens[1].type == RLangLexer.ASSIGN
+
+    tokens = tokenize_from_string(lines[5])
+    assert tokens[1].type == RLangLexer.PLUS_EQ
+
+    tokens = tokenize_from_string(lines[6])
+    assert tokens[1].type == RLangLexer.MINUS_EQ
+
+    tokens = tokenize_from_string(lines[7])
+    assert tokens[1].type == RLangLexer.TIMES_EQ
+    
+    tokens = tokenize_from_string(lines[8])
+    assert tokens[1].type == RLangLexer.DIV_EQ

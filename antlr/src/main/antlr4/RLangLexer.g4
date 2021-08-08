@@ -97,7 +97,7 @@ MINUS : '-';
  */
 
 FNAME
-    : IDENTIFIER '.' LETTER*
+    : IDENTIFIER '.' LETTER* DIGIT
     ;
 
 IDENTIFIER
