@@ -1,3 +1,3 @@
 Goal Effect := (2 == 1 and 3) == a
-Goal Action := (-123.034) and !(True)
-
+Goal test := (-123.034) and not (True)
+Goal test1 := a[1] in S and not S[1] in S[1:] + S[1]

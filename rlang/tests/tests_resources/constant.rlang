@@ -10,3 +10,5 @@ Constant test7 := S
 Constant test8 := S[1:5]
 Constant test9 := A
 Constant test10 := S == S'
+Constant test11 := 5 * (-123.034)
+Constant test12 := -12-(-3)

@@ -12,3 +12,4 @@ class UnknownVariableError(RLangSemanticError):
     def __init__(self, variable_name):
         self.message = f"Unknown variable binding '{variable_name}'."
         super().__init__(self.message)
+

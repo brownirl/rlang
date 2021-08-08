@@ -5,3 +5,5 @@ Predicate test3 := S[0] > 3 and S[1] <= 5
 Predicate test3 := not (True)
 Predicate test4 := False
 Predicate in_lava := position in lava_locs
+Predicate test1 := not location != workshop
+Predicate test1 := not location in workshop != location in workshop

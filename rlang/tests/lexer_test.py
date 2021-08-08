@@ -2,7 +2,6 @@ from antlr4 import CommonTokenStream, InputStream, Token
 import sys, os
 sys.path.append(os.path.abspath("../"))
 from rlang.src.language.RLangLexer import RLangLexer
-from rlang.src.language.RLangErrorListener import RLangErrorListener
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -10,12 +9,9 @@ __location__ = os.path.realpath(
 def tokenize_from_string(input_string):
     input_stream = InputStream(input_string)
     lexer = RLangLexer(input_stream)
-    lexer.addErrorListener(RLangErrorListener())
-    # lexer.addErrorListener(MyErrorListener)
     stream = CommonTokenStream(lexer)
     stream.fill()
     return stream.tokens
-
 
 # All tests must begin with 'test_'
 
@@ -192,14 +188,7 @@ def test_action_token():
 
     file.seek(0)
     tokens = tokenize_from_string(lines[0])
-    assert tokens[3].type == RLangLexer.L_BRK
-    assert tokens[4].type == RLangLexer.INTEGER
-    assert tokens[5].type == RLangLexer.COM
-    assert tokens[6].type == RLangLexer.INTEGER
-    assert tokens[7].type == RLangLexer.COM
-    assert tokens[8].type == RLangLexer.INTEGER
-    assert tokens[9].type == RLangLexer.R_BRK
-    assert len(tokens) == 12
+    assert tokens[3].type == RLangLexer.INTEGER
 
     file.close()
 
@@ -224,7 +213,6 @@ def test_effect_token():
     assert tokens[5].type == RLangLexer.COM
     assert tokens[6].type == RLangLexer.INTEGER
     assert tokens[7].type == RLangLexer.R_BRK
-    # should NL be before DEDENT? / does order matter?
     assert tokens[8].type == RLangLexer.NL
     assert tokens[9].type == RLangLexer.DEDENT
     assert len(tokens) == 11
@@ -327,6 +315,7 @@ def test_option_token():
     assert tokens[5].type == RLangLexer.NL
     assert tokens[6].type == RLangLexer.DEDENT
 
+    # TODO: add find
     # tokens = tokenize_from_string(lines[2])
     # assert tokens[0].type == RLangLexer.INDENT
     # assert tokens[1].type == RLangLexer.FIND
@@ -352,28 +341,27 @@ def test_option_token():
 
     file.close()
 
-    def test_markov_feature():
-        file = open(os.path.join(__location__, "tests_resources/markov_feature.rlang"), "r")
-        lines = file.readlines()
-        for line in file:
-            tokens = tokenize_from_string(line)
-            assert tokens[0].type == RLangLexer.MARKOVFEATURE
-            assert tokens[1].type == RLangLexer.IDENTIFIER
-            assert tokens[2].type == RLangLexer.BIND
-        
-        file.seek(0)
-        lines = file.readlines()
-        tokens = tokenize_from_string(lines[1])
-        assert tokens[3].type == RLangLexer.S_PRIME
-        assert tokens[4].type == RLangLexer.MINUS
-        assert tokens[5].type == RLangLexer.S
-        assert len(tokens) == 8
+def test_markov_feature():
+    file = open(os.path.join(__location__, "tests_resources/markov_feature.rlang"), "r")
+    lines = file.readlines()
+    for line in file:
+        tokens = tokenize_from_string(line)
+        assert tokens[0].type == RLangLexer.MARKOVFEATURE
+        assert tokens[1].type == RLangLexer.IDENTIFIER
+        assert tokens[2].type == RLangLexer.BIND
+    
+    file.seek(0)
+    lines = file.readlines()
+
+    #TODO: figure out what to do with MarkovFeature delta_gold := gold - gold'
+    # tokens = tokenize_from_string(lines[0])
+
+    tokens = tokenize_from_string(lines[1])
+    assert tokens[3].type == RLangLexer.S_PRIME
+    assert tokens[4].type == RLangLexer.PLUS
+    assert tokens[5].type == RLangLexer.S
+    assert len(tokens) == 8
 
     file.close()
-        
-    
-    # def test_invalid():
-
-        
     
 

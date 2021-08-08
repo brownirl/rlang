@@ -1,0 +1,4 @@
+MarkovFeature test := gold - gold' * gold == 1
+MarkovFeature test1 := S'[1] - S[0]
+# need to refine Markov feature parser rule to exclude examples:
+    MarkovFeature test2 := 2

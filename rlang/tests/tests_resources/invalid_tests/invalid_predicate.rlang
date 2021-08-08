@@ -1,0 +1,4 @@
+Predicate test := location != workshop == b
+Predicate test1 := not location in workshop != location + workshop
+Predicate test2 := not location or in and workshop and location
+Predicate test3 := True + 1
