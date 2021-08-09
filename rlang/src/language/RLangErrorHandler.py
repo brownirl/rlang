@@ -21,6 +21,7 @@ class RLangErrorHandler(DefaultErrorStrategy):
         else:
             input = "<unknown input>"
         msg = "no viable alternative at input " + self.escapeWSAndQuote(input)
+        print(e.recognizer._ctx)
         recognizer.notifyErrorListeners(msg, e.offendingToken, e)
         raise e
 

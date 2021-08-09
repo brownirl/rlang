@@ -1,6 +1,5 @@
-import rlang.file_234
-import pandas
-import rlang.file.file_file
+import file_234.py
+import file_file.py
 
 i = 1.0
 i += 1.3

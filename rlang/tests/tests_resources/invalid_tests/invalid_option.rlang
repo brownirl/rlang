@@ -12,8 +12,3 @@ Option test1:
 Option test2:
         Execute go
     until at_workshop
-
-Option test3:
-    init True
-        Execute go
-        Find

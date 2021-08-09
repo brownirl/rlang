@@ -45,7 +45,6 @@ constant: CONSTANT IDENTIFIER BIND (any_bound_var | boolean_exp | arithmetic_exp
 
 policy_stat
     : execute
-    | FIND
     | IF boolean_exp COL INDENT (policy_stat NL+)* DEDENT (ELIF boolean_exp COL INDENT (policy_stat NL+)* DEDENT)* (ELSE COL INDENT (policy_stat NL+)* DEDENT)*
     ;
 
