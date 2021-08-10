@@ -41,7 +41,6 @@ REWARD: 'Reward';
 POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
-FIND: 'Find';
 MARKOVFEATURE: 'MarkovFeature';
 IMPORT: 'import';
 
