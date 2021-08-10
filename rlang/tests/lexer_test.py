@@ -397,5 +397,5 @@ def test_invalid_tokens():
     try:
         tokens = tokenize_from_string(lines[0])
     except Exception as ex:
-        offendingToken = ex.args[0].input.getText(ex.args[0].startIndex, ex.args[0].startIndex)
+        offendingToken = ex.e.input.getText(ex.e.startIndex, ex.e.startIndex)
         assert offendingToken == "@"
