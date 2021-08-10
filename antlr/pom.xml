@@ -22,7 +22,6 @@
                                 <exclude>**/VocabularyAssembler.py</exclude>
                                 <exclude>**/Exceptions.py</exclude>
                                 <exclude>**/RLangErrorListener.py</exclude>
-                                <exclude>**/RLangErrorHandler.py</exclude>
                                 <exclude>**/prettyprint.py</exclude>
                             </excludes>
                             <followSymlinks>false</followSymlinks>

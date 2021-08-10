@@ -24,10 +24,8 @@ def parse_from_input(input_string):
     lexer.addErrorListener(RLangErrorListener())
     stream = CommonTokenStream(lexer)
     parser = RLangParser(stream)
-    parser._errHandler = BailErrorStrategy()
     parser.removeErrorListeners()
     parser.addErrorListener(RLangErrorListener())
-    parser._errHandler = RLangErrorHandler()
 
     return parser
 
@@ -155,7 +153,6 @@ def test_effect():
     except Exception as re:
         assert False, "effect3 failed"  
 
-
 def test_policy():
     file = open(os.path.join(__location__, "tests_resources/policy.rlang"), "r")
     lines = file.readlines()
@@ -213,8 +210,6 @@ def test_invalid_constant():
     assert offending_token == "'-='"
     print(expected_token)
     assert expected_token == "{'S'', 'S', 'A', 'not', 'True', 'False', '[', '(', '-', IDENTIFIER, DECIMAL, INTEGER}"
-
-test_invalid_constant()
 
 def test_invalid_factor():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_factor.rlang"), "r")
