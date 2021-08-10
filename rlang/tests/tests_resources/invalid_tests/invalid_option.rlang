@@ -4,11 +4,6 @@ Option test:
             Execute
     until at_workshop2
 
-Option test1:
-    init not 1 == 1
-        Find use
-    until at_workshop2
-
 Option test2:
         Execute go
     until at_workshop

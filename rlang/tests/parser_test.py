@@ -3,8 +3,10 @@ from antlr4 import *
 import sys, os
 
 from antlr4.error.ErrorListener import ConsoleErrorListener
+from antlr4.error.ErrorStrategy import BailErrorStrategy
 sys.path.append(os.path.abspath("../"))
-from rlang.src.language.RLangErrorHandler import MissingTokenException, RLangErrorHandler, UnwantedTokenException
+from rlang.src.language.RLangErrorListener import RLangErrorListener
+from rlang.src.language.RLangErrorHandler import RLangErrorHandler
 from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
 from antlr4.tree.ParseTreePatternMatcher import ParseTreePatternMatcher
@@ -18,11 +20,14 @@ __location__ = os.path.realpath(
 def parse_from_input(input_string):
     input_stream = InputStream(input_string)
     lexer = RLangLexer(input_stream)
+    lexer.removeErrorListeners()
+    lexer.addErrorListener(RLangErrorListener())
     stream = CommonTokenStream(lexer)
     parser = RLangParser(stream)
+    parser._errHandler = BailErrorStrategy()
+    parser.removeErrorListeners()
+    parser.addErrorListener(RLangErrorListener())
     parser._errHandler = RLangErrorHandler()
-    # parser.removeErrorListeners()
-    # parser.addErrorListener(RLangErrorListener())
 
     return parser
 
@@ -30,15 +35,17 @@ def get_invalid_tokens(input_string):
     try:
         parser = parse_from_input(input_string)
         tree = parser.program()
-    except (InputMismatchException, UnwantedTokenException, MissingTokenException) as e:
-        offending_token = parser.getTokenErrorDisplay(e.offendingToken)
-        expected_token = e.getExpectedTokens().toString(parser.literalNames, parser.symbolicNames)
-        return offending_token, expected_token
-    except NoViableAltException as e:
-        offending_token = parser.getTokenErrorDisplay(e.offendingToken)
-        return offending_token, None
-    except Exception as e:
-        print(type(e))
+    except Exception as ex:
+        if type(ex.args[0]) == NoViableAltException:
+            offending_token = parser.getTokenErrorDisplay(ex.args[0].offendingToken)
+            return offending_token, None
+        elif type(ex.args[0]) == LexerNoViableAltException:
+            offending_token = ex.args[0].input.getText(ex.args[0].startIndex, ex.args[0].startIndex)
+            return offending_token, None
+        else: 
+            offending_token = parser.getTokenErrorDisplay(ex.args[0].offendingToken)
+            expected_token = ex.args[0].getExpectedTokens().toString(parser.literalNames, parser.symbolicNames)
+            return offending_token, expected_token
     return None
 
 
@@ -105,17 +112,16 @@ def test_markov_feature():
             tree = parser.dec()
         except Exception as re:
             assert False
-test_markov_feature()
 
 def test_option():
     file = open(os.path.join(__location__, "tests_resources/option.rlang"), "r")
     lines = file.readlines()
-    option1 = ''.join(lines[0:4])
-    try:
-        parser= parse_from_input(option1)
-        tree = parser.dec()
-    except Exception as re:
-        assert False, "option1 failed"
+    # option1 = ''.join(lines[0:4])
+    # try:
+    #     parser= parse_from_input(option1)
+    #     tree = parser.dec()
+    # except Exception as re:
+    #     assert False, "option1 failed"
 
     option2 = ''.join(lines[4:])
     try:
@@ -123,6 +129,7 @@ def test_option():
         tree = parser.dec()
     except Exception as re:
         assert False, "option2 failed"    
+
 
 def test_effect():
     file = open(os.path.join(__location__, "tests_resources/effect.rlang"), "r")
@@ -147,6 +154,7 @@ def test_effect():
         tree = parser.effect()
     except Exception as re:
         assert False, "effect3 failed"  
+
 
 def test_policy():
     file = open(os.path.join(__location__, "tests_resources/policy.rlang"), "r")
@@ -189,16 +197,23 @@ def test_invalid_constant():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_constant.rlang"), "r")
     lines = file.readlines()
 
-    # TODO: Figure out what to do with token recognition errors
     offending_token, expected_token = get_invalid_tokens(lines[0])
+    assert offending_token == "@"
+    assert expected_token == None
+
     offending_token, expected_token = get_invalid_tokens(lines[1])
     assert offending_token == "'+'"
     assert expected_token == None
+    
     offending_token, expected_token = get_invalid_tokens(lines[2])
     assert offending_token == "'Effect'"
     assert expected_token == "NL"
+    
     offending_token, expected_token = get_invalid_tokens(lines[3])
     assert offending_token == "'-='"
+    print(expected_token)
+    assert expected_token == "{'S'', 'S', 'A', 'not', 'True', 'False', '[', '(', '-', IDENTIFIER, DECIMAL, INTEGER}"
+
 test_invalid_constant()
 
 def test_invalid_factor():
@@ -250,6 +265,7 @@ def test_invalid_effect():
     lines = file.readlines()
 
     offending_token, expected_token = get_invalid_tokens("".join(lines[:5]))
+    print(offending_token)
     assert offending_token == "'Feature'"
     assert expected_token == "{DEDENT, NL, 'Constant', 'Reward', 'S'', IDENTIFIER}"
 
@@ -272,45 +288,39 @@ def test_invalid_option():
     lines = file.readlines()
 
     option1 = "".join(lines[:5])
-    print(get_invalid_tokens(option1))
     offending_token, expected_token = get_invalid_tokens(option1)
     assert offending_token == "'newLine'"
     assert expected_token == "IDENTIFIER"
 
-    #TODO: option currently allows multiple execute/find statements
-    offending_token, expected_token = get_invalid_tokens("".join(lines[6:10]))
-    assert offending_token == "'use'"
-    # assert expected_token == "DEDENT"
-
-    offending_token, expected_token = get_invalid_tokens("".join(lines[11:14]))
+    offending_token, expected_token = get_invalid_tokens("".join(lines[6:9]))
     assert offending_token == "'Execute'"
     assert expected_token == "'init'"
-
 
 def test_invalid_policy():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_policy.rlang"), "r")
     lines = file.readlines()
 
+    get_invalid_tokens("".join(lines[:6]))
     offending_token, expected_token = get_invalid_tokens("".join(lines[:6]))
     assert offending_token == "'elif'"
-    assert expected_token == "{DEDENT, 'Execute', 'Find', 'if'}"
+    assert expected_token == "{DEDENT, 'Execute', 'if'}"
 
+    get_invalid_tokens("".join(lines[6:11]))
     offending_token, expected_token = get_invalid_tokens("".join(lines[6:11]))
     assert offending_token == "'init'"
-    assert expected_token == "{DEDENT, 'Execute', 'Find', 'if'}"
+    assert expected_token == "{DEDENT, 'Execute', 'if'}"
+
+# test_invalid_policy()
 
 def test_invalid_predicate():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_predicate.rlang"), "r")
     lines = file.readlines()
 
-    #TODO: validity of test? Predicate test := location != workshop == b + workshop
-    print(get_invalid_tokens(lines[0]))
-
-    offending_token, expected_token = get_invalid_tokens(lines[1])
+    offending_token, expected_token = get_invalid_tokens(lines[0])
     assert offending_token == "'in'"
     assert expected_token == "{'S'', 'S', 'A', 'not', 'True', 'False', '[', '(', '-', IDENTIFIER, DECIMAL, INTEGER}"
 
-    offending_token, expected_token = get_invalid_tokens(lines[2])
+    offending_token, expected_token = get_invalid_tokens(lines[1])
     assert offending_token == "'+'"
     assert expected_token == "NL"
 
@@ -320,7 +330,6 @@ def test_misc():
 
     for line in lines[:2]:
         try:
-            #TODO: import grammar rule doesn't work for examples
             parser = parse_from_input(line)
             tree = parser.imports()
         except Exception as re:
