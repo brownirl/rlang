@@ -4,6 +4,9 @@ from functools import reduce
 import numpy as np
 from antlr4 import *
 import json
+import sys, os
+
+sys.path.append(os.path.abspath("../rlang/src/"))
 
 from lmdp.grounding.states import Predicate
 from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression

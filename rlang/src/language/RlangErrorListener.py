@@ -8,9 +8,9 @@ class RLangErrorListener(ErrorListener):
         if e is None:
             e = RecognitionException(msg, recognizer, recognizer.getInputStream(), recognizer._ctx)
             e.offendingToken = offendingSymbol  
-        raise RlangException(e, msg)
+        raise RLangException(e, msg)
 
-class RlangException(ParseCancellationException):
+class RLangException(ParseCancellationException):
     def __init__(self, e, msg: str):
         super().__init__(msg)
         self.e = e

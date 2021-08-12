@@ -1,8 +1,8 @@
-from rlang.src.language.RLangErrorListener import RLangErrorListener
-from antlr4 import CommonTokenStream, InputStream, Token
 import sys, os
 sys.path.append(os.path.abspath("../"))
 from rlang.src.language.RLangLexer import RLangLexer
+from rlang.src.language.RLangErrorListener import RLangErrorListener
+from antlr4 import CommonTokenStream, InputStream, Token
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
