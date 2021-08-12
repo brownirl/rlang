@@ -1,5 +1,6 @@
 from antlr4.error.Errors import CancellationException, ParseCancellationException, RecognitionException
 from antlr4.error.ErrorListener import *
+from rlang.src.language.Exceptions import RLangParseCancellationException
 
 class RLangErrorListener(ErrorListener):
     
@@ -8,9 +9,4 @@ class RLangErrorListener(ErrorListener):
         if e is None:
             e = RecognitionException(msg, recognizer, recognizer.getInputStream(), recognizer._ctx)
             e.offendingToken = offendingSymbol  
-        raise RLangException(e, msg)
-
-class RLangException(ParseCancellationException):
-    def __init__(self, e, msg: str):
-        super().__init__(msg)
-        self.e = e
+        raise RLangParseCancellationException(e, msg)

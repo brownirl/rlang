@@ -1,10 +1,10 @@
 from antlr4 import *
-
 import sys, os
 
 from antlr4.error.ErrorListener import ConsoleErrorListener
 from antlr4.error.ErrorStrategy import BailErrorStrategy
 sys.path.append(os.path.abspath("../"))
+from rlang.src.language.RLangErrorStrategy import RLangErrorStrategy
 from rlang.src.language.RLangErrorListener import RLangErrorListener
 from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
@@ -25,6 +25,7 @@ def parse_from_input(input_string):
     parser = RLangParser(stream)
     parser.removeErrorListeners()
     parser.addErrorListener(RLangErrorListener())
+    parser._errHandler = RLangErrorStrategy()
 
     return parser
 
@@ -193,10 +194,12 @@ def test_invalid_constant():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_constant.rlang"), "r")
     lines = file.readlines()
 
+    #TODO: resolve double tracebacks lexer no viable alternative exception
     offending_token, expected_token = get_invalid_tokens(lines[0])
     assert offending_token == "@"
     assert expected_token == None
 
+    #TODO: resolve double tracebacks for no viable alternative exception
     offending_token, expected_token = get_invalid_tokens(lines[1])
     assert offending_token == "'+'"
     assert expected_token == None
@@ -207,7 +210,6 @@ def test_invalid_constant():
     
     offending_token, expected_token = get_invalid_tokens(lines[3])
     assert offending_token == "'-='"
-    print(expected_token)
     assert expected_token == "{'S'', 'S', 'A', 'not', 'True', 'False', '[', '(', '-', IDENTIFIER, DECIMAL, INTEGER}"
 
 def test_invalid_factor():
@@ -234,6 +236,7 @@ def test_invalid_feature():
     assert offending_token == "'=='"
     assert expected_token == "NL"
     
+    # TODO: resolve double traceback for no viable alt exception
     offending_token, expected_token = get_invalid_tokens(lines[1])
     assert offending_token == "'['"
     assert expected_token == None
@@ -242,10 +245,12 @@ def test_invalid_goal():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_goal.rlang"), "r")
     lines = file.readlines()
 
+
     offending_token, expected_token = get_invalid_tokens(lines[0])
     assert offending_token == "'Effect'"
     assert expected_token == "IDENTIFIER"
 
+    # TODO: resolve double traceback for no viable alt exception
     offending_token, expected_token = get_invalid_tokens(lines[1])
     assert offending_token == "'and'"
     assert expected_token == None
@@ -258,25 +263,24 @@ def test_invalid_effect():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_effect.rlang"), "r")
     lines = file.readlines()
 
-    print(get_invalid_tokens("".join(lines[:5])))
-
-    # offending_token, expected_token = get_invalid_tokens("".join(lines[:5]))
-    # assert offending_token == "'Feature'"
-    # assert expected_token == "{DEDENT, NL, 'Constant', 'Reward', 'S'', IDENTIFIER}"
+    offending_token, expected_token = get_invalid_tokens("".join(lines[:5]))
+    assert offending_token == "'Feature'"
+    assert expected_token == "{DEDENT, NL, 'Constant', 'Reward', 'S'', IDENTIFIER}"
 
     offending_token, expected_token = get_invalid_tokens("".join(lines[6:8]))
     assert offending_token == "'\\n'"
     assert expected_token == "INDENT"
 
+    # TODO: resolve double traceback for no viable alt exception
     offending_token, expected_token = get_invalid_tokens("".join(lines[9:11]))
     assert offending_token == "'ten'"
     assert expected_token == "{'-', DECIMAL, INTEGER}"
     
+    # TODO: resolve double traceback for no viable alt exception
     offending_token, expected_token = get_invalid_tokens("".join(lines[12:16]))
     assert offending_token == "':'"
     assert expected_token == None
 
-test_invalid_effect()
 
 def test_invalid_option():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_option.rlang"), "r")
@@ -290,6 +294,7 @@ def test_invalid_option():
     offending_token, expected_token = get_invalid_tokens("".join(lines[6:9]))
     assert offending_token == "'Execute'"
     assert expected_token == "'init'"
+
 
 def test_invalid_policy():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_policy.rlang"), "r")
@@ -309,6 +314,7 @@ def test_invalid_predicate():
     file = open(os.path.join(__location__, "tests_resources/invalid_tests/invalid_predicate.rlang"), "r")
     lines = file.readlines()
 
+    # TODO: resolve double traceback for no viable alt exception
     offending_token, expected_token = get_invalid_tokens(lines[0])
     assert offending_token == "'in'"
     assert expected_token == "{'S'', 'S', 'A', 'not', 'True', 'False', '[', '(', '-', IDENTIFIER, DECIMAL, INTEGER}"
@@ -334,3 +340,7 @@ def test_misc():
             tree = parser.arithmetic_exp()
         except Exception as re:
             assert False
+
+
+if __name__ == "__main__":
+    test_invalid_predicate()

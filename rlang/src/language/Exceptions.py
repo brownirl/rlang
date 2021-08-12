@@ -1,3 +1,5 @@
+from antlr4.error.Errors import ParseCancellationException
+
 class RLangSemanticError(Exception):
     pass
 
@@ -13,3 +15,7 @@ class UnknownVariableError(RLangSemanticError):
         self.message = f"Unknown variable binding '{variable_name}'."
         super().__init__(self.message)
 
+class RLangParseCancellationException(ParseCancellationException):
+    def __init__(self, e, msg: str):
+        super().__init__(msg)
+        self.e = e
