@@ -74,13 +74,6 @@ def test_Predicate():
     hi = Predicate(x == 1 and BOOL_TRUE.or_(BOOL_FALSE))
     assert hi_parsed == hi
     assert hi_parsed(np.array([0, 1, 2])) == hi(np.array([0, 1, 2]))
-    #print((x == 1).and_(BOOL_TRUE).or_(BOOL_FALSE))
-    # hi = Predicate((x==1).__and__(BOOL_TRUE).__or__(BOOL_FALSE))
-    # print(hi)
-    # assert hi_parsed == hi
-    # print(hi_parsed(np.array([0, 1, 2])))
-    # assert hi_parsed(np.array([0, 1, 2])) == hi(np.array([0, 1, 2]))
-
 
 if __name__ == "__main__":
     test_Predicate()
