@@ -17,10 +17,10 @@ from functools import reduce, partial
 from collections.abc import Iterable, Sequence
 from collections import Counter
 
-from lmdp.grounding.GroundingClass import Grounding
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from lmdp.grounding.real.RealExpressionClass import RealExpression
-from lmdp.grounding.states.StateClass import State, BatchedState
+from rlang.src.lmdp.grounding.GroundingClass import Grounding
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from rlang.src.lmdp.grounding.real.RealExpressionClass import RealExpression
+from rlang.src.lmdp.grounding.states.StateClass import State, BatchedState
 
 
 class StateFactor(Grounding, RealExpression):

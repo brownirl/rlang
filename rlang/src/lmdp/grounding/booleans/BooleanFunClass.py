@@ -8,7 +8,7 @@ import sys, os
 
 sys.path.append(os.path.abspath("../rlang/src/"))
 
-from lmdp.grounding.expressions.ExpressionsClass import Expression
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import reduce, partial
 import numpy as np
 import torch

@@ -8,9 +8,9 @@ import sys, os
 
 sys.path.append(os.path.abspath("../rlang/src/"))
 
-from lmdp.grounding.GroundingClass import Grounding
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
-from lmdp.grounding.states.StateClass import BatchedState, State
+from rlang.src.lmdp.grounding.GroundingClass import Grounding
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
+from rlang.src.lmdp.grounding.states.StateClass import BatchedState, State
 
 import numpy as np
 import torch

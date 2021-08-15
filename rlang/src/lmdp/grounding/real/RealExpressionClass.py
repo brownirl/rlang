@@ -8,10 +8,10 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 import numpy as np
-from lmdp.grounding.expressions.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from lmdp.utils.expression_utils import Domain
-from lmdp.utils.space import BatchedVector, BatchedTuple
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from rlang.src.lmdp.utils.expression_utils import Domain
+from rlang.src.lmdp.utils.space import BatchedVector, BatchedTuple
 from collections.abc import Sequence
 
 

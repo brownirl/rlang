@@ -10,7 +10,7 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 import numpy as np
-from lmdp.utils.space import Vector, BatchedVector
+from rlang.src.lmdp.utils.space import Vector, BatchedVector
 
 
 class State(Vector):
