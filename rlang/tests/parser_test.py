@@ -19,8 +19,8 @@ __location__ = os.path.realpath(
 def parse_from_input(input_string):
     input_stream = InputStream(input_string)
     lexer = RLangLexer(input_stream)
-    lexer.removeErrorListeners()
-    lexer.addErrorListener(RLangErrorListener())
+    # lexer.removeErrorListeners()
+    # lexer.addErrorListener(RLangErrorListener())
     stream = CommonTokenStream(lexer)
     parser = RLangParser(stream)
     parser.removeErrorListeners()
@@ -30,6 +30,8 @@ def parse_from_input(input_string):
     return parser
 
 def get_invalid_tokens(input_string):
+    # parser = parse_from_input(input_string)
+    # tree = parser.program()
     try:
         parser = parse_from_input(input_string)
         tree = parser.program()
@@ -196,8 +198,8 @@ def test_invalid_constant():
 
     #TODO: resolve double tracebacks lexer no viable alternative exception
     offending_token, expected_token = get_invalid_tokens(lines[0])
-    assert offending_token == "@"
-    assert expected_token == None
+    assert offending_token == "'@'"
+    assert expected_token == "NL"
 
     #TODO: resolve double tracebacks for no viable alternative exception
     offending_token, expected_token = get_invalid_tokens(lines[1])
@@ -343,4 +345,4 @@ def test_misc():
 
 
 if __name__ == "__main__":
-    test_invalid_predicate()
+    test_invalid_constant()
