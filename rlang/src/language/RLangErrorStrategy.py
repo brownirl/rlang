@@ -14,7 +14,8 @@ class RLangErrorStrategy(DefaultErrorStrategy):
         # pass
         try:
             super().sync(recognizer)
-        except InputMismatchException as e:
-            # self.recoverInline(recognizer)
-            print("caught")
-            self.reportInputMismatch(recognizer, e)
+        except:
+            pass
+            # # self.recoverInline(recognizer)
+            # print("caught")
+            # # self.reportInputMismatch(recognizer, InputMismatchException(recognizer))

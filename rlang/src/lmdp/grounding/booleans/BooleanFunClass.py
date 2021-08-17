@@ -18,6 +18,16 @@ class BooleanExpression(Expression):
     _id = 0
 
     def __init__(self, fun, domain, name=None, operator=None, operands=None):
+        """
+        Initializes a Boolean Expression
+
+        Args:
+            fun (function): [description]
+            domain (string list): [description]
+            name (string, optional): [description]. Defaults to 'boolean-f-' + the class id.
+            operator (string, optional): [description]. Defaults to None.
+            operands (string, optional): [description]. Defaults to None.
+        """
         self._operator = operator
         self._operands = operands
         if name is None:
@@ -26,6 +36,21 @@ class BooleanExpression(Expression):
         Expression.__init__(self, fun, domain=domain, codomain=["boolean"], name=name)
 
     def and_(self, other):
+        """ 
+        Represents the logical operator 'and' to join two boolean expressions
+
+        Args:
+            other (Expression): any BooleanExpression, Expression, or bool
+
+        Raises:
+            other.__name__: if other is not a boolean, BooleanExpression or Expression, raise other.__name__()
+
+        Returns:
+            BooleanExpression: fun is a partial function that applies _conj to self and other; 
+                                domain is the combination of the domains of self and other;
+                                operator is 'and';
+                                operands is a list of self and other
+        """
         # Short-circuiting
         # if (self == BOOL_TRUE or other == BOOL_TRUE):
         #     return self
@@ -46,6 +71,21 @@ class BooleanExpression(Expression):
             raise other.__name__() + " must be a Boolean Expression or bool"
 
     def or_(self, other):
+        """ 
+        Represents the logical operator 'or' to join two boolean expressions
+
+        Args:
+            other (Expression): any BooleanExpression, Expression, or bool
+
+        Raises:
+            other.__name__: if other is not a boolean, BooleanExpression or Expression, raise other.__name__()
+
+        Returns:
+            BooleanExpression: fun is a partial function that applies _disj to self and other; 
+                                domain is the combination of the domains of self and other;
+                                operator is 'or';
+                                operands is a list of self and other
+        """
         # Short-circuiting
         # if (self == BOOL_TRUE or other == BOOL_TRUE):
         #     return BOOL_TRUE
@@ -53,7 +93,7 @@ class BooleanExpression(Expression):
         #     return self
         # generate function 
         if isinstance(other, BooleanExpression):
-            return BooleanExpression(partial(_conj, self, other),
+            return BooleanExpression(partial(_disj, self, other),
                                      domain=self.domain() + other.domain(),
                                      operator='or',
                                      operands=[self, other])
@@ -65,6 +105,15 @@ class BooleanExpression(Expression):
             raise other.__name__() + " must be a Boolean Expression or bool"
 
     def not_(self):
+        """
+        Represents the logic operator "not"
+
+        Returns:
+            BooleanExpression: fun is a partial function that applies _neg to self; 
+                                domain is self.domain();
+                                operator is 'not';
+                                operands is a list of self
+        """
         if self._operator is not None and self._operator == 'not':
             return self._operands[0]
         return BooleanExpression(partial(_neg, self),
@@ -98,6 +147,15 @@ class BooleanExpression(Expression):
 
 
 def grounded_or(result_1, result_2):
+    """[summary]
+
+    Args:
+        result_1 ([type]): [description]
+        result_2 ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     if isinstance(result_1, bool) and isinstance(result_2, bool):  # boolean operation
         return result_1 or result_2
     if isinstance(result_1, bool) and isinstance(result_2, (np.ndarray, torch.Tensor)):
