@@ -14,12 +14,12 @@ import sys, os
 
 sys.path.append(os.path.abspath("./lmdp"))
 from collections import namedtuple
-from lmdp.grounding.states.PredicateClass import any_state
-from lmdp.grounding.booleans.BooleanFunClass import any_action, bool_not
-from lmdp.grounding.actions.SubpolicyClass import Subpolicy
-from lmdp.grounding.states.Effect import Effect
-from lmdp.grounding import *
-from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE
+from rlang.src.lmdp.grounding.states.PredicateClass import any_state
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import any_action, bool_not
+from rlang.src.lmdp.grounding.actions.SubpolicyClass import Subpolicy
+from rlang.src.lmdp.grounding.states.Effect import Effect
+from rlang.src.lmdp.grounding import *
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE
 
 WHEN_CTX = True
 OTHERWISE_CTX = False

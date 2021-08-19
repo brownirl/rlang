@@ -11,11 +11,11 @@
     date: v0 September 2020
           v1 January 2021
 '''
-from lmdp.grounding.transitions.TransitionGroundingClass import TransitionGrounding
-from lmdp.grounding.states.StateGroundingClass import StateFactor
-from lmdp.grounding import *
-from lmdp.grounding.expressions.ConditionalExpressionClass import Conditional
-from lmdp.grounding.VocabularyClass import Vocabulary
+from .grounding.transitions.TransitionGroundingClass import TransitionGrounding
+from .grounding.states.StateGroundingClass import StateFactor
+from .grounding import *
+from .grounding.expressions.ConditionalExpressionClass import Conditional
+from .grounding.VocabularyClass import Vocabulary
 from simple_rl.mdp.MDPClass import MDP
 from collections import defaultdict
 from collections.abc import Iterable

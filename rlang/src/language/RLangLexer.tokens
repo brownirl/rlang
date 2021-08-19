@@ -55,6 +55,7 @@ IDENTIFIER=54
 DECIMAL=55
 INTEGER=56
 SKIP_=57
+ANY=58
 'Predicate'=4
 'Feature'=5
 'Factor'=6

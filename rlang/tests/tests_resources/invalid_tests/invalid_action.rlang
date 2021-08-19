@@ -1,0 +1,6 @@
+Action test := [1, 0]
+Action test1 := 1 == 1.0
+Action test2 := 1.0
+Action S := [1, 2, 3]
+Action test2 := 1 + 1
+Action test3 := test4

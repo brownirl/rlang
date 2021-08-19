@@ -1,0 +1,2 @@
+MarkovFeature delta_state := S' + S
+MarkovFeature test2 := 2

@@ -1,0 +1,10 @@
+Predicate at_workshop := location == workshop               
+Predicate away := location != workshop and location != tree
+Predicate test2 := location and workshop or tree and 1 == 1
+Predicate test3 := S[0] > 3 and S[1] <= 5
+Predicate test3 := not (True)
+Predicate test4 := False
+Predicate in_lava := position in lava_locs
+Predicate test5 := not location != workshop
+Predicate test6 := not location in workshop != location in workshop
+Predicate test7 := location != workshop == b

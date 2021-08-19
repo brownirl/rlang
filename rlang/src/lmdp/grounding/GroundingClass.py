@@ -3,7 +3,7 @@
     Author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     Date: August 2020
 """
-from lmdp.utils.expression_utils import Domain, Codomain
+from rlang.src.lmdp.utils.expression_utils import Domain, Codomain
 
 
 class Grounding(object):

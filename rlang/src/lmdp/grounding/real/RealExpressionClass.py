@@ -8,10 +8,10 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 import numpy as np
-from lmdp.grounding.expressions.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from lmdp.utils.expression_utils import Domain
-from lmdp.utils.space import BatchedVector, BatchedTuple
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from rlang.src.lmdp.utils.expression_utils import Domain
+from rlang.src.lmdp.utils.space import BatchedVector, BatchedTuple
 from collections.abc import Sequence
 
 
@@ -20,6 +20,18 @@ class RealExpression(Expression):
 
     def __init__(self, expression_fun, dimension=1, domain=[], codomain=["real"], name=None, operator=None,
                  operands=None):
+        """
+        Initializes Real Expression
+
+        Args:
+            expression_fun (function): [description]
+            dimension (int, optional): [description]. Defaults to 1.
+            domain (list, optional): [description]. Defaults to [].
+            codomain (list, optional): [description]. Defaults to ["real"].
+            name ([type], optional): [description]. Defaults to "real-exp-" + class id.
+            operator ([type], optional): [description]. Defaults to None.
+            operands ([type], optional): [description]. Defaults to None.
+        """
         self.__dim = dimension
         self._operator = operator
         self._operands = operands
@@ -32,6 +44,7 @@ class RealExpression(Expression):
     def dim(self):
         return self.__dim
 
+    #TODO: rewrite with match case?
     def __add__(self, other):
         domain = self.domain()
         operands = [self, other]
@@ -40,24 +53,26 @@ class RealExpression(Expression):
                 domain += other.domain()
                 f = lambda **args: self.__call__(**args) + other(**args)
             else:
-                raise "Shapes are not compatible"
+                raise Exception("Shapes are not compatible")
         elif (isinstance(other, (float, int))):
             f = lambda **args: self.__call__(**args) + other
         elif (isinstance(other, np.ndarray)):
+            # TODO: find out why self.dim() is in a tuple
             if (other.shape == (self.dim(),)):
                 f = lambda **args: self.__call__(**args) + other
             else:
-                raise "Shapes are not compatible"
+                raise Exception("Shapes are not compatible. ")
         elif (isinstance(other, Sequence)):
             if (len(other) == self.dim()):
                 f = lambda **args: self.__call__(**args) + np.array(other)
             else:
-                raise "Shapes are not compatible"
+                raise Exception("Shapes are not compatible")
         else:
             return NotImplemented
         return RealExpression(f, dimension=self.dim(), domain=domain, operator='+', operands=operands)
 
     def __sub__(self, other):
+
         domain = self.domain()
         operands = [self, other]
         if (isinstance(other, RealExpression)):
@@ -72,7 +87,9 @@ class RealExpression(Expression):
             if (other.shape == (self.dim(),)):
                 f = lambda **args: self.__call__(**args) - other
             else:
-                raise "Shapes are not compatible"
+                msg = """Shapes are not compatible. The dimension of {} is {},
+                but the shape of {} is {}""".format(self(), self.dim(), other, other.shape)
+                raise Exception(msg)
         elif (isinstance(other, Sequence)):
             if (len(other) == self.dim()):
                 f = lambda **args: self.__call__(**args) - np.array(other)
@@ -82,6 +99,8 @@ class RealExpression(Expression):
             return NotImplemented
         return RealExpression(f, self.dim(), domain=domain, operator='-', operands=operands)
 
+ #TODO: for matrix multiplication, don't you need to check if matrix col and row length equate?
+ #TODO: is this how matrix multiplication intended to work?
     def __mul__(self, other):
         domain = self.domain()
         operands = [self, other]
@@ -115,7 +134,7 @@ class RealExpression(Expression):
                 domain += other.domain()
                 f = lambda **args: self.__call__(**args) / other(**args)
             else:
-                raise "Shapes are not compatible"
+                raise Exception("Shapes are not compatible")
         elif (isinstance(other, float) or isinstance(other, int)):
             f = lambda **args: self.__call__(**args) / other
         elif (isinstance(other, np.ndarray)):
@@ -212,7 +231,7 @@ class RealExpression(Expression):
                 raise "Length must be equal"
         elif (isinstance(other, float) or isinstance(other, int)):
             if (self.dim() == 1):
-                return BooleanExpression(lambda **args: self.__call__(**args) == other, domain=self.domain())
+                return BooleanExpression(lambda **args: self.__call__(**args) != other, domain=self.domain())
             else:
                 raise "Length must be equal"
         elif (isinstance(other, np.ndarray)):
@@ -272,10 +291,12 @@ class RealExpression(Expression):
 
     def __getitem__(self, idx):
         operands = [self, idx]
-        if isinstance(idx, (list, tuple, np.ndarray)):
-            if not self.__indices_within_bounds(idx, self.dim()):
-                raise ValueError("Indices out of bounds")
-        elif isinstance(idx, slice):
+        # if isinstance(idx, (list, tuple, np.ndarray)):
+        #     pass
+        #     # if not self.__indices_within_bounds(idx, self.dim()):
+        #     #     raise ValueError("Indices out of bounds")
+        # el
+        if isinstance(idx, slice):
             idx = slice(idx.start, min(idx.stop, self.dim()), idx.step)
             idx = np.mgrid[idx].astype(int)
         elif idx >= self.dim():
@@ -287,6 +308,7 @@ class RealExpression(Expression):
                               domain=self.domain(),
                               operator='[]', operands=operands)
 
+    #TODO: what's the purpose of compose?
     def __compose__(self, expression):
         if (self.domain == expression.codomain):  # composable
             return RealExpression(lambda **args: self.__call__(expression(**args)), domain=expression.domain(),

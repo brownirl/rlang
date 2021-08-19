@@ -1,0 +1,16 @@
+Effect test:
+    iron = 1 == 1
+    S' *= 123
+    Constant is_goal_reached := True
+    Feature yes := hello
+
+Effect test1:
+reached_goal = True
+
+Effect not test2 in position:
+    Reward ten
+
+Effect 1 + 1:
+    Reward 1.5
+    iron = 5
+    S' *= 123

@@ -11,7 +11,7 @@ else:
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3;")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3<")
         buf.write("\u01be\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
@@ -260,7 +260,7 @@ class RLangParser ( Parser ):
                       "LT_EQ", "NOT_EQ", "COL", "COM", "L_BRK", "R_BRK", 
                       "L_PAR", "R_PAR", "LT", "GT", "TIMES", "DIVIDE", "PLUS", 
                       "MINUS", "FNAME", "IDENTIFIER", "DECIMAL", "INTEGER", 
-                      "SKIP_" ]
+                      "SKIP_", "ANY" ]
 
     RULE_program = 0
     RULE_imports = 1
@@ -359,6 +359,7 @@ class RLangParser ( Parser ):
     DECIMAL=55
     INTEGER=56
     SKIP_=57
+    ANY=58
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)

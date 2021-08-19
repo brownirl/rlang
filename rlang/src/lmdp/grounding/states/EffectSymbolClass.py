@@ -10,8 +10,8 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 
-from lmdp.grounding.states.PredicateClass import Predicate
-from lmdp.grounding.expressions.ExpressionsClass import Expression
+from rlang.src.lmdp.grounding.states.PredicateClass import Predicate
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import partial
 
 

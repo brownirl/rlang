@@ -138,3 +138,5 @@ fragment COMMENT
 SKIP_
     : (SPACES | COMMENT) -> skip
     ;
+
+ANY: . ;

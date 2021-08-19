@@ -1,6 +1,8 @@
 import numpy as np
 from antlr4 import *
+import sys, os
 
+sys.path.append(os.path.abspath("../"))
 from rlang.src.lmdp.grounding.states import Predicate
 from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
 from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
@@ -72,7 +74,6 @@ def test_Predicate():
     hi = Predicate(x == 1 and BOOL_TRUE.or_(BOOL_FALSE))
     assert hi_parsed == hi
     assert hi_parsed(np.array([0, 1, 2])) == hi(np.array([0, 1, 2]))
-
 
 if __name__ == "__main__":
     test_Predicate()

@@ -17,19 +17,23 @@ from functools import reduce, partial
 from collections.abc import Iterable, Sequence
 from collections import Counter
 
-from lmdp.grounding.GroundingClass import Grounding
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from lmdp.grounding.real.RealExpressionClass import RealExpression
-from lmdp.grounding.states.StateClass import State, BatchedState
+from rlang.src.lmdp.grounding.GroundingClass import Grounding
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from rlang.src.lmdp.grounding.real.RealExpressionClass import RealExpression
+from rlang.src.lmdp.grounding.states.StateClass import State, BatchedState
 
 
 class StateFactor(Grounding, RealExpression):
     counter = 0
 
     def __init__(self, feature_positions, name=None):
-        '''
-            Args: feature_positions is an array-like of indices (list, tuple or np.array)
-        '''
+        """
+        Initializes StateFactor
+
+        Args:
+            feature_positions (list, tuple or np.array): an array-like of indices
+            name (String, optional): [description]. Defaults to "state-factor-" + counter
+        """
         if (name is None):
             name = "state-factor-" + str(StateFactor.counter)
         if isinstance(feature_positions, int):

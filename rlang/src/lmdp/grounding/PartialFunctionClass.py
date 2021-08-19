@@ -6,7 +6,7 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: January 2021
 '''
-from lmdp.utils.expression_utils import Domain, Codomain
+from rlang.src.lmdp.utils.expression_utils import Domain, Codomain
 
 
 class PartialFunction:

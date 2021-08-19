@@ -1,0 +1,10 @@
+Policy test1:
+	Execute up
+	
+Policy test2:
+	if at_workshop:
+		Execute down
+	elif iron >= 1:
+		Execute leave
+	else:
+		Execute left

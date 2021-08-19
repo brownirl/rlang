@@ -1,0 +1,12 @@
+Effect A == right:
+    position += [0,1]
+
+Effect up:
+    y += 1
+    inventory[1] += 1
+
+Effect reached_goal:
+    Reward 1
+    iron = 5
+    S' *= 123
+    Constant is_goal_reached := True

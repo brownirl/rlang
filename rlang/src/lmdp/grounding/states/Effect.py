@@ -12,18 +12,25 @@
     date: January 2021
 '''
 
-from lmdp.grounding.expressions.ExpressionsClass import Expression
-from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, BOOL_TRUE, BOOL_FALSE
-from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
-from lmdp.grounding.states.PredicateClass import Predicate
-from lmdp.grounding.states.StateGroundingClass import StateFactor
-from lmdp.utils.expression_utils import Domain, Codomain
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, BOOL_TRUE, BOOL_FALSE
+from rlang.src.lmdp.grounding.states.EffectSymbolClass import EffectSymbol
+from rlang.src.lmdp.grounding.states.PredicateClass import Predicate
+from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor
+from rlang.src.lmdp.utils.expression_utils import Domain, Codomain
 from functools import partial
 
 
 class Effect(Expression):
 
     def __init__(self, boolean_expression_sa, effect):
+        """
+        Initializes Effect
+
+        Args:
+            boolean_expression_sa (BooleanExpression): the condition on which effect is called
+            effect (list, tuple, Expression, or dict): [description]
+        """
         self._effect = effect
         self._domain_sa = boolean_expression_sa
         Expression.__init__(self, self.effect, domain=["state", "action"], codomain=["set_of_states"])

@@ -1,0 +1,17 @@
+Policy test:
+    elif iron >= 1:
+		Execute leave
+	else:
+		Execute left
+
+Policy test2:
+    init 1 == 1
+        if has_iron:
+            Execute use
+    until at_workshop2
+
+Policy test3:
+    if at_workshop:
+        Execute down
+    if in_store:
+        Execute left 

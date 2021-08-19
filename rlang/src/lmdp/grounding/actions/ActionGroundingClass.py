@@ -5,8 +5,8 @@
           v1 January 2021
 '''
 
-from lmdp.grounding.GroundingClass import Grounding
-from lmdp.grounding.expressions.ExpressionsClass import Expression
+from rlang.src.lmdp.grounding.GroundingClass import Grounding
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
 
 
 class ActionGrounding(Expression, Grounding):

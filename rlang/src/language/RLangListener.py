@@ -4,13 +4,16 @@ from functools import reduce
 import numpy as np
 from antlr4 import *
 import json
+import sys, os
 
-from lmdp.grounding.states import Predicate
-from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
-from lmdp.grounding.real.RealExpressionClass import RealConstant, RealExpression
-from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
-from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
-from lmdp import LMDP
+sys.path.append(os.path.abspath("../rlang/src/"))
+
+from rlang.src.lmdp.grounding.states import Predicate
+from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
+from rlang.src.lmdp.grounding.real.RealExpressionClass import RealConstant, RealExpression
+from rlang.src.lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
+from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
+from rlang.src.lmdp import LMDP
 from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
