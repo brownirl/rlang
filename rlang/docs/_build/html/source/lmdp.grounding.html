@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>lmdp.grounding package &mdash; RLang 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> RLang
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">lmdp.grounding package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-lmdp.grounding.GroundingClass">lmdp.grounding.GroundingClass module</a></li>
+<li><a class="reference internal" href="#module-lmdp.grounding.PartialFunctionClass">lmdp.grounding.PartialFunctionClass module</a></li>
+<li><a class="reference internal" href="#module-lmdp.grounding.VocabularyClass">lmdp.grounding.VocabularyClass module</a></li>
+<li><a class="reference internal" href="#module-lmdp.grounding">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RLang</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>lmdp.grounding package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/lmdp.grounding.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lmdp-grounding-package">
+<h1>lmdp.grounding package<a class="headerlink" href="#lmdp-grounding-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.actions.html">lmdp.grounding.actions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.ActionGroundingClass">lmdp.grounding.actions.ActionGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.DiscreteActionGroundingClass">lmdp.grounding.actions.DiscreteActionGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.PolicyElementsClass">lmdp.grounding.actions.PolicyElementsClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.PolicyFromDictClass">lmdp.grounding.actions.PolicyFromDictClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.PolicyGroundingClass">lmdp.grounding.actions.PolicyGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.SubpolicyClass">lmdp.grounding.actions.SubpolicyClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions.options">lmdp.grounding.actions.options module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.actions.html#module-lmdp.grounding.actions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.booleans.html">lmdp.grounding.booleans package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.booleans.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.booleans.html#module-lmdp.grounding.booleans.BooleanFunClass">lmdp.grounding.booleans.BooleanFunClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.booleans.html#module-lmdp.grounding.booleans">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.expressions.html">lmdp.grounding.expressions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.expressions.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.expressions.html#module-lmdp.grounding.expressions.ConditionalExpressionClass">lmdp.grounding.expressions.ConditionalExpressionClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.expressions.html#module-lmdp.grounding.expressions.ExpressionsClass">lmdp.grounding.expressions.ExpressionsClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.expressions.html#module-lmdp.grounding.expressions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.real.html">lmdp.grounding.real package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.real.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.real.html#module-lmdp.grounding.real.MarkovFeatureClass">lmdp.grounding.real.MarkovFeatureClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.real.html#module-lmdp.grounding.real.RealExpressionClass">lmdp.grounding.real.RealExpressionClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.real.html#module-lmdp.grounding.real">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.rewards.html">lmdp.grounding.rewards package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.rewards.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.rewards.html#module-lmdp.grounding.rewards.RewardGroundingClass">lmdp.grounding.rewards.RewardGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.rewards.html#module-lmdp.grounding.rewards.ValueGroundingClass">lmdp.grounding.rewards.ValueGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.rewards.html#module-lmdp.grounding.rewards">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.states.html">lmdp.grounding.states package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states.Effect">lmdp.grounding.states.Effect module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states.EffectSymbolClass">lmdp.grounding.states.EffectSymbolClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states.NextStateGroundingClass">lmdp.grounding.states.NextStateGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states.PredicateClass">lmdp.grounding.states.PredicateClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states.StateClass">lmdp.grounding.states.StateClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states.StateGroundingClass">lmdp.grounding.states.StateGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.states.html#module-lmdp.grounding.states">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lmdp.grounding.transitions.html">lmdp.grounding.transitions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.transitions.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.transitions.html#module-lmdp.grounding.transitions.TransitionGroundingClass">lmdp.grounding.transitions.TransitionGroundingClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lmdp.grounding.transitions.html#module-lmdp.grounding.transitions">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-lmdp.grounding.GroundingClass">
+<span id="lmdp-grounding-groundingclass-module"></span><h2>lmdp.grounding.GroundingClass module<a class="headerlink" href="#module-lmdp.grounding.GroundingClass" title="Permalink to this headline">¶</a></h2>
+<p>Abstract class for grounding names to MDPs
+Author: Rafael Rodriguez-Sanchez (<a class="reference external" href="mailto:rrs&#37;&#52;&#48;brown&#46;edu">rrs<span>&#64;</span>brown<span>&#46;</span>edu</a>)
+Date: August 2020</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="lmdp.grounding.GroundingClass.Grounding">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">lmdp.grounding.GroundingClass.</span></span><span class="sig-name descname"><span class="pre">Grounding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lmdp.grounding.GroundingClass.Grounding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="lmdp.grounding.GroundingClass.Grounding.name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#lmdp.grounding.GroundingClass.Grounding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lmdp.grounding.PartialFunctionClass">
+<span id="lmdp-grounding-partialfunctionclass-module"></span><h2>lmdp.grounding.PartialFunctionClass module<a class="headerlink" href="#module-lmdp.grounding.PartialFunctionClass" title="Permalink to this headline">¶</a></h2>
+<dl>
+<dt>Partial Function Specification Class</dt><dd><ul class="simple">
+<li><p>Represents function specification, with a given domain-codomain,</p></li>
+</ul>
+<p>in the form of a function by parts.
+- Implemented as Pairs of (boolean expressions, function).</p>
+</dd>
+</dl>
+<p>author: Rafael Rodriguez-Sanchez (<a class="reference external" href="mailto:rrs&#37;&#52;&#48;brown&#46;edu">rrs<span>&#64;</span>brown<span>&#46;</span>edu</a>)
+date: January 2021</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="lmdp.grounding.PartialFunctionClass.PartialFunction">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">lmdp.grounding.PartialFunctionClass.</span></span><span class="sig-name descname"><span class="pre">PartialFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lmdp.grounding.PartialFunctionClass.PartialFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lmdp.grounding.PartialFunctionClass.PartialFunction.add_specification">
+<span class="sig-name descname"><span class="pre">add_specification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boolean_cond</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lmdp.grounding.PartialFunctionClass.PartialFunction.add_specification" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lmdp.grounding.VocabularyClass">
+<span id="lmdp-grounding-vocabularyclass-module"></span><h2>lmdp.grounding.VocabularyClass module<a class="headerlink" href="#module-lmdp.grounding.VocabularyClass" title="Permalink to this headline">¶</a></h2>
+<p>RLang Vocabulary Class
+author: Rafael Rodriguez-Sanchez
+date: January 2021</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="lmdp.grounding.VocabularyClass.Vocabulary">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">lmdp.grounding.VocabularyClass.</span></span><span class="sig-name descname"><span class="pre">Vocabulary</span></span><a class="headerlink" href="#lmdp.grounding.VocabularyClass.Vocabulary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lmdp.grounding.VocabularyClass.Vocabulary.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lmdp.grounding.VocabularyClass.Vocabulary.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lmdp.grounding">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lmdp.grounding" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Benjamin A. Spiegel, Rafael Rodriguez Sanchez, Jennifer Wang.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
