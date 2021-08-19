@@ -24,6 +24,13 @@ from functools import partial
 class Effect(Expression):
 
     def __init__(self, boolean_expression_sa, effect):
+        """
+        Initializes Effect
+
+        Args:
+            boolean_expression_sa (BooleanExpression): the condition on which effect is called
+            effect (list, tuple, Expression, or dict): [description]
+        """
         self._effect = effect
         self._domain_sa = boolean_expression_sa
         Expression.__init__(self, self.effect, domain=["state", "action"], codomain=["set_of_states"])

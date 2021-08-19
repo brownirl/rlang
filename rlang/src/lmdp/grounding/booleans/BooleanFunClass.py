@@ -17,16 +17,18 @@ import torch
 class BooleanExpression(Expression):
     _id = 0
 
+    #TODO: find out if fun needs to return a boolean
+    #TODO: description for domain and type
     def __init__(self, fun, domain, name=None, operator=None, operands=None):
         """
         Initializes a Boolean Expression
 
         Args:
-            fun (function): [description]
-            domain (string list): [description]
-            name (string, optional): [description]. Defaults to 'boolean-f-' + the class id.
-            operator (string, optional): [description]. Defaults to None.
-            operands (string, optional): [description]. Defaults to None.
+            fun (function): 
+            domain (type): [description]
+            name (string, optional): name of the Boolean Expression. Defaults to 'boolean-f-' + the class id.
+            operator (string, optional): represents the logical operator connecting operands. Defaults to None.
+            operands (a list of Boolean Expressions, optional): a list of Boolean Expressions joined by the operator. Defaults to None.
         """
         self._operator = operator
         self._operands = operands
@@ -106,7 +108,7 @@ class BooleanExpression(Expression):
 
     def not_(self):
         """
-        Represents the logic operator "not"
+        Represents the logic operator "not" to negate an Boolean Expression
 
         Returns:
             BooleanExpression: fun is a partial function that applies _neg to self; 
@@ -150,11 +152,11 @@ def grounded_or(result_1, result_2):
     """[summary]
 
     Args:
-        result_1 ([type]): [description]
-        result_2 ([type]): [description]
+        result_1 (bool, or (np.ndarray, torch.Tensor)): [description]
+        result_2 (bool, or (np.ndarray, torch.Tensor)): [description]
 
     Returns:
-        [type]: [description]
+        bool or Boolean Expression: [description]
     """
     if isinstance(result_1, bool) and isinstance(result_2, bool):  # boolean operation
         return result_1 or result_2
@@ -164,7 +166,7 @@ def grounded_or(result_1, result_2):
         return result_1.__or__(result_2)
     return result_1 | result_2
 
-
+#TODO: figure out what to do with a matrix as an input
 def grounded_and(result_1, result_2):
     if isinstance(result_1, bool) and isinstance(result_2, bool):  # boolean operation
         return result_1 and result_2
@@ -192,21 +194,48 @@ def _neg(f, **args):
 
 
 def bool_and(*exps):
+    """
+    Joins multiple Expressions or Boolean Expression using the logical operator "and"
+
+    Returns:
+        Boolean Expression: from Expressions joined with "and"
+    """
     b_exps = map(cast_to_boolean, exps)
     return reduce(lambda a, b: a.__and__(b), b_exps)
 
 
 def bool_or(*exps):
+    """
+    Joins multiple Expressions or Boolean Expression using the logical operator "or"
+
+    Returns:
+        Boolean Expression: from Expressions joined with "or"
+    """
     b_exps = map(cast_to_boolean, exps)
     return reduce(lambda a, b: a.__or__(b), b_exps)
 
 
 def bool_not(exp):
+    """
+    Negates an Expression using the logical operator "not"
+
+    Returns:
+        Boolean Expression: negated Expression
+    """
     exp = cast_to_boolean(exp)
     return exp.not_()
 
 
 def cast_to_boolean(expression):
+    """
+    Casts an Expression to a Boolean Expression
+
+    Args:
+        expression (Expresssion): Expression with "boolean" in its codomain
+
+    Returns:
+        Boolean Expression: expression as a Boolean Expression
+    """
     assert "boolean" in expression.codomain()
     return BooleanExpression(expression, domain=expression.domain()) if not isinstance(expression,
                                                                                        BooleanExpression) else expression

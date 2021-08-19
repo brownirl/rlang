@@ -27,9 +27,13 @@ class StateFactor(Grounding, RealExpression):
     counter = 0
 
     def __init__(self, feature_positions, name=None):
-        '''
-            Args: feature_positions is an array-like of indices (list, tuple or np.array)
-        '''
+        """
+        Initializes StateFactor
+
+        Args:
+            feature_positions (list, tuple or np.array): an array-like of indices
+            name (String, optional): [description]. Defaults to "state-factor-" + counter
+        """
         if (name is None):
             name = "state-factor-" + str(StateFactor.counter)
         if isinstance(feature_positions, int):
