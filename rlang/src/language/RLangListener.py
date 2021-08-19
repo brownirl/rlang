@@ -86,7 +86,7 @@ class RLangListener(RLangParserListener):
             new_feature = StateFeature(lambda *args, **kwargs: arith_exp(*args, **kwargs), arith_exp.number_of_features(),
                                        variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
         elif isinstance(arith_exp, types.FunctionType):
-            # TODO: Keep track of size of arith_exp for number_of_features. hardcoded to 1
+            # TODO: Keep track of size of arith_exp for number_of_features argument. hardcoded to 1
             new_feature = StateFeature(arith_exp, 1, name=ctx.IDENTIFIER().getText())
         else:
             print(f"Something else: {type(arith_exp)}")
@@ -97,6 +97,9 @@ class RLangListener(RLangParserListener):
         new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
         self.addVariable(ctx.IDENTIFIER().getText(), new_predicate)
         # print(new_predicate(np.array([0, 0, 0, 0])))
+
+    def exitAction(self, ctx: RLangParser.ActionContext):
+        pass
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
