@@ -24,11 +24,10 @@ def experiment_params(**kwargs):
     return default_params
 
 if __name__=="__main__":
-    from lmdp.agents.lang_hierarchical import RLangSMDPQAgent_PriorPolicy as RLangSMDPQAgent
-    from lmdp.agents.factories import QLearningFactory
-    from lmdp.agents.simple_rl_agent import SimpleRLAgent
-    from lmdp.agents import QLearningAgent
-    from lmdp.grounding import Option
+    from agents import RLangSMDPQAgent_PriorPolicy as RLangSMDPQAgent
+    from agents import QLearningFactory
+    from agents import SimpleRLAgent
+    from agents import QLearningAgent
     from vocab import *
     
     lmdp = LMDP(four_room_mdp, factor_names=["x", "y"]) # mdp is given to bind factors

@@ -1,25 +1,20 @@
 from all.agents import Agent, DDQN as DQN
 from all.core import State
 from all.presets import Preset
-from all.logging import DummyWriter
 from all.approximation import QNetwork, FixedTarget
 from all.logging import DummyWriter
 from all.memory import PrioritizedReplayBuffer as ExperienceReplayBuffer
 from all.optim import LinearScheduler
 from all.policies import GreedyPolicy
 
-from lmdp.agents.all_option_dqn import OptionGreedyPolicy, OptionInitMask, masked_q, OptionDDQN
+from agents import OptionGreedyPolicy, OptionDDQN
 from lmdp.grounding.states.StateClass import State as RLangState
 
 import torch
 from torch.optim import Adam
 
-from functools import partial
 from collections import namedtuple
 from collections.abc import Iterable
-import copy
-
-import dill
 
 
 class RLangOptionAgent(Iterable, Agent):

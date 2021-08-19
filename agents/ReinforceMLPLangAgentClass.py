@@ -10,14 +10,12 @@
 '''
 
 # Python imports.
-from collections import defaultdict
 
 # Other imports
 import numpy as np
 import torch
 
-from lmdp.agents.LangAgentClass import LangAgent
-from lmdp.agents.ReinforceMLPAgentClass import ReinforceMLPAgent
+from agents.LangAgentClass import LangAgent
 
 
 class ReinforceMLPLangAgent(LangAgent):

@@ -108,7 +108,7 @@ class OptionAgent(HierarchicalAgent):
         return self._inner_agent.eval(state)
 
 
-from lmdp.agents.factories import OptQLearningFactory
+from agents.factories import OptQLearningFactory
 
 
 class IntraoptionQAgent(SubgoalHierarchicalAgent):

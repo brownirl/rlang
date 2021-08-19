@@ -3,8 +3,8 @@
     author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
     date: September 2020
 '''
-from lmdp.agents.SarsaAgentClass import SarsaAgent
-from lmdp.agents.LangAgentClass import LangAgent
+from agents import SarsaAgent
+from agents.LangAgentClass import LangAgent
 from lmdp.utils.collections import DefaultDict
 
 

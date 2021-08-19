@@ -5,14 +5,11 @@
           v1 February 2021
 '''
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
-from lmdp.agents.LangAgentClass import LangAgent
-from lmdp.utils.collections import DefaultDict, ArrayDict, Index, _cartesian
-from functools import reduce
+from agents.LangAgentClass import LangAgent
+from lmdp.utils.collections import ArrayDict, Index, _cartesian
 from collections import namedtuple
 import numpy as np
 import copy, time
-import pickle, os.path
-from itertools import product
 from tqdm import tqdm
 
 indices = namedtuple("SAIndex", ["state_space", "action_space"])
@@ -55,9 +52,7 @@ class QLearningLangAgent(LangAgent):
         self.base_agent.q_func = copy.deepcopy(self.q_func)
 
     def __init_functions(self):
-        from itertools import product
         from lmdp.grounding.states.StateClass import BatchedState
-        from lmdp.utils.space import BatchedTuple
 
         t = list(self.indices.state_space.objects())
         s_ = BatchedState(t)

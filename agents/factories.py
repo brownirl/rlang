@@ -1,4 +1,4 @@
-from lmdp.agents.Agent import AgentFactory
+from agents import AgentFactory
 from all.presets.classic_control.models import fc_relu_q
 from lmdp.grounding.states.StateClass import BatchedState as RLangState
 from lmdp.grounding.states.StateClass import State as RLState
@@ -274,7 +274,7 @@ class LinearQLearning(FeatureWrapper):
 
 
 # =====================================================================
-from lmdp.agents.Agent import Agent
+from agents import Agent
 from all.presets.classic_control import vqn
 from all.core.state import State
 from collections import namedtuple
@@ -321,7 +321,7 @@ class QNFactory(AgentFactory):
 
 # ===================================================================================================
 from all.presets.classic_control import dqn
-from lmdp.agents.option_dqn import dqn as odqn
+from agents import dqn as odqn
 
 
 class DQN(Agent):

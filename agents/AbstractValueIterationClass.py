@@ -4,10 +4,9 @@
     date: January 2021
 
 '''
-from lmdp.agents.LangAgentClass import LangAgent
+from agents.LangAgentClass import LangAgent
 from lmdp.grounding.states.StateClass import State as RLangState
 
-from simple_rl.planning.ValueIterationClass import ValueIteration
 from simple_rl.abstraction.AbstractValueIterationClass import AbstractValueIteration as AVI
 from simple_rl.abstraction.action_abs.ActionAbstractionClass import ActionAbstraction
 from simple_rl.abstraction.action_abs.OptionClass import Option as SimpleRLOption

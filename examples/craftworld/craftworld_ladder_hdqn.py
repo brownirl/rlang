@@ -2,12 +2,12 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from envs.craftworld.craftworld_gym import Craftworld
-from agents.models import dqn_q_head
+from agents import dqn_q_head
 from experiments.all_experiment import allExperimentRunner
 from experiments.rlang_experiment import RLangExperiment
 
-from lmdp.agents.rlang_hdqn import RLangHDQNFactory as rlang_hdqn, hdqn_hyperparameters, default_outer_cli_parameters, default_inner_cli_parameters
-import lmdp.agents.dqn as dqn
+from agents import RLangHDQNFactory as rlang_hdqn, hdqn_hyperparameters, default_outer_cli_parameters, default_inner_cli_parameters
+import agents as dqn
 
 from craft_subpolicies import program_ladder as program
 

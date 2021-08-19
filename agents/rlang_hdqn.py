@@ -1,5 +1,5 @@
-from lmdp.agents.rlang_agent_builder import RLangBuilderFactory
-from lmdp.agents.all_hierarchical_dqn import HDQNPreset
+from agents.rlang_agent_builder import RLangBuilderFactory
+from agents.all_hierarchical_dqn import HDQNPreset
 
 from all.presets import PresetBuilder
 from all.presets.classic_control.models import fc_relu_q

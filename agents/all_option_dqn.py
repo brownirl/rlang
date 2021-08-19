@@ -6,11 +6,8 @@ from all.logging import DummyWriter
 from all.memory import ExperienceReplayBuffer
 from all.optim import LinearScheduler
 from all.policies import GreedyPolicy
-from all.presets.classic_control.models import fc_relu_q
-from all.approximation.checkpointer import PeriodicCheckpointer
 from all.presets import PresetBuilder, Preset
 
-from lmdp.agents.dqn import DQNPreset
 from lmdp.grounding.states.StateClass import State, BatchedState
 from lmdp.grounding.states.StateClass import state_builder as RLangState
 import numpy as np

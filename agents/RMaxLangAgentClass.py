@@ -1,9 +1,7 @@
-import random
 import numpy as np
-from simple_rl.agents.AgentClass import Agent
 from simple_rl.agents.RMaxAgentClass import RMaxAgent
 
-from lmdp.agents.LangAgentClass import LangAgent
+from agents.LangAgentClass import LangAgent
 from lmdp.utils.collections import DefaultDict
 
 from functools import reduce

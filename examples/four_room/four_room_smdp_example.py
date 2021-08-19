@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from lmdp import *
-from lmdp.agents.AbstractValueIterationClass import AAValueInteration
+from agents import AAValueInteration
 
 if __name__=="__main__":
     from lmdp.grounding import State as RLangState

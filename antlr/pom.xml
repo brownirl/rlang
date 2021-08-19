@@ -12,10 +12,6 @@
                     <filesets>
                         <fileset>
                             <directory>../rlang/src/language</directory>
-                            <!--                            <includes>-->
-                            <!--                                <include>**/*.tmp</include>-->
-                            <!--                                <include>**/*.log</include>-->
-                            <!--                            </includes>-->
                             <excludes>
                                 <exclude>**/__init__.py</exclude>
                                 <exclude>**/RLangListener.py</exclude>
