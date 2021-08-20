@@ -8,9 +8,9 @@ import sys, os
 # sys.path.append(os.path.abspath("../rlang/src/"))
 
 
-from rlang.src.lmdp.grounding.GroundingClass import Grounding
-from rlang.src.lmdp.grounding.PartialFunctionClass import PartialFunction
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.PartialFunctionClass import PartialFunction
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
 from collections import defaultdict
 
 

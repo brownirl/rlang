@@ -3,8 +3,8 @@ import sys, os
 import numpy as np
 import torch
 sys.path.append(os.path.abspath("../"))
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_FALSE, BOOL_TRUE, BooleanExpression, bool_and, bool_not, bool_or, cast_to_boolean, grounded_and
-from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
+from lmdp.grounding.booleans.BooleanFunClass import BOOL_FALSE, BOOL_TRUE, BooleanExpression, bool_and, bool_not, bool_or, cast_to_boolean, grounded_and
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 
 import unittest
 
@@ -55,14 +55,6 @@ class TestBoolean(unittest.TestCase):
         self.assertFalse(true1.not_()())
         false_or_true = BOOL_FALSE.or_(BOOL_TRUE)
         self.assertFalse(false_or_true.not_()())
-
-    def test_grounded_or(self):
-        pass
-
-    def test_grounded_and(self):
-        pass
-        # test = np.array([[1, 2, 3], [4, 5, 6]], int)
-        # print(grounded_and(BOOL_FALSE, test)())
 
     def test_bool_or(self):
         test1 = Expression(lambda **args: 1 == 1, [], ["boolean"])

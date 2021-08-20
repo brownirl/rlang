@@ -6,12 +6,12 @@
 import os
 import sys
 
-from rlang.src.lmdp.grounding.states import Predicate
-from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
+from lmdp.grounding.states import Predicate
+from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 
 sys.path.append(os.path.abspath("/"))
 from collections import defaultdict
-from rlang.src.lmdp.grounding import *
+from lmdp.grounding import *
 
 
 class Vocabulary:

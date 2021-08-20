@@ -8,7 +8,7 @@ import sys, os
 
 sys.path.append(os.path.abspath("../rlang/src/"))
 
-from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import reduce, partial
 import numpy as np
 import torch
@@ -17,15 +17,14 @@ import torch
 class BooleanExpression(Expression):
     _id = 0
 
-    #TODO: find out if fun needs to return a boolean
-    #TODO: description for domain and type
+    #REVIEW: find out if fun needs to return a boolean
     def __init__(self, fun, domain, name=None, operator=None, operands=None):
         """
         Initializes a Boolean Expression
 
         Args:
             fun (function): 
-            domain (type): [description]
+            domain (list of string): state, action, next-state
             name (string, optional): name of the Boolean Expression. Defaults to 'boolean-f-' + the class id.
             operator (string, optional): represents the logical operator connecting operands. Defaults to None.
             operands (a list of Boolean Expressions, optional): a list of Boolean Expressions joined by the operator. Defaults to None.
@@ -166,7 +165,6 @@ def grounded_or(result_1, result_2):
         return result_1.__or__(result_2)
     return result_1 | result_2
 
-#TODO: figure out what to do with a matrix as an input
 def grounded_and(result_1, result_2):
     if isinstance(result_1, bool) and isinstance(result_2, bool):  # boolean operation
         return result_1 and result_2

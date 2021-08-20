@@ -4,7 +4,7 @@ from typing import Sequence
 
 import numpy as np
 sys.path.append(os.path.abspath("../"))
-from rlang.src.lmdp.grounding.real.RealExpressionClass import RealExpression
+from lmdp.grounding.real.RealExpressionClass import RealExpression
 import unittest
 
 class TestRealExpressions(unittest.TestCase):
@@ -18,15 +18,6 @@ class TestRealExpressions(unittest.TestCase):
        arr = np.array([1, 2, 3])
        arr_exp += arr
        self.assertTrue((arr_exp() == [2, 5, 4]).all())
-
-       ndarr_exp = RealExpression(lambda **args: np.array([[1, 2, 3], [0, 0, 0]]), dimension=(2,3))
-       ndarr = np.array([[1, 2, 3], [1, 2, 3]])
-    #    print(ndarr.shape)
-    #    print((ndarr_exp.dim(),))
-    #    ndarr_exp += ndarr
-    #    print(ndarr_exp())
-    #    print(isinstance(ndarr, np.ndarray))
-    #    print([[1, 2, 3]] + ndarr)
 
     def test_sub(self):
         float_exp = RealExpression(lambda **args: 1.5)
@@ -46,11 +37,8 @@ class TestRealExpressions(unittest.TestCase):
         arr_exp = RealExpression(lambda **args: np.array([1, 3, 1]), dimension=3)
         arr_exp *= 2
         self.assertTrue((arr_exp() == [2, 6, 2]).all())
-        # print(np.matmul(np.array([1, 2, 3]), np.array([1, 2, 3])))
         arr_exp *= np.array([4, 5, 6])
         self.assertTrue((arr_exp() == [8, 30, 12]).all())
-        arr_exp *= [1, 2, 3]
-        # print(arr_exp())
 
     def test_true_div(self):
         float_exp = RealExpression(lambda **args: 1.5)
@@ -66,12 +54,10 @@ class TestRealExpressions(unittest.TestCase):
         self.assertTrue((float_exp < 2)())
         self.assertFalse((float_exp < 1.5)())
 
-
     def test_le(self):
         float_exp = RealExpression(lambda **args: 1.5)
         self.assertTrue((float_exp <= 2)())
         self.assertTrue((float_exp <= 1.5)())
-        
 
     def test_eq(self):
         float_exp = RealExpression(lambda **args: 1.5)
@@ -101,7 +87,7 @@ class TestRealExpressions(unittest.TestCase):
         arr_exp1 = RealExpression(lambda **args: np.array([1, 2, 3, 4, 5, 6]), dimension=6)
         self.assertTrue((arr_exp1[:10:2]() == [1, 3, 5]).all())
 
-        #TODO: can't leave idx.stop blank
+        # TODO: can't leave idx.stop blank
         # print(arr_exp1[::-1]())
 
         ndarr_exp = RealExpression(lambda **args: np.array([[1, 2, 3], [4, 5, 6]]), dimension=(2,3))

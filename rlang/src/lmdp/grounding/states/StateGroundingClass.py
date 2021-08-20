@@ -17,10 +17,10 @@ from functools import reduce, partial
 from collections.abc import Iterable, Sequence
 from collections import Counter
 
-from rlang.src.lmdp.grounding.GroundingClass import Grounding
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from rlang.src.lmdp.grounding.real.RealExpressionClass import RealExpression
-from rlang.src.lmdp.grounding.states.StateClass import State, BatchedState
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.grounding.real.RealExpressionClass import RealExpression
+from lmdp.grounding.states.StateClass import State, BatchedState
 
 
 class StateFactor(Grounding, RealExpression):
@@ -51,12 +51,16 @@ class StateFactor(Grounding, RealExpression):
         return [self, ]
 
     def executor(self, state):
-        '''
-            This takes in the state from MDP and returns the value of the
-            state variable to which is grounded
-            Args:
-                - args[0] must be the state from MDP
-        '''
+        """
+        This takes in the state from MDP and returns the value of the
+        state variable to which is grounded
+
+        Args:
+            state ([type]): the state from MDP
+
+        Returns:
+            [type]: the value of the state variable grounded to state
+         """
         # print(type(state))
         # print(state)
         if isinstance(state, np.ndarray):

@@ -12,12 +12,12 @@
     date: January 2021
 '''
 
-from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, BOOL_TRUE, BOOL_FALSE
-from rlang.src.lmdp.grounding.states.EffectSymbolClass import EffectSymbol
-from rlang.src.lmdp.grounding.states.PredicateClass import Predicate
-from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor
-from rlang.src.lmdp.utils.expression_utils import Domain, Codomain
+from lmdp.grounding.expressions.ExpressionsClass import Expression
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, BOOL_TRUE, BOOL_FALSE
+from lmdp.grounding.states.EffectSymbolClass import EffectSymbol
+from lmdp.grounding.states.PredicateClass import Predicate
+from lmdp.grounding.states.StateGroundingClass import StateFactor
+from lmdp.utils.expression_utils import Domain, Codomain
 from functools import partial
 
 

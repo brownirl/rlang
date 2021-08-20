@@ -8,10 +8,10 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 import numpy as np
-from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from rlang.src.lmdp.utils.expression_utils import Domain
-from rlang.src.lmdp.utils.space import BatchedVector, BatchedTuple
+from lmdp.grounding.expressions.ExpressionsClass import Expression
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.utils.expression_utils import Domain
+from lmdp.utils.space import BatchedVector, BatchedTuple
 from collections.abc import Sequence
 
 
@@ -44,7 +44,6 @@ class RealExpression(Expression):
     def dim(self):
         return self.__dim
 
-    #TODO: rewrite with match case?
     def __add__(self, other):
         domain = self.domain()
         operands = [self, other]
@@ -57,7 +56,6 @@ class RealExpression(Expression):
         elif (isinstance(other, (float, int))):
             f = lambda **args: self.__call__(**args) + other
         elif (isinstance(other, np.ndarray)):
-            # TODO: find out why self.dim() is in a tuple
             if (other.shape == (self.dim(),)):
                 f = lambda **args: self.__call__(**args) + other
             else:
@@ -99,8 +97,6 @@ class RealExpression(Expression):
             return NotImplemented
         return RealExpression(f, self.dim(), domain=domain, operator='-', operands=operands)
 
- #TODO: for matrix multiplication, don't you need to check if matrix col and row length equate?
- #TODO: is this how matrix multiplication intended to work?
     def __mul__(self, other):
         domain = self.domain()
         operands = [self, other]
