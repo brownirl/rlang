@@ -1,7 +1,7 @@
 import sys, os
 sys.path.append(os.path.abspath("./"))
 from lmdp import *
-from lmdp.experiment_runner import run_agents
+from agents.experiment_runner import run_agents
 
 
 def experiment_params(**kwargs):

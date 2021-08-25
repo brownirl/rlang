@@ -5,7 +5,7 @@ from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
 #agents
 from agents import RMaxLangAgent, RMaxAgent, RandomAgent
 #lmdp
-from lmdp.experiment_runner import run_agents
+from agents.experiment_runner import run_agents
 from functools import partial
 
 
