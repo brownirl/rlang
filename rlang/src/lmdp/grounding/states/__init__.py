@@ -1,7 +1,7 @@
-from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFeature
-from rlang.src.lmdp.grounding.states.PredicateClass import Predicate, any_state
-from rlang.src.lmdp.grounding.states.Effect import PredictiveEffect
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE
+from lmdp.grounding.states.StateGroundingClass import StateFeature
+from lmdp.grounding.states.PredicateClass import Predicate, any_state
+from lmdp.grounding.states.Effect import PredictiveEffect
+from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE
 
 
 def predicate(name=None):

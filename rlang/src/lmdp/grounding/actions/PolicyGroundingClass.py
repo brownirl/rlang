@@ -4,9 +4,9 @@
     date: v0 August 2020
           v1 January 2021
 '''
-from rlang.src.lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
-from rlang.src.lmdp.grounding.GroundingClass import Grounding
-from rlang.src.lmdp.grounding.expressions.ExpressionsClass import Expression
+from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.expressions.ExpressionsClass import Expression
 
 
 class Policy(Grounding, Expression):

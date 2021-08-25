@@ -1,8 +1,8 @@
 from antlr4 import *
 
-from rlang.src.language.RLangLexer import RLangLexer
-from rlang.src.language.RLangParser import RLangParser
-from rlang.src.language.RLangListener import RLangListener
+from language.RLangLexer import RLangLexer
+from language.RLangParser import RLangParser
+from language.RLangListener import RLangListener
 from .LMDPClass import LMDP
 
 

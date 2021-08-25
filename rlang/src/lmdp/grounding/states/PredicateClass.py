@@ -8,9 +8,9 @@ import sys, os
 
 sys.path.append(os.path.abspath("../rlang/src/"))
 
-from rlang.src.lmdp.grounding.GroundingClass import Grounding
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
-from rlang.src.lmdp.grounding.states.StateClass import BatchedState, State
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, bool_or, bool_and, bool_not
+from lmdp.grounding.states.StateClass import BatchedState, State
 
 import numpy as np
 import torch
@@ -38,6 +38,15 @@ class Predicate(Grounding, BooleanExpression):
     counter = 0
 
     def __init__(self, boolean_fun, name=None, operator=None, operands=None):
+        """
+        Boolean expression used to specify sets of states
+
+        Args:
+            boolean_fun (lambda): function that produces a boolean value
+            name (str, optional): [description]. Defaults to "symbol-" + counter.
+            operator (string, optional): represents the logical operator connecting operands. Defaults to None.
+            operands (a list of Boolean Expressions, optional): a list of Boolean Expressions joined by the operator. Defaults to None.
+        """
         if name is None:
             name = "symbol-" + str(Predicate.counter)
         Grounding.__init__(self, name)

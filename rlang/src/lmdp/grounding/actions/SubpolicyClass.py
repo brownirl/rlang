@@ -7,9 +7,9 @@
 import sys, os
 
 sys.path.append(os.path.abspath("/"))
-from rlang.src.lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
-from rlang.src.lmdp.grounding.actions.PolicyGroundingClass import Policy
-from rlang.src.lmdp.grounding.states.PredicateClass import any_state
+from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
+from lmdp.grounding.actions.PolicyGroundingClass import Policy
+from lmdp.grounding.states.PredicateClass import any_state
 
 
 class Subpolicy(Policy):
