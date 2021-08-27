@@ -99,8 +99,6 @@ class RealExpression(Expression):
             return NotImplemented
         return RealExpression(f, self.dim(), domain=domain, operator='-', operands=operands)
 
- #TODO: for matrix multiplication, don't you need to check if matrix col and row length equate?
- #TODO: is this how matrix multiplication intended to work?
     def __mul__(self, other):
         domain = self.domain()
         operands = [self, other]
