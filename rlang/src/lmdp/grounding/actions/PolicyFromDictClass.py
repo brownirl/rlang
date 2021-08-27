@@ -7,7 +7,8 @@
 
 from collections.abc import Iterable
 
-
+# TODO: This class should not have any uses anymore, 
+# most likely, the same can be achieved using conditionals or PolicyElements
 class PolicyFromDict:
 
     def __init__(self, policy=[]):

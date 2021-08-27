@@ -14,6 +14,11 @@ sys.path.append(os.path.abspath("/"))
 
 from lmdp.utils.expression_utils import Domain, Codomain
 
+#TODO: This class contains Expressions and ConditionalExpressions class. 
+# This may be refactored, time permitting, as they are not related in 
+# an object-oriented way, 
+# i.e., the ConditionalExpression does not inherit from Expressions. 
+# Perhaps a better name for expressions could be considered
 
 class Expression:
     def __init__(self, fun, domain=[], codomain=[], name=None):
