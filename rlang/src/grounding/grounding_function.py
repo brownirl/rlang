@@ -7,7 +7,7 @@
     date: January 2021, August 2021
 """
 
-from grounding_object import Grounding
+from grounding.knowledge_grounding import Grounding
 from grounding.utils.domain import Domain
 
 

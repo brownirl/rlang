@@ -1,7 +1,7 @@
 """
-    Feature grounding_function class
+    Feature grounding class
         - Represents a feature
-    author: Benjamin Spiegel (bspiegel@cs.brown.edu)
+    author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
     date: August 2021
 """
 

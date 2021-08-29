@@ -1,7 +1,7 @@
 """
     Abstract class for all groundings
-    Author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    Date: August 2020
+    author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang (plz put ur email here)
+    Date: August 2021
 """
 
 

@@ -1,7 +1,7 @@
 """
-    Constant grounding_function class
-        - Represents constants
-    author: Benjamin Spiegel (bspiegel@cs.brown.edu)
+    Constant grounding class
+        - Represents a constant
+    author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
     date: August 2021
 """
 

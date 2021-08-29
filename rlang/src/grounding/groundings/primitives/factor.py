@@ -1,7 +1,7 @@
 """
-    Factor grounding_function class
+    Factor grounding class
         - Represents a factor of state
-    author: Benjamin Spiegel (bspiegel@cs.brown.edu)
+    author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
     date: August 2021
 """
 
