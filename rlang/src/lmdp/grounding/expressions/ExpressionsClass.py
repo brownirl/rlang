@@ -12,7 +12,7 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 
-from rlang.src.lmdp.utils.expression_utils import Domain, Codomain
+from lmdp.utils.expression_utils import Domain, Codomain
 
 
 class Expression:

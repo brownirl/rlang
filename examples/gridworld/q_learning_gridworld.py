@@ -6,8 +6,6 @@ from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP
 #agents
 #lmdp
 from rlang.src.lmdp import RLMDP
-from lmdp.experiment_runner import run_agents
-from functools import partial
 
 
 def experiment_params():

@@ -1,13 +1,3 @@
-"""
-    State Functions:
-        - State Factor
-        - State Features
-    N.B.: These classes assume Simple RL MDP States, whose underlying data structure is a numpy array.
-
-    Author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    Date: August 2020
-"""
-
 import sys, os
 
 sys.path.append(os.path.abspath("/"))
@@ -17,10 +7,10 @@ from functools import reduce, partial
 from collections.abc import Iterable, Sequence
 from collections import Counter
 
-from rlang.src.lmdp.grounding.GroundingClass import Grounding
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
-from rlang.src.lmdp.grounding.real.RealExpressionClass import RealExpression
-from rlang.src.lmdp.grounding.states.StateClass import State, BatchedState
+from lmdp.grounding.GroundingClass import Grounding
+from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression
+from lmdp.grounding.real.RealExpressionClass import RealExpression
+from lmdp.grounding.states.StateClass import State, BatchedState
 
 
 class StateFactor(Grounding, RealExpression):
@@ -28,10 +18,11 @@ class StateFactor(Grounding, RealExpression):
 
     def __init__(self, feature_positions, name=None):
         """
-        Initializes StateFactor
+        A partition of the components of the state vector, 
+        assume Simple RL MDP States, whose underlying data structure is a numpy array.
 
         Args:
-            feature_positions (list, tuple or np.array): an array-like of indices
+            feature_positions (list, tuple or np.array): an array-like list of indices
             name (String, optional): [description]. Defaults to "state-factor-" + counter
         """
         if (name is None):

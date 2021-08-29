@@ -10,7 +10,7 @@ import sys, os
 
 sys.path.append(os.path.abspath("/"))
 import numpy as np
-from rlang.src.lmdp.utils.space import Vector, BatchedVector
+from lmdp.utils.space import Vector, BatchedVector
 
 
 class State(Vector):
@@ -20,10 +20,11 @@ class State(Vector):
     '''
 
     def __init__(self, data, dim=None):
-        '''
+        """
+        Args:
             data: single dimension array-like object
             dim: dimension of the state vector. 
-        '''
+        """
 
         Vector.__init__(self, data, dim)
 

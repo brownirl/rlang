@@ -1,6 +1,6 @@
-from rlang.src.lmdp.grounding.states.PredicateClass import any_state
-from rlang.src.lmdp.grounding.actions.PolicyGroundingClass import Policy
-from rlang.src.lmdp.grounding.actions.SubpolicyClass import Subpolicy
+from lmdp.grounding.states.PredicateClass import any_state
+from lmdp.grounding.actions.PolicyGroundingClass import Policy
+from lmdp.grounding.actions.SubpolicyClass import Subpolicy
 
 
 def policy(name=None):
