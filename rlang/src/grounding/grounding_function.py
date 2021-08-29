@@ -8,15 +8,15 @@
 """
 
 from grounding_object import Grounding
-from domain import Domain
+from grounding.utils.domain import Domain
 
 
 class GroundingFunction(Grounding):
 
     def __init__(self, domain: Domain, codomain: Domain, name: str = None):
         super().__init__(name)
-        self.domain = domain
-        self.codomain = codomain
+        self._domain = domain
+        self._codomain = codomain
 
         # self.specification = []  # list of (boolean, expression) specification
 

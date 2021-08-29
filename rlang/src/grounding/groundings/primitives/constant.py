@@ -7,7 +7,7 @@
 
 from typing import Any
 from grounding.grounding_function import GroundingFunction
-from grounding.domain import Domain
+from grounding.utils.domain import Domain
 
 
 class Constant(GroundingFunction):

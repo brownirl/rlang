@@ -7,7 +7,7 @@
 
 from typing import Callable
 from feature import Feature
-from grounding.domain import Domain
+from grounding.utils.domain import Domain
 
 
 class Predicate(Feature):

@@ -6,7 +6,7 @@
 """
 
 from feature import Feature
-from grounding.domain import Domain
+from grounding.utils.domain import Domain
 
 
 class Factor(Feature):
