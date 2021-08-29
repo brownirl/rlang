@@ -25,17 +25,31 @@ class Effect(Expression):
 
     def __init__(self, boolean_expression_sa, effect):
         """
-        Initializes Effect
+        An expression specifying the effect of an action
 
         Args:
-            boolean_expression_sa (BooleanExpression): the condition on which effect is called
-            effect (list, tuple, Expression, or dict): [description]
+            boolean_expression_sa (BooleanExpression): Boolean expresion in SxA to determine if the effect is applicable
+            effect (list, tuple, Expression, or dict): Effect Expression among: list of States, Predicate, dictionary of Factor name to expression
         """
         self._effect = effect
         self._domain_sa = boolean_expression_sa
         Expression.__init__(self, self.effect, domain=["state", "action"], codomain=["set_of_states"])
 
     def effect(self, state, action):
+        """
+        Depending on the type and domain of effect, 
+        defines a partial function parameterized by a (state, action) pair 
+
+        Args:
+            state (State)
+            action (string)
+
+        Raises:
+            ValueError: if type of effect is invalid
+
+        Returns:
+            partial: [description]
+        """
         if (isinstance(self._effect, (list, tuple))):  # state enumerations
             f = lambda state, action, next_state: self._domain_sa(state, action) & (next_state in self._effect)
         elif (isinstance(self._effect, Expression) and self._effect.codomain == Codomain(
@@ -91,8 +105,8 @@ class PredictiveEffect(Effect):
 if __name__ == "__main__":
     from simple_rl.mdp.StateClass import State
     from lmdp.grounding.states.NextStateGroundingClass import next_state
-    from lmdp.grounding import StateFactor
-    from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
+    from lmdp.grounding.states.StateGroundingClass import StateFactor
+    # from lmdp.grounding.booleans.BooleanFunClass import any_state, any_action
     import numpy as np
 
     x = StateFactor(0, "x")

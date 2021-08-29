@@ -38,6 +38,15 @@ class Predicate(Grounding, BooleanExpression):
     counter = 0
 
     def __init__(self, boolean_fun, name=None, operator=None, operands=None):
+        """
+        Boolean expression used to specify sets of states
+
+        Args:
+            boolean_fun (lambda): function that produces a boolean value
+            name (str, optional): [description]. Defaults to "symbol-" + counter.
+            operator (string, optional): represents the logical operator connecting operands. Defaults to None.
+            operands (a list of Boolean Expressions, optional): a list of Boolean Expressions joined by the operator. Defaults to None.
+        """
         if name is None:
             name = "symbol-" + str(Predicate.counter)
         Grounding.__init__(self, name)

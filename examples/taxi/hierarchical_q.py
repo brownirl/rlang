@@ -2,11 +2,10 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 # envs
 #agents
-from lmdp.agents import QLearningAgent
+from agents import QLearningAgent
 #lmdp
 from lmdp import *
-from lmdp.experiment_runner import run_agents
-from functools import partial
+from agents.experiment_runner import run_agents
 
 
 def experiment_params(**kwargs):
@@ -30,9 +29,9 @@ def experiment_params(**kwargs):
 
 
 if __name__ == "__main__":
-    from lmdp.agents.factories import QLearningFactory
-    from lmdp.agents.lang_hierarchical import RLangSMDPQAgent
-    from lmdp.agents.simple_rl_agent import SimpleRLAgent
+    from agents import QLearningFactory
+    from agents import RLangSMDPQAgent
+    from agents import SimpleRLAgent
     from vocab import *
 
     lmdp_none = LMDP(taxi_mdp)

@@ -2,11 +2,11 @@ import sys, os
 sys.path.append(os.path.abspath("./"))
 
 from envs.craftworld.craftworld_gym import Craftworld
-from agents.models import dqn_q_head
+from agents import dqn_q_head
 from experiments.all_experiment import allExperimentRunner
 from experiments.rlang_experiment import RLangExperiment
 
-import lmdp.agents.dqn as dqn
+import agents as dqn
 
 import argparse
 import numpy as np

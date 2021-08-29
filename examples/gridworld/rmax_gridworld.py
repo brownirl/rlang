@@ -3,9 +3,9 @@ sys.path.append(os.path.abspath("./"))
 # envs
 from simple_rl.tasks.grid_world.GridWorldStateClass import GridWorldState
 #agents
-from lmdp.agents import RMaxLangAgent, RMaxAgent, RandomAgent
+from agents import RMaxLangAgent, RMaxAgent, RandomAgent
 #lmdp
-from lmdp.experiment_runner import run_agents
+from agents.experiment_runner import run_agents
 from functools import partial
 
 

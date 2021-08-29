@@ -20,10 +20,11 @@ class State(Vector):
     '''
 
     def __init__(self, data, dim=None):
-        '''
+        """
+        Args:
             data: single dimension array-like object
             dim: dimension of the state vector. 
-        '''
+        """
 
         Vector.__init__(self, data, dim)
 

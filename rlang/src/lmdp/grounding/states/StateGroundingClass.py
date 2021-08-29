@@ -1,13 +1,3 @@
-"""
-    State Functions:
-        - State Factor
-        - State Features
-    N.B.: These classes assume Simple RL MDP States, whose underlying data structure is a numpy array.
-
-    Author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
-    Date: August 2020
-"""
-
 import sys, os
 
 sys.path.append(os.path.abspath("/"))
@@ -28,10 +18,11 @@ class StateFactor(Grounding, RealExpression):
 
     def __init__(self, feature_positions, name=None):
         """
-        Initializes StateFactor
+        A partition of the components of the state vector, 
+        assume Simple RL MDP States, whose underlying data structure is a numpy array.
 
         Args:
-            feature_positions (list, tuple or np.array): an array-like of indices
+            feature_positions (list, tuple or np.array): an array-like list of indices
             name (String, optional): [description]. Defaults to "state-factor-" + counter
         """
         if (name is None):

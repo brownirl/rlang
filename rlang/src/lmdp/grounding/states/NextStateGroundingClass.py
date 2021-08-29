@@ -27,6 +27,13 @@ class NextStatePredicate(Predicate, BooleanExpression):
 
 class NextStateGrounding(StateFactor, RealExpression):
     def __init__(self, state_grounding):
+        """ 
+        Wrapper for State Grounding that grounds names
+        to the 'next state' of a transition tuple (s, s')
+        
+        Args:
+            state_grounding (StateFactor, StateFeature): [description]
+        """
         self._domain = Domain(["next_state"])
         self.__state_grounding = state_grounding
         RealExpression.__init__(self, self.executor, domain=["next_state"])

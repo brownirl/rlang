@@ -20,12 +20,12 @@ class BooleanExpression(Expression):
     #REVIEW: find out if fun needs to return a boolean
     def __init__(self, fun, domain, name=None, operator=None, operands=None):
         """
-        Initializes a Boolean Expression
+        An Expression that produces a Boolean value
 
         Args:
-            fun (function): 
-            domain (list of string): state, action, next-state
-            name (string, optional): name of the Boolean Expression. Defaults to 'boolean-f-' + the class id.
+            fun (lambda): a lambda that produces a boolean value
+            domain (a list of str): combinations of "state", "action", and "next_state"
+            name (str, optional): name of the Boolean Expression. Defaults to 'boolean-f-' + the class id.
             operator (string, optional): represents the logical operator connecting operands. Defaults to None.
             operands (a list of Boolean Expressions, optional): a list of Boolean Expressions joined by the operator. Defaults to None.
         """
@@ -148,15 +148,6 @@ class BooleanExpression(Expression):
 
 
 def grounded_or(result_1, result_2):
-    """[summary]
-
-    Args:
-        result_1 (bool, or (np.ndarray, torch.Tensor)): [description]
-        result_2 (bool, or (np.ndarray, torch.Tensor)): [description]
-
-    Returns:
-        bool or Boolean Expression: [description]
-    """
     if isinstance(result_1, bool) and isinstance(result_2, bool):  # boolean operation
         return result_1 or result_2
     if isinstance(result_1, bool) and isinstance(result_2, (np.ndarray, torch.Tensor)):
