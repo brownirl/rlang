@@ -14,6 +14,7 @@ from lmdp.grounding.states.PredicateClass import Predicate
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from functools import partial
 
+# TODO: EffectSymbolClass.py is now subsumed by EffectClass
 
 class EffectSymbol(Expression):
     def __init__(self, boolean_fun):

@@ -44,7 +44,6 @@ class RealExpression(Expression):
     def dim(self):
         return self.__dim
 
-    #TODO: rewrite with match case?
     def __add__(self, other):
         domain = self.domain()
         operands = [self, other]
@@ -57,7 +56,6 @@ class RealExpression(Expression):
         elif (isinstance(other, (float, int))):
             f = lambda **args: self.__call__(**args) + other
         elif (isinstance(other, np.ndarray)):
-            # TODO: find out why self.dim() is in a tuple
             if (other.shape == (self.dim(),)):
                 f = lambda **args: self.__call__(**args) + other
             else:

@@ -14,7 +14,13 @@ from collections import defaultdict
 from lmdp.grounding import *
 
 
+# TODO: Not to be confused with the vocabulary you implemented. 
+# This can be renamed in order to avoid confusion.
+
 class Vocabulary:
+    """
+    Implements a lookup table for the grounded terms in an LMDP.
+    """
 
     def __init__(self):
         self._vocabulary = defaultdict(lambda: None)

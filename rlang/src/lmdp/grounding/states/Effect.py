@@ -1,3 +1,17 @@
+'''
+    Effect Class:
+        Effect Expression implementation.
+        args:
+            -Boolean expresion in SxA to determine if the effect is applicable
+            -Effect Expression among:
+                - List of States
+                - Predicate
+                - Dictionary of Factor name to expression
+
+    author: Rafael Rodriguez-Sanchez (rrs@brown.edu)
+    date: January 2021
+'''
+
 from lmdp.grounding.expressions.ExpressionsClass import Expression
 from lmdp.grounding.booleans.BooleanFunClass import BooleanExpression, BOOL_TRUE, BOOL_FALSE
 from lmdp.grounding.states.EffectSymbolClass import EffectSymbol

@@ -13,6 +13,9 @@ from lmdp.grounding.real.RealExpressionClass import RealExpression, real_exp
 from lmdp.grounding.states.StateClass import BatchedState
 import numpy as np
 
+# TODO: It may be necessary to improve ValueGrounding to 
+# include the case of Q-functions (Q: SxA->R) if that was included in the grammar. 
+# Currently, it only support V-functions (V: S->R)
 
 class RewardGrounding(Grounding, PartialFunction):
     id = 0

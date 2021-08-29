@@ -11,6 +11,7 @@ from lmdp.grounding.actions.ActionGroundingClass import ActionGrounding
 from lmdp.grounding.actions.PolicyGroundingClass import Policy
 from lmdp.grounding.states.PredicateClass import any_state
 
+#TODO: This should be deprecated for the Option Class
 
 class Subpolicy(Policy):
     id = 0

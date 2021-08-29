@@ -17,6 +17,7 @@ import torch
 class BooleanExpression(Expression):
     _id = 0
 
+    #REVIEW: find out if fun needs to return a boolean
     def __init__(self, fun, domain, name=None, operator=None, operands=None):
         """
         An Expression that produces a Boolean value
