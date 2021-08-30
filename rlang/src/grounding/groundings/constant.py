@@ -6,7 +6,7 @@
 """
 
 from typing import Any
-from grounding.grounding_function import GroundingFunction
+from groundings.grounding_function import GroundingFunction
 from grounding.utils.domain import Domain
 
 

@@ -7,7 +7,7 @@
 
 from typing import Callable
 from grounding.utils.domain import Domain
-from grounding.grounding_function import GroundingFunction
+from groundings.grounding_function import GroundingFunction
 
 
 class Policy(GroundingFunction):
