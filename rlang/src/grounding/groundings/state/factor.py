@@ -5,14 +5,14 @@
     date: August 2021
 """
 
-from feature import Feature
+from grounding.grounding_function import GroundingFunction
 from grounding.utils.domain import Domain
 
 
-class Factor(Feature):
+class Factor(GroundingFunction):
     def __init__(self, state_indices: [int], name: str = None):
         self._state_indices = state_indices
-        super(Factor, self).__init__(codomain=Domain.MULTIPLE_VALUES, function=self.__call__, name=name)
+        super().__init__(domain=Domain.STATE, codomain=Domain.REAL_VALUE, name=name)
 
     def __call__(self, *args, **kwargs):
         return kwargs['state'][self._state_indices]     # TODO: it's unclear whether we need to support keywords

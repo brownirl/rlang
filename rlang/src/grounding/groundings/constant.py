@@ -11,9 +11,9 @@ from grounding.utils.domain import Domain
 
 
 class Constant(GroundingFunction):
-    def __init__(self, value: Any, name: str):
-        super().__init__(domain=Domain.ANY, codomain=Domain.REAL_VALUE, name=name)
+    def __init__(self, codomain: Domain, value: Any, name: str):
         self._value = value
+        super().__init__(domain=Domain.ANY, codomain=codomain, name=name)
 
     def __call__(self, *args, **kwargs):
         return self._value

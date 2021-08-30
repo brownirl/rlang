@@ -1,6 +1,6 @@
 """
-    Feature grounding class
-        - Represents a feature
+    Effect grounding class
+        - Abstract class for effects
     author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
     date: August 2021
 """
@@ -10,12 +10,7 @@ from grounding.grounding_function import GroundingFunction
 from grounding.utils.domain import Domain
 
 
-class Feature(GroundingFunction):
+class Effect(GroundingFunction):
     def __init__(self, codomain: Domain, function: Callable, name: str):
         self._function = function
-        super().__init__(domain=Domain.STATE, codomain=codomain, name=name)
-
-    def __call__(self, *args, **kwargs):
-        return self._function(args, kwargs)
-
-# TODO: Override equality operator functions __eq__, etc.
+        super().__init__(domain=Domain.STATE_ACTION, codomain=codomain, name=name)

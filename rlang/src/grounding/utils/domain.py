@@ -10,9 +10,10 @@ from enum import Enum, auto
 
 class Domain(Enum):
     STATE = auto()
+    ACTION = auto()
     STATE_ACTION = auto()
     STATE_ACTION_NEXTSTATE = auto()
     REAL_VALUE = auto()
+    REWARD = auto()
     BOOLEAN = auto()
-    MULTIPLE_VALUES = auto()
     ANY = auto() # Constant grounding_functions don't care what is passed to them
