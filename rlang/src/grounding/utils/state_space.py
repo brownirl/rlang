@@ -14,4 +14,4 @@ class State(np.ndarray):
         # This should abstract away batched states
         if type(item) != tuple:
             item = (slice(None, None, None), item)
-        return super().__getitem__(item)
+        return State(super().__getitem__(item))
