@@ -16,4 +16,4 @@ class Policy(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.ACTION, name=name)
 
     def __call__(self, *args, **kwargs):
-        return self._function(args, kwargs)     # TODO: What kind of function do we expect?
+        return self._function(kwargs['state'])     # TODO: What kind of function do we expect?

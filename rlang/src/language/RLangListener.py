@@ -1,19 +1,9 @@
 import types
 from functools import reduce
-
 import numpy as np
 from antlr4 import *
 import json
-import sys, os
 
-sys.path.append(os.path.abspath("../rlang/src/"))
-
-from lmdp.grounding.states import Predicate
-from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
-from lmdp.grounding.real.RealExpressionClass import RealConstant, RealExpression
-from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
-from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
-from lmdp import LMDP
 from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
@@ -22,7 +12,7 @@ from .Exceptions import *
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self, lmdp: LMDP = None):
+    def __init__(self, lmdp = None):
         self.lmdp = lmdp
         self.vocab_fnames = []
         self.grounded_vars = {}
@@ -193,9 +183,9 @@ class RLangListener(RLangParserListener):
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
         if ctx.TRUE() is not None:
-            ctx.value = BOOL_TRUE
+            ctx.value = True
         elif ctx.FALSE() is not None:
-            ctx.value = BOOL_FALSE
+            ctx.value = False
 
     def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
         variable = None
@@ -254,7 +244,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.any_decimal().value
 
     def enterAny_integer(self, ctx: RLangParser.Any_integerContext):
-        ctx.value = RealConstant(int(ctx.getText()))
+        ctx.value = int(ctx.getText())
 
     def enterAny_decimal(self, ctx: RLangParser.Any_decimalContext):
-        ctx.value = RealConstant(float(ctx.getText()))
+        ctx.value = float(ctx.getText())

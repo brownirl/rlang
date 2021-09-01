@@ -16,6 +16,6 @@ class Feature(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.REAL_VALUE, name=name)
 
     def __call__(self, *args, **kwargs):
-        return self._function(*args, **kwargs)
+        return self._function(kwargs['state'])
 
 # TODO: Override equality operator functions __eq__, etc.

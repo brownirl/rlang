@@ -2,6 +2,7 @@ from antlr4.error.Errors import CancellationException, ParseCancellationExceptio
 from antlr4.error.ErrorListener import *
 from rlang.src.language.Exceptions import RLangParseCancellationException
 
+
 class RLangErrorListener(ErrorListener):
     
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
