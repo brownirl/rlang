@@ -12,7 +12,7 @@ class FactorTest(unittest.TestCase):
         s1 = State([4, 5, 6, 7])
 
         self.assertTrue(np.array_equal(z(state=s1), State([4, 6, 7])))
-        # self.assertEqual(True, False)  # add assertion here
+        self.assertTrue(np.array_equal(x(state=s1), State(4)))
 
 
 if __name__ == '__main__':

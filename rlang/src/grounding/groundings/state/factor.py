@@ -19,7 +19,6 @@ class Factor(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.REAL_VALUE, name=name)
 
     def __call__(self, *args, **kwargs):
-        print(kwargs)
         return kwargs['state'].__getitem__(self._state_indices)     # TODO: it's unclear whether we need to support keywords
 
     def __eq__(self, other):
