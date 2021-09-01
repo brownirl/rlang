@@ -5,10 +5,10 @@
     date: August 2021
 """
 
-from grounding.knowledge_grounding import Grounding
-from grounding.utils.domain import Domain
-from grounding.groundings.state.policy import Policy
-from grounding.groundings.state.predicate import Predicate
+from rlang.src.grounding.knowledge_grounding import Grounding
+from rlang.src.grounding.utils.domain import Domain
+from rlang.src.grounding.groundings.state.policy import Policy
+from rlang.src.grounding.groundings.state.predicate import Predicate
 
 
 class Option(Grounding):

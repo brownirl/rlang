@@ -6,8 +6,8 @@
 """
 
 from typing import Callable
-from effect import Effect
-from grounding.utils.domain import Domain
+from .effect import Effect
+from rlang.src.grounding.utils.domain import Domain
 
 
 class TransitionEffect(Effect):

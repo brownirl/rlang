@@ -6,8 +6,8 @@
 """
 
 from typing import Callable
-from groundings.grounding_function import GroundingFunction
-from grounding.utils.domain import Domain
+from rlang.src.grounding.groundings.grounding_function import GroundingFunction
+from rlang.src.grounding.utils.domain import Domain
 
 
 class Predicate(GroundingFunction):
@@ -16,9 +16,10 @@ class Predicate(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.BOOLEAN, name=name)
 
     def __call__(self, *args, **kwargs):
-        return self._function(args, kwargs)     # TODO: it's unclear whether we need to support keywords
+        return self._function(*args, **kwargs)     # TODO: it's unclear whether we need to support keywords
 
 # TODO: Implement __and__, __or__, and __not__ composition
+# TODO: Implement __repr__, __eq__, __lt__, etc.
 
 
 class Goal(Predicate):

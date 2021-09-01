@@ -1,4 +1,9 @@
-# TODO: This class should contain information about the state space
+"""
+    State util class
+        -
+    author: Benjamin Spiegel (bspiegel@cs.brown.edu)
+    date: August 2021
+"""
 
 from typing import Any
 import numpy as np
@@ -15,3 +20,18 @@ class State(np.ndarray):
         if type(item) != tuple:
             item = (slice(None, None, None), item)
         return State(super().__getitem__(item))
+
+    def __eq__(self, other):
+        # TODO: This fails due to logical and, need to check array dimension
+        # TODO: Consider implementing two separate eq methods
+        # Try State(0) == State([[1, 0], [0, 0]). Returns [[False],[True]] instead of [[False],[False]]
+        return np.asarray(np.all(super().__eq__(other), axis=1, keepdims=True))
+
+    def __ne__(self, other):
+        return np.bitwise_not(self.__eq__(other))
+
+
+class StateSpace:
+    def __init__(self, dtype: np.dtype, shape: tuple):
+        self.dtype = dtype
+        self.shape = shape

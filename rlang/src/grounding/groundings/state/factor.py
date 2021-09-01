@@ -5,14 +5,25 @@
     date: August 2021
 """
 
-from groundings.grounding_function import GroundingFunction
-from grounding.utils.domain import Domain
+from typing import Any
+from rlang.src.grounding.groundings.grounding_function import GroundingFunction
+from rlang.src.grounding import Domain
+from rlang.src.grounding.groundings.state.predicate import Predicate
 
 
 class Factor(GroundingFunction):
-    def __init__(self, state_indices: [int], name: str = None):
+    def __init__(self, state_indices: Any, name: str = None):
+        if type(state_indices) == int:
+            state_indices = [state_indices]
         self._state_indices = state_indices
         super().__init__(domain=Domain.STATE, codomain=Domain.REAL_VALUE, name=name)
 
     def __call__(self, *args, **kwargs):
+        print(kwargs)
         return kwargs['state'].__getitem__(self._state_indices)     # TODO: it's unclear whether we need to support keywords
+
+    def __eq__(self, other):
+        return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs))
+
+    def __repr__(self):
+        return str(self._state_indices)

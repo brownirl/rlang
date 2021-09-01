@@ -7,8 +7,8 @@
     date: January 2021, August 2021
 """
 
-from grounding.knowledge_grounding import Grounding
-from grounding.utils.domain import Domain
+from rlang.src.grounding.knowledge_grounding import Grounding
+from rlang.src.grounding.utils.domain import Domain
 
 
 class GroundingFunction(Grounding):
