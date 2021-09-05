@@ -3,17 +3,19 @@ from rlang.src.grounding import Predicate, State, BOOL_FALSE, BOOL_TRUE
 
 
 class PredicateTest(unittest.TestCase):
-    def test_instantiation(self):
-        x = Predicate(function=lambda state: state == State(3))
-        s1 = State(3)
-        self.assertTrue(x(s1))
-    
     def test_true(self):
         test1 = Predicate(lambda state: 1 == 1, [])
         self.assertTrue(test1())
         test2 = Predicate(lambda state: 1 + 1 > 1, [])
         self.assertTrue(test2())
         self.assertTrue(BOOL_TRUE())
+
+        test3 = Predicate(function=lambda state: state == State(3))
+        s1 = State(3)
+        self.assertTrue(test3(s1))
+        test4 = Predicate(function=lambda state: state != State(4))
+        self.assertTrue(test4(s1))
+        
 
     def test_false(self):
         test1 = Predicate(lambda **args: 1 != 1, [])

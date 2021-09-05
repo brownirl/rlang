@@ -60,7 +60,3 @@ if __name__ == "__main__":
 
 class Goal(Predicate):
     pass    # A Goal is simply a Predicate. We may want to add a constructor which accepts a Predicate
-
-
-class Goal(Predicate):
-    pass    # A Goal is simply a Predicate. We may want to add a constructor which accepts a Predicate
