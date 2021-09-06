@@ -9,7 +9,6 @@ from typing import Callable
 import numpy as np
 from rlang.src.grounding import Domain
 from rlang.src.grounding.groundings.grounding_function import GroundingFunction
-from rlang.src.grounding.groundings.state.predicate import Predicate
 from rlang.src.grounding.utils.grounding_errors import RLangGroundingError
 
 
@@ -34,3 +33,7 @@ class StateGroundingFunction(GroundingFunction):
         if isinstance(other, np.ndarray):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other)
         raise RLangGroundingError(message=f"Cannot != a {type(self)} and a {type(other)}")
+
+
+# Leaving this at the bottom of the file for circular import issue. Don't move it.
+from rlang.src.grounding.groundings.state.predicate import Predicate

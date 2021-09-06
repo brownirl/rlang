@@ -12,8 +12,7 @@ from .Exceptions import *
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self, lmdp = None):
-        self.lmdp = lmdp
+    def __init__(self):
         self.vocab_fnames = []
         self.grounded_vars = {}
         self.new_vars = {}
