@@ -4,6 +4,7 @@
     author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
     date: August 2021
 """
+
 from __future__ import annotations
 from typing import Callable
 from rlang.src.grounding.groundings.grounding_function import GroundingFunction
@@ -51,7 +52,7 @@ class Predicate(GroundingFunction):
         return False
 
     def __repr__(self):
-        return "Predicate"
+        return "<Predicate>"
 
 
 class Goal(Predicate):
