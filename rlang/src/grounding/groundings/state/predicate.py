@@ -7,19 +7,14 @@
 
 from __future__ import annotations
 from typing import Callable
-from rlang.src.grounding.groundings.grounding_function import GroundingFunction
+from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 from rlang.src.grounding.utils.domain import Domain
 from rlang.src.grounding.utils.grounding_errors import RLangGroundingError
 
 
-class Predicate(GroundingFunction):
+class Predicate(StateGroundingFunction):
     def __init__(self, function: Callable, name: str = None):
-        self._function = function
-        super().__init__(domain=Domain.STATE, codomain=Domain.BOOLEAN,
-                         name=name)
-
-    def __call__(self, *args, **kwargs):
-        return self._function(*args, **kwargs)
+        super().__init__(function=function, codomain=Domain.BOOLEAN, name=name)
 
     def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):

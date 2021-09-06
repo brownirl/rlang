@@ -7,13 +7,9 @@
 
 from typing import Callable
 from rlang.src.grounding.utils.domain import Domain
-from rlang.src.grounding.groundings.grounding_function import GroundingFunction
+from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 
 
-class Policy(GroundingFunction):
+class Policy(StateGroundingFunction):
     def __init__(self, function: Callable, name: str = None):
-        self._function = function
-        super().__init__(domain=Domain.STATE, codomain=Domain.ACTION, name=name)
-
-    def __call__(self, *args, **kwargs):
-        return self._function(*args, **kwargs)     # TODO: What kind of function do we expect?
+        super().__init__(function=function, codomain=Domain.ACTION, name=name)
