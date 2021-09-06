@@ -42,29 +42,7 @@ class Predicate(GroundingFunction):
 
     def __eq__(self, o: object) -> bool:
         return super().__eq__(o)
-
-
-    
-    ### CONSTANTS #####
-BOOL_TRUE = Predicate(function=lambda state: True)
-BOOL_FALSE = Predicate(function=lambda state: False)
-
-if __name__ == "__main__":
-    from rlang.src.grounding import State
-    x = Predicate(function=lambda state: state == State(3))
-    s1 = State(3)
-    print(x(state=s1))
-    test1 = Predicate(lambda state: 1 != 1)
-    print(test1(state=0))
-    # false_and_false = BOOL_FALSE & (BOOL_FALSE)
-    # true_and_false = BOOL_TRUE & (BOOL_FALSE)
-    # false_and_true = BOOL_FALSE & (BOOL_TRUE)
-    # true_and_true = BOOL_TRUE & (BOOL_TRUE)
-    # print((true_and_true & False)())
-    # print(false_and_false())
-    # print(true_and_false())
-    # print(false_and_true())
-    # print(true_and_true())
+        
 
 class Goal(Predicate):
     pass    # A Goal is simply a Predicate. We may want to add a constructor which accepts a Predicate

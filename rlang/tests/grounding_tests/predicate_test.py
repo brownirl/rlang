@@ -25,6 +25,8 @@ class PredicateTest(unittest.TestCase):
         self.assertFalse(BOOL_FALSE(state=None))
     
     def test_and(self):
+        BOOL_TRUE = Predicate(function=lambda state: True)
+        BOOL_FALSE = Predicate(function=lambda state: False)
         false_and_false = BOOL_FALSE & (BOOL_FALSE)
         true_and_false = BOOL_TRUE & (BOOL_FALSE)
         false_and_true = BOOL_FALSE & (BOOL_TRUE)
@@ -36,6 +38,8 @@ class PredicateTest(unittest.TestCase):
         self.assertTrue(true_and_true(state=None))
 
     def test_or(self):
+        BOOL_TRUE = Predicate(function=lambda state: True)
+        BOOL_FALSE = Predicate(function=lambda state: False)
         false_or_false = BOOL_FALSE | (BOOL_FALSE)
         true_or_false = BOOL_TRUE | (BOOL_FALSE)
         false_or_true = BOOL_FALSE | (BOOL_TRUE)
@@ -47,6 +51,8 @@ class PredicateTest(unittest.TestCase):
         self.assertTrue(true_or_true(state=None))
     
     def test_not(self):
+        BOOL_TRUE = Predicate(function=lambda state: True)
+        BOOL_FALSE = Predicate(function=lambda state: False)
         self.assertTrue((not BOOL_FALSE)(state=None))
         self.assertFalse((not BOOL_TRUE)(state=None))
         false1 = Predicate(lambda state: 1 != 1, [])
