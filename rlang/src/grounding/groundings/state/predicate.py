@@ -45,7 +45,7 @@ class Predicate(GroundingFunction):
         return Predicate(function=lambda *args, **kwargs:
                          not self(*args, **kwargs))
 
-    def __bool__(self, *args, **kwargs) -> Predicate:
+    def __bool__(self, *args, **kwargs) -> bool:
         if self(*args, **kwargs):
             return True
         return False
