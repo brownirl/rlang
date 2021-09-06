@@ -18,5 +18,8 @@ class Factor(StateGroundingFunction):
         super().__init__(function=lambda *args, **kwargs: kwargs['state'].__getitem__(self._state_indices),
                          codomain=Domain.REAL_VALUE, name=name)
 
+    def __getitem__(self, item):
+        return Factor(self._state_indices[item])
+
     def __repr__(self):
         return f"<Factor: {str(self._state_indices)}>"

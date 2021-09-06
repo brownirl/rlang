@@ -7,9 +7,14 @@
 
 from typing import Callable
 from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
+from rlang.src.grounding.groundings.state.factor import Factor
 from rlang.src.grounding.utils.domain import Domain
 
 
 class Feature(StateGroundingFunction):
     def __init__(self, function: Callable, name: str = None):
         super().__init__(function=function, codomain=Domain.REAL_VALUE, name=name)
+
+    @classmethod
+    def from_Factor(cls, factor: Factor, name: str = None):
+        return cls(function=factor.__call__, name=name)

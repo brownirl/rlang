@@ -18,7 +18,7 @@ class RLangListener(RLangParserListener):
     def __init__(self, mdp_metadata: MDPMetadata = None):
         self.vocab_fnames = []
         self.grounded_vars = {}
-        self.new_vars = {}
+        # self.new_vars = {}
         self.rlang_knowledge = RLangKnowledge()
         self.mdp_metadata = mdp_metadata
 
@@ -39,15 +39,15 @@ class RLangListener(RLangParserListener):
     def retrieveVariable(self, variable_name):
         if variable_name in self.grounded_vars.keys():
             return self.grounded_vars[variable_name]
-        elif variable_name in self.new_vars.keys():
-            return self.new_vars[variable_name]
+        elif variable_name in self.rlang_knowledge.keys():
+            return self.rlang_knowledge[variable_name]
         else:
             raise UnknownVariableError(variable_name)
 
     def addVariable(self, variable_name, variable):
-        if variable_name in self.new_vars.keys() or variable_name in self.grounded_vars.keys():
+        if variable_name in self.rlang_knowledge.keys() or variable_name in self.grounded_vars.keys():
             raise AlreadyBoundError(variable_name)
-        self.new_vars.update({variable_name: variable})
+        self.rlang_knowledge.update({variable_name: variable})
 
     # def exitProgram(self, ctx: RLangParser.ProgramContext):
     #     # TODO: This is only for DEBUG purposes
@@ -65,9 +65,8 @@ class RLangListener(RLangParserListener):
         self.parseVocabFiles()
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        feature_positions = list(range(self.state_size)) if self.state_size is not None else None
+        feature_positions = list(range(self.mdp_metadata.state_space.shape[0])) if self.mdp_metadata.state_space.shape[0] is not None else None
         if ctx.trailer() is not None:
-            # TODO: support slice trailers! ctx.trailer() can be an index or a slice
             feature_positions = ctx.trailer().value
         if ctx.array_exp() is not None:
             feature_positions = ctx.array_exp().value
@@ -78,9 +77,8 @@ class RLangListener(RLangParserListener):
         arith_exp = ctx.arithmetic_exp().value
         new_feature = None
         # print(type(arith_exp))
-        if isinstance(arith_exp, StateFactor):
-            new_feature = StateFeature(lambda *args, **kwargs: arith_exp(*args, **kwargs), arith_exp.number_of_features(),
-                                       variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
+        if isinstance(arith_exp, Factor):
+            new_feature = Feature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
         elif isinstance(arith_exp, types.FunctionType):
             # TODO: Keep track of size of arith_exp for number_of_features argument. hardcoded to 1
             new_feature = StateFeature(arith_exp, 1, name=ctx.IDENTIFIER().getText())
@@ -229,10 +227,10 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.slice_exp().value
 
     def exitIndex_exp(self, ctx: RLangParser.Index_expContext):
-        ctx.value = ctx.any_integer().value()
+        ctx.value = ctx.any_integer().value
 
     def exitArray_exp(self, ctx: RLangParser.Array_expContext):
-        ctx.value = list(map(lambda x: x.value(), ctx.arr))
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitSlice_exp(self, ctx: RLangParser.Slice_expContext):
         start_ind = None

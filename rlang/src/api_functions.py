@@ -1,10 +1,11 @@
+import numpy as np
 from antlr4 import *
 from rlang.src.grounding.knowledge import RLangKnowledge
-from rlang.src.grounding.utils.state_space import MDPMetadata
+from rlang.src.grounding.utils.state_space import MDPMetadata, StateSpace
 from rlang.src.language import *
 
 
-def parseFile(rlang_fname: str) -> RLangKnowledge:
+def parse_file(rlang_fname: str) -> RLangKnowledge:
     rlang_file = FileStream(rlang_fname)
     lexer = RLangLexer(rlang_file)
     stream = CommonTokenStream(lexer)
@@ -16,7 +17,7 @@ def parseFile(rlang_fname: str) -> RLangKnowledge:
     return listener.rlang_knowledge
 
 
-def parse(rlang: str, mdp_metadata: MDPMetadata) -> RLangKnowledge:
+def parse(rlang: str, mdp_metadata: MDPMetadata = None) -> RLangKnowledge:
     rlang = InputStream(rlang)
     lexer = RLangLexer(rlang)
     stream = CommonTokenStream(lexer)
@@ -26,3 +27,8 @@ def parse(rlang: str, mdp_metadata: MDPMetadata) -> RLangKnowledge:
     walker = ParseTreeWalker()
     walker.walk(listener, tree)
     return listener.rlang_knowledge
+
+
+def metadata_from_state(state_instance: np.ndarray):
+    s = StateSpace(state_instance.dtype, state_instance.shape)
+    return MDPMetadata(s)
