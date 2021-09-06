@@ -1,28 +1,11 @@
 import numpy as np
 from antlr4 import *
-import sys, os
-
-sys.path.append(os.path.abspath("../"))
-from rlang.src.lmdp.grounding.states import Predicate
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
-from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
+# from rlang.src.lmdp.grounding.states import Predicate
+# from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
+# from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
 from rlang.src.language.RLangLexer import RLangLexer
 from rlang.src.language.RLangParser import RLangParser
 from rlang.src.language.RLangListener import RLangListener
-
-
-# TODO: replace state_size with a more comprehensive MDP parameter object
-def listener_from_input(rlang_str, state_size=None):
-    rlang = InputStream(rlang_str)
-    lexer = RLangLexer(rlang)
-    stream = CommonTokenStream(lexer)
-    parser = RLangParser(stream)
-    tree = parser.program()
-    listener = RLangListener()
-    listener.state_size = state_size
-    walker = ParseTreeWalker()
-    walker.walk(listener, tree)
-    return listener
 
 
 def test_Factor():

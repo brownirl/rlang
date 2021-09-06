@@ -1,4 +1,4 @@
 import os
-from .src import grounding, language
+from src import *
 __path__.append(os.path.join(os.path.dirname(__file__), "src"))
-__all__ = ["grounding", "language"]
+__all__ = ["grounding", "language", "parse", "parseFile"]

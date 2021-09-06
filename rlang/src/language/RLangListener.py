@@ -4,6 +4,9 @@ import numpy as np
 from antlr4 import *
 import json
 
+from rlang.src.grounding.utils.state_space import MDPMetadata
+from rlang.src.grounding import *
+
 from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
@@ -12,11 +15,12 @@ from .Exceptions import *
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self):
+    def __init__(self, mdp_metadata: MDPMetadata = None):
         self.vocab_fnames = []
         self.grounded_vars = {}
         self.new_vars = {}
-        self.state_size = None  # TODO: Refactor this with dataclass about the MDP
+        self.rlang_knowledge = RLangKnowledge()
+        self.mdp_metadata = mdp_metadata
 
     # This function add the lmdp objects in the vocabulary files to self.grounded_vars
     # And probably keep track of object names in the vocab for later reference from the rlang file
@@ -67,7 +71,7 @@ class RLangListener(RLangParserListener):
             feature_positions = ctx.trailer().value
         if ctx.array_exp() is not None:
             feature_positions = ctx.array_exp().value
-        new_factor = StateFactor(feature_positions, name=ctx.IDENTIFIER().getText())
+        new_factor = Factor(feature_positions, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_factor.name, new_factor)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
@@ -97,6 +101,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.arithmetic_exp().value
 
     def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
+        # TODO: Refactor this. operands may or may not be a GroundingFunction
         operation = None
         if ctx.TIMES() is not None:
             operation = lambda a, b: a * b
@@ -105,6 +110,7 @@ class RLangListener(RLangParserListener):
         ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
+        # TODO: Refactor this. operands may or may not be a GroundingFunction
         operation = None
         if ctx.PLUS() is not None:
             operation = lambda a, b: a + b
@@ -122,16 +128,19 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.boolean_exp().value
 
     def exitBool_and(self, ctx: RLangParser.Bool_andContext):
+        # TODO: Refactor this. operands may or may not be a GroundingFunction
         ctx.value = ctx.lhs.value.and_(ctx.rhs.value)
 
     def exitBool_or(self, ctx: RLangParser.Bool_orContext):
+        # TODO: Refactor this. operands may or may not be a GroundingFunction
         ctx.value = ctx.lhs.value.or_(ctx.rhs.value)
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
+        # TODO: Refactor this. expression may or may not be a GroundingFunction
         ctx.value = ctx.boolean_exp().value.not_()
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        # TODO: Investigate StateFactor .in_ method
+        # TODO: What kinds of operands do we want to allow here?
         lhs = None
         rhs = None
         if ctx.lhs_arr is not None:
@@ -146,7 +155,7 @@ class RLangListener(RLangParserListener):
         # print(rhs)
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
-        # TODO: Should ctx.value be a callable here as well? Check BooleanFunClass.py
+        # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
@@ -155,6 +164,7 @@ class RLangListener(RLangParserListener):
         ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
+        # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
