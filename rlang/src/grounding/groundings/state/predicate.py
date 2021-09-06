@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Callable
 from rlang.src.grounding.groundings.grounding_function import GroundingFunction
 from rlang.src.grounding.utils.domain import Domain
+from rlang.src.grounding.utils.grounding_errors import RLangGroundingError
 
 
 class Predicate(GroundingFunction):
@@ -19,7 +20,6 @@ class Predicate(GroundingFunction):
 
     def __call__(self, *args, **kwargs):
         return self._function(*args, **kwargs)
-        # TODO: it's unclear whether we need to support keywords
 
 # TODO: Implement __and__, __or__, and __not__ composition
 # TODO: Implement __repr__, etc.
@@ -31,7 +31,7 @@ class Predicate(GroundingFunction):
         if isinstance(other, bool):
             return Predicate(function=lambda *args, **kwargs:
                              self(*args, **kwargs) and bool)
-        # TODO: raise error
+        raise RLangGroundingError(message=f"Cannot & a Predicate with a {type(other)}")
 
     def __or__(self, other) -> Predicate:
         if isinstance(other, Predicate):
@@ -40,7 +40,7 @@ class Predicate(GroundingFunction):
         if isinstance(other, bool):
             return Predicate(function=lambda *args, **kwargs:
                              self(*args, **kwargs) or bool)
-        # TODO: raise error
+        raise RLangGroundingError(message=f"Cannot | a Predicate with a {type(other)}")
 
     def __repr__(self):
         return "<Predicate>"
