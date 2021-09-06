@@ -70,7 +70,12 @@ boolean_exp
     | (TRUE | FALSE)                                            # bool_tf
     ;
 
-any_bound_var: (IDENTIFIER | S | S_PRIME | A) trailer*;
+any_bound_var
+    : IDENTIFIER trailer*    # bound_identifier
+    | S trailer?             # bound_state
+    | S_PRIME trailer?       # bound_next_state
+    | A trailer?             # bound_action
+    ;
 
 trailer
     : index_exp     # trailer_index

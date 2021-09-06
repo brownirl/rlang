@@ -49,14 +49,6 @@ class RLangListener(RLangParserListener):
             raise AlreadyBoundError(variable_name)
         self.rlang_knowledge.update({variable_name: variable})
 
-    # def exitProgram(self, ctx: RLangParser.ProgramContext):
-    #     # TODO: This is only for DEBUG purposes
-    #     print(f"grounded_vars: {self.grounded_vars}")
-    #     print(f"new_vars: {self.new_vars}")
-    #     print(self.new_vars['position'](np.array([0, 0, 0, 0])))
-    #     print(self.new_vars['x'](np.array([0, 1, 0, 0])))
-    #     print(self.new_vars['reached_goal'](np.array([4, 1, 0, 0])))
-
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
 
@@ -194,31 +186,31 @@ class RLangListener(RLangParserListener):
         elif ctx.FALSE() is not None:
             ctx.value = False
 
-    def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
-        variable = None
-        if ctx.IDENTIFIER() is not None:
-            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        elif ctx.S() is not None:
-            # TODO: Support this
-            variable = S
-            pass
-        elif ctx.S_PRIME() is not None:
-            # TODO: Support this
-            variable = S_prime
-            pass
-        elif ctx.A() is not None:
-            # TODO: Support this
-            variable = A
-        if ctx.trailer():  # if it's not empty
-            trailers = list(map(lambda x: x.value, ctx.trailer()))
-            trailers.insert(0, variable)
-            # TODO: this needs to change based on type(variable)
-            # print(variable)
-            # print(trailers)
-            indexed_variable = reduce(lambda a, b: a[b], trailers)
-            variable = indexed_variable
-        ctx.value = variable
-        # print(type(variable))
+    # def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
+    #     variable = None
+    #     if ctx.IDENTIFIER() is not None:
+    #         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+    #     elif ctx.S() is not None:
+    #         # TODO: Support this
+    #         variable = Feature.from_Factor(Factor(ctx.trailer()[0].value))
+    #         pass
+    #     elif ctx.S_PRIME() is not None:
+    #         # TODO: Support this
+    #         variable = S_prime
+    #         pass
+    #     elif ctx.A() is not None:
+    #         # TODO: Support this
+    #         variable = A
+    #     if ctx.trailer():  # if it's not empty
+    #         trailers = list(map(lambda x: x.value, ctx.trailer()))
+    #         trailers.insert(0, variable)
+    #         # TODO: this needs to change based on type(variable)
+    #         # print(variable)
+    #         # print(trailers)
+    #         indexed_variable = reduce(lambda a, b: a[b], trailers)
+    #         variable = indexed_variable
+    #     ctx.value = variable
+    #     # print(type(variable))
 
     def exitTrailer_index(self, ctx: RLangParser.Trailer_indexContext):
         ctx.value = ctx.index_exp().value

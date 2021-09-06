@@ -314,12 +314,39 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#any_bound_var.
-    def enterAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+    # Enter a parse tree produced by RLangParser#bound_identifier.
+    def enterBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#any_bound_var.
-    def exitAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+    # Exit a parse tree produced by RLangParser#bound_identifier.
+    def exitBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_state.
+    def enterBound_state(self, ctx:RLangParser.Bound_stateContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_state.
+    def exitBound_state(self, ctx:RLangParser.Bound_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_next_state.
+    def enterBound_next_state(self, ctx:RLangParser.Bound_next_stateContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_next_state.
+    def exitBound_next_state(self, ctx:RLangParser.Bound_next_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_action.
+    def enterBound_action(self, ctx:RLangParser.Bound_actionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_action.
+    def exitBound_action(self, ctx:RLangParser.Bound_actionContext):
         pass
 
 
