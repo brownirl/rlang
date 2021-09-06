@@ -21,16 +21,12 @@ class Predicate(GroundingFunction):
     def __call__(self, *args, **kwargs):
         return self._function(*args, **kwargs)
 
-# TODO: Implement __and__, __or__, and __not__ composition
-# TODO: Implement __repr__, etc.
-
     def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):
             return Predicate(function=lambda *args, **kwargs:
                              self(*args, **kwargs) and other(*args, **kwargs))
         if isinstance(other, bool):
-            return Predicate(function=lambda *args, **kwargs:
-                             self(*args, **kwargs) and bool)
+            return self if other else Predicate(function=lambda *args, **kwargs: False)
         raise RLangGroundingError(message=f"Cannot & a Predicate with a {type(other)}")
 
     def __or__(self, other) -> Predicate:
@@ -42,8 +38,16 @@ class Predicate(GroundingFunction):
                              self(*args, **kwargs) or bool)
         raise RLangGroundingError(message=f"Cannot | a Predicate with a {type(other)}")
 
+    def __invert__(self) -> Predicate:
+        return Predicate(function=lambda *args, **kwargs:
+                         not self(*args, **kwargs))
+
     def __repr__(self):
         return "<Predicate>"
+
+    def test_false(self):
+        return Predicate(function=lambda *args, **kwargs:
+                         self(*args, **kwargs) and False)
 
 
 class Goal(Predicate):
