@@ -45,10 +45,6 @@ class Predicate(GroundingFunction):
     def __repr__(self):
         return "<Predicate>"
 
-    def test_false(self):
-        return Predicate(function=lambda *args, **kwargs:
-                         self(*args, **kwargs) and False)
-
 
 class Goal(Predicate):
     pass    # A Goal is simply a Predicate.
