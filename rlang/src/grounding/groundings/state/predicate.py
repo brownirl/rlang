@@ -17,12 +17,12 @@ class Predicate(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.BOOLEAN, name=name)
 
     def __call__(self, *args, **kwargs):
-        return self._function(*args, **kwargs)     # TODO: it's unclear whether we need to support keywords
+        return self._function(kwargs["state"])     # TODO: it's unclear whether we need to support keywords
 
 # TODO: Implement __and__, __or__, and __not__ composition
 # TODO: Implement __repr__, __eq__, __lt__, etc.
 
-    def __and__(self, other):
+    def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) and other(*args, **kwargs))
         if isinstance(other, bool):
@@ -30,24 +30,32 @@ class Predicate(GroundingFunction):
         #TODO: raise error
         
     
-    def __or__(self, other):
-        pass
+    def __or__(self, other) -> Predicate:
+        if isinstance(other, Predicate):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) or other(*args, **kwargs))
+        if isinstance(other, bool):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) or bool)
+        #TODO: raise error
+    
+    def __not__(self) -> Predicate:
+        return Predicate(function=lambda *args, **kwargs: not self(*args, **kwargs))
 
-
+    def __eq__(self, o: object) -> bool:
+        return super().__eq__(o)
 
 
     
     ### CONSTANTS #####
-BOOL_TRUE = Predicate(function=lambda *args, **kwargs: True)
-BOOL_FALSE = Predicate(function=lambda *args, **kwargs: False)
+BOOL_TRUE = Predicate(function=lambda state: True)
+BOOL_FALSE = Predicate(function=lambda state: False)
 
 if __name__ == "__main__":
     from rlang.src.grounding import State
     x = Predicate(function=lambda state: state == State(3))
     s1 = State(3)
-    print(x(s1))
-    test1 = Predicate(lambda *args, **kwargs: 1 != 1)
-    print(test1())
+    print(x(state=s1))
+    test1 = Predicate(lambda state: 1 != 1)
+    print(test1(state=0))
     # false_and_false = BOOL_FALSE & (BOOL_FALSE)
     # true_and_false = BOOL_TRUE & (BOOL_FALSE)
     # false_and_true = BOOL_FALSE & (BOOL_TRUE)
