@@ -21,7 +21,7 @@ class Predicate(GroundingFunction):
         # TODO: it's unclear whether we need to support keywords
 
 # TODO: Implement __and__, __or__, and __not__ composition
-# TODO: Implement __repr__, __eq__, __lt__, etc.
+# TODO: Implement __repr__, etc.
 
     def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):
@@ -45,11 +45,13 @@ class Predicate(GroundingFunction):
         return Predicate(function=lambda *args, **kwargs:
                          not self(*args, **kwargs))
 
-    def __bool__(self) -> Predicate:
-        pass
+    def __bool__(self, *args, **kwargs) -> Predicate:
+        if self(*args, **kwargs):
+            return True
+        return False
 
     def __repr__(self):
-        return super().__repr__()
+        return "Predicate"
 
 
 class Goal(Predicate):
