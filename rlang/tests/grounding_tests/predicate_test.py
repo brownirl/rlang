@@ -60,7 +60,7 @@ class PredicateTest(unittest.TestCase):
         true1 = Predicate(lambda state: 1 + 1 > 1, [])
         self.assertFalse((not true1)(state=None))
         false_or_true = BOOL_FALSE.or_(BOOL_TRUE)
-        self.assertFalse((not false_or_true)(state=None))
+        self.assertFalse((false_or_true)(state=None))
 
 if __name__ == '__main__':
     unittest.main()
