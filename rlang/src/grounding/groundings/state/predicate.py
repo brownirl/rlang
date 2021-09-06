@@ -42,15 +42,6 @@ class Predicate(GroundingFunction):
                              self(*args, **kwargs) or bool)
         # TODO: raise error
 
-    def __invert__(self) -> Predicate:
-        return Predicate(function=lambda *args, **kwargs:
-                         not self(*args, **kwargs))
-
-    def __bool__(self, *args, **kwargs) -> bool:
-        if self(*args, **kwargs):
-            return True
-        return False
-
     def __repr__(self):
         return "<Predicate>"
 
