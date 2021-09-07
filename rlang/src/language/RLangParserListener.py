@@ -197,6 +197,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#arith_array.
+    def enterArith_array(self, ctx:RLangParser.Arith_arrayContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_array.
+    def exitArith_array(self, ctx:RLangParser.Arith_arrayContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#arith_plus_minus.
     def enterArith_plus_minus(self, ctx:RLangParser.Arith_plus_minusContext):
         pass
@@ -314,21 +323,48 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#any_bound_var.
-    def enterAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+    # Enter a parse tree produced by RLangParser#bound_identifier.
+    def enterBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#any_bound_var.
-    def exitAny_bound_var(self, ctx:RLangParser.Any_bound_varContext):
+    # Exit a parse tree produced by RLangParser#bound_identifier.
+    def exitBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#trailer_index.
-    def enterTrailer_index(self, ctx:RLangParser.Trailer_indexContext):
+    # Enter a parse tree produced by RLangParser#bound_state.
+    def enterBound_state(self, ctx:RLangParser.Bound_stateContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#trailer_index.
-    def exitTrailer_index(self, ctx:RLangParser.Trailer_indexContext):
+    # Exit a parse tree produced by RLangParser#bound_state.
+    def exitBound_state(self, ctx:RLangParser.Bound_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_next_state.
+    def enterBound_next_state(self, ctx:RLangParser.Bound_next_stateContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_next_state.
+    def exitBound_next_state(self, ctx:RLangParser.Bound_next_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_action.
+    def enterBound_action(self, ctx:RLangParser.Bound_actionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_action.
+    def exitBound_action(self, ctx:RLangParser.Bound_actionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#trailer_array.
+    def enterTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#trailer_array.
+    def exitTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
         pass
 
 
@@ -341,21 +377,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#index_exp.
-    def enterIndex_exp(self, ctx:RLangParser.Index_expContext):
+    # Enter a parse tree produced by RLangParser#int_array_exp.
+    def enterInt_array_exp(self, ctx:RLangParser.Int_array_expContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#index_exp.
-    def exitIndex_exp(self, ctx:RLangParser.Index_expContext):
+    # Exit a parse tree produced by RLangParser#int_array_exp.
+    def exitInt_array_exp(self, ctx:RLangParser.Int_array_expContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#array_exp.
-    def enterArray_exp(self, ctx:RLangParser.Array_expContext):
+    # Enter a parse tree produced by RLangParser#any_array_exp.
+    def enterAny_array_exp(self, ctx:RLangParser.Any_array_expContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#array_exp.
-    def exitArray_exp(self, ctx:RLangParser.Array_expContext):
+    # Exit a parse tree produced by RLangParser#any_array_exp.
+    def exitAny_array_exp(self, ctx:RLangParser.Any_array_expContext):
         pass
 
 

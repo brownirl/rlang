@@ -1,3 +1,4 @@
+from grounding.groundings.state.factor import Factor
 from lmdp.grounding import *
 from simple_rl.tasks.grid_world.GridWorldMDPClass import GridWorldMDP, GridWorldState
 from simple_rl.tasks.four_room.FourRoomMDPClass import FourRoomMDP
@@ -40,12 +41,11 @@ def compute_hallways(width, height):
 height, width = 10, 10
 goals = [(8, 4)]
 
-#### Factors
-position = StateFactor([0,1], "position") # definition of new factor.
+# Factors
+position = Factor([0, 1], "position")  # definition of new factor.
 x, y = position[0], position[1]
 
-
-### Symbols
+# Symbols
 # goal = Symbol(bool_and(x == 8, y == 4))
 
 half_width = math.ceil(width / 2.0)
@@ -95,4 +95,4 @@ def hallway_policy(hallway, wall_type):
 
     return policy
 
-four_room_mdp = FourRoomMDP(goal_locs=goals, slip_prob=0.33, step_cost=0, rand_init=True) # initialize mdp
+four_room_mdp = FourRoomMDP(goal_locs=goals, slip_prob=0.33, step_cost=0, rand_init=True)  # initialize mdp

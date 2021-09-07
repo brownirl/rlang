@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>grounding.utils package &mdash; RLang 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RLang
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">grounding.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-grounding.utils.action_space">grounding.utils.action_space module</a></li>
+<li><a class="reference internal" href="#module-grounding.utils.domain">grounding.utils.domain module</a></li>
+<li><a class="reference internal" href="#module-grounding.utils.grounding_errors">grounding.utils.grounding_errors module</a></li>
+<li><a class="reference internal" href="#module-grounding.utils.state_space">grounding.utils.state_space module</a></li>
+<li><a class="reference internal" href="#module-grounding.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RLang</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>grounding.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/grounding.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="grounding-utils-package">
+<h1>grounding.utils package<a class="headerlink" href="#grounding-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-grounding.utils.action_space">
+<span id="grounding-utils-action-space-module"></span><h2>grounding.utils.action_space module<a class="headerlink" href="#module-grounding.utils.action_space" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-grounding.utils.domain">
+<span id="grounding-utils-domain-module"></span><h2>grounding.utils.domain module<a class="headerlink" href="#module-grounding.utils.domain" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Domain Enum</dt><dd><ul class="simple">
+<li><p>Represents function domains and co-domains</p></li>
+</ul>
+</dd>
+</dl>
+<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
+date: August 2021</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">grounding.utils.domain.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grounding.utils.domain.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.ACTION">
+<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.ACTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.ANY">
+<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.ANY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.BOOLEAN">
+<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.BOOLEAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.REAL_VALUE">
+<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.REAL_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.REWARD">
+<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.REWARD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.STATE">
+<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.STATE_ACTION">
+<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.STATE_ACTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grounding.utils.domain.Domain.STATE_ACTION_NEXTSTATE">
+<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXTSTATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#grounding.utils.domain.Domain.STATE_ACTION_NEXTSTATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-grounding.utils.grounding_errors">
+<span id="grounding-utils-grounding-errors-module"></span><h2>grounding.utils.grounding_errors module<a class="headerlink" href="#module-grounding.utils.grounding_errors" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="grounding.utils.grounding_errors.RLangGroundingError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">grounding.utils.grounding_errors.</span></span><span class="sig-name descname"><span class="pre">RLangGroundingError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grounding.utils.grounding_errors.RLangGroundingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-grounding.utils.state_space">
+<span id="grounding-utils-state-space-module"></span><h2>grounding.utils.state_space module<a class="headerlink" href="#module-grounding.utils.state_space" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>State util class</dt><dd><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
+date: August 2021</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="grounding.utils.state_space.MDPMetadata">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">grounding.utils.state_space.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#grounding.utils.state_space.StateSpace" title="grounding.utils.state_space.StateSpace"><span class="pre">grounding.utils.state_space.StateSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grounding.utils.state_space.MDPMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="grounding.utils.state_space.State">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">grounding.utils.state_space.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grounding.utils.state_space.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="grounding.utils.state_space.StateSpace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">grounding.utils.state_space.</span></span><span class="sig-name descname"><span class="pre">StateSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grounding.utils.state_space.StateSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-grounding.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-grounding.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Benjamin Spiegel, Jennifer Wang, Rafael Rodriguez-Sanchez.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

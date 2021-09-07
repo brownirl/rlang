@@ -1,19 +1,14 @@
 import types
 from functools import reduce
-
 import numpy as np
 from antlr4 import *
 import json
-import sys, os
+from typing import Callable
 
-sys.path.append(os.path.abspath("../rlang/src/"))
+from rlang.src.grounding.utils.state_space import MDPMetadata
+from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
+from rlang.src.grounding import *
 
-from lmdp.grounding.states import Predicate
-from lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
-from lmdp.grounding.real.RealExpressionClass import RealConstant, RealExpression
-from lmdp.grounding.expressions.ExpressionsClass import S, A, S_prime
-from lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
-from lmdp import LMDP
 from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
@@ -22,12 +17,11 @@ from .Exceptions import *
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self, lmdp: LMDP = None):
-        self.lmdp = lmdp
+    def __init__(self, mdp_metadata: MDPMetadata = None):
         self.vocab_fnames = []
         self.grounded_vars = {}
-        self.new_vars = {}
-        self.state_size = None  # TODO: Refactor this with dataclass about the MDP
+        self.rlang_knowledge = RLangKnowledge()
+        self.mdp_metadata = mdp_metadata
 
     # This function add the lmdp objects in the vocabulary files to self.grounded_vars
     # And probably keep track of object names in the vocab for later reference from the rlang file
@@ -38,7 +32,7 @@ class RLangListener(RLangParserListener):
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler callable
                 voc_assembler = VocabularyAssembler(vocab)
                 self.grounded_vars.update(voc_assembler.lmdp_objects)
-                self.state_size = voc_assembler.state_size
+                # self.state_size = voc_assembler.state_size
 
         for fname in self.vocab_fnames:
             parseVocabFile(fname)
@@ -46,23 +40,15 @@ class RLangListener(RLangParserListener):
     def retrieveVariable(self, variable_name):
         if variable_name in self.grounded_vars.keys():
             return self.grounded_vars[variable_name]
-        elif variable_name in self.new_vars.keys():
-            return self.new_vars[variable_name]
+        elif variable_name in self.rlang_knowledge.keys():
+            return self.rlang_knowledge[variable_name]
         else:
             raise UnknownVariableError(variable_name)
 
     def addVariable(self, variable_name, variable):
-        if variable_name in self.new_vars.keys() or variable_name in self.grounded_vars.keys():
+        if variable_name in self.rlang_knowledge.keys() or variable_name in self.grounded_vars.keys():
             raise AlreadyBoundError(variable_name)
-        self.new_vars.update({variable_name: variable})
-
-    # def exitProgram(self, ctx: RLangParser.ProgramContext):
-    #     # TODO: This is only for DEBUG purposes
-    #     print(f"grounded_vars: {self.grounded_vars}")
-    #     print(f"new_vars: {self.new_vars}")
-    #     print(self.new_vars['position'](np.array([0, 0, 0, 0])))
-    #     print(self.new_vars['x'](np.array([0, 1, 0, 0])))
-    #     print(self.new_vars['reached_goal'](np.array([4, 1, 0, 0])))
+        self.rlang_knowledge.update({variable_name: variable})
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -72,59 +58,110 @@ class RLangListener(RLangParserListener):
         self.parseVocabFiles()
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        feature_positions = list(range(self.state_size)) if self.state_size is not None else None
+        feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
         if ctx.trailer() is not None:
-            # TODO: support slice trailers! ctx.trailer() can be an index or a slice
-            feature_positions = ctx.trailer().value
-        if ctx.array_exp() is not None:
-            feature_positions = ctx.array_exp().value
-        new_factor = StateFactor(feature_positions, name=ctx.IDENTIFIER().getText())
+            if isinstance(ctx.trailer().value, slice):
+                feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))[ctx.trailer().value]
+            else:
+                feature_positions = ctx.trailer().value
+        new_factor = Factor(feature_positions, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_factor.name, new_factor)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value
-        new_feature = None
-        # print(type(arith_exp))
-        if isinstance(arith_exp, StateFactor):
-            new_feature = StateFeature(lambda *args, **kwargs: arith_exp(*args, **kwargs), arith_exp.number_of_features(),
-                                       variables=arith_exp.variables(), name=ctx.IDENTIFIER().getText())
-        elif isinstance(arith_exp, types.FunctionType):
-            # TODO: Keep track of size of arith_exp for number_of_features argument. hardcoded to 1
-            new_feature = StateFeature(arith_exp, 1, name=ctx.IDENTIFIER().getText())
+        if isinstance(arith_exp, Factor):
+            new_feature = Feature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
+        elif isinstance(arith_exp, Callable):
+            new_feature = Feature(function=arith_exp, name=ctx.IDENTIFIER().getText())
         else:
-            print(f"Something else: {type(arith_exp)}")
+            raise RLangSemanticError(f"Cannot make a Feature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
 
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
-        # print(type(ctx.boolean_exp().value))
-        new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        if isinstance(ctx.boolean_exp().value, Predicate):
+            new_predicate = ctx.boolean_exp().value
+        elif isinstance(ctx.boolean_exp().value, Callable):
+            new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        elif isinstance(ctx.boolean_exp().value, bool):
+            new_predicate = Predicate(lambda *args, **kwargs: ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        else:
+            raise RLangSemanticError(f"Cannot make a Predicate from a {type(ctx.boolean_exp().value)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_predicate)
-        # print(new_predicate(np.array([0, 0, 0, 0])))
 
     def exitAction(self, ctx: RLangParser.ActionContext):
-        pass
+        if ctx.any_number() is not None:
+            new_action = Action(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.int_array_exp() is not None:
+            new_action = Action(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.any_array_exp() is not None:
+            new_action = Action(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
+        else:
+            raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
+        self.addVariable(ctx.IDENTIFIER().getText(), new_action)
+
+    def exitExecute(self, ctx: RLangParser.ExecuteContext):
+        # TODO: Fix this once Actions are fleshed out. Need to cast to whatever action type.
+        ctx.value = ctx.IDENTIFIER().getText()
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
 
     def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
-        operation = None
-        if ctx.TIMES() is not None:
-            operation = lambda a, b: a * b
-        elif ctx.DIVIDE() is not None:
-            operation = lambda a, b: a / b
-        ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        if isinstance(ctx.lhs.value, StateGroundingFunction):
+            if ctx.TIMES() is not None:
+                ctx.value = ctx.lhs.value * ctx.rhs.value
+            elif ctx.DIVIDE() is not None:
+                ctx.value = ctx.lhs.value / ctx.rhs.value
+            return
+
+        if isinstance(ctx.rhs.value, StateGroundingFunction):
+            if ctx.TIMES() is not None:
+                ctx.value = ctx.rhs.value * ctx.lhs.value
+            elif ctx.DIVIDE() is not None:
+                ctx.value = ctx.lhs.value / ctx.rhs.value
+            return
+
+        # TODO: Support other StateGroundings
+
+        if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
+            operation = None
+            if ctx.TIMES() is not None:
+                operation = lambda a, b: a * b
+            elif ctx.DIVIDE() is not None:
+                operation = lambda a, b: a / b
+            ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
+            return
+
+        raise RLangSemanticError(
+            f"Using '*' or '/' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
-        operation = None
-        if ctx.PLUS() is not None:
-            operation = lambda a, b: a + b
-        elif ctx.MINUS() is not None:
-            operation = lambda a, b: a - b
-        ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
+            if ctx.PLUS() is not None:
+                ctx.value = ctx.lhs.value + ctx.rhs.value
+            elif ctx.MINUS() is not None:
+                ctx.value = ctx.lhs.value - ctx.rhs.value
+            return
+
+        # TODO: Support other StateGroundings
+
+        if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
+            operation = None
+            if ctx.PLUS() is not None:
+                operation = lambda a, b: a + b
+            elif ctx.DIVIDE() is not None:
+                operation = lambda a, b: a - b
+            ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
+            return
+
+        raise RLangSemanticError(
+            f"Using '+' or '-' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
+
+    def exitArith_array(self, ctx: RLangParser.Arith_arrayContext):
+        ctx.value = ctx.any_array_exp().value
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         ctx.value = ctx.any_bound_var().value
@@ -133,16 +170,24 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.boolean_exp().value
 
     def exitBool_and(self, ctx: RLangParser.Bool_andContext):
-        ctx.value = ctx.lhs.value.and_(ctx.rhs.value)
+        # if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
+        #     ctx.value = ctx.lhs.value & ctx.rhs.value
+        #     return
+        # ctx.value = lambda *args, **kwargs: ctx.lhs.value & ctx.rhs.value
+        ctx.value = ctx.lhs.value & ctx.rhs.value
 
     def exitBool_or(self, ctx: RLangParser.Bool_orContext):
-        ctx.value = ctx.lhs.value.or_(ctx.rhs.value)
+        # if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
+        #     ctx.value = ctx.lhs.value | ctx.rhs.value
+        #     return
+        # ctx.value = lambda *args, **kwargs: ctx.lhs.value | ctx.rhs.value
+        ctx.value = ctx.lhs.value | ctx.rhs.value
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
-        ctx.value = ctx.boolean_exp().value.not_()
+        ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        # TODO: Investigate StateFactor .in_ method
+        # TODO: What kinds of operands do we want to allow here?
         lhs = None
         rhs = None
         if ctx.lhs_arr is not None:
@@ -157,15 +202,17 @@ class RLangListener(RLangParserListener):
         # print(rhs)
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
-        # TODO: Should ctx.value be a callable here as well? Check BooleanFunClass.py
+        # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs),
+                                                           ctx.rhs.value(*args, **kwargs))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
+        # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
@@ -179,61 +226,70 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a >= b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        # TODO: What about if ctx.lhs.value is a StateFeature and needs a state variable?
-        # print(type(ctx.lhs.value))
-        # print(ctx.lhs.value(np.array([0, 1, 2])))
-        # print(type(ctx.rhs.value))
-        # print(ctx.rhs.value(state=np.array([0, 1, 2])))
-        # TODO: This breaks with function and RealExpression
-        fun = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
-        ctx.value = BooleanExpression(fun, ["state"])
+
+        if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
+            ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+            return
+
+        raise RLangSemanticError(
+            f"Operation not permitted (or implemented) between {type(ctx.lhs.value)} and {type(ctx.rhs.value)}")
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
+        if not isinstance(ctx.any_bound_var().value, Predicate):
+            raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} does not have a truth value")
         ctx.value = ctx.any_bound_var().value
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
         if ctx.TRUE() is not None:
-            ctx.value = BOOL_TRUE
+            ctx.value = True
         elif ctx.FALSE() is not None:
-            ctx.value = BOOL_FALSE
+            ctx.value = False
 
-    def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
-        variable = None
-        if ctx.IDENTIFIER() is not None:
-            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        elif ctx.S() is not None:
-            # TODO: Support this
-            variable = S
-            pass
-        elif ctx.S_PRIME() is not None:
-            # TODO: Support this
-            variable = S_prime
-            pass
-        elif ctx.A() is not None:
-            # TODO: Support this
-            variable = A
-        if ctx.trailer():  # if it's not empty
-            trailers = list(map(lambda x: x.value, ctx.trailer()))
-            trailers.insert(0, variable)
-            # TODO: this needs to change based on type(variable)
-            # print(variable)
-            # print(trailers)
-            indexed_variable = reduce(lambda a, b: a[b], trailers)
-            variable = indexed_variable
-        ctx.value = variable
-        # print(type(variable))
+    def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
+        variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if not ctx.trailer():  # Check if it's not empty
+            ctx.value = variable
+            return
 
-    def exitTrailer_index(self, ctx: RLangParser.Trailer_indexContext):
-        ctx.value = ctx.index_exp().value
+        if isinstance(variable, Factor):
+            if len(ctx.trailer()) > 1:
+                raise RLangSemanticError("Too much subscripting on Factor")
+            ctx.value = variable[ctx.trailer()[0].value]
+            return
+        elif isinstance(variable, Feature):
+            if len(ctx.trailer()) > 1:
+                raise RLangSemanticError("Too much subscripting on Feature")
+            ctx.value = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value])
+            return
+
+        # TODO: Implement subscripting for other StateGroundings
+        raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
+
+    def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
+        feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
+        if ctx.trailer() is not None:
+            feature_positions = ctx.trailer().value
+        ctx.value = Factor(feature_positions)
+
+    def exitBound_next_state(self, ctx: RLangParser.Bound_next_stateContext):
+        # TODO
+        pass
+
+    def exitBound_action(self, ctx: RLangParser.Bound_actionContext):
+        # TODO
+        pass
+
+    def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
+        ctx.value = ctx.int_array_exp().value
 
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
 
-    def exitIndex_exp(self, ctx: RLangParser.Index_expContext):
-        ctx.value = ctx.any_integer().value()
+    def exitAny_array_exp(self, ctx: RLangParser.Any_array_expContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
 
-    def exitArray_exp(self, ctx: RLangParser.Array_expContext):
-        ctx.value = list(map(lambda x: x.value(), ctx.arr))
+    def exitInt_array_exp(self, ctx: RLangParser.Int_array_expContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitSlice_exp(self, ctx: RLangParser.Slice_expContext):
         start_ind = None
@@ -254,7 +310,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.any_decimal().value
 
     def enterAny_integer(self, ctx: RLangParser.Any_integerContext):
-        ctx.value = RealConstant(int(ctx.getText()))
+        ctx.value = int(ctx.getText())
 
     def enterAny_decimal(self, ctx: RLangParser.Any_decimalContext):
-        ctx.value = RealConstant(float(ctx.getText()))
+        ctx.value = float(ctx.getText())

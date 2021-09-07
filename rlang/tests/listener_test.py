@@ -1,79 +1,89 @@
 import numpy as np
-from antlr4 import *
-import sys, os
-
-sys.path.append(os.path.abspath("../"))
-from rlang.src.lmdp.grounding.states import Predicate
-from rlang.src.lmdp.grounding.booleans.BooleanFunClass import BOOL_TRUE, BOOL_FALSE, BooleanExpression
-from rlang.src.lmdp.grounding.states.StateGroundingClass import StateFactor, StateFeature
-from rlang.src.language.RLangLexer import RLangLexer
-from rlang.src.language.RLangParser import RLangParser
-from rlang.src.language.RLangListener import RLangListener
-
-
-# TODO: replace state_size with a more comprehensive MDP parameter object
-def listener_from_input(rlang_str, state_size=None):
-    rlang = InputStream(rlang_str)
-    lexer = RLangLexer(rlang)
-    stream = CommonTokenStream(lexer)
-    parser = RLangParser(stream)
-    tree = parser.program()
-    listener = RLangListener()
-    listener.state_size = state_size
-    walker = ParseTreeWalker()
-    walker.walk(listener, tree)
-    return listener
+import rlang
+from rlang.src.grounding import *
 
 
 def test_Factor():
-    position_parsed = listener_from_input("Factor position := S", 3).new_vars['position']
-    position = StateFactor([0, 1, 2], "position")
-    assert position_parsed == position
-    assert position_parsed(np.array([5, 6, 7])) == position(np.array([5, 6, 7]))
+    metadata = rlang.metadata_from_state(np.zeros(5))
+    state = State(np.array([4, 5, 6, 7, 8]))
 
-    position_parsed = listener_from_input("Factor position := S[0]").new_vars['position']
-    position = StateFactor([0], "position")
-    assert position_parsed == position
-    assert position_parsed(np.array([5, 6, 7])) == position(np.array([5, 6, 7]))
+    position_parsed = rlang.parse("Factor position := S", metadata)['position']
+    position = Factor([0, 1, 2, 3, 4], "position")
+    assert position(state=state) == position_parsed(state=state)
 
-    position_parsed = listener_from_input("Factor position := S[0, 3, 2]").new_vars['position']
-    position = StateFactor([0, 3, 2], "position")
-    assert position_parsed == position
-    assert position_parsed(np.array([5, 6, 7, 8, 9])) == position(np.array([5, 6, 7, 8, 9]))
+    position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
+    position = Factor(0, "position")
+    assert position(state=state) == position_parsed(state=state)
 
-    # TODO: Support slices
-    # position_parsed = listener_from_input("Factor position := S[0:2]").new_vars['position']
-    # position = StateFactor([0:2], "position")
-    # assert position_parsed == position
-    # assert position_parsed(np.array([5, 6, 7, 8, 9])) == position(np.array([5, 6, 7, 8, 9]))
+    position_parsed = rlang.parse("Factor position := S[0:3]", metadata)['position']
+    position = Factor([0, 1, 2], "position")
+    assert position(state=state) == position_parsed(state=state)
+
+    position_parsed = rlang.parse("Factor position := S[:3]", metadata)['position']
+    assert position(state=state) == position_parsed(state=state)
+
+    position_parsed = rlang.parse("Factor position := S[0, 3, 1]", metadata)['position']
+    position = Factor([0, 3, 1], "position")
+    assert position(state=state) == position_parsed(state=state)
 
 
 def test_Feature():
-    x_parsed = listener_from_input("Factor position := S[0, 1]\nFeature x := position[0]").new_vars['x']
-    position = StateFactor([0, 1], "position")
-    x = StateFeature(position[0], 1)
-    assert x_parsed == x
-    assert x_parsed(np.array([5, 6, 7])) == x(np.array([5, 6, 7]))
+    metadata = rlang.metadata_from_state(np.zeros(5))
+    state = State(np.array([4, 5, 6, 7, 8]))
 
-    # TODO: Support S, A, S' parsing for Feature
-    # x_parsed = listener_from_input("Feature x := S", 3).new_vars['x']
-    # x_parsed = listener_from_input("Feature x := A", 3).new_vars['x']
-    # x_parsed = listener_from_input("Feature x := S'", 3).new_vars['x']
+    x_parsed = rlang.parse("Feature x := S[0, 1]", metadata)['x']
+    x = Feature.from_Factor(Factor([0, 1]), "x")
+    assert x(state=state) == x_parsed(state=state)
 
-    x_parsed = listener_from_input("Factor position := S[0, 1]\nFeature x := position[0] + 4 * 2 + position[1]").new_vars['x']
-    position = StateFactor([0, 1], "position")
-    x = StateFeature(position[0] + 4 * 2 + position[1], 1)
-    assert x_parsed == x
-    assert x_parsed(np.array([5, 6, 7])) == x(np.array([5, 6, 7]))
+    x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]", metadata)['x']
+    position = Factor([0, 1], "position")
+    x = Feature.from_Factor(position[0], "x")
+    assert x(state=state) == x_parsed(state=state)
+
+    x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position * 2", metadata)['x']
+    position = Factor([0, 1], "position")
+    x = Feature.from_Factor(position * 2, "x")
+    assert x(state=state) == x_parsed(state=state)
+    x = Feature.from_Factor(2 * position, "x")
+    assert x(state=state) == x_parsed(state=state)
+
+    x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + 4 * 2 + position[1]", metadata)['x']
+    position = Factor([0, 1], "position")
+    x = Feature(position[0] + 4 * 2 + position[1], "x")
+    assert x(state=state) == x_parsed(state=state)
+
+    x_parsed = rlang.parse("Factor position := S[0:3]\nFeature x := position[0] + 4 * 2 + 3 / position[1]", metadata)['x']
+    position = Factor(list(range(5))[slice(0, 3, 1)], "position")
+    x = Feature(position[0] + 4 * 2 + 3 / position[1], "x")
+    assert x(state=state) == x_parsed(state=state)
 
 
 def test_Predicate():
-    hi_parsed = listener_from_input("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False").new_vars['hi']
-    position = StateFactor([0, 1], "position")
-    x = StateFeature(position[0], 1)
-    hi = Predicate(x == 1 and BOOL_TRUE.or_(BOOL_FALSE))
-    assert hi_parsed == hi
-    assert hi_parsed(np.array([0, 1, 2])) == hi(np.array([0, 1, 2]))
+    metadata = rlang.metadata_from_state(np.zeros(5))
+    state = State(np.array([4, 5, 6, 7, 8]))
+
+    hi_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False", metadata)['hi']
+    position = Factor([0, 1], "position")
+    x = Feature(position[0])
+    hi = Predicate(x == 1 & True | False)
+    assert hi(state=state) == hi_parsed(state=state)
+
+    # TODO: Need more tests for Predicate
+
+
+def test_Action():
+    metadata = rlang.metadata_from_state(np.zeros(5))
+
+    up_parsed = rlang.parse("Action up := -1.3", metadata)['up']
+    up = Action(-1.3, "up")
+    assert up() == up_parsed()
+
+    up_parsed = rlang.parse("Action up := [0, 1.0, -4.2]", metadata)['up']
+    up = Action([0, 1.0, -4.2], "up")
+    assert up() == up_parsed()
+
+    # TODO: Need more tests for Action
+
 
 if __name__ == "__main__":
-    test_Predicate()
+    test_Action()
