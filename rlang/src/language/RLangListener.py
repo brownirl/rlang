@@ -3,6 +3,7 @@ from functools import reduce
 import numpy as np
 from antlr4 import *
 import json
+from typing import Callable
 
 from rlang.src.grounding.utils.state_space import MDPMetadata
 from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
@@ -19,7 +20,6 @@ class RLangListener(RLangParserListener):
     def __init__(self, mdp_metadata: MDPMetadata = None):
         self.vocab_fnames = []
         self.grounded_vars = {}
-        # self.new_vars = {}
         self.rlang_knowledge = RLangKnowledge()
         self.mdp_metadata = mdp_metadata
 
@@ -60,7 +60,10 @@ class RLangListener(RLangParserListener):
     def exitFactor(self, ctx: RLangParser.FactorContext):
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
         if ctx.trailer() is not None:
-            feature_positions = ctx.trailer().value
+            if isinstance(ctx.trailer().value, slice):
+                feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))[ctx.trailer().value]
+            else:
+                feature_positions = ctx.trailer().value
         new_factor = Factor(feature_positions, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_factor.name, new_factor)
 
@@ -70,9 +73,9 @@ class RLangListener(RLangParserListener):
         # print(type(arith_exp))
         if isinstance(arith_exp, Factor):
             new_feature = Feature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
-        elif isinstance(arith_exp, types.FunctionType):
+        elif isinstance(arith_exp, Callable):
             # TODO: Keep track of size of arith_exp for number_of_features argument. hardcoded to 1
-            new_feature = StateFeature(arith_exp, 1, name=ctx.IDENTIFIER().getText())
+            new_feature = Feature(function=arith_exp, name=ctx.IDENTIFIER().getText())
         else:
             print(f"Something else: {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
@@ -90,22 +93,60 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.arithmetic_exp().value
 
     def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
-        # TODO: Refactor this. operands may or may not be a GroundingFunction
-        operation = None
-        if ctx.TIMES() is not None:
-            operation = lambda a, b: a * b
-        elif ctx.DIVIDE() is not None:
-            operation = lambda a, b: a / b
-        ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        if isinstance(ctx.lhs.value, StateGroundingFunction):
+            if ctx.TIMES() is not None:
+                ctx.value = ctx.lhs.value * ctx.rhs.value
+            elif ctx.DIVIDE() is not None:
+                ctx.value = ctx.lhs.value / ctx.rhs.value
+            return
+
+        if isinstance(ctx.rhs.value, StateGroundingFunction):
+            if ctx.TIMES() is not None:
+                ctx.value = ctx.rhs.value * ctx.lhs.value
+            elif ctx.DIVIDE() is not None:
+                ctx.value = ctx.lhs.value / ctx.rhs.value
+            return
+
+        # TODO: Support other StateGroundings
+
+        if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
+            operation = None
+            if ctx.TIMES() is not None:
+                operation = lambda a, b: a * b
+            elif ctx.DIVIDE() is not None:
+                operation = lambda a, b: a / b
+            ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
+            return
+
+        raise RLangSemanticError(f"Using '*' or '/' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
-        # TODO: Refactor this. operands may or may not be a GroundingFunction
-        operation = None
-        if ctx.PLUS() is not None:
-            operation = lambda a, b: a + b
-        elif ctx.MINUS() is not None:
-            operation = lambda a, b: a - b
-        ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        if isinstance(ctx.lhs.value, StateGroundingFunction):
+            if ctx.PLUS() is not None:
+                ctx.value = ctx.lhs.value + ctx.rhs.value
+            elif ctx.MINUS() is not None:
+                ctx.value = ctx.lhs.value - ctx.rhs.value
+            return
+
+        if isinstance(ctx.rhs.value, StateGroundingFunction):
+            if ctx.PLUS() is not None:
+                ctx.value = ctx.rhs.value + ctx.lhs.value
+            elif ctx.MINUS() is not None:
+                ctx.value = ctx.lhs.value - ctx.rhs.value
+            return
+
+        # TODO: Support other StateGroundings
+
+        if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
+            operation = None
+            if ctx.PLUS() is not None:
+                operation = lambda a, b: a + b
+            elif ctx.DIVIDE() is not None:
+                operation = lambda a, b: a - b
+            ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
+            return
+
+        raise RLangSemanticError(f"Using '+' or '-' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
@@ -214,30 +255,20 @@ class RLangListener(RLangParserListener):
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if ctx.trailer() is None:
+        if not ctx.trailer():   # Check if it's not empty
             ctx.value = variable
+            return
 
         # TODO: Properly implement this
         if isinstance(variable, Factor):
-            if ctx.trailer():
-                if len(ctx.trailer()) > 1:
-                    raise RLangSemanticError("Too much subscripting on Factor")
-                ctx.value = Factor[ctx.trailer()[0].value]
-            ctx.value = variable
+            if len(ctx.trailer()) > 1:
+                raise RLangSemanticError("Too much subscripting on Factor")
+            ctx.value = variable[ctx.trailer()[0].value]
+        elif isinstance(variable, Feature):
+            if len(ctx.trailer()) > 1:
+                raise RLangSemanticError("Too much subscripting on Feature")
+            ctx.value = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value])
 
-        # if ctx.trailer():
-        #     trailers = list(map(lambda x: x.value, ctx.trailer()))
-        #     trailers.insert(0, variable)
-        #     # TODO: this needs to change based on type(variable)
-        #     # print(variable)
-        #     # print(trailers)
-        #     indexed_variable = reduce(lambda a, b: a[b], trailers)
-        #     variable = indexed_variable
-        # if ctx.trailer():
-        #     trailers = list(map(lambda x: x.value, ctx.trailer()))
-        #     print(trailers)
-        #     function = lambda *args, **kwargs: variable(*args, **kwargs)[trailers[0]]
-        ctx.value = variable
 
     def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))

@@ -11,15 +11,19 @@ from rlang.src.grounding import Domain
 
 
 class Factor(StateGroundingFunction):
-    def __init__(self, state_indices: Any, name: str = None):
-        if type(state_indices) == int:
-            state_indices = [state_indices]
-        self._state_indices = state_indices
-        super().__init__(function=lambda *args, **kwargs: kwargs['state'].__getitem__(self._state_indices),
+    def __init__(self, state_indexer: Any, name: str = None):
+        if type(state_indexer) == int:
+            state_indexer = [state_indexer]
+        self._state_indexer = state_indexer
+        super().__init__(function=lambda *args, **kwargs: kwargs['state'].__getitem__(self._state_indexer),
                          codomain=Domain.REAL_VALUE, name=name)
 
     def __getitem__(self, item):
-        return Factor(self._state_indices[item])
+        if isinstance(self._state_indexer, slice):
+            print("This is weird")
+        if isinstance(item, list):
+            return Factor([self._state_indexer[i] for i in item])
+        return Factor(self._state_indexer[item])
 
     def __repr__(self):
-        return f"<Factor: {str(self._state_indices)}>"
+        return f"<Factor: {str(self._state_indexer)}>"
