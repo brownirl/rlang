@@ -1,4 +1,6 @@
 import sys, os
+
+from grounding.groundings.state.factor import Factor
 sys.path.append(os.path.abspath("./"))
 
 import random
@@ -30,7 +32,7 @@ agent_n_features = len(agent)
 # agent
 
 # [0, 1, 2]
-agent_state = StateFactor(list(range(agent_n_features)), name="agent")
+agent_state = Factor(list(range(agent_n_features)), name="agent")
 
 # walls
 walls_state = {}
@@ -47,13 +49,13 @@ wall_n_features = 2
 init_idx = agent_n_features
 for i in range(len(walls)):
     walls_state.update({"wall_"+str(i): 
-                        StateFactor(list(range(init_idx, init_idx + (i+1)*wall_n_features)), "wall_"+str(i))})
+                        Factor(list(range(init_idx, init_idx + (i+1)*wall_n_features)), "wall_"+str(i))})
     init_idx += (i+1)*wall_n_features
 
 # passengers
 passenger_state = {}
 for p in range(len(passengers)):
-    passenger_state["passenger_"+str(p)] = StateFactor(list(range(init_idx, init_idx + passenger_n_features)), "passenger_"+str(p))
+    passenger_state["passenger_"+str(p)] = Factor(list(range(init_idx, init_idx + passenger_n_features)), "passenger_"+str(p))
     init_idx += (p+1)*passenger_n_features
 
 locals().update(walls_state)

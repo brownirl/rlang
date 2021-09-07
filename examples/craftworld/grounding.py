@@ -1,4 +1,6 @@
 import sys, os
+from grounding.groundings.state.factor import Factor
+from grounding.groundings.state.predicate import Predicate
 sys.path.append(os.path.abspath("./"))
 
 
@@ -39,13 +41,13 @@ built_elements = list(recipes['recipes'].keys())
 
 #-----factors
 end_map_idx = (n_objects+1) * WIDTH * HEIGHT
-grid_map = StateFactor(list(range(end_map_idx)), "grid_map")
-inventory = StateFactor(list(range(end_map_idx, end_map_idx + n_objects)), "inventory")
-delta_inventory = StateFactor(list(range(end_map_idx + n_objects, end_map_idx + 2*n_objects)), name='delta_inventory')
+grid_map = Factor(list(range(end_map_idx)), "grid_map")
+inventory = Factor(list(range(end_map_idx, end_map_idx + n_objects)), "inventory")
+delta_inventory = Factor(list(range(end_map_idx + n_objects, end_map_idx + 2*n_objects)), name='delta_inventory')
 
 end_inv = end_map_idx + 2*n_objects
-position = StateFactor(list(range(end_inv, end_inv+2)), 'position')
-direction = StateFactor(list(range(end_inv+2, end_inv+6)), 'direction')
+position = Factor(list(range(end_inv, end_inv+2)), 'position')
+direction = Factor(list(range(end_inv+2, end_inv+6)), 'direction')
 
 #-----features
 
@@ -72,7 +74,7 @@ locals().update(materials) # add variables for element features such as gold, ir
 # workbenches, water, boundary, stone
 environment_elements = {}
 for p in recipes['environment']:
-    environment_elements.update({"at_"+p: Symbol(elements_to_use[objects_to_idx[p]] > 0, name="at_"+p)})
+    environment_elements.update({"at_"+p: Predicate(elements_to_use[objects_to_idx[p]] > 0)})
 
 environment_predicates = list(environment_elements.keys())
 locals().update(environment_elements)
