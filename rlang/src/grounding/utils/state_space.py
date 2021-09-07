@@ -22,6 +22,8 @@ class State(np.ndarray):
         return State(super().__getitem__(item))
 
     def __eq__(self, other):
+        # print(self.shape)
+        # print(other.shape)
         # TODO: This fails due to logical and, need to check array dimension
         # TODO: Consider implementing two separate eq methods
         # Try State(0) == State([[1, 0], [0, 0]). Returns [[False],[True]] instead of [[False],[False]]

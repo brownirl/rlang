@@ -5,6 +5,7 @@ from antlr4 import *
 import json
 
 from rlang.src.grounding.utils.state_space import MDPMetadata
+from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 from rlang.src.grounding import *
 
 from .RLangLexer import RLangLexer
@@ -31,7 +32,7 @@ class RLangListener(RLangParserListener):
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler callable
                 voc_assembler = VocabularyAssembler(vocab)
                 self.grounded_vars.update(voc_assembler.lmdp_objects)
-                self.state_size = voc_assembler.state_size
+                # self.state_size = voc_assembler.state_size
 
         for fname in self.vocab_fnames:
             parseVocabFile(fname)
@@ -57,11 +58,9 @@ class RLangListener(RLangParserListener):
         self.parseVocabFiles()
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        feature_positions = list(range(self.mdp_metadata.state_space.shape[0])) if self.mdp_metadata.state_space.shape[0] is not None else None
+        feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
         if ctx.trailer() is not None:
             feature_positions = ctx.trailer().value
-        if ctx.array_exp() is not None:
-            feature_positions = ctx.array_exp().value
         new_factor = Factor(feature_positions, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_factor.name, new_factor)
 
@@ -151,7 +150,8 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a == b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
+        ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs),
+                                                           ctx.rhs.value(*args, **kwargs))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
         # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
@@ -212,14 +212,52 @@ class RLangListener(RLangParserListener):
     #     ctx.value = variable
     #     # print(type(variable))
 
-    def exitTrailer_index(self, ctx: RLangParser.Trailer_indexContext):
-        ctx.value = ctx.index_exp().value
+    def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
+        variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if ctx.trailer() is None:
+            ctx.value = variable
+
+        # TODO: Properly implement this
+        if isinstance(variable, Factor):
+            if ctx.trailer():
+                if len(ctx.trailer()) > 1:
+                    raise RLangSemanticError("Too much subscripting on Factor")
+                ctx.value = Factor[ctx.trailer()[0].value]
+            ctx.value = variable
+
+        # if ctx.trailer():
+        #     trailers = list(map(lambda x: x.value, ctx.trailer()))
+        #     trailers.insert(0, variable)
+        #     # TODO: this needs to change based on type(variable)
+        #     # print(variable)
+        #     # print(trailers)
+        #     indexed_variable = reduce(lambda a, b: a[b], trailers)
+        #     variable = indexed_variable
+        # if ctx.trailer():
+        #     trailers = list(map(lambda x: x.value, ctx.trailer()))
+        #     print(trailers)
+        #     function = lambda *args, **kwargs: variable(*args, **kwargs)[trailers[0]]
+        ctx.value = variable
+
+    def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
+        feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
+        if ctx.trailer() is not None:
+            feature_positions = ctx.trailer().value
+        ctx.value = Factor(feature_positions)
+
+    def exitBound_next_state(self, ctx: RLangParser.Bound_next_stateContext):
+        # TODO
+        pass
+
+    def exitBound_action(self, ctx: RLangParser.Bound_actionContext):
+        # TODO
+        pass
+
+    def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
+        ctx.value = ctx.array_exp().value
 
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
-
-    def exitIndex_exp(self, ctx: RLangParser.Index_expContext):
-        ctx.value = ctx.any_integer().value
 
     def exitArray_exp(self, ctx: RLangParser.Array_expContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))

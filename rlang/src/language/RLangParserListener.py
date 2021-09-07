@@ -350,12 +350,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#trailer_index.
-    def enterTrailer_index(self, ctx:RLangParser.Trailer_indexContext):
+    # Enter a parse tree produced by RLangParser#trailer_array.
+    def enterTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#trailer_index.
-    def exitTrailer_index(self, ctx:RLangParser.Trailer_indexContext):
+    # Exit a parse tree produced by RLangParser#trailer_array.
+    def exitTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
         pass
 
 
@@ -365,15 +365,6 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#trailer_slice.
     def exitTrailer_slice(self, ctx:RLangParser.Trailer_sliceContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#index_exp.
-    def enterIndex_exp(self, ctx:RLangParser.Index_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#index_exp.
-    def exitIndex_exp(self, ctx:RLangParser.Index_expContext):
         pass
 
 

@@ -39,16 +39,16 @@ def test_Feature():
     position = Factor([0, 1], "position")
     x = Feature.from_Factor(position[0], "x")
     assert x(state=state) == x_parsed(state=state)
-
-    x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position * 2", metadata)['x']
-    position = Factor([0, 1], "position")
-    x = Feature.from_Factor(position[0] * 2, "x")
-    assert x(state=state) == x_parsed(state=state)
-
-    x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + 4 * 2 + position[1]", metadata)['x']
-    position = Factor([0, 1], "position")
-    x = Feature(position[0] + 4 * 2 + position[1], "x")
-    assert x(state=state) == x_parsed(state=state)
+    #
+    # x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position * 2", metadata)['x']
+    # position = Factor([0, 1], "position")
+    # x = Feature.from_Factor(position[0] * 2, "x")
+    # assert x(state=state) == x_parsed(state=state)
+    #
+    # x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + 4 * 2 + position[1]", metadata)['x']
+    # position = Factor([0, 1], "position")
+    # x = Feature(position[0] + 4 * 2 + position[1], "x")
+    # assert x(state=state) == x_parsed(state=state)
 
 
 # def test_Predicate():
