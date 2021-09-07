@@ -36,7 +36,7 @@ class Predicate(StateGroundingFunction):
         raise RLangGroundingError(message=f"Cannot | a Predicate with a {type(other)}")
 
     def __invert__(self) -> Predicate:
-        return Predicate(function=lambda *args, **kwargs: ~ self(*args, **kwargs))
+        return Predicate(function=lambda *args, **kwargs: bool(~ self(*args, **kwargs)))
 
     def __repr__(self):
         return "<Predicate>"
