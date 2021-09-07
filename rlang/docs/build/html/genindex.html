@@ -161,7 +161,6 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
- | <a href="#K"><strong>K</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
@@ -174,14 +173,22 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grounding.html#grounding.Action">Action (class in grounding)</a>
+
+      <ul>
+        <li><a href="grounding.groundings.html#grounding.groundings.Action">(class in grounding.groundings)</a>
+</li>
+        <li><a href="grounding.groundings.html#grounding.groundings.action.Action">(class in grounding.groundings.action)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Domain.ACTION">ACTION (grounding.Domain attribute)</a>
 
       <ul>
         <li><a href="grounding.utils.html#grounding.utils.domain.Domain.ACTION">(grounding.utils.domain.Domain attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Domain.ANY">ANY (grounding.Domain attribute)</a>
 
       <ul>
@@ -254,6 +261,12 @@
         <li><a href="grounding.groundings.state.html#grounding.groundings.state.factor.Factor">(class in grounding.groundings.state.factor)</a>
 </li>
       </ul></li>
+      <li><a href="grounding.html#grounding.knowledge.RLangKnowledge.factors">factors() (grounding.knowledge.RLangKnowledge method)</a>
+
+      <ul>
+        <li><a href="grounding.html#grounding.RLangKnowledge.factors">(grounding.RLangKnowledge method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Feature">Feature (class in grounding)</a>
@@ -262,6 +275,14 @@
         <li><a href="grounding.groundings.html#grounding.groundings.Feature">(class in grounding.groundings)</a>
 </li>
         <li><a href="grounding.groundings.state.html#grounding.groundings.state.feature.Feature">(class in grounding.groundings.state.feature)</a>
+</li>
+      </ul></li>
+      <li><a href="grounding.html#grounding.Feature.from_Factor">from_Factor() (grounding.Feature class method)</a>
+
+      <ul>
+        <li><a href="grounding.groundings.html#grounding.groundings.Feature.from_Factor">(grounding.groundings.Feature class method)</a>
+</li>
+        <li><a href="grounding.groundings.state.html#grounding.groundings.state.feature.Feature.from_Factor">(grounding.groundings.state.feature.Feature class method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -290,6 +311,13 @@
 
       <ul>
         <li><a href="grounding.groundings.html#module-grounding.groundings">module</a>
+</li>
+      </ul></li>
+      <li>
+    grounding.groundings.action
+
+      <ul>
+        <li><a href="grounding.groundings.html#module-grounding.groundings.action">module</a>
 </li>
       </ul></li>
       <li>
@@ -355,6 +383,8 @@
         <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     grounding.groundings.state_action.effect
 
@@ -362,8 +392,6 @@
         <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.effect">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     grounding.groundings.state_action.reward_effect
 
@@ -452,18 +480,6 @@
   </ul></td>
 </tr></table>
 
-<h2 id="K">K</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="grounding.html#grounding.Knowledge">Knowledge (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.html#grounding.knowledge.Knowledge">(class in grounding.knowledge)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -475,6 +491,8 @@
         <li><a href="grounding.groundings.state_action_state.html#grounding.groundings.state_action_state.markov_feature.MarkovFeature">(class in grounding.groundings.state_action_state.markov_feature)</a>
 </li>
       </ul></li>
+      <li><a href="grounding.utils.html#grounding.utils.state_space.MDPMetadata">MDPMetadata (class in grounding.utils.state_space)</a>
+</li>
       <li>
     module
 
@@ -482,6 +500,8 @@
         <li><a href="grounding.html#module-grounding">grounding</a>
 </li>
         <li><a href="grounding.groundings.html#module-grounding.groundings">grounding.groundings</a>
+</li>
+        <li><a href="grounding.groundings.html#module-grounding.groundings.action">grounding.groundings.action</a>
 </li>
         <li><a href="grounding.groundings.html#module-grounding.groundings.constant">grounding.groundings.constant</a>
 </li>
@@ -594,8 +614,6 @@
         <li><a href="grounding.utils.html#grounding.utils.domain.Domain.REWARD">(grounding.utils.domain.Domain attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.RewardEffect">RewardEffect (class in grounding)</a>
 
       <ul>
@@ -604,8 +622,16 @@
         <li><a href="grounding.groundings.state_action.html#grounding.groundings.state_action.reward_effect.RewardEffect">(class in grounding.groundings.state_action.reward_effect)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.utils.html#grounding.utils.grounding_errors.RLangGroundingError">RLangGroundingError</a>
 </li>
+      <li><a href="grounding.html#grounding.RLangKnowledge">RLangKnowledge (class in grounding)</a>
+
+      <ul>
+        <li><a href="grounding.html#grounding.knowledge.RLangKnowledge">(class in grounding.knowledge)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
