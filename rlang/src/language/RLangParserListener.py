@@ -197,6 +197,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#arith_array.
+    def enterArith_array(self, ctx:RLangParser.Arith_arrayContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_array.
+    def exitArith_array(self, ctx:RLangParser.Arith_arrayContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#arith_plus_minus.
     def enterArith_plus_minus(self, ctx:RLangParser.Arith_plus_minusContext):
         pass
@@ -368,12 +377,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#array_exp.
-    def enterArray_exp(self, ctx:RLangParser.Array_expContext):
+    # Enter a parse tree produced by RLangParser#int_array_exp.
+    def enterInt_array_exp(self, ctx:RLangParser.Int_array_expContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#array_exp.
-    def exitArray_exp(self, ctx:RLangParser.Array_expContext):
+    # Exit a parse tree produced by RLangParser#int_array_exp.
+    def exitInt_array_exp(self, ctx:RLangParser.Int_array_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#any_array_exp.
+    def enterAny_array_exp(self, ctx:RLangParser.Any_array_expContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_array_exp.
+    def exitAny_array_exp(self, ctx:RLangParser.Any_array_expContext):
         pass
 
 

@@ -91,12 +91,17 @@ class RLangListener(RLangParserListener):
     def exitAction(self, ctx: RLangParser.ActionContext):
         if ctx.any_number() is not None:
             new_action = Action(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
-        elif ctx.array_exp() is not None:
-            new_action = Action(action=ctx.array_exp().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.int_array_exp() is not None:
+            new_action = Action(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.any_array_exp() is not None:
+            new_action = Action(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
         else:
             raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
         self.addVariable(ctx.IDENTIFIER().getText(), new_action)
 
+    def exitExecute(self, ctx: RLangParser.ExecuteContext):
+        # TODO: Fix this once Actions are fleshed out. Need to cast to whatever action type.
+        ctx.value = ctx.IDENTIFIER().getText()
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -127,7 +132,8 @@ class RLangListener(RLangParserListener):
             ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
             return
 
-        raise RLangSemanticError(f"Using '*' or '/' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
+        raise RLangSemanticError(
+            f"Using '*' or '/' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
         if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
@@ -148,10 +154,14 @@ class RLangListener(RLangParserListener):
             ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
             return
 
-        raise RLangSemanticError(f"Using '+' or '-' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
+        raise RLangSemanticError(
+            f"Using '+' or '-' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = ctx.any_number().value
+
+    def exitArith_array(self, ctx: RLangParser.Arith_arrayContext):
+        ctx.value = ctx.any_array_exp().value
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         ctx.value = ctx.any_bound_var().value
@@ -221,7 +231,8 @@ class RLangListener(RLangParserListener):
             ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
             return
 
-        raise RLangSemanticError(f"Operation not permitted (or implemented) between {type(ctx.lhs.value)} and {type(ctx.rhs.value)}")
+        raise RLangSemanticError(
+            f"Operation not permitted (or implemented) between {type(ctx.lhs.value)} and {type(ctx.rhs.value)}")
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         if not isinstance(ctx.any_bound_var().value, Predicate):
@@ -236,7 +247,7 @@ class RLangListener(RLangParserListener):
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not ctx.trailer():   # Check if it's not empty
+        if not ctx.trailer():  # Check if it's not empty
             ctx.value = variable
             return
 
@@ -269,12 +280,15 @@ class RLangListener(RLangParserListener):
         pass
 
     def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
-        ctx.value = ctx.array_exp().value
+        ctx.value = ctx.int_array_exp().value
 
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
 
-    def exitArray_exp(self, ctx: RLangParser.Array_expContext):
+    def exitAny_array_exp(self, ctx: RLangParser.Any_array_expContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
+
+    def exitInt_array_exp(self, ctx: RLangParser.Int_array_expContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitSlice_exp(self, ctx: RLangParser.Slice_expContext):

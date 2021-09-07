@@ -68,6 +68,22 @@ def test_Predicate():
     hi = Predicate(x == 1 & True | False)
     assert hi(state=state) == hi_parsed(state=state)
 
+    # TODO: Need more tests for Predicate
+
+
+def test_Action():
+    metadata = rlang.metadata_from_state(np.zeros(5))
+
+    up_parsed = rlang.parse("Action up := -1.3", metadata)['up']
+    up = Action(-1.3, "up")
+    assert up() == up_parsed()
+
+    up_parsed = rlang.parse("Action up := [0, 1.0, -4.2]", metadata)['up']
+    up = Action([0, 1.0, -4.2], "up")
+    assert up() == up_parsed()
+
+    # TODO: Need more tests for Action
+
 
 if __name__ == "__main__":
-    test_Predicate()
+    test_Action()

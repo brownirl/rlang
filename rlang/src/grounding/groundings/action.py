@@ -7,8 +7,8 @@
 
 from typing import Any
 import numpy as np
-from groundings.grounding_function import GroundingFunction
-from grounding.utils.domain import Domain
+from rlang.src.grounding.groundings.grounding_function import GroundingFunction
+from rlang.src.grounding.utils.domain import Domain
 
 
 class Action(GroundingFunction):
