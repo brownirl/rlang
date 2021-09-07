@@ -58,14 +58,16 @@ def test_Feature():
     assert x(state=state) == x_parsed(state=state)
 
 
-# def test_Predicate():
-#     hi_parsed = listener_from_input("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False").new_vars['hi']
-#     position = StateFactor([0, 1], "position")
-#     x = StateFeature(position[0], 1)
-#     hi = Predicate(x == 1 and BOOL_TRUE.or_(BOOL_FALSE))
-#     assert hi_parsed == hi
-#     assert hi_parsed(np.array([0, 1, 2])) == hi(np.array([0, 1, 2]))
-#
+def test_Predicate():
+    metadata = rlang.metadata_from_state(np.zeros(5))
+    state = State(np.array([4, 5, 6, 7, 8]))
+
+    hi_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False", metadata)['hi']
+    position = Factor([0, 1], "position")
+    x = Feature(position[0])
+    hi = Predicate(x == 1 & True | False)
+    assert hi(state=state) == hi_parsed(state=state)
+
 
 if __name__ == "__main__":
-    test_Feature()
+    test_Predicate()

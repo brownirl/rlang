@@ -26,7 +26,7 @@ dec
 factor: FACTOR IDENTIFIER BIND S trailer?;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
-action: ACTION IDENTIFIER BIND INTEGER;
+action: ACTION IDENTIFIER BIND (any_number | array_exp);
 goal: GOAL IDENTIFIER BIND boolean_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;

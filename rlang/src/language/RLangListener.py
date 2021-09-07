@@ -69,25 +69,34 @@ class RLangListener(RLangParserListener):
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value
-        new_feature = None
-        # print(type(arith_exp))
         if isinstance(arith_exp, Factor):
             new_feature = Feature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
         elif isinstance(arith_exp, Callable):
-            # TODO: Keep track of size of arith_exp for number_of_features argument. hardcoded to 1
             new_feature = Feature(function=arith_exp, name=ctx.IDENTIFIER().getText())
         else:
-            print(f"Something else: {type(arith_exp)}")
+            raise RLangSemanticError(f"Cannot make a Feature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
 
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
-        # print(type(ctx.boolean_exp().value))
-        new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        if isinstance(ctx.boolean_exp().value, Predicate):
+            new_predicate = ctx.boolean_exp().value
+        elif isinstance(ctx.boolean_exp().value, Callable):
+            new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        elif isinstance(ctx.boolean_exp().value, bool):
+            new_predicate = Predicate(lambda *args, **kwargs: ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        else:
+            raise RLangSemanticError(f"Cannot make a Predicate from a {type(ctx.boolean_exp().value)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_predicate)
-        # print(new_predicate(np.array([0, 0, 0, 0])))
 
     def exitAction(self, ctx: RLangParser.ActionContext):
-        pass
+        if ctx.any_number() is not None:
+            new_action = Action(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.array_exp() is not None:
+            new_action = Action(action=ctx.array_exp().value, name=ctx.IDENTIFIER().getText())
+        else:
+            raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
+        self.addVariable(ctx.IDENTIFIER().getText(), new_action)
+
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -121,16 +130,9 @@ class RLangListener(RLangParserListener):
         raise RLangSemanticError(f"Using '*' or '/' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
-        if isinstance(ctx.lhs.value, StateGroundingFunction):
+        if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
             if ctx.PLUS() is not None:
                 ctx.value = ctx.lhs.value + ctx.rhs.value
-            elif ctx.MINUS() is not None:
-                ctx.value = ctx.lhs.value - ctx.rhs.value
-            return
-
-        if isinstance(ctx.rhs.value, StateGroundingFunction):
-            if ctx.PLUS() is not None:
-                ctx.value = ctx.rhs.value + ctx.lhs.value
             elif ctx.MINUS() is not None:
                 ctx.value = ctx.lhs.value - ctx.rhs.value
             return
@@ -158,16 +160,21 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.boolean_exp().value
 
     def exitBool_and(self, ctx: RLangParser.Bool_andContext):
-        # TODO: Refactor this. operands may or may not be a GroundingFunction
-        ctx.value = ctx.lhs.value.and_(ctx.rhs.value)
+        # if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
+        #     ctx.value = ctx.lhs.value & ctx.rhs.value
+        #     return
+        # ctx.value = lambda *args, **kwargs: ctx.lhs.value & ctx.rhs.value
+        ctx.value = ctx.lhs.value & ctx.rhs.value
 
     def exitBool_or(self, ctx: RLangParser.Bool_orContext):
-        # TODO: Refactor this. operands may or may not be a GroundingFunction
-        ctx.value = ctx.lhs.value.or_(ctx.rhs.value)
+        # if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
+        #     ctx.value = ctx.lhs.value | ctx.rhs.value
+        #     return
+        # ctx.value = lambda *args, **kwargs: ctx.lhs.value | ctx.rhs.value
+        ctx.value = ctx.lhs.value | ctx.rhs.value
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
-        # TODO: Refactor this. expression may or may not be a GroundingFunction
-        ctx.value = ctx.boolean_exp().value.not_()
+        ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
         # TODO: What kinds of operands do we want to allow here?
@@ -209,16 +216,16 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a >= b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        # TODO: What about if ctx.lhs.value is a StateFeature and needs a state variable?
-        # print(type(ctx.lhs.value))
-        # print(ctx.lhs.value(np.array([0, 1, 2])))
-        # print(type(ctx.rhs.value))
-        # print(ctx.rhs.value(state=np.array([0, 1, 2])))
-        # TODO: This breaks with function and RealExpression
-        fun = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs), ctx.rhs.value(*args, **kwargs))
-        ctx.value = BooleanExpression(fun, ["state"])
+
+        if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
+            ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+            return
+
+        raise RLangSemanticError(f"Operation not permitted (or implemented) between {type(ctx.lhs.value)} and {type(ctx.rhs.value)}")
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
+        if not isinstance(ctx.any_bound_var().value, Predicate):
+            raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} does not have a truth value")
         ctx.value = ctx.any_bound_var().value
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
@@ -227,48 +234,25 @@ class RLangListener(RLangParserListener):
         elif ctx.FALSE() is not None:
             ctx.value = False
 
-    # def exitAny_bound_var(self, ctx: RLangParser.Any_bound_varContext):
-    #     variable = None
-    #     if ctx.IDENTIFIER() is not None:
-    #         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-    #     elif ctx.S() is not None:
-    #         # TODO: Support this
-    #         variable = Feature.from_Factor(Factor(ctx.trailer()[0].value))
-    #         pass
-    #     elif ctx.S_PRIME() is not None:
-    #         # TODO: Support this
-    #         variable = S_prime
-    #         pass
-    #     elif ctx.A() is not None:
-    #         # TODO: Support this
-    #         variable = A
-    #     if ctx.trailer():  # if it's not empty
-    #         trailers = list(map(lambda x: x.value, ctx.trailer()))
-    #         trailers.insert(0, variable)
-    #         # TODO: this needs to change based on type(variable)
-    #         # print(variable)
-    #         # print(trailers)
-    #         indexed_variable = reduce(lambda a, b: a[b], trailers)
-    #         variable = indexed_variable
-    #     ctx.value = variable
-    #     # print(type(variable))
-
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
         if not ctx.trailer():   # Check if it's not empty
             ctx.value = variable
             return
 
-        # TODO: Properly implement this
         if isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
             ctx.value = variable[ctx.trailer()[0].value]
+            return
         elif isinstance(variable, Feature):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Feature")
             ctx.value = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value])
+            return
 
+        # TODO: Implement subscripting for other StateGroundings
+        raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
 
     def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))

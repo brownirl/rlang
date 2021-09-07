@@ -23,7 +23,7 @@ class StateGroundingFunction(GroundingFunction):
     def __eq__(self, other):
         if isinstance(other, (StateGroundingFunction, Callable)):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs))
-        if isinstance(other, np.ndarray):
+        if isinstance(other, (np.ndarray, int, float)):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other)
         raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
 

@@ -5,14 +5,18 @@
     date: August 2021
 """
 
+from typing import Any
+import numpy as np
 from groundings.grounding_function import GroundingFunction
 from grounding.utils.domain import Domain
 
 
 class Action(GroundingFunction):
-    def __init__(self, action, name: str = None):   # TODO: action should be type hinted eventually
+    def __init__(self, action: Any, name: str = None):
+        if isinstance(action, (int, float)):
+            action = np.array(action)
         self._action = action
-        super().__init__(domain=Domain.ANY, codomain=Domain.STATE, name=name)
+        super().__init__(domain=Domain.ANY, codomain=Domain.ACTION, name=name)
 
     def __call__(self, *args, **kwargs):
         return self._action

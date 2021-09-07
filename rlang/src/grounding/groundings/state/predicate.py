@@ -19,23 +19,24 @@ class Predicate(StateGroundingFunction):
     def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):
             return Predicate(function=lambda *args, **kwargs:
-                             self(*args, **kwargs) and other(*args, **kwargs))
+                             self(*args, **kwargs) & other(*args, **kwargs))
         if isinstance(other, bool):
             return self if other else Predicate(function=lambda *args, **kwargs: False)
         raise RLangGroundingError(message=f"Cannot & a Predicate with a {type(other)}")
 
+    def __rand__(self, other):
+        self.__and__(other)
+
     def __or__(self, other) -> Predicate:
         if isinstance(other, Predicate):
             return Predicate(function=lambda *args, **kwargs:
-                             self(*args, **kwargs) or other(*args, **kwargs))
+                             self(*args, **kwargs) | other(*args, **kwargs))
         if isinstance(other, bool):
-            return Predicate(function=lambda *args, **kwargs:
-                             self(*args, **kwargs) or bool)
+            return self if not other else Predicate(function=lambda *args, **kwargs: True)
         raise RLangGroundingError(message=f"Cannot | a Predicate with a {type(other)}")
 
     def __invert__(self) -> Predicate:
-        return Predicate(function=lambda *args, **kwargs:
-                         not self(*args, **kwargs))
+        return Predicate(function=lambda *args, **kwargs: ~ self(*args, **kwargs))
 
     def __repr__(self):
         return "<Predicate>"
