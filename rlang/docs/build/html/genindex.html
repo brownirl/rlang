@@ -158,7 +158,6 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -174,21 +173,25 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Action">Action (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.groundings.html#grounding.groundings.Action">(class in grounding.groundings)</a>
 </li>
-        <li><a href="grounding.groundings.html#grounding.groundings.action.Action">(class in grounding.groundings.action)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Domain.ACTION">ACTION (grounding.Domain attribute)</a>
 
       <ul>
         <li><a href="grounding.utils.html#grounding.utils.domain.Domain.ACTION">(grounding.utils.domain.Domain attribute)</a>
 </li>
       </ul></li>
+      <li><a href="grounding.html#grounding.ActionReference">ActionReference (class in grounding)</a>
+
+      <ul>
+        <li><a href="grounding.groundings.html#grounding.groundings.ActionReference">(class in grounding.groundings)</a>
+</li>
+        <li><a href="grounding.groundings.html#grounding.groundings.action.ActionReference">(class in grounding.groundings.action)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grounding.html#grounding.ActionSpace">ActionSpace (class in grounding)</a>
+</li>
       <li><a href="grounding.html#grounding.Domain.ANY">ANY (grounding.Domain attribute)</a>
 
       <ul>
@@ -213,6 +216,16 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grounding.groundings.html#grounding.groundings.Option.can_execute">can_execute() (grounding.groundings.Option method)</a>
+
+      <ul>
+        <li><a href="grounding.groundings.html#grounding.groundings.option.Option.can_execute">(grounding.groundings.option.Option method)</a>
+</li>
+        <li><a href="grounding.html#grounding.Option.can_execute">(grounding.Option method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Constant">Constant (class in grounding)</a>
 
       <ul>
@@ -236,20 +249,6 @@
   </ul></td>
 </tr></table>
 
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="grounding.html#grounding.Effect">Effect (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.groundings.html#grounding.groundings.Effect">(class in grounding.groundings)</a>
-</li>
-        <li><a href="grounding.groundings.state_action.html#grounding.groundings.state_action.effect.Effect">(class in grounding.groundings.state_action.effect)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -267,8 +266,6 @@
         <li><a href="grounding.html#grounding.RLangKnowledge.factors">(grounding.RLangKnowledge method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.Feature">Feature (class in grounding)</a>
 
       <ul>
@@ -277,6 +274,10 @@
         <li><a href="grounding.groundings.state.html#grounding.groundings.state.feature.Feature">(class in grounding.groundings.state.feature)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grounding.html#grounding.ActionSpace.from_action">from_action() (grounding.ActionSpace class method)</a>
+</li>
       <li><a href="grounding.html#grounding.Feature.from_Factor">from_Factor() (grounding.Feature class method)</a>
 
       <ul>
@@ -285,6 +286,10 @@
         <li><a href="grounding.groundings.state.html#grounding.groundings.state.feature.Feature.from_Factor">(grounding.groundings.state.feature.Feature class method)</a>
 </li>
       </ul></li>
+      <li><a href="grounding.html#grounding.StateSpace.from_state">from_state() (grounding.StateSpace class method)</a>
+</li>
+      <li><a href="grounding.html#grounding.MDPMetadata.from_state_action">from_state_action() (grounding.MDPMetadata class method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -369,6 +374,8 @@
         <li><a href="grounding.groundings.state.html#module-grounding.groundings.state.policy">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     grounding.groundings.state.predicate
 
@@ -381,29 +388,6 @@
 
       <ul>
         <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    grounding.groundings.state_action.effect
-
-      <ul>
-        <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.effect">module</a>
-</li>
-      </ul></li>
-      <li>
-    grounding.groundings.state_action.reward_effect
-
-      <ul>
-        <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.reward_effect">module</a>
-</li>
-      </ul></li>
-      <li>
-    grounding.groundings.state_action.transition_effect
-
-      <ul>
-        <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.transition_effect">module</a>
 </li>
       </ul></li>
       <li>
@@ -442,13 +426,6 @@
 </li>
       </ul></li>
       <li>
-    grounding.utils.action_space
-
-      <ul>
-        <li><a href="grounding.utils.html#module-grounding.utils.action_space">module</a>
-</li>
-      </ul></li>
-      <li>
     grounding.utils.domain
 
       <ul>
@@ -460,13 +437,6 @@
 
       <ul>
         <li><a href="grounding.utils.html#module-grounding.utils.grounding_errors">module</a>
-</li>
-      </ul></li>
-      <li>
-    grounding.utils.state_space
-
-      <ul>
-        <li><a href="grounding.utils.html#module-grounding.utils.state_space">module</a>
 </li>
       </ul></li>
       <li><a href="grounding.html#grounding.GroundingFunction">GroundingFunction (class in grounding)</a>
@@ -491,7 +461,7 @@
         <li><a href="grounding.groundings.state_action_state.html#grounding.groundings.state_action_state.markov_feature.MarkovFeature">(class in grounding.groundings.state_action_state.markov_feature)</a>
 </li>
       </ul></li>
-      <li><a href="grounding.utils.html#grounding.utils.state_space.MDPMetadata">MDPMetadata (class in grounding.utils.state_space)</a>
+      <li><a href="grounding.html#grounding.MDPMetadata">MDPMetadata (class in grounding)</a>
 </li>
       <li>
     module
@@ -521,12 +491,6 @@
 </li>
         <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action">grounding.groundings.state_action</a>
 </li>
-        <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.effect">grounding.groundings.state_action.effect</a>
-</li>
-        <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.reward_effect">grounding.groundings.state_action.reward_effect</a>
-</li>
-        <li><a href="grounding.groundings.state_action.html#module-grounding.groundings.state_action.transition_effect">grounding.groundings.state_action.transition_effect</a>
-</li>
         <li><a href="grounding.groundings.state_action_state.html#module-grounding.groundings.state_action_state">grounding.groundings.state_action_state</a>
 </li>
         <li><a href="grounding.groundings.state_action_state.html#module-grounding.groundings.state_action_state.markov_feature">grounding.groundings.state_action_state.markov_feature</a>
@@ -537,13 +501,9 @@
 </li>
         <li><a href="grounding.utils.html#module-grounding.utils">grounding.utils</a>
 </li>
-        <li><a href="grounding.utils.html#module-grounding.utils.action_space">grounding.utils.action_space</a>
-</li>
         <li><a href="grounding.utils.html#module-grounding.utils.domain">grounding.utils.domain</a>
 </li>
         <li><a href="grounding.utils.html#module-grounding.utils.grounding_errors">grounding.utils.grounding_errors</a>
-</li>
-        <li><a href="grounding.utils.html#module-grounding.utils.state_space">grounding.utils.state_space</a>
 </li>
       </ul></li>
   </ul></td>
@@ -578,6 +538,8 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grounding.groundings.html#grounding.groundings.PartialTransitionFunction">PartialTransitionFunction (class in grounding.groundings)</a>
+</li>
       <li><a href="grounding.html#grounding.Policy">Policy (class in grounding)</a>
 
       <ul>
@@ -614,16 +576,10 @@
         <li><a href="grounding.utils.html#grounding.utils.domain.Domain.REWARD">(grounding.utils.domain.Domain attribute)</a>
 </li>
       </ul></li>
-      <li><a href="grounding.html#grounding.RewardEffect">RewardEffect (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.groundings.html#grounding.groundings.RewardEffect">(class in grounding.groundings)</a>
-</li>
-        <li><a href="grounding.groundings.state_action.html#grounding.groundings.state_action.reward_effect.RewardEffect">(class in grounding.groundings.state_action.reward_effect)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grounding.groundings.html#grounding.groundings.RewardFunction">RewardFunction (class in grounding.groundings)</a>
+</li>
       <li><a href="grounding.utils.html#grounding.utils.grounding_errors.RLangGroundingError">RLangGroundingError</a>
 </li>
       <li><a href="grounding.html#grounding.RLangKnowledge">RLangKnowledge (class in grounding)</a>
@@ -639,11 +595,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grounding.html#grounding.State">State (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.utils.html#grounding.utils.state_space.State">(class in grounding.utils.state_space)</a>
 </li>
-      </ul></li>
       <li><a href="grounding.html#grounding.Domain.STATE">STATE (grounding.Domain attribute)</a>
 
       <ul>
@@ -665,25 +617,15 @@
 </li>
       </ul></li>
       <li><a href="grounding.html#grounding.StateSpace">StateSpace (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.utils.html#grounding.utils.state_space.StateSpace">(class in grounding.utils.state_space)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="grounding.html#grounding.TransitionEffect">TransitionEffect (class in grounding)</a>
-
-      <ul>
-        <li><a href="grounding.groundings.html#grounding.groundings.TransitionEffect">(class in grounding.groundings)</a>
+      <li><a href="grounding.groundings.html#grounding.groundings.TransitionFunction">TransitionFunction (class in grounding.groundings)</a>
 </li>
-        <li><a href="grounding.groundings.state_action.html#grounding.groundings.state_action.transition_effect.TransitionEffect">(class in grounding.groundings.state_action.transition_effect)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
