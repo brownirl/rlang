@@ -100,7 +100,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_action)
 
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
-        # TODO: Fix this once Actions are fleshed out. Need to cast to whatever action type.
+        # TODO: Fix this once Actions are fleshed out. Need to cast to whatever action type or check if it's a sub-policy
         ctx.value = ctx.IDENTIFIER().getText()
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
