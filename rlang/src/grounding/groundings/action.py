@@ -11,7 +11,7 @@ from rlang.src.grounding.groundings.grounding_function import GroundingFunction
 from rlang.src.grounding.utils.domain import Domain
 
 
-class Action(GroundingFunction):
+class ActionReference(GroundingFunction):
     def __init__(self, action: Any, name: str = None):
         if isinstance(action, (int, float)):
             action = np.array(action)

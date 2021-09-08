@@ -4,7 +4,7 @@ from rlang.src.grounding import *
 
 
 def test_Factor():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
     position_parsed = rlang.parse("Factor position := S", metadata)['position']
@@ -28,7 +28,7 @@ def test_Factor():
 
 
 def test_Feature():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
     x_parsed = rlang.parse("Feature x := S[0, 1]", metadata)['x']
@@ -59,7 +59,7 @@ def test_Feature():
 
 
 def test_Predicate():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
     hi_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False", metadata)['hi']
@@ -72,14 +72,14 @@ def test_Predicate():
 
 
 def test_Action():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
 
     up_parsed = rlang.parse("Action up := -1.3", metadata)['up']
-    up = Action(-1.3, "up")
+    up = ActionReference(-1.3, "up")
     assert up() == up_parsed()
 
     up_parsed = rlang.parse("Action up := [0, 1.0, -4.2]", metadata)['up']
-    up = Action([0, 1.0, -4.2], "up")
+    up = ActionReference([0, 1.0, -4.2], "up")
     assert up() == up_parsed()
 
     # TODO: Need more tests for Action

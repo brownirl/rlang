@@ -90,11 +90,11 @@ class RLangListener(RLangParserListener):
 
     def exitAction(self, ctx: RLangParser.ActionContext):
         if ctx.any_number() is not None:
-            new_action = Action(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
+            new_action = ActionReference(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
         elif ctx.int_array_exp() is not None:
-            new_action = Action(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
+            new_action = ActionReference(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
         elif ctx.any_array_exp() is not None:
-            new_action = Action(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
+            new_action = ActionReference(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
         else:
             raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
         self.addVariable(ctx.IDENTIFIER().getText(), new_action)
