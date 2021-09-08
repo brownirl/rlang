@@ -1,8 +1,8 @@
 from antlr4 import *
 from rlang.src.grounding.knowledge import RLangKnowledge
 from rlang.src.grounding.utils.mdp_metadata import MDPMetadata
-from rlang.src.language import *
-from rlang.src.language.RLangErrorListener import RLangErrorListener
+from rlang.src.language.antlr import *
+from rlang.src.language.antlr.RLangErrorListener import RLangErrorListener
 
 
 def parse_file(rlang_fname: str) -> RLangKnowledge:

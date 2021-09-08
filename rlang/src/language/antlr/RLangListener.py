@@ -1,19 +1,13 @@
-import types
-from functools import reduce
-import numpy as np
-from antlr4 import *
 import json
 from typing import Callable
 
-from rlang.src.grounding.utils.mdp_metadata import MDPMetadata
 from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 from rlang.src.grounding import *
 
-from .RLangLexer import RLangLexer
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
-from .VocabularyAssembler import VocabularyAssembler
-from .Exceptions import *
+from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
+from Exceptions import *
 
 
 class RLangListener(RLangParserListener):
@@ -212,7 +206,6 @@ class RLangListener(RLangParserListener):
                                                            ctx.rhs.value(*args, **kwargs))
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
-        # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b

@@ -19,5 +19,5 @@ class UnknownVariableError(RLangSemanticError):
 
 class RLangParseCancellationException(ParseCancellationException):
     def __init__(self, e, msg: str):
-        super().__init__(msg)
         self.e = e
+        super().__init__(msg)

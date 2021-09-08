@@ -19,7 +19,6 @@
                                 <exclude>**/Exceptions.py</exclude>
                                 <exclude>**/RLangErrorListener.py</exclude>
                                 <exclude>**/RLangErrorStrategy.py</exclude>
-                                <exclude>**/prettyprint.py</exclude>
                             </excludes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
