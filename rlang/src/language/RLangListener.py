@@ -5,7 +5,7 @@ from antlr4 import *
 import json
 from typing import Callable
 
-from rlang.src.grounding.utils.state_space import MDPMetadata
+from rlang.src.grounding.utils.mdp_metadata import MDPMetadata
 from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 from rlang.src.grounding import *
 

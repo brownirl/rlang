@@ -1,7 +1,7 @@
 import numpy as np
 from antlr4 import *
 from rlang.src.grounding.knowledge import RLangKnowledge
-from rlang.src.grounding.utils.state_space import MDPMetadata, StateSpace
+from rlang.src.grounding.utils.state_action_implementation import MDPMetadata, StateSpace
 from rlang.src.language import *
 from rlang.src.language.RLangErrorListener import RLangErrorListener
 
