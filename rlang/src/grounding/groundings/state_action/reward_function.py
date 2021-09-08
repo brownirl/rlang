@@ -2,7 +2,7 @@
     RewardFunction grounding class
         -
     author: Benjamin Spiegel (bspiegel@cs.brown.edu)
-    date: August 2021
+    date: September 2021
 """
 
 from typing import Callable

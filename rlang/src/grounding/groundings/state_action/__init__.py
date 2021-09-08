@@ -1,3 +1,2 @@
-from .effect import Effect
-from .reward_function import RewardEffect
-from .transition_function import TransitionEffect
+from .reward_function import RewardFunction
+from .transition_function import TransitionFunction, PartialTransitionFunction

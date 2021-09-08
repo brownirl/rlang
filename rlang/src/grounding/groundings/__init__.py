@@ -5,5 +5,5 @@ from .action import ActionReference
 from .constant import Constant
 from .grounding_function import GroundingFunction
 from .option import Option
-__all__ = ["GroundingFunction", "Factor", "Feature", "Policy", "Predicate",
-           "Effect", "RewardEffect", "TransitionEffect", "MarkovFeature", "ActionReference", "Constant", "Option"]
+__all__ = ["GroundingFunction", "Factor", "Feature", "Policy", "Predicate", "TransitionFunction",
+           "PartialTransitionFunction", "RewardFunction", "MarkovFeature", "ActionReference", "Constant", "Option"]
