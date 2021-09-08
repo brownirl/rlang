@@ -3,7 +3,7 @@
         - stores groundings for retrieval by user
         - this is the base-level knowledge class
     author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang (plz put ur email here)
-    date: August 2021
+    date: September 2021
 """
 
 from rlang.src.grounding.knowledge_grounding import Grounding
