@@ -75,7 +75,7 @@ any_bound_var
     : IDENTIFIER trailer*    # bound_identifier
     | S trailer?             # bound_state
     | S_PRIME trailer?       # bound_next_state
-    | A trailer?             # bound_action
+    | A			             # bound_action
     ;
 
 trailer

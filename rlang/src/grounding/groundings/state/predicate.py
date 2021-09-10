@@ -17,7 +17,7 @@ class Predicate(StateGroundingFunction):
         super().__init__(function=function, codomain=Domain.BOOLEAN, name=name)
 
     def __and__(self, other) -> Predicate:
-        if isinstance(other, Predicate):
+        if isinstance(other, (Predicate, Callable)):
             return Predicate(function=lambda *args, **kwargs:
                              self(*args, **kwargs) & other(*args, **kwargs))
         if isinstance(other, bool):
@@ -28,7 +28,7 @@ class Predicate(StateGroundingFunction):
         self.__and__(other)
 
     def __or__(self, other) -> Predicate:
-        if isinstance(other, Predicate):
+        if isinstance(other, (Predicate, Callable)):
             return Predicate(function=lambda *args, **kwargs:
                              self(*args, **kwargs) | other(*args, **kwargs))
         if isinstance(other, bool):

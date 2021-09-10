@@ -1,7 +1,7 @@
 """
-    Constant grounding class
-        - Represents a constant
-    author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
+    Primitive class
+        - Represents a primitive
+    author: Benjamin Spiegel (bspiegel@cs.brown.edu)
     date: August 2021
 """
 
@@ -11,7 +11,7 @@ from rlang.src.grounding.groundings.grounding_function import GroundingFunction
 from rlang.src.grounding.utils.domain import Domain
 
 
-class Constant(GroundingFunction):
+class Primitive(GroundingFunction):
     def __init__(self, codomain: Domain, value: Any, name: str = None):
         if isinstance(value, (int, float, list)):
             value = np.array(value)

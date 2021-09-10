@@ -201,6 +201,13 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value / ctx.rhs.value
             return
 
+        if isinstance(ctx.lhs.value, Callable) and isinstance(ctx.rhs.value, Callable):
+            if ctx.TIMES() is not None:
+                ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) * ctx.rhs.value(*args, **kwargs)
+            elif ctx.DIVIDE() is not None:
+                ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) / ctx.rhs.value(*args, **kwargs)
+            return
+
         # TODO: Support other GroundingFunctions
 
         if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
@@ -223,13 +230,20 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value - ctx.rhs.value
             return
 
+        if isinstance(ctx.lhs.value, Callable) and isinstance(ctx.rhs.value, Callable):
+            if ctx.PLUS() is not None:
+                ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) + ctx.rhs.value(*args, **kwargs)
+            elif ctx.MINUS() is not None:
+                ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) - ctx.rhs.value(*args, **kwargs)
+            return
+
         # TODO: Support other GroundingFunctions
 
         if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
             operation = None
             if ctx.PLUS() is not None:
                 operation = lambda a, b: a + b
-            elif ctx.DIVIDE() is not None:
+            elif ctx.MINUS() is not None:
                 operation = lambda a, b: a - b
             ctx.value = lambda *args, **kwargs: operation(ctx.lhs.value, ctx.rhs.value)
             return
@@ -238,13 +252,13 @@ class RLangListener(RLangParserListener):
             f"Using '+' or '-' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
-        ctx.value = ctx.any_number().value
+        ctx.value = lambda *args, **kwargs: ctx.any_number().value
 
     def exitArith_array(self, ctx: RLangParser.Arith_arrayContext):
         ctx.value = ctx.any_array_exp().value
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (Factor, Feature, Policy)):
+        if not isinstance(ctx.any_bound_var().value, (Factor, Feature, Policy, Callable)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -316,9 +330,9 @@ class RLangListener(RLangParserListener):
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
         if ctx.TRUE() is not None:
-            ctx.value = True
+            ctx.value = lambda *args, **kwargs: True
         elif ctx.FALSE() is not None:
-            ctx.value = False
+            ctx.value = lambda *args, **kwargs: False
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -347,12 +361,13 @@ class RLangListener(RLangParserListener):
         ctx.value = Factor(feature_positions)
 
     def exitBound_next_state(self, ctx: RLangParser.Bound_next_stateContext):
-        # TODO
-        pass
+        feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
+        if ctx.trailer() is not None:
+            feature_positions = ctx.trailer().value
+        ctx.value = Factor(feature_positions, state_arg='next_state')
 
     def exitBound_action(self, ctx: RLangParser.Bound_actionContext):
-        # TODO
-        pass
+        ctx.value = lambda *args, **kwargs: kwargs['action']
 
     def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
         ctx.value = ctx.int_array_exp().value

@@ -49,6 +49,8 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '/' a {type(self)} and a {type(other)}")
 
     def __rtruediv__(self, other):
+        if isinstance(other, Callable):
+            return Feature(function=lambda *args, **kwargs: other(*args, **kwargs) / self(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: other / self(*args, **kwargs))
         raise RLangGroundingError(message=f"Cannot '/' a {type(other)} and a {type(self)}")

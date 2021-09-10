@@ -57,6 +57,9 @@ def test_Feature():
     x = Feature(position[0] + 4 * 2 + 3 / position[1], "x")
     assert x(state=state) == x_parsed(state=state)
 
+    x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)")['x']
+    assert x_parsed(state=state) == 14
+
 
 def test_Predicate():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
@@ -67,6 +70,9 @@ def test_Predicate():
     x = Feature(position[0])
     hi = Predicate(x == 1 & True | False)
     assert hi(state=state) == hi_parsed(state=state)
+
+    hi_parsed = rlang.parse("Predicate hi := True or False", metadata)['hi']
+    assert hi_parsed(state=state) == True
 
     # TODO: Need more tests for Predicate
 
@@ -114,4 +120,4 @@ def test_Option():
 
 
 if __name__ == "__main__":
-    test_Policy()
+    test_Predicate()
