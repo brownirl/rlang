@@ -9,12 +9,13 @@ Predicate c := S[0] == 2
 
 Policy test1:
 	Execute up
+	Execute down
 
 Policy test2:
 	if False:
-		Execute up
+		Execute down
 	elif True:
-		Execute left
+		Execute test1
 	else:
 		Execute down
 

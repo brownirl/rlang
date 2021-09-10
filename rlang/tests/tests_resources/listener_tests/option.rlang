@@ -16,6 +16,10 @@ Policy test2:
 		Execute down
 
 Option build_bridge:
-    init a or b
-        Execute test2
-    until c
+	init a or b
+		Execute test2
+	until c
+
+Policy do_something:
+	Execute build_bridge
+

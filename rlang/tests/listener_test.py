@@ -93,21 +93,25 @@ def test_Policy():
     test1 = knowledge['test1']
     test2 = knowledge['test2']
 
-    # print(test2(state=s))
+    print(test1(state=s))
 
     # TODO: Need more tests
 
 
 def test_Option():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-    s = State([2, 1, 2, 3, 4])
+    s = State([3, 1, 2, 3, 4])
 
     knowledge = rlang.parse_file("tests_resources/listener_tests/option.rlang", metadata)
     build_bridge = knowledge['build_bridge']
+    do = knowledge['do_something']
 
     print(build_bridge.can_execute(state=s))
     print(build_bridge(state=s))
+    print(do(state=s))
+
+    # TODO: Need more tests
 
 
 if __name__ == "__main__":
-    test_Option()
+    test_Policy()
