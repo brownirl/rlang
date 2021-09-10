@@ -1,5 +1,6 @@
 import json
 from typing import Callable
+from functools import reduce
 
 from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 from rlang.src.grounding import *
@@ -7,7 +8,8 @@ from rlang.src.grounding import *
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
-from Exceptions import *
+from rlang.src.language.utils.semantic_schemas import policy_stat_collection, conditional_policy_statement
+from .Exceptions import *
 
 
 class RLangListener(RLangParserListener):
@@ -20,8 +22,8 @@ class RLangListener(RLangParserListener):
     # This function add the lmdp objects in the vocabulary files to self.grounded_vars
     # And probably keep track of object names in the vocab for later reference from the rlang file
     def parseVocabFiles(self):
-        def parseVocabFile(fname):
-            with open(fname, 'r') as f:
+        def parseVocabFile(file: str):
+            with open(file, 'r') as f:
                 vocab = json.load(f)
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler callable
                 voc_assembler = VocabularyAssembler(vocab)
@@ -93,9 +95,56 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
         self.addVariable(ctx.IDENTIFIER().getText(), new_action)
 
+    def exitPolicy(self, ctx: RLangParser.PolicyContext):
+        policy_stats = lambda *args, **kwargs: policy_stat_collection(
+            list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
+        new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
+        self.addVariable(ctx.IDENTIFIER().getText(), new_policy)
+
+    def exitPolicy_stat_execute(self, ctx: RLangParser.Policy_stat_executeContext):
+        ctx.value = ctx.execute().value
+
+    def exitPolicy_stat_conditional(self, ctx: RLangParser.Policy_stat_conditionalContext):
+        if not isinstance(ctx.if_condition.value, (bool, Predicate, Callable)):
+            # TODO: May need to accommodate more object types here
+            raise RLangSemanticError(
+                f"A {type(ctx.if_condition.value)} cannot be used in a conditional within a Policy")
+
+        if isinstance(ctx.if_condition.value, bool):
+            if_condition = lambda *args, **kwargs: ctx.if_condition.value
+        else:
+            if_condition = ctx.if_condition.value
+
+        if_statements = lambda *args, **kwargs: policy_stat_collection(
+            list(map(lambda x: x.value, ctx.if_statements)), *args, **kwargs)
+        elif_condition = None
+        elif_statements = None
+        else_statements = None
+
+        if ctx.elif_condition is not None:
+            if not isinstance(ctx.elif_condition.value, (bool, Predicate, Callable)):
+                # TODO: May need to accommodate more object types here
+                raise RLangSemanticError(
+                    f"A {type(ctx.elif_condition.value)} cannot be used in a conditional within a Policy")
+            if isinstance(ctx.elif_condition.value, bool):
+                elif_condition = lambda *args, **kwargs: ctx.elif_condition.value
+            else:
+                elif_condition = ctx.elif_condition.value
+            elif_statements = lambda *args, **kwargs: policy_stat_collection(
+                list(map(lambda x: x.value, ctx.elif_statements)), *args, **kwargs)
+
+        if len(ctx.else_statements) > 0:
+            else_statements = lambda *args, **kwargs: policy_stat_collection(
+                list(map(lambda x: x.value, ctx.else_statements)), *args, **kwargs)
+
+        ctx.value = lambda *args, **kwargs: conditional_policy_statement(
+            if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
+
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
-        # TODO: Fix this once Actions are fleshed out. Need to cast to whatever action type or check if it's a sub-policy
-        ctx.value = ctx.IDENTIFIER().getText()
+        variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if not isinstance(variable, (Option, ActionReference)):
+            raise RLangSemanticError(f"Cannot execute a {type(variable)}")
+        ctx.value = variable
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -115,7 +164,7 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value / ctx.rhs.value
             return
 
-        # TODO: Support other StateGroundings
+        # TODO: Support other GroundingFunctions
 
         if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
             operation = None
@@ -137,7 +186,7 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value - ctx.rhs.value
             return
 
-        # TODO: Support other StateGroundings
+        # TODO: Support other GroundingFunctions
 
         if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
             operation = None
@@ -158,6 +207,8 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.any_array_exp().value
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
+        if not isinstance(ctx.any_bound_var().value, (Factor, Feature, Policy)):
+            raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
     def exitBool_paren(self, ctx: RLangParser.Bool_parenContext):
@@ -178,32 +229,26 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.lhs.value | ctx.rhs.value
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
+        if isinstance(ctx.boolean_exp().value, bool):
+            ctx.value = not ctx.boolean_exp().value
+            return
         ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        # TODO: What kinds of operands do we want to allow here?
-        lhs = None
-        rhs = None
-        if ctx.lhs_arr is not None:
-            lhs = ctx.lhs_arr.value
-        elif ctx.lhs_arith is not None:
-            lhs = ctx.lhs_arith.value
-        if ctx.rhs_arr is not None:
-            rhs = ctx.rhs_arr.value
-        elif ctx.rhs_bound_var is not None:
-            rhs = ctx.rhs_bound_var.value
-        # print(lhs)
-        # print(rhs)
+        # TODO: This may not be so simple
+        ctx.value = ctx.lhs.value in ctx.rhs.value
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
-        # TODO: Refactor this. BooleanExpressions no longer exist, operands may or may not be GroundingFunctions
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
-        ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value(*args, **kwargs),
-                                                           ctx.rhs.value(*args, **kwargs))
+
+        if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
+            ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+        else:
+            ctx.value = lambda *args, **kwargs: bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
         bool_operation = None

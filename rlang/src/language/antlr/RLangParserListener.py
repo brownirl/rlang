@@ -170,12 +170,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#policy_stat.
-    def enterPolicy_stat(self, ctx:RLangParser.Policy_statContext):
+    # Enter a parse tree produced by RLangParser#policy_stat_execute.
+    def enterPolicy_stat_execute(self, ctx:RLangParser.Policy_stat_executeContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#policy_stat.
-    def exitPolicy_stat(self, ctx:RLangParser.Policy_statContext):
+    # Exit a parse tree produced by RLangParser#policy_stat_execute.
+    def exitPolicy_stat_execute(self, ctx:RLangParser.Policy_stat_executeContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#policy_stat_conditional.
+    def enterPolicy_stat_conditional(self, ctx:RLangParser.Policy_stat_conditionalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#policy_stat_conditional.
+    def exitPolicy_stat_conditional(self, ctx:RLangParser.Policy_stat_conditionalContext):
         pass
 
 

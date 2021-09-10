@@ -5,14 +5,14 @@ from rlang.src.language.antlr import *
 from rlang.src.language.antlr.RLangErrorListener import RLangErrorListener
 
 
-def parse_file(rlang_fname: str) -> RLangKnowledge:
+def parse_file(rlang_fname: str, mdp_metadata: MDPMetadata = None) -> RLangKnowledge:
     rlang_file = FileStream(rlang_fname)
     lexer = RLangLexer(rlang_file)
     stream = CommonTokenStream(lexer)
     parser = RLangParser(stream)
     parser.addErrorListener(RLangErrorListener())
     tree = parser.program()
-    listener = RLangListener()
+    listener = RLangListener(mdp_metadata)
     walker = ParseTreeWalker()
     walker.walk(listener, tree)
     return listener.rlang_knowledge

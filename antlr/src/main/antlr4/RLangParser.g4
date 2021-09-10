@@ -31,7 +31,7 @@ goal: GOAL IDENTIFIER BIND boolean_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
 option: OPTION IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL*)* DEDENT UNTIL boolean_exp;
-policy: POLICY IDENTIFIER COL INDENT (policy_stat NL*)* DEDENT;
+policy: POLICY IDENTIFIER COL INDENT (stats+=policy_stat NL*)+ DEDENT;
 
 effect_stat
     : reward
@@ -44,8 +44,8 @@ assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS
 constant: CONSTANT IDENTIFIER BIND (any_bound_var | boolean_exp | arithmetic_exp | int_array_exp);
 
 policy_stat
-    : execute
-    | IF boolean_exp COL INDENT (policy_stat NL+)* DEDENT (ELIF boolean_exp COL INDENT (policy_stat NL+)* DEDENT)* (ELSE COL INDENT (policy_stat NL+)* DEDENT)*
+    : execute        # policy_stat_execute
+    | IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*  # policy_stat_conditional
     ;
 
 execute: EXECUTE IDENTIFIER;
@@ -64,7 +64,7 @@ boolean_exp
     | lhs=boolean_exp AND rhs=boolean_exp                       # bool_and
     | lhs=boolean_exp OR rhs=boolean_exp                        # bool_or
     | NOT boolean_exp                                           # bool_not
-    | (lhs_arr=int_array_exp | lhs_arith=arithmetic_exp) IN (rhs_arr=int_array_exp | rhs_bound_var=any_bound_var)   # bool_in
+    | lhs=arithmetic_exp IN rhs=arithmetic_exp                  # bool_in
     | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq
     | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_arith_eq
     | any_bound_var                                             # bool_bound_var

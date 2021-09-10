@@ -80,10 +80,21 @@ def test_Action():
 
     up_parsed = rlang.parse("Action up := [0, 1.0, -4.2]", metadata)['up']
     up = ActionReference([0, 1.0, -4.2], "up")
-    assert up() == up_parsed()
+    # assert up() == up_parsed()
 
     # TODO: Need more tests for Action
 
 
+def test_Policy():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([4, 1, 2, 3, 4])
+
+    knowledge = rlang.parse_file("tests_resources/listener_tests/policy.rlang", metadata)
+    test1 = knowledge['test1']
+    test2 = knowledge['test2']
+
+    # print(test2(state=s))
+
+
 if __name__ == "__main__":
-    test_Action()
+    test_Policy()
