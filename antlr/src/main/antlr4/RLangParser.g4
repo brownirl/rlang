@@ -48,7 +48,7 @@ policy_stat
     | IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*  # policy_stat_conditional
     ;
 
-execute: EXECUTE IDENTIFIER;
+execute: EXECUTE (IDENTIFIER | any_number | int_array_exp | any_array_exp);
 
 arithmetic_exp
     : L_PAR arithmetic_exp R_PAR                                # arith_paren

@@ -8,7 +8,7 @@ Predicate b := S[0] == 1
 Predicate c := S[0] == 2
 
 Policy test1:
-	Execute up
+	Execute [0, -0.5]
 	Execute down
 
 Policy test2:

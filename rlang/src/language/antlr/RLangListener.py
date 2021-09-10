@@ -167,10 +167,21 @@ class RLangListener(RLangParserListener):
             if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
 
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
-        variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not isinstance(variable, (Option, Policy, ActionReference)):
-            raise RLangSemanticError(f"Cannot execute a {type(variable)}")
-        ctx.value = variable
+        if ctx.IDENTIFIER() is not None:
+            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+            if not isinstance(variable, (Option, Policy, ActionReference)):
+                raise RLangSemanticError(f"Cannot execute a {type(variable)}")
+            ctx.value = variable
+            return
+        elif ctx.any_number() is not None:
+            new_action = ActionReference(action=ctx.any_number().value)
+        elif ctx.int_array_exp() is not None:
+            new_action = ActionReference(action=ctx.int_array_exp().value)
+        elif ctx.any_array_exp() is not None:
+            new_action = ActionReference(action=ctx.any_array_exp().value)
+        else:
+            raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
+        ctx.value = new_action
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
