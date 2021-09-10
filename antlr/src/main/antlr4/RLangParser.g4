@@ -30,7 +30,7 @@ action: ACTION IDENTIFIER BIND (any_number | int_array_exp | any_array_exp);
 goal: GOAL IDENTIFIER BIND boolean_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
-option: OPTION IDENTIFIER COL INDENT INIT boolean_exp INDENT (policy_stat NL*)* DEDENT UNTIL boolean_exp;
+option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT (stats+=policy_stat NL*)+ DEDENT UNTIL until=boolean_exp;
 policy: POLICY IDENTIFIER COL INDENT (stats+=policy_stat NL*)+ DEDENT;
 
 effect_stat

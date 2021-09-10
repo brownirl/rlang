@@ -95,6 +95,32 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
         self.addVariable(ctx.IDENTIFIER().getText(), new_action)
 
+    def exitOption(self, ctx: RLangParser.OptionContext):
+        policy_stats = lambda *args, **kwargs: policy_stat_collection(
+            list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
+        new_policy = Policy(function=policy_stats)
+
+        if isinstance(ctx.init.value, Predicate):
+            init_predicate = ctx.init.value
+        elif isinstance(ctx.init.value, Callable):
+            init_predicate = Predicate(ctx.init.value)
+        elif isinstance(ctx.init.value, bool):
+            init_predicate = Predicate(lambda *args, **kwargs: ctx.init.value)
+        else:
+            raise RLangSemanticError(f"Cannot initialize an Option based on a {type(ctx.boolean_exp().value)}")
+
+        if isinstance(ctx.until.value, Predicate):
+            until_predicate = ctx.until.value
+        elif isinstance(ctx.until.value, Callable):
+            until_predicate = Predicate(ctx.until.value)
+        elif isinstance(ctx.until.value, bool):
+            until_predicate = Predicate(lambda *args, **kwargs: ctx.until.value)
+        else:
+            raise RLangSemanticError(f"Cannot terminate an Option based on a {type(ctx.boolean_exp().value)}")
+
+        new_option = Option(initiation=init_predicate, termination=until_predicate, policy=new_policy, name=ctx.IDENTIFIER().getText())
+        self.addVariable(ctx.IDENTIFIER().getText(), new_option)
+
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
         policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
@@ -142,7 +168,7 @@ class RLangListener(RLangParserListener):
 
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not isinstance(variable, (Option, ActionReference)):
+        if not isinstance(variable, (Option, Policy, ActionReference)):
             raise RLangSemanticError(f"Cannot execute a {type(variable)}")
         ctx.value = variable
 
