@@ -1,30 +1,53 @@
 src.grounding package
 =====================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   src.grounding.groundings
-   src.grounding.utils
-
 Submodules
 ----------
 
-src.grounding.knowledge module
-------------------------------
+src.grounding.base module
+-------------------------
 
-.. automodule:: src.grounding.knowledge
+.. automodule:: src.grounding.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-src.grounding.knowledge\_grounding module
------------------------------------------
+src.grounding.internals module
+------------------------------
 
-.. automodule:: src.grounding.knowledge_grounding
+.. automodule:: src.grounding.internals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.grounding.primitive\_groundings module
+------------------------------------------
+
+.. automodule:: src.grounding.primitive_groundings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.grounding.state\_action\_groundings module
+----------------------------------------------
+
+.. automodule:: src.grounding.state_action_groundings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.grounding.state\_action\_state\_groundings module
+-----------------------------------------------------
+
+.. automodule:: src.grounding.state_action_state_groundings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.grounding.state\_groundings module
+--------------------------------------
+
+.. automodule:: src.grounding.state_groundings
    :members:
    :undoc-members:
    :show-inheritance:

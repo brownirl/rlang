@@ -44,7 +44,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'lmdp/']
+exclude_patterns = ['_build', 'Thumbs.db']
 
 autodoc_default_options = {
     'undoc-members': False
@@ -56,9 +56,9 @@ autodoc_default_options = {
 #     'exclude-members': '__weakref__'
 # }
 
-autodoc_type_aliases = {
-    'Predicate': 'Predicate'
-}
+# autodoc_type_aliases = {
+#     'Predicate': 'Predicate'
+# }
 
 # -- Options for HTML output -------------------------------------------------
 

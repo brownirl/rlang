@@ -1,33 +1,23 @@
 from __future__ import annotations
 from enum import Enum, auto
 from typing import Callable
-# from rlang.src.grounding.utils.domain import Domain
 from collections.abc import MutableMapping
 
 
 class Domain(Enum):
-    """
-        Domain Enum
-            - Represents function domains and co-domains
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu)
-        date: August 2021
-    """
-    STATE = auto()
+    """Enum representing the domain or codomain of a GroundingFunction"""
     ACTION = auto()
-    STATE_ACTION = auto()
-    STATE_ACTION_NEXTSTATE = auto()
+    ANY = auto()
+    BOOLEAN = auto()
     REAL_VALUE = auto()
     REWARD = auto()
-    BOOLEAN = auto()
-    ANY = auto() # Constant grounding_functions don't care what is passed to them
+    STATE = auto()
+    STATE_ACTION = auto()
+    STATE_ACTION_NEXTSTATE = auto()
 
 
 class Grounding(object):
-    """
-        Abstract class for all groundings
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang (plz put ur email here)
-        Date: August 2021
-    """
+    """Parent class for all grounded objects."""
     def __init__(self, name=None):
         self._name = name
 
@@ -43,15 +33,18 @@ class Grounding(object):
 
 
 class GroundingFunction(Grounding):
+    """Parent class for groundings which are functions.
+
+    GroundingFunctions have a specified domain and codomain.
+    They are typically invoked with keyword arguments corresponding
+    to their domain, i.e. door_closed(state=s).
+
+    Args:
+        domain: Domain of the function.
+        codomain: Codomain of the function.
+        function: the actual function.
+        name (optional): the name of the Grounding.
     """
-        Grounded Function Specification Class
-            - Represents function specification, with a given domain-codomain,
-            in the form of a function by parts.
-            - Implemented as Pairs of (boolean expressions, function).
-        author: Rafael Rodriguez-Sanchez (rrs@brown.edu), Benjamin Spiegel
-        (bspiegel@cs.brown.edu)
-        date: January 2021, August 2021
-        """
 
     def __init__(self, domain: Domain, codomain: Domain, function: Callable, name: str = None):
         super().__init__(name)
