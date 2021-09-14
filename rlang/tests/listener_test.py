@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 import rlang
 from rlang.src.grounding import *

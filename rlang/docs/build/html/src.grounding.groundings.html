@@ -291,22 +291,34 @@ date: January 2021, August 2021</p>
 </div>
 <div class="section" id="module-src.grounding.groundings.option">
 <span id="src-grounding-groundings-option-module"></span><h2>src.grounding.groundings.option module<a class="headerlink" href="#module-src.grounding.groundings.option" title="Permalink to this headline">¶</a></h2>
-<dl class="simple">
-<dt>Option Class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.groundings.option.Option">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.groundings.option.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.groundings.state.predicate.Predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.groundings.state.policy.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.groundings.state.predicate.Predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.groundings.option.Option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.knowledge_grounding.Grounding</span></code></p>
+<p>Grounding object for an option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiation</strong> – A Predicate capturing the initiation set of the option</p></li>
+<li><p><strong>policy</strong> – A Policy capturing the policy of the option</p></li>
+<li><p><strong>termination</strong> – A Predicate capturing the termination set of the option</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – A name for the Option grounding</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.grounding.groundings.option.Option.can_execute">
 <span class="sig-name descname"><span class="pre">can_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.grounding.groundings.option.Option.can_execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Determines whether the option can be executed in a given state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – A State object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -414,10 +426,30 @@ date: January 2021, August 2021</p>
 <dt class="sig sig-object py" id="src.grounding.groundings.Option">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.groundings.state.predicate.Predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.groundings.state.policy.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.groundings.state.predicate.Predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.groundings.Option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.knowledge_grounding.Grounding</span></code></p>
+<p>Grounding object for an option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiation</strong> – A Predicate capturing the initiation set of the option</p></li>
+<li><p><strong>policy</strong> – A Policy capturing the policy of the option</p></li>
+<li><p><strong>termination</strong> – A Predicate capturing the termination set of the option</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – A name for the Option grounding</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.grounding.groundings.Option.can_execute">
 <span class="sig-name descname"><span class="pre">can_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.grounding.groundings.Option.can_execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Determines whether the option can be executed in a given state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – A State object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

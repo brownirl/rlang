@@ -1,14 +1,6 @@
-"""
-    Primitive class
-        - Represents a primitive
-    author: Benjamin Spiegel (bspiegel@cs.brown.edu)
-    date: August 2021
-"""
-
 from typing import Any
 import numpy as np
-from rlang.src.grounding.groundings.grounding_function import GroundingFunction
-from rlang.src.grounding.utils.domain import Domain
+from rlang.src.grounding import Domain, GroundingFunction
 
 
 class Primitive(GroundingFunction):
@@ -18,3 +10,10 @@ class Primitive(GroundingFunction):
         self._value = value
         super().__init__(domain=Domain.ANY, codomain=codomain,
                          function=lambda *args, **kwargs: self._value, name=name)
+
+
+class ActionReference(Primitive):
+    def __init__(self, action: Any, name: str = None):
+        if isinstance(action, (int, float, list)):
+            action = np.array(action)
+        super().__init__(codomain=Domain.ACTION, value=action, name=name)

@@ -1,6 +1,6 @@
 from antlr4 import *
-from rlang.src.grounding.knowledge import RLangKnowledge
-from rlang.src.grounding.utils.mdp_metadata import MDPMetadata
+from rlang.src.grounding.base import RLangKnowledge
+from rlang.src.grounding.internals import MDPMetadata
 from rlang.src.language.antlr import *
 from rlang.src.language.antlr.RLangErrorListener import RLangErrorListener
 

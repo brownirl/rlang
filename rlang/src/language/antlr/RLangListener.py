@@ -1,9 +1,8 @@
-import json
 from typing import Callable
-from functools import reduce
+import json
 
-from rlang.src.grounding.groundings.state.state_grounding_function import StateGroundingFunction
 from rlang.src.grounding import *
+from rlang.src.grounding.state_groundings import StateGroundingFunction
 
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener

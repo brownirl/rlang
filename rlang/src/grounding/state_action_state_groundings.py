@@ -6,8 +6,7 @@
 """
 
 from typing import Callable
-from rlang.src.grounding.groundings.grounding_function import GroundingFunction
-from rlang.src.grounding.utils.domain import Domain
+from rlang.src.grounding import Domain, GroundingFunction
 
 
 class MarkovFeature(GroundingFunction):
