@@ -4,7 +4,7 @@ from rlang.src.grounding import *
 
 
 def test_Factor():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
     position_parsed = rlang.parse("Factor position := S", metadata)['position']
@@ -28,7 +28,7 @@ def test_Factor():
 
 
 def test_Feature():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
     x_parsed = rlang.parse("Feature x := S[0, 1]", metadata)['x']
@@ -57,9 +57,12 @@ def test_Feature():
     x = Feature(position[0] + 4 * 2 + 3 / position[1], "x")
     assert x(state=state) == x_parsed(state=state)
 
+    x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)")['x']
+    assert x_parsed(state=state) == 14
+
 
 def test_Predicate():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
     hi_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False", metadata)['hi']
@@ -68,22 +71,53 @@ def test_Predicate():
     hi = Predicate(x == 1 & True | False)
     assert hi(state=state) == hi_parsed(state=state)
 
+    hi_parsed = rlang.parse("Predicate hi := True or False", metadata)['hi']
+    assert hi_parsed(state=state) == True
+
     # TODO: Need more tests for Predicate
 
 
 def test_Action():
-    metadata = rlang.metadata_from_state(np.zeros(5))
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
 
     up_parsed = rlang.parse("Action up := -1.3", metadata)['up']
-    up = Action(-1.3, "up")
+    up = ActionReference(-1.3, "up")
     assert up() == up_parsed()
 
     up_parsed = rlang.parse("Action up := [0, 1.0, -4.2]", metadata)['up']
-    up = Action([0, 1.0, -4.2], "up")
-    assert up() == up_parsed()
+    up = ActionReference([0, 1.0, -4.2], "up")
+    # assert up() == up_parsed()
 
     # TODO: Need more tests for Action
 
 
+def test_Policy():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([4, 1, 2, 3, 4])
+
+    knowledge = rlang.parse_file("tests_resources/listener_tests/policy.rlang", metadata)
+    test1 = knowledge['test1']
+    test2 = knowledge['test2']
+
+    print(test1(state=s))
+
+    # TODO: Need more tests
+
+
+def test_Option():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([3, 1, 2, 3, 4])
+
+    knowledge = rlang.parse_file("tests_resources/listener_tests/option.rlang", metadata)
+    build_bridge = knowledge['build_bridge']
+    do = knowledge['do_something']
+
+    print(build_bridge.can_execute(state=s))
+    print(build_bridge(state=s))
+    print(do(state=s))
+
+    # TODO: Need more tests
+
+
 if __name__ == "__main__":
-    test_Action()
+    test_Predicate()

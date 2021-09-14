@@ -1,0 +1,33 @@
+Action up := 1
+Action down := -1
+Action left := 2
+Action right := -2
+
+Predicate a := S[0] == 0
+Predicate b := S[0] == 1
+Predicate c := S[0] == 2
+
+Policy test1:
+	Execute [0, -0.5]
+	Execute down
+
+Policy test2:
+	if False:
+		Execute down
+	elif True:
+		Execute test1
+	else:
+		Execute down
+
+Policy test3:
+	if a:
+		Execute down
+	elif b:
+		Execute up
+	else:
+		if c:
+			Execute left
+		elif True:
+			Execute up
+		else:
+			Execute right

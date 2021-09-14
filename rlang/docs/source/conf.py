@@ -12,8 +12,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src/grounding'))
-# sys.path.insert(0, os.path.abspath('../src/grounding'))
+sys.path.insert(0, os.path.abspath('../../src/grounding'))
+sys.path.insert(0, os.path.abspath('../../src/language'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -43,8 +44,21 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'lmdp/']
 
+autodoc_default_options = {
+    'undoc-members': False
+}
+#     'members': True,
+#     'member-order': 'bysource',
+#     'special-members': '__init__',
+#     'undoc-members': True,
+#     'exclude-members': '__weakref__'
+# }
+
+autodoc_type_aliases = {
+    'Predicate': 'Predicate'
+}
 
 # -- Options for HTML output -------------------------------------------------
 

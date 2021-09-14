@@ -15,10 +15,7 @@ from rlang.src.grounding.utils.grounding_errors import RLangGroundingError
 class StateGroundingFunction(GroundingFunction):
     def __init__(self, codomain: Domain, function: Callable, name: str = None):
         self._function = function
-        super().__init__(domain=Domain.STATE, codomain=codomain, name=name)
-
-    def __call__(self, *args, **kwargs):
-        return self._function(*args, **kwargs)
+        super().__init__(domain=Domain.STATE, codomain=codomain, function=function, name=name)
 
     def __eq__(self, other):
         if isinstance(other, (StateGroundingFunction, Callable)):
@@ -52,6 +49,8 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '/' a {type(self)} and a {type(other)}")
 
     def __rtruediv__(self, other):
+        if isinstance(other, Callable):
+            return Feature(function=lambda *args, **kwargs: other(*args, **kwargs) / self(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: other / self(*args, **kwargs))
         raise RLangGroundingError(message=f"Cannot '/' a {type(other)} and a {type(self)}")

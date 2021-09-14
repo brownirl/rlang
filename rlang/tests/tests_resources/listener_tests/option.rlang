@@ -1,0 +1,25 @@
+Action up := 1
+Action down := -1
+Action left := 2
+Action right := -2
+
+Predicate a := S[0] == 0
+Predicate b := S[0] == 1
+Predicate c := S[0] == 2
+
+Policy test2:
+	if False:
+		Execute up
+	elif True:
+		Execute left
+	else:
+		Execute down
+
+Option build_bridge:
+	init a or b
+		Execute test2
+	until c
+
+Policy do_something:
+	Execute build_bridge
+

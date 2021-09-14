@@ -1,14 +1,11 @@
 from antlr4 import *
 import sys, os
 
-from antlr4.error.ErrorListener import ConsoleErrorListener
-from antlr4.error.ErrorStrategy import BailErrorStrategy
 sys.path.append(os.path.abspath("../"))
-from rlang.src.language.RLangErrorStrategy import RLangErrorStrategy
-from rlang.src.language.RLangErrorListener import RLangErrorListener
-from rlang.src.language.RLangLexer import RLangLexer
-from rlang.src.language.RLangParser import RLangParser
-from antlr4.tree.ParseTreePatternMatcher import ParseTreePatternMatcher
+from antlr.RLangErrorStrategy import RLangErrorStrategy
+from antlr.RLangErrorListener import RLangErrorListener
+from antlr import RLangLexer
+from antlr import RLangParser
 from antlr4.error.Errors import *
 
 # All tests must begin with 'test_'

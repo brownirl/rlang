@@ -11,11 +11,11 @@ from rlang.src.grounding import Domain
 
 
 class Factor(StateGroundingFunction):
-    def __init__(self, state_indexer: Any, name: str = None):
+    def __init__(self, state_indexer: Any, name: str = None, state_arg: str = 'state'):
         if type(state_indexer) == int:
             state_indexer = [state_indexer]
         self._state_indexer = state_indexer
-        super().__init__(function=lambda *args, **kwargs: kwargs['state'].__getitem__(self._state_indexer),
+        super().__init__(function=lambda *args, **kwargs: kwargs[state_arg].__getitem__(self._state_indexer),
                          codomain=Domain.REAL_VALUE, name=name)
 
     def __getitem__(self, item):

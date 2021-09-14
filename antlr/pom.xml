@@ -11,7 +11,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>../rlang/src/language</directory>
+                            <directory>../rlang/src/language/antlr</directory>
                             <excludes>
                                 <exclude>**/__init__.py</exclude>
                                 <exclude>**/RLangListener.py</exclude>
@@ -19,7 +19,6 @@
                                 <exclude>**/Exceptions.py</exclude>
                                 <exclude>**/RLangErrorListener.py</exclude>
                                 <exclude>**/RLangErrorStrategy.py</exclude>
-                                <exclude>**/prettyprint.py</exclude>
                             </excludes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
@@ -40,7 +39,7 @@
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>4.9.2</version>
                 <configuration>
-                    <outputDirectory>../rlang/src/language</outputDirectory>
+                    <outputDirectory>../rlang/src/language/antlr</outputDirectory>
                     <arguments>
                         <argument>-Xexact-output-dir</argument>
                         <argument>-Dlanguage=Python3</argument>

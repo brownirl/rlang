@@ -9,7 +9,6 @@ Subpackages
 
    src.grounding
    src.language
-   src.lmdp
 
 Submodules
 ----------
