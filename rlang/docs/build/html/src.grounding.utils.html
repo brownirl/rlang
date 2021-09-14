@@ -40,7 +40,9 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.language package" href="src.language.html" />
+    <link rel="prev" title="src.grounding.groundings.state_action_state package" href="src.grounding.groundings.state_action_state.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -85,19 +87,19 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">src.grounding.utils package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#src-grounding-utils-action-space-module">src.grounding.utils.action_space module</a></li>
-<li><a class="reference internal" href="#src-grounding-utils-domain-module">src.grounding.utils.domain module</a></li>
-<li><a class="reference internal" href="#src-grounding-utils-grounding-errors-module">src.grounding.utils.grounding_errors module</a></li>
-<li><a class="reference internal" href="#src-grounding-utils-state-space-module">src.grounding.utils.state_space module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="src.html">src package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.grounding.html">src.grounding package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="src.grounding.groundings.html">src.grounding.groundings package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">src.grounding.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.language.html">src.language package</a></li>
 </ul>
 </li>
 </ul>
-</div>
+
             
           
         </div>
@@ -144,6 +146,10 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
+          <li><a href="src.html">src package</a> &raquo;</li>
+        
+          <li><a href="src.grounding.html">src.grounding package</a> &raquo;</li>
+        
       <li>src.grounding.utils package</li>
     
     
@@ -168,20 +174,142 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="src-grounding-utils-action-space-module">
-<h2>src.grounding.utils.action_space module<a class="headerlink" href="#src-grounding-utils-action-space-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-src.grounding.utils.domain">
+<span id="src-grounding-utils-domain-module"></span><h2>src.grounding.utils.domain module<a class="headerlink" href="#module-src.grounding.utils.domain" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Domain Enum</dt><dd><ul class="simple">
+<li><p>Represents function domains and co-domains</p></li>
+</ul>
+</dd>
+</dl>
+<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
+date: August 2021</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.domain.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.domain.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.ACTION">
+<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.ACTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.ANY">
+<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.ANY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.BOOLEAN">
+<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.BOOLEAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.REAL_VALUE">
+<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.REAL_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.REWARD">
+<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.REWARD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.STATE">
+<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.STATE_ACTION">
+<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.STATE_ACTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.utils.domain.Domain.STATE_ACTION_NEXTSTATE">
+<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXTSTATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#src.grounding.utils.domain.Domain.STATE_ACTION_NEXTSTATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="src-grounding-utils-domain-module">
-<h2>src.grounding.utils.domain module<a class="headerlink" href="#src-grounding-utils-domain-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-src.grounding.utils.grounding_errors">
+<span id="src-grounding-utils-grounding-errors-module"></span><h2>src.grounding.utils.grounding_errors module<a class="headerlink" href="#module-src.grounding.utils.grounding_errors" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.grounding.utils.grounding_errors.RLangGroundingError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.grounding_errors.</span></span><span class="sig-name descname"><span class="pre">RLangGroundingError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.grounding_errors.RLangGroundingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
 </div>
-<div class="section" id="src-grounding-utils-grounding-errors-module">
-<h2>src.grounding.utils.grounding_errors module<a class="headerlink" href="#src-grounding-utils-grounding-errors-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-src.grounding.utils.mdp_metadata">
+<span id="src-grounding-utils-mdp-metadata-module"></span><h2>src.grounding.utils.mdp_metadata module<a class="headerlink" href="#module-src.grounding.utils.mdp_metadata" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.grounding.utils.mdp_metadata.ActionSpace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.mdp_metadata.</span></span><span class="sig-name descname"><span class="pre">ActionSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.mdp_metadata.ActionSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.grounding.utils.mdp_metadata.ActionSpace.from_action">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.mdp_metadata.ActionSpace.from_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.grounding.utils.mdp_metadata.MDPMetadata">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.mdp_metadata.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.utils.mdp_metadata.StateSpace" title="src.grounding.utils.mdp_metadata.StateSpace"><span class="pre">src.grounding.utils.mdp_metadata.StateSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.utils.mdp_metadata.ActionSpace" title="src.grounding.utils.mdp_metadata.ActionSpace"><span class="pre">src.grounding.utils.mdp_metadata.ActionSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.mdp_metadata.MDPMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.grounding.utils.mdp_metadata.MDPMetadata.from_state_action">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_state_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.mdp_metadata.MDPMetadata.from_state_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.grounding.utils.mdp_metadata.StateSpace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.mdp_metadata.</span></span><span class="sig-name descname"><span class="pre">StateSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.mdp_metadata.StateSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.grounding.utils.mdp_metadata.StateSpace.from_state">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.mdp_metadata.StateSpace.from_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="src-grounding-utils-state-space-module">
-<h2>src.grounding.utils.state_space module<a class="headerlink" href="#src-grounding-utils-state-space-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-src.grounding.utils.state_action_implementation">
+<span id="src-grounding-utils-state-action-implementation-module"></span><h2>src.grounding.utils.state_action_implementation module<a class="headerlink" href="#module-src.grounding.utils.state_action_implementation" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.grounding.utils.state_action_implementation.Action">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.state_action_implementation.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.state_action_implementation.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+<dl class="simple">
+<dt>Action util class</dt><dd><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
+date: September 2021</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.grounding.utils.state_action_implementation.State">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.utils.state_action_implementation.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.utils.state_action_implementation.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+<dl class="simple">
+<dt>State util class</dt><dd><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
+date: August 2021</p>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-src.grounding.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.grounding.utils" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -190,6 +318,10 @@
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="src.language.html" class="btn btn-neutral float-right" title="src.language package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="src.grounding.groundings.state_action_state.html" class="btn btn-neutral float-left" title="src.grounding.groundings.state_action_state package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

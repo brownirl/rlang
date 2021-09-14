@@ -7,28 +7,13 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   src.grounding.groundings.primitive_references
    src.grounding.groundings.state
    src.grounding.groundings.state_action
    src.grounding.groundings.state_action_state
 
 Submodules
 ----------
-
-src.grounding.groundings.action module
---------------------------------------
-
-.. automodule:: src.grounding.groundings.action
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-src.grounding.groundings.constant module
-----------------------------------------
-
-.. automodule:: src.grounding.groundings.constant
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 src.grounding.groundings.grounding\_function module
 ---------------------------------------------------

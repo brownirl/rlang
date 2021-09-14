@@ -4,14 +4,6 @@ src.grounding.utils package
 Submodules
 ----------
 
-src.grounding.utils.action\_space module
-----------------------------------------
-
-.. automodule:: src.grounding.utils.action_space
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 src.grounding.utils.domain module
 ---------------------------------
 
@@ -28,10 +20,18 @@ src.grounding.utils.grounding\_errors module
    :undoc-members:
    :show-inheritance:
 
-src.grounding.utils.state\_space module
----------------------------------------
+src.grounding.utils.mdp\_metadata module
+----------------------------------------
 
-.. automodule:: src.grounding.utils.state_space
+.. automodule:: src.grounding.utils.mdp_metadata
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.grounding.utils.state\_action\_implementation module
+--------------------------------------------------------
+
+.. automodule:: src.grounding.utils.state_action_implementation
    :members:
    :undoc-members:
    :show-inheritance:
