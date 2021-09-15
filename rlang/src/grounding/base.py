@@ -57,12 +57,16 @@ class GroundingFunction(Grounding):
 
 
 class RLangKnowledge(MutableMapping):
-    """
-        Knowledge class
-            - stores groundings for retrieval by user
-            - this is the base-level knowledge class
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang (plz put ur email here)
-        date: September 2021
+    """Acts as a container for Groundings.
+
+    Acts just like a Python dictionary.
+
+    Examples:
+        .. code-block:: python
+
+            base = RLangKnowledge()
+            base['x_location'] = Factor([1])
+
     """
 
     def __init__(self):

@@ -161,381 +161,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="src-grounding-package">
-<h1>src.grounding package<a class="headerlink" href="#src-grounding-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-src.grounding.base">
-<span id="src-grounding-base-module"></span><h2>src.grounding.base module<a class="headerlink" href="#module-src.grounding.base" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.base.Domain">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.base.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.base.Domain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>Enum representing the domain or codomain of a GroundingFunction</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.ACTION">
-<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#src.grounding.base.Domain.ACTION" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.ANY">
-<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#src.grounding.base.Domain.ANY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.BOOLEAN">
-<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#src.grounding.base.Domain.BOOLEAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.REAL_VALUE">
-<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#src.grounding.base.Domain.REAL_VALUE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.REWARD">
-<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#src.grounding.base.Domain.REWARD" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.STATE">
-<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#src.grounding.base.Domain.STATE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.STATE_ACTION">
-<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#src.grounding.base.Domain.STATE_ACTION" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.base.Domain.STATE_ACTION_NEXTSTATE">
-<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXTSTATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#src.grounding.base.Domain.STATE_ACTION_NEXTSTATE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.base.Grounding">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.base.</span></span><span class="sig-name descname"><span class="pre">Grounding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.base.Grounding" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Parent class for all grounded objects.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="src.grounding.base.Grounding.name">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#src.grounding.base.Grounding.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.base.GroundingFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.base.</span></span><span class="sig-name descname"><span class="pre">GroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.base.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.base.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.base.GroundingFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.base.Grounding" title="src.grounding.base.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.base.Grounding</span></code></a></p>
-<p>Parent class for groundings which are functions.</p>
-<p>GroundingFunctions have a specified domain and codomain.
-They are typically invoked with keyword arguments corresponding
-to their domain, i.e. door_closed(state=s).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> – the actual function.</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – the name of the Grounding.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.base.RLangKnowledge">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.base.</span></span><span class="sig-name descname"><span class="pre">RLangKnowledge</span></span><a class="headerlink" href="#src.grounding.base.RLangKnowledge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
-<dl class="simple">
-<dt>Knowledge class</dt><dd><ul class="simple">
-<li><p>stores groundings for retrieval by user</p></li>
-<li><p>this is the base-level knowledge class</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang (plz put ur email here)
-date: September 2021</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.grounding.base.RLangKnowledge.factors">
-<span class="sig-name descname"><span class="pre">factors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.base.RLangKnowledge.factors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.grounding.internals">
-<span id="src-grounding-internals-module"></span><h2>src.grounding.internals module<a class="headerlink" href="#module-src.grounding.internals" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.internals.Action">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.internals.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.Action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
-<dl class="simple">
-<dt>Action util class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.internals.ActionSpace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.internals.</span></span><span class="sig-name descname"><span class="pre">ActionSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.ActionSpace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.grounding.internals.ActionSpace.from_action">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.ActionSpace.from_action" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.internals.MDPMetadata">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.internals.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.internals.StateSpace" title="src.grounding.internals.StateSpace"><span class="pre">src.grounding.internals.StateSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.internals.ActionSpace" title="src.grounding.internals.ActionSpace"><span class="pre">src.grounding.internals.ActionSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.MDPMetadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.grounding.internals.MDPMetadata.from_state_action">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_state_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.MDPMetadata.from_state_action" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.internals.State">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.internals.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.State" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
-<dl class="simple">
-<dt>State util class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: August 2021</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.internals.StateSpace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.internals.</span></span><span class="sig-name descname"><span class="pre">StateSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.StateSpace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.grounding.internals.StateSpace.from_state">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.internals.StateSpace.from_state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.grounding.primitive_groundings">
-<span id="src-grounding-primitive-groundings-module"></span><h2>src.grounding.primitive_groundings module<a class="headerlink" href="#module-src.grounding.primitive_groundings" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.primitive_groundings.ActionReference">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.primitive_groundings.</span></span><span class="sig-name descname"><span class="pre">ActionReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.primitive_groundings.ActionReference" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.primitive_groundings.Primitive" title="src.grounding.primitive_groundings.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.primitive_groundings.Primitive</span></code></a></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.primitive_groundings.Primitive">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.primitive_groundings.</span></span><span class="sig-name descname"><span class="pre">Primitive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.base.Domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.primitive_groundings.Primitive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.GroundingFunction</span></code></p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.grounding.state_action_groundings">
-<span id="src-grounding-state-action-groundings-module"></span><h2>src.grounding.state_action_groundings module<a class="headerlink" href="#module-src.grounding.state_action_groundings" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_action_groundings.PartialTransitionFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_action_groundings.</span></span><span class="sig-name descname"><span class="pre">PartialTransitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_action_groundings.PartialTransitionFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="src.grounding.state_action_groundings.StateActionGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>PartialTransitionFunction grounding class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_action_groundings.RewardFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_action_groundings.</span></span><span class="sig-name descname"><span class="pre">RewardFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_action_groundings.RewardFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="src.grounding.state_action_groundings.StateActionGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></a></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_action_groundings.StateActionGroundingFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_action_groundings.</span></span><span class="sig-name descname"><span class="pre">StateActionGroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.base.Domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.GroundingFunction</span></code></p>
-<dl class="simple">
-<dt>StateActionGroundingFunction class</dt><dd><ul class="simple">
-<li><p>Represents a GroundingFunction which is a function of State and Action</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_action_groundings.TransitionFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_action_groundings.</span></span><span class="sig-name descname"><span class="pre">TransitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_action_groundings.TransitionFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="src.grounding.state_action_groundings.StateActionGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>TransitionFunction grounding class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.grounding.state_action_state_groundings">
-<span id="src-grounding-state-action-state-groundings-module"></span><h2>src.grounding.state_action_state_groundings module<a class="headerlink" href="#module-src.grounding.state_action_state_groundings" title="Permalink to this headline">¶</a></h2>
-<dl class="simple">
-<dt>MarkovFeature grounding class</dt><dd><ul class="simple">
-<li><p>Represents a feature</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_action_state_groundings.MarkovFeature">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_action_state_groundings.</span></span><span class="sig-name descname"><span class="pre">MarkovFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_action_state_groundings.MarkovFeature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.GroundingFunction</span></code></p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.grounding.state_groundings">
-<span id="src-grounding-state-groundings-module"></span><h2>src.grounding.state_groundings module<a class="headerlink" href="#module-src.grounding.state_groundings" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Factor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_groundings.</span></span><span class="sig-name descname"><span class="pre">Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_indexer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_arg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'state'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.Factor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>Factor grounding class</dt><dd><ul class="simple">
-<li><p>Represents a factor of state</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Feature">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_groundings.</span></span><span class="sig-name descname"><span class="pre">Feature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.Feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>Feature grounding class</dt><dd><ul class="simple">
-<li><p>Represents a feature</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Feature.from_Factor">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Factor" title="src.grounding.state_groundings.Factor"><span class="pre">Factor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.Feature.from_Factor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Option">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_groundings.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Policy" title="src.grounding.state_groundings.Policy"><span class="pre">src.grounding.state_groundings.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.Option" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.Grounding</span></code></p>
-<p>Grounding object for an option.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>initiation</strong> – A Predicate capturing the initiation set of the option</p></li>
-<li><p><strong>policy</strong> – A Policy capturing the policy of the option</p></li>
-<li><p><strong>termination</strong> – A Predicate capturing the termination set of the option</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – A name for the Option grounding</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Option.can_execute">
-<span class="sig-name descname"><span class="pre">can_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.grounding.state_groundings.Option.can_execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines whether the option can be executed in a given state.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> – A State object</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Policy">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_groundings.</span></span><span class="sig-name descname"><span class="pre">Policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.Policy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.Predicate">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_groundings.</span></span><span class="sig-name descname"><span class="pre">Predicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.Predicate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>Predicate grounding class</dt><dd><ul class="simple">
-<li><p>Represents a factor of state</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.grounding.state_groundings.StateGroundingFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.state_groundings.</span></span><span class="sig-name descname"><span class="pre">StateGroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">rlang.src.grounding.base.Domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.state_groundings.StateGroundingFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.GroundingFunction</span></code></p>
-<dl class="simple">
-<dt>StateGroundingFunction class</dt><dd><ul class="simple">
-<li><p>Represents a GroundingFunction which is a function of State</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.grounding">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.grounding" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="module-src.grounding">
+<span id="src-grounding-package"></span><h1>src.grounding package<a class="headerlink" href="#module-src.grounding" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Action">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
-<dl class="simple">
-<dt>Action util class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.internals.BatchedPrimitive</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.ActionReference">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">ActionReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.ActionReference" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.primitive_groundings.Primitive" title="src.grounding.primitive_groundings.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.primitive_groundings.Primitive</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.reference_groundings.Reference</span></code></p>
 </dd></dl>
 
 <dl class="py class">
@@ -599,29 +236,32 @@ date: September 2021</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Factor">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_indexer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_arg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'state'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Factor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>Factor grounding class</dt><dd><ul class="simple">
-<li><p>Represents a factor of state</p></li>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
+<p>Represents a Factor of the state space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_indexer</strong> – the indices or slice of the state space.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
 </ul>
 </dd>
 </dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Feature">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Feature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>Feature grounding class</dt><dd><ul class="simple">
-<li><p>Represents a feature</p></li>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
+<p>Represents a Feature of the state space.</p>
+<p>Can represent any function of the state space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> – a function of state.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
 </ul>
 </dd>
 </dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.grounding.Feature.from_Factor">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Factor" title="src.grounding.Factor"><span class="pre">Factor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Feature.from_Factor" title="Permalink to this definition">¶</a></dt>
@@ -643,8 +283,8 @@ date: August 2021</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.GroundingFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">GroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.base.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.base.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.GroundingFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.base.Grounding" title="src.grounding.base.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.base.Grounding</span></code></a></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">GroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.GroundingFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.grounding.Grounding" title="src.grounding.base.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.base.Grounding</span></code></a></p>
 <p>Parent class for groundings which are functions.</p>
 <p>GroundingFunctions have a specified domain and codomain.
 They are typically invoked with keyword arguments corresponding
@@ -663,8 +303,9 @@ to their domain, i.e. door_closed(state=s).</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.MDPMetadata">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.internals.StateSpace" title="src.grounding.internals.StateSpace"><span class="pre">src.grounding.internals.StateSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.internals.ActionSpace" title="src.grounding.internals.ActionSpace"><span class="pre">src.grounding.internals.ActionSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.MDPMetadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.StateSpace" title="src.grounding.internals.StateSpace"><span class="pre">src.grounding.internals.StateSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.ActionSpace" title="src.grounding.internals.ActionSpace"><span class="pre">src.grounding.internals.ActionSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.MDPMetadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents important parameters of the MDP like the state space and action space.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.grounding.MDPMetadata.from_state_action">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_state_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.MDPMetadata.from_state_action" title="Permalink to this definition">¶</a></dt>
@@ -676,11 +317,17 @@ to their domain, i.e. door_closed(state=s).</p>
 <dt class="sig sig-object py" id="src.grounding.MarkovFeature">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">MarkovFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.MarkovFeature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.GroundingFunction</span></code></p>
+<p>Represents a Grounding that is a function of (state, action, next_state)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>function</strong> – a function of (state, action, next_state)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Option">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Policy" title="src.grounding.state_groundings.Policy"><span class="pre">src.grounding.state_groundings.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.state_groundings.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Option" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Policy" title="src.grounding.state_groundings.Policy"><span class="pre">src.grounding.state_groundings.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.Grounding</span></code></p>
 <p>Grounding object for an option.</p>
 <dl class="field-list simple">
@@ -702,7 +349,10 @@ to their domain, i.e. door_closed(state=s).</p>
 <dd class="field-odd"><p><strong>state</strong> – A State object</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>bool</p>
+<dd class="field-even"><p>True iff the option can be executed in the given state.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -712,50 +362,46 @@ to their domain, i.e. door_closed(state=s).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.PartialTransitionFunction">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">PartialTransitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.PartialTransitionFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="src.grounding.state_action_groundings.StateActionGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>PartialTransitionFunction grounding class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></p>
+<p>Represents a transition function that does not return the entire state.</p>
+<p>Can be used to specify partial knowledge of the transition function, including
+the value of a Factor of the next state.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Policy">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Policy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Predicate">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Predicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Predicate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_groundings.StateGroundingFunction" title="src.grounding.state_groundings.StateGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>Predicate grounding class</dt><dd><ul class="simple">
-<li><p>Represents a factor of state</p></li>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
+<p>Represents a function of state which has a truth value.</p>
+<p>A Predicate is a feature of the state space with a codomain
+restricted to True or False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> – a function of state that evaluates to a bool.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
 </ul>
 </dd>
 </dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang
-date: August 2021</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.RLangKnowledge">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">RLangKnowledge</span></span><a class="headerlink" href="#src.grounding.RLangKnowledge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
-<dl class="simple">
-<dt>Knowledge class</dt><dd><ul class="simple">
-<li><p>stores groundings for retrieval by user</p></li>
-<li><p>this is the base-level knowledge class</p></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>), Jennifer Wang (plz put ur email here)
-date: September 2021</p>
+<p>Acts as a container for Groundings.</p>
+<p>Acts just like a Python dictionary.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">base</span> <span class="o">=</span> <span class="n">RLangKnowledge</span><span class="p">()</span>
+<span class="n">base</span><span class="p">[</span><span class="s1">&#39;x_location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Factor</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.grounding.RLangKnowledge.factors">
 <span class="sig-name descname"><span class="pre">factors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.RLangKnowledge.factors" title="Permalink to this definition">¶</a></dt>
@@ -766,21 +412,14 @@ date: September 2021</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.RewardFunction">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">RewardFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.RewardFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="src.grounding.state_action_groundings.StateActionGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></p>
+<p>Represents a reward function.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.State">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.State" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
-<dl class="simple">
-<dt>State util class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: August 2021</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.internals.BatchedPrimitive</span></code></p>
 </dd></dl>
 
 <dl class="py class">
@@ -797,18 +436,10 @@ date: August 2021</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.TransitionFunction">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">TransitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.TransitionFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.state_action_groundings.StateActionGroundingFunction" title="src.grounding.state_action_groundings.StateActionGroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></a></p>
-<dl class="simple">
-<dt>TransitionFunction grounding class</dt><dd><ul class="simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-<p>author: Benjamin Spiegel (<a class="reference external" href="mailto:bspiegel&#37;&#52;&#48;cs&#46;brown&#46;edu">bspiegel<span>&#64;</span>cs<span>&#46;</span>brown<span>&#46;</span>edu</a>)
-date: September 2021</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_action_groundings.StateActionGroundingFunction</span></code></p>
+<p>Represents a transition function.</p>
 </dd></dl>
 
-</div>
 </div>
 
 
@@ -824,7 +455,7 @@ date: September 2021</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Benjamin Spiegel, Jennifer Wang, Rafael Rodriguez-Sanchez.
+        &#169; Copyright 2021, Benjamin Spiegel, Rafael Rodriguez-Sanchez, Jennifer Wang.
 
     </p>
   </div>

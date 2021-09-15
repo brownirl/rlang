@@ -1,21 +1,14 @@
 from __future__ import annotations
 from typing import Callable, Any, Union
+
 import numpy as np
 from rlang.src.grounding.base import Domain, Grounding, GroundingFunction
 from rlang.src.grounding.internals import State
 from rlang.src.exceptions import RLangGroundingError
-# from rlang.src.grounding.utils.domain import Domain
-# from rlang.src.grounding.utils.state_action_implementation import State
-# from rlang.src.grounding.utils.grounding_errors import RLangGroundingError
 
 
 class StateGroundingFunction(GroundingFunction):
-    """
-        StateGroundingFunction class
-            - Represents a GroundingFunction which is a function of State
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
-        date: August 2021
-    """
+    """Parent class for a Grounding that is a function of state."""
     def __init__(self, codomain: Domain, function: Callable, name: str = None):
         self._function = function
         super().__init__(domain=Domain.STATE, codomain=codomain, function=function, name=name)
@@ -81,16 +74,12 @@ class StateGroundingFunction(GroundingFunction):
         self.__add__(other)
 
 
-# Leaving this at the bottom of the file for circular import issue. Don't move it.
-# from rlang.src.grounding.groundings.state.predicate import Predicate
-# from rlang.src.grounding.groundings.state.feature import Feature
-
 class Factor(StateGroundingFunction):
-    """
-        Factor grounding class
-            - Represents a factor of state
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
-        date: August 2021
+    """Represents a Factor of the state space.
+
+    Args:
+        state_indexer: the indices or slice of the state space.
+        name (optional): the name of the grounding.
     """
     def __init__(self, state_indexer: Any, name: str = None, state_arg: str = 'state'):
         if type(state_indexer) == int:
@@ -111,11 +100,13 @@ class Factor(StateGroundingFunction):
 
 
 class Feature(StateGroundingFunction):
-    """
-        Feature grounding class
-            - Represents a feature
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
-        date: August 2021
+    """Represents a Feature of the state space.
+
+    Can represent any function of the state space.
+
+    Args:
+        function: a function of state.
+        name (optional): the name of the grounding.
     """
     def __init__(self, function: Callable, name: str = None):
         super().__init__(function=function, codomain=Domain.REAL_VALUE, name=name)
@@ -126,11 +117,14 @@ class Feature(StateGroundingFunction):
 
 
 class Predicate(StateGroundingFunction):
-    """
-        Predicate grounding class
-            - Represents a factor of state
-        author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang
-        date: August 2021
+    """Represents a function of state which has a truth value.
+
+    A Predicate is a feature of the state space with a codomain
+    restricted to True or False.
+
+    Args:
+        function: a function of state that evaluates to a bool.
+        name (optional): the name of the grounding.
     """
     def __init__(self, function: Callable, name: str = None):
         super().__init__(function=function, codomain=Domain.BOOLEAN, name=name)
@@ -195,6 +189,6 @@ class Option(Grounding):
             state: A State object
 
         Returns:
-            bool
+            bool: True iff the option can be executed in the given state.
         """
         return self._initiation(*args, **kwargs)
