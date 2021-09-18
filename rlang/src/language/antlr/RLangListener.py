@@ -59,7 +59,7 @@ class RLangListener(RLangParserListener):
                 feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))[ctx.trailer().value]
             else:
                 feature_positions = ctx.trailer().value
-        new_factor = Factor(feature_positions, name=ctx.IDENTIFIER().getText())
+        new_factor = Factor(state_indexer=feature_positions, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_factor.name, new_factor)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
