@@ -94,6 +94,16 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
         self.addVariable(ctx.IDENTIFIER().getText(), new_action)
 
+    def exitMarkov_feature(self, ctx: RLangParser.Markov_featureContext):
+        arith_exp = ctx.arithmetic_exp().value
+        if isinstance(arith_exp, Factor):
+            new_markov_feature = MarkovFeature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
+        elif isinstance(arith_exp, Callable):
+            new_markov_feature = MarkovFeature(function=arith_exp, name=ctx.IDENTIFIER().getText())
+        else:
+            raise RLangSemanticError(f"Cannot make a MarkovFeature from a {type(arith_exp)}")
+        self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
+
     def exitOption(self, ctx: RLangParser.OptionContext):
         policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
@@ -117,7 +127,8 @@ class RLangListener(RLangParserListener):
         else:
             raise RLangSemanticError(f"Cannot terminate an Option based on a {type(ctx.boolean_exp().value)}")
 
-        new_option = Option(initiation=init_predicate, termination=until_predicate, policy=new_policy, name=ctx.IDENTIFIER().getText())
+        new_option = Option(initiation=init_predicate, termination=until_predicate, policy=new_policy,
+                            name=ctx.IDENTIFIER().getText())
         self.addVariable(ctx.IDENTIFIER().getText(), new_option)
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
@@ -186,7 +197,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.arithmetic_exp().value
 
     def exitArith_times_divide(self, ctx: RLangParser.Arith_times_divideContext):
-        if isinstance(ctx.lhs.value, StateGroundingFunction):
+        if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
             if ctx.TIMES() is not None:
                 ctx.value = ctx.lhs.value * ctx.rhs.value
             elif ctx.DIVIDE() is not None:
@@ -265,27 +276,36 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.boolean_exp().value
 
     def exitBool_and(self, ctx: RLangParser.Bool_andContext):
-        # if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
-        #     ctx.value = ctx.lhs.value & ctx.rhs.value
-        #     return
-        # ctx.value = lambda *args, **kwargs: ctx.lhs.value & ctx.rhs.value
+        # TODO: lhs or rhs may be functions. Is there a better way to handle this?
+        if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
+            ctx.value = ctx.lhs.value & ctx.rhs.value
+            return
+        if isinstance(ctx.lhs.value, Callable) and isinstance(ctx.rhs.value, Callable):
+            ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) & ctx.rhs.value(*args, **kwargs)
+            return
+        # Do we ever get here?
         ctx.value = ctx.lhs.value & ctx.rhs.value
 
     def exitBool_or(self, ctx: RLangParser.Bool_orContext):
-        # if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
-        #     ctx.value = ctx.lhs.value | ctx.rhs.value
-        #     return
-        # ctx.value = lambda *args, **kwargs: ctx.lhs.value | ctx.rhs.value
+        if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
+            ctx.value = ctx.lhs.value | ctx.rhs.value
+            return
+        if isinstance(ctx.lhs.value, Callable) and isinstance(ctx.rhs.value, Callable):
+            ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) | ctx.rhs.value(*args, **kwargs)
+            return
         ctx.value = ctx.lhs.value | ctx.rhs.value
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
         if isinstance(ctx.boolean_exp().value, bool):
             ctx.value = not ctx.boolean_exp().value
             return
+        if isinstance(ctx.boolean_exp().value, Callable):
+            ctx.value = lambda *args, **kwargs: not ctx.boolean_exp().value(*args, **kwargs)
+            return
         ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        # TODO: This may not be so simple
+        # TODO: This may not be so simple. Try a try/catch after writing some tests
         ctx.value = ctx.lhs.value in ctx.rhs.value
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
@@ -363,6 +383,7 @@ class RLangListener(RLangParserListener):
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
         if ctx.trailer() is not None:
             feature_positions = ctx.trailer().value
+        # TODO: Replace this with something more sophisticated. You can smuggle in S' into a Feature... bad.
         ctx.value = Factor(feature_positions, state_arg='next_state')
 
     def exitBound_action(self, ctx: RLangParser.Bound_actionContext):

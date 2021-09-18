@@ -9,9 +9,9 @@ from rlang.src.exceptions import RLangGroundingError
 
 class StateGroundingFunction(GroundingFunction):
     """Parent class for a Grounding that is a function of state."""
-    def __init__(self, codomain: Domain, function: Callable, name: str = None):
+    def __init__(self, codomain: Domain, function: Callable, domain: Domain = Domain.STATE, name: str = None):
         self._function = function
-        super().__init__(domain=Domain.STATE, codomain=codomain, function=function, name=name)
+        super().__init__(domain=domain, codomain=codomain, function=function, name=name)
 
     def __eq__(self, other):
         if isinstance(other, (StateGroundingFunction, Callable)):
@@ -81,11 +81,11 @@ class Factor(StateGroundingFunction):
         state_indexer: the indices or slice of the state space.
         name (optional): the name of the grounding.
     """
-    def __init__(self, state_indexer: Any, name: str = None, state_arg: str = 'state'):
+    def __init__(self, state_indexer: Any, name: str = None):
         if type(state_indexer) == int:
             state_indexer = [state_indexer]
         self._state_indexer = state_indexer
-        super().__init__(function=lambda *args, **kwargs: kwargs[state_arg].__getitem__(self._state_indexer),
+        super().__init__(function=lambda *args, **kwargs: kwargs['state'].__getitem__(self._state_indexer),
                          codomain=Domain.REAL_VALUE, name=name)
 
     def __getitem__(self, item):
@@ -112,7 +112,7 @@ class Feature(StateGroundingFunction):
         super().__init__(function=function, codomain=Domain.REAL_VALUE, name=name)
 
     @classmethod
-    def from_Factor(cls, factor: 'Factor', name: str = None):
+    def from_Factor(cls, factor: Factor, name: str = None):
         return cls(function=factor.__call__, name=name)
 
 

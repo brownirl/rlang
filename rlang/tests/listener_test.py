@@ -75,6 +75,9 @@ def test_Predicate():
     hi_parsed = rlang.parse("Predicate hi := True or False", metadata)['hi']
     assert hi_parsed(state=state) == True
 
+    hi_parsed = rlang.parse("Predicate hi := True or False and False or True", metadata)['hi']
+    print(hi_parsed(state=state))
+
     # TODO: Need more tests for Predicate
 
 
