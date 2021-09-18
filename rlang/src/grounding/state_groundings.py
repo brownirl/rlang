@@ -17,7 +17,10 @@ class StateGroundingFunction(GroundingFunction):
         super().__init__(domain=domain, codomain=codomain, function=function, name=name)
 
     def __eq__(self, other):
-        if isinstance(other, (StateGroundingFunction, Callable)):
+        if isinstance(other, StateGroundingFunction):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
+                             domain=self.domain + other.domain)
+        if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
@@ -25,7 +28,10 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
 
     def __ne__(self, other):
-        if isinstance(other, (StateGroundingFunction, Callable)):
+        if isinstance(other, StateGroundingFunction):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs),
+                             domain=self.domain + other.domain)
+        if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
@@ -33,7 +39,10 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '!=' a {type(self)} and a {type(other)}")
 
     def __mul__(self, other):
-        if isinstance(other, (StateGroundingFunction, Callable)):
+        if isinstance(other, StateGroundingFunction):
+            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs),
+                           domain=self.domain + other.domain)
+        if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
@@ -44,7 +53,10 @@ class StateGroundingFunction(GroundingFunction):
         return self.__mul__(other)
 
     def __truediv__(self, other):
-        if isinstance(other, (StateGroundingFunction, Callable)):
+        if isinstance(other, StateGroundingFunction):
+            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs),
+                           domain=self.domain + other.domain)
+        if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
@@ -60,7 +72,10 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '/' a {type(other)} and a {type(self)}")
 
     def __sub__(self, other):
-        if isinstance(other, (StateGroundingFunction, Callable)):
+        if isinstance(other, StateGroundingFunction):
+            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs),
+                           domain=self.domain + other.domain)
+        if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
@@ -73,6 +88,9 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '-' a {type(other)} and a {type(self)}")
 
     def __add__(self, other):
+        if isinstance(other, StateGroundingFunction):
+            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs),
+                           domain=self.domain + other.domain)
         if isinstance(other, (StateGroundingFunction, Callable)):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs))
@@ -154,10 +172,12 @@ class Predicate(StateGroundingFunction):
         super().__init__(function=function, codomain=Domain.BOOLEAN, domain=domain, name=name)
 
     def __and__(self, other) -> Predicate:
-        if isinstance(other, (Predicate, Callable)):
+        if isinstance(other, Predicate):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs),
+                             domain=self.domain + other.domain)
+        if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
-            return Predicate(function=lambda *args, **kwargs:
-                             self(*args, **kwargs) & other(*args, **kwargs))
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs))
         if isinstance(other, bool):
             return self if other else Predicate(function=lambda *args, **kwargs: False, domain=Domain.ANY)
         raise RLangGroundingError(message=f"Cannot & a Predicate with a {type(other)}")
@@ -166,10 +186,12 @@ class Predicate(StateGroundingFunction):
         return self.__and__(other)
 
     def __or__(self, other) -> Predicate:
+        if isinstance(other, Predicate):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs),
+                             domain=self.domain + other.domain)
         if isinstance(other, (Predicate, Callable)):
             # TODO: We must know the domain of Callable to properly track the domain
-            return Predicate(function=lambda *args, **kwargs:
-                             self(*args, **kwargs) | other(*args, **kwargs))
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs))
         if isinstance(other, bool):
             return self if not other else Predicate(function=lambda *args, **kwargs: True, domain=Domain.ANY)
         raise RLangGroundingError(message=f"Cannot | a Predicate with a {type(other)}")
