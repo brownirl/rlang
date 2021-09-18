@@ -53,6 +53,7 @@ class RLangListener(RLangParserListener):
         self.parseVocabFiles()
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
+        # TODO: Consider modifying grammar to include S' for factor definition
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
         if ctx.trailer() is not None:
             if isinstance(ctx.trailer().value, slice):
@@ -66,6 +67,7 @@ class RLangListener(RLangParserListener):
         arith_exp = ctx.arithmetic_exp().value
         if isinstance(arith_exp, Factor):
             new_feature = Feature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
+        # TODO: This will hopefully not exist after migrating to PrimitiveGrounding. Need to check domain.
         elif isinstance(arith_exp, Callable):
             new_feature = Feature(function=arith_exp, name=ctx.IDENTIFIER().getText())
         else:
@@ -75,8 +77,10 @@ class RLangListener(RLangParserListener):
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
         if isinstance(ctx.boolean_exp().value, Predicate):
             new_predicate = ctx.boolean_exp().value
+        # TODO: This will hopefully not exist after migrating to PrimitiveGrounding
         elif isinstance(ctx.boolean_exp().value, Callable):
             new_predicate = Predicate(ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
+        # TODO: This MIGHT not exist after migrating to PrimitiveGrounding
         elif isinstance(ctx.boolean_exp().value, bool):
             new_predicate = Predicate(lambda *args, **kwargs: ctx.boolean_exp().value, name=ctx.IDENTIFIER().getText())
         else:
@@ -211,6 +215,7 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value / ctx.rhs.value
             return
 
+        # TODO: Replace this with PrimitiveGrounding operation
         if isinstance(ctx.lhs.value, Callable) and isinstance(ctx.rhs.value, Callable):
             if ctx.TIMES() is not None:
                 ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) * ctx.rhs.value(*args, **kwargs)
@@ -220,6 +225,7 @@ class RLangListener(RLangParserListener):
 
         # TODO: Support other GroundingFunctions
 
+        # TODO: MAYBE replace this with PrimitiveGrounding operation
         if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
             operation = None
             if ctx.TIMES() is not None:
@@ -240,6 +246,7 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value - ctx.rhs.value
             return
 
+        # TODO: Replace this with PrimitiveGrounding operation
         if isinstance(ctx.lhs.value, Callable) and isinstance(ctx.rhs.value, Callable):
             if ctx.PLUS() is not None:
                 ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) + ctx.rhs.value(*args, **kwargs)
@@ -247,8 +254,9 @@ class RLangListener(RLangParserListener):
                 ctx.value = lambda *args, **kwargs: ctx.lhs.value(*args, **kwargs) - ctx.rhs.value(*args, **kwargs)
             return
 
-        # TODO: Support other GroundingFunctions
+        # TODO: Support other GroundingFunctions which an any_bound_var could be
 
+        # TODO: MAYBE replace this with PrimitiveGrounding operation
         if isinstance(ctx.lhs.value, (int, float)) and isinstance(ctx.rhs.value, (int, float)):
             operation = None
             if ctx.PLUS() is not None:
@@ -262,9 +270,11 @@ class RLangListener(RLangParserListener):
             f"Using '+' or '-' on {type(ctx.lhs.value)} and {type(ctx.rhs.value)} not yet implemented")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
+        # TODO: This should not be a Callable. Maybe make this a PrimitiveGrounding
         ctx.value = lambda *args, **kwargs: ctx.any_number().value
 
     def exitArith_array(self, ctx: RLangParser.Arith_arrayContext):
+        # TODO: Maybe replace this with a PrimitiveGrounding
         ctx.value = ctx.any_array_exp().value
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
@@ -277,6 +287,7 @@ class RLangListener(RLangParserListener):
 
     def exitBool_and(self, ctx: RLangParser.Bool_andContext):
         # TODO: lhs or rhs may be functions. Is there a better way to handle this?
+        # TODO: UPDATE: This will change if bool_tf code migrates to PrimitiveGrounding
         if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
             ctx.value = ctx.lhs.value & ctx.rhs.value
             return
@@ -287,6 +298,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.lhs.value & ctx.rhs.value
 
     def exitBool_or(self, ctx: RLangParser.Bool_orContext):
+        # TODO: This will change if bool_tf code migrates to PrimitiveGrounding
         if isinstance(ctx.lhs.value, Predicate) or isinstance(ctx.rhs.value, Predicate):
             ctx.value = ctx.lhs.value | ctx.rhs.value
             return
@@ -296,6 +308,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.lhs.value | ctx.rhs.value
 
     def exitBool_not(self, ctx: RLangParser.Bool_notContext):
+        # TODO: This will change if bool_tf code migrates to PrimitiveGrounding
         if isinstance(ctx.boolean_exp().value, bool):
             ctx.value = not ctx.boolean_exp().value
             return
@@ -305,10 +318,11 @@ class RLangListener(RLangParserListener):
         ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        # TODO: This may not be so simple. Try a try/catch after writing some tests
+        # TODO: This IS NOT so simple. Resolve this after migrating arithmetic expressions to PrimitiveGroundings
         ctx.value = ctx.lhs.value in ctx.rhs.value
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
+        # TODO: This will change if bool_tf code migrates to PrimitiveGrounding
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
@@ -335,6 +349,7 @@ class RLangListener(RLangParserListener):
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
 
+        # TODO: Do these need to be StateGroundingFunctions? Might they just need to be GroundingFunctions?
         if isinstance(ctx.lhs.value, StateGroundingFunction) or isinstance(ctx.rhs.value, StateGroundingFunction):
             ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
             return
@@ -348,6 +363,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.any_bound_var().value
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
+        # TODO: This should probably be changed to at least ctx.value = True/False. Maybe migrate to PrimitiveGrounding
         if ctx.TRUE() is not None:
             ctx.value = lambda *args, **kwargs: True
         elif ctx.FALSE() is not None:

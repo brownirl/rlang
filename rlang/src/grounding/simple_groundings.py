@@ -4,7 +4,7 @@ from rlang.src.grounding import Domain, GroundingFunction
 
 
 # TODO: I'm not sure these are needed. They may be used in tandem with internals.py objects
-class SimpleGrounding(GroundingFunction):
+class PrimitiveGrounding(GroundingFunction):
     def __init__(self, codomain: Domain, value: Any, name: str = None):
         if isinstance(value, (int, float, list)):
             value = np.array(value)
@@ -13,7 +13,7 @@ class SimpleGrounding(GroundingFunction):
                          function=lambda *args, **kwargs: self._value, name=name)
 
 
-class ActionReference(SimpleGrounding):
+class ActionReference(PrimitiveGrounding):
     def __init__(self, action: Any, name: str = None):
         if isinstance(action, (int, float, list)):
             action = np.array(action)
