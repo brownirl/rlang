@@ -1,6 +1,8 @@
 from typing import Callable
 from rlang.src.grounding import Domain, GroundingFunction
 
+# TODO: Migrate these to groundings.py
+
 
 class StateActionGroundingFunction(GroundingFunction):
     """Parent class for a Grounding that is a function of (state, action)."""

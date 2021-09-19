@@ -1,5 +1,49 @@
+from __future__ import annotations
 from typing import Any
+from enum import Enum
 import numpy as np
+from rlang.src.exceptions import RLangGroundingError
+
+
+class Domain(Enum):
+    """Enum representing the domain or codomain of a OldGroundingFunction
+
+    Domain enums can be automatically combined using an addition operation:
+
+    .. code-block:: python
+
+        Domain.STATE + Domain.ACTION == Domain.STATE_ACTION
+
+    """
+    ANY = 1
+    ACTION = 2
+    STATE = 3
+    STATE_ACTION = 6
+    NEXT_STATE = 5
+    STATE_NEXT_STATE = 15
+    STATE_ACTION_NEXT_STATE = 30
+    BOOLEAN = 7
+    REAL_VALUE = 11
+    REWARD = 13
+
+    def __add__(self, other) -> Domain:
+        if isinstance(other, Domain):
+            # You can think of domain values as being multiples of prime numbers.
+            # If STATE is 3 and ACTION is 2, STATE_ACTION is 3*2 = 6.
+            if self.value % other.value == 0:
+                return self
+            else:
+                enum_value = self.value * other.value
+                if enum_value in set(item.value for item in Domain):
+                    return Domain(enum_value)
+                else:
+                    raise RLangGroundingError(f"The ({self.name}, {other.name}) Domain or Codomain is not supported")
+        else:
+            raise RLangGroundingError(f"Can't add a Domain enum to a {type(other)}")
+
+    @classmethod
+    def from_name(cls, name: str) -> Domain:
+        return Domain[name.upper()]
 
 
 class ActionSpace:
@@ -53,7 +97,7 @@ class BatchedPrimitive(np.ndarray):
     def __eq__(self, other):
         # print(self.shape)
         # print(other.shape)
-        # TODO: This fails due to logical and, need to check array dimension
+        # TODO: This fails due to 'logical and', need to check array dimension
         # TODO: Consider implementing two separate eq methods
         # Try BatchedPrimitive(0) == BatchedPrimitive([[1, 0], [0, 0]). Returns [[False],[True]] instead of [[False],[False]]
         return BatchedPrimitive(np.asarray(np.all(super().__eq__(other), axis=1, keepdims=True)))

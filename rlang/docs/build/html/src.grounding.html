@@ -161,8 +161,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-src.grounding">
-<span id="src-grounding-package"></span><h1>src.grounding package<a class="headerlink" href="#module-src.grounding" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="src-grounding-package">
+<h1>src.grounding package<a class="headerlink" href="#src-grounding-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-src.grounding">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.grounding" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Action">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Action" title="Permalink to this definition">¶</a></dt>
@@ -172,7 +174,16 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.ActionReference">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">ActionReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.ActionReference" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.reference_groundings.PrimitiveGrounding</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.groundings.PrimitiveGrounding</span></code></p>
+<p>Represents a reference to a specified action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> – the action.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – name of the action.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -190,59 +201,79 @@
 <dt class="sig sig-object py" id="src.grounding.Domain">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>Enum representing the domain or codomain of a GroundingFunction</p>
+<p>Enum representing the domain or codomain of a OldGroundingFunction</p>
+<p>Domain enums can be automatically combined using an addition operation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span> <span class="o">+</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ACTION</span> <span class="o">==</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE_ACTION</span>
+</pre></div>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.ACTION">
-<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#src.grounding.Domain.ACTION" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#src.grounding.Domain.ACTION" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.ANY">
-<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#src.grounding.Domain.ANY" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#src.grounding.Domain.ANY" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.BOOLEAN">
-<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#src.grounding.Domain.BOOLEAN" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#src.grounding.Domain.BOOLEAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.Domain.NEXT_STATE">
+<span class="sig-name descname"><span class="pre">NEXT_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#src.grounding.Domain.NEXT_STATE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.REAL_VALUE">
-<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#src.grounding.Domain.REAL_VALUE" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">11</span></em><a class="headerlink" href="#src.grounding.Domain.REAL_VALUE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.REWARD">
-<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#src.grounding.Domain.REWARD" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">13</span></em><a class="headerlink" href="#src.grounding.Domain.REWARD" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.STATE">
-<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#src.grounding.Domain.STATE" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#src.grounding.Domain.STATE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="src.grounding.Domain.STATE_ACTION">
-<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#src.grounding.Domain.STATE_ACTION" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#src.grounding.Domain.STATE_ACTION" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="src.grounding.Domain.STATE_ACTION_NEXTSTATE">
-<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXTSTATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#src.grounding.Domain.STATE_ACTION_NEXTSTATE" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="src.grounding.Domain.STATE_ACTION_NEXT_STATE">
+<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXT_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">30</span></em><a class="headerlink" href="#src.grounding.Domain.STATE_ACTION_NEXT_STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.grounding.Domain.STATE_NEXT_STATE">
+<span class="sig-name descname"><span class="pre">STATE_NEXT_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">15</span></em><a class="headerlink" href="#src.grounding.Domain.STATE_NEXT_STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.grounding.Domain.from_name">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.grounding.Domain" title="src.grounding.internals.Domain"><span class="pre">src.grounding.internals.Domain</span></a></span></span><a class="headerlink" href="#src.grounding.Domain.from_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Factor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_indexer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_arg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'state'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Factor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
-<p>Represents a Factor of the state space.</p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_indexer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">rlang.src.grounding.internals.Domain</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">Domain.STATE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.grounding.GroundingFunction" title="rlang.src.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.groundings.GroundingFunction</span></code></a></p>
+<p>Represents a factor of the state space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state_indexer</strong> – the indices or slice of the state space.</p></li>
 <li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
+<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Factor.</p></li>
 </ul>
 </dd>
 </dl>
@@ -250,21 +281,22 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Feature">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Feature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
-<p>Represents a Feature of the state space.</p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Feature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">rlang.src.grounding.internals.Domain</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">Domain.STATE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.groundings.GroundingFunction</span></code></p>
+<p>Represents a feature of the state space.</p>
 <p>Can represent any function of the state space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>function</strong> – a function of state.</p></li>
 <li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
+<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Feature.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.grounding.Feature.from_Factor">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Factor" title="src.grounding.Factor"><span class="pre">Factor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Feature.from_Factor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">src.grounding.groundings.Factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Feature.from_Factor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -283,12 +315,15 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.GroundingFunction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">GroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Domain" title="src.grounding.base.Domain"><span class="pre">src.grounding.base.Domain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.GroundingFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.grounding.Grounding" title="src.grounding.base.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.base.Grounding</span></code></a></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">GroundingFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">rlang.src.grounding.internals.Domain</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codomain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">rlang.src.grounding.internals.Domain</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.GroundingFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.grounding.Grounding" title="rlang.src.grounding.groundings.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.groundings.Grounding</span></code></a></p>
 <p>Parent class for groundings which are functions.</p>
 <p>GroundingFunctions have a specified domain and codomain.
 They are typically invoked with keyword arguments corresponding
-to their domain, i.e. door_closed(state=s).</p>
+to their domain:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">door_closed</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -316,27 +351,32 @@ to their domain, i.e. door_closed(state=s).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.MarkovFeature">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">MarkovFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.MarkovFeature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.GroundingFunction</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#src.grounding.GroundingFunction" title="rlang.src.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.groundings.GroundingFunction</span></code></a></p>
 <p>Represents a Grounding that is a function of (state, action, next_state)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>function</strong> – a function of (state, action, next_state)</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.grounding.MarkovFeature.from_Factor">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_Factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Factor" title="rlang.src.grounding.groundings.Factor"><span class="pre">rlang.src.grounding.groundings.Factor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.MarkovFeature.from_Factor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Option">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Policy" title="src.grounding.state_groundings.Policy"><span class="pre">src.grounding.state_groundings.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Predicate" title="src.grounding.state_groundings.Predicate"><span class="pre">src.grounding.state_groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Option" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.base.Grounding</span></code></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Predicate" title="src.grounding.groundings.Predicate"><span class="pre">src.grounding.groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Policy" title="src.grounding.groundings.Policy"><span class="pre">src.grounding.groundings.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#src.grounding.Predicate" title="src.grounding.groundings.Predicate"><span class="pre">src.grounding.groundings.Predicate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.groundings.Grounding</span></code></p>
 <p>Grounding object for an option.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>initiation</strong> – A Predicate capturing the initiation set of the option</p></li>
-<li><p><strong>policy</strong> – A Policy capturing the policy of the option</p></li>
-<li><p><strong>termination</strong> – A Predicate capturing the termination set of the option</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – A name for the Option grounding</p></li>
+<li><p><strong>initiation</strong> – A Predicate capturing the initiation set of the option.</p></li>
+<li><p><strong>policy</strong> – A Policy capturing the policy of the option.</p></li>
+<li><p><strong>termination</strong> – A Predicate capturing the termination set of the option.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
 </ul>
 </dd>
 </dl>
@@ -346,7 +386,7 @@ to their domain, i.e. door_closed(state=s).</p>
 <dd><p>Determines whether the option can be executed in a given state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> – A State object</p>
+<dd class="field-odd"><p><strong>state</strong> – A State object.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True iff the option can be executed in the given state.</p>
@@ -370,25 +410,39 @@ the value of a Factor of the next state.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Policy">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Policy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">rlang.src.grounding.internals.Domain</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">Domain.STATE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.groundings.GroundingFunction</span></code></p>
+<p>Represents a policy function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> – the policy function from states to actions.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.Predicate">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Predicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Predicate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.state_groundings.StateGroundingFunction</span></code></p>
-<p>Represents a function of state which has a truth value.</p>
-<p>A Predicate is a feature of the state space with a codomain
-restricted to True or False.</p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">Predicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">rlang.src.grounding.internals.Domain</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">Domain.STATE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Predicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.groundings.GroundingFunction</span></code></p>
+<p>Represents a function which has a truth value.</p>
+<p>A Predicate is a feature with a codomain restricted to True or False.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>function</strong> – a function of state that evaluates to a bool.</p></li>
 <li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
+<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Predicate.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.grounding.Predicate.from_PrimitiveGrounding">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_PrimitiveGrounding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primitive_grounding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">src.grounding.groundings.PrimitiveGrounding</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.Predicate.from_PrimitiveGrounding" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -419,7 +473,7 @@ restricted to True or False.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.grounding.State">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">src.grounding.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.grounding.State" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">src.grounding.internals.BatchedPrimitive</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.src.grounding.internals.BatchedPrimitive</span></code></p>
 </dd></dl>
 
 <dl class="py class">
@@ -440,6 +494,7 @@ restricted to True or False.</p>
 <p>Represents a transition function.</p>
 </dd></dl>
 
+</div>
 </div>
 
 

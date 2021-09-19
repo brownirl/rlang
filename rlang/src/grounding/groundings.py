@@ -2,22 +2,69 @@ from __future__ import annotations
 from typing import Callable, Any, Union
 
 import numpy as np
-from rlang.src.grounding.base import Domain, Grounding, GroundingFunction
-from rlang.src.grounding.internals import State
+from rlang.src.grounding.internals import Domain, State, Action
 from rlang.src.exceptions import RLangGroundingError
 
 
-class StateGroundingFunction(GroundingFunction):
-    """Parent class for a Grounding that is a function of state."""
-    def __init__(self, codomain: Domain, function: Callable, domain: Union[str, Domain] = Domain.STATE, name: str = None):
+class Grounding(object):
+    """Parent class for all grounded objects."""
+    def __init__(self, name=None):
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    def __hash__(self):
+        return self._name.__hash__()
+
+    def __repr__(self):
+        return self._name
+
+
+class GroundingFunction(Grounding):
+    """Parent class for groundings which are functions.
+
+    GroundingFunctions have a specified domain and codomain.
+    They are typically invoked with keyword arguments corresponding
+    to their domain:
+
+    .. code-block:: python
+
+        door_closed(state=s)
+
+    Args:
+        domain: Domain of the function.
+        codomain: Codomain of the function.
+        function: the actual function.
+        name (optional): the name of the Grounding.
+    """
+    def __init__(self, domain: Union[str, Domain], codomain: Union[str, Domain], function: Callable, name: str = None):
         if isinstance(domain, str):
             domain = Domain.from_name(domain)
 
+        if isinstance(codomain, str):
+            codomain = Domain.from_name(codomain)
+
+        super().__init__(name)
+        self.domain = domain
+        self.codomain = codomain
         self._function = function
-        super().__init__(domain=domain, codomain=codomain, function=function, name=name)
+
+    def __call__(self, *args, **kwargs):
+        if 'state' in kwargs.keys():
+            if not isinstance(kwargs['state'], State):
+                kwargs.update({'state': State(kwargs['state'])})
+        if 'action' in kwargs.keys():
+            if not isinstance(kwargs['action'], State):
+                kwargs.update({'action': Action(kwargs['action'])})
+        if 'next_state' in kwargs.keys():
+            if not isinstance(kwargs['next_state'], State):
+                kwargs.update({'next_state': State(kwargs['next_state'])})
+        return self._function(*args, **kwargs)
 
     def __eq__(self, other):
-        if isinstance(other, StateGroundingFunction):
+        if isinstance(other, GroundingFunction):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
                              domain=self.domain + other.domain)
         if isinstance(other, Callable):
@@ -28,7 +75,7 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
 
     def __ne__(self, other):
-        if isinstance(other, StateGroundingFunction):
+        if isinstance(other, GroundingFunction):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs),
                              domain=self.domain + other.domain)
         if isinstance(other, Callable):
@@ -39,9 +86,13 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '!=' a {type(self)} and a {type(other)}")
 
     def __mul__(self, other):
-        if isinstance(other, StateGroundingFunction):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs),
-                           domain=self.domain + other.domain)
+        if isinstance(other, GroundingFunction):
+            new_domain = self.domain + other.domain
+            if new_domain.value == Domain.ANY:
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()*other())
+            else:
+                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs),
+                               domain=new_domain)
         if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs))
@@ -53,9 +104,13 @@ class StateGroundingFunction(GroundingFunction):
         return self.__mul__(other)
 
     def __truediv__(self, other):
-        if isinstance(other, StateGroundingFunction):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs),
-                           domain=self.domain + other.domain)
+        if isinstance(other, GroundingFunction):
+            new_domain = self.domain + other.domain
+            if new_domain.value == Domain.ANY:
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()/other())
+            else:
+                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs),
+                               domain=new_domain)
         if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs))
@@ -72,9 +127,13 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '/' a {type(other)} and a {type(self)}")
 
     def __sub__(self, other):
-        if isinstance(other, StateGroundingFunction):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs),
-                           domain=self.domain + other.domain)
+        if isinstance(other, GroundingFunction):
+            new_domain = self.domain + other.domain
+            if new_domain.value == Domain.ANY:
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()-other())
+            else:
+                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs),
+                               domain=new_domain)
         if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs))
@@ -88,10 +147,14 @@ class StateGroundingFunction(GroundingFunction):
         raise RLangGroundingError(message=f"Cannot '-' a {type(other)} and a {type(self)}")
 
     def __add__(self, other):
-        if isinstance(other, StateGroundingFunction):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs),
-                           domain=self.domain + other.domain)
-        if isinstance(other, (StateGroundingFunction, Callable)):
+        if isinstance(other, GroundingFunction):
+            new_domain = self.domain + other.domain
+            if new_domain.value == Domain.ANY:
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()+other())
+            else:
+                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs),
+                               domain=self.domain + other.domain)
+        if isinstance(other, (GroundingFunction, Callable)):
             # TODO: We must know the domain of Callable to properly track the domain
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
@@ -102,7 +165,49 @@ class StateGroundingFunction(GroundingFunction):
         self.__add__(other)
 
 
-class Factor(StateGroundingFunction):
+class PrimitiveGrounding(GroundingFunction):
+    """Represents a GroundingFunction with domain Domain.ANY."""
+    def __init__(self, codomain: Domain, value: Any, name: str = None):
+        if isinstance(value, (int, float, list)):
+            value = np.array(value)
+        self._value = value
+        super().__init__(domain=Domain.ANY, codomain=codomain,
+                         function=lambda *args, **kwargs: self._value, name=name)
+
+
+class ActionReference(PrimitiveGrounding):
+    """Represents a reference to a specified action.
+
+    Args:
+        action: the action.
+        name (optional): name of the action.
+    """
+    def __init__(self, action: Any, name: str = None):
+        # TODO: Integrate Action object into this constructor
+        if isinstance(action, (int, float, list)):
+            action = np.array(action)
+        elif isinstance(action, GroundingFunction):
+            if action.domain == Domain.ANY:
+                action = np.array(action())
+            else:
+                raise RLangGroundingError(f"Actions cannot be functions of {action.domain}")
+        super().__init__(codomain=Domain.ACTION, value=action, name=name)
+
+
+class IdentityGrounding(GroundingFunction):
+    """Represents S, A, and S'
+
+    Args:
+        domain: 'state', 'action', or 'next_state'
+    """
+    def __init__(self, domain: Union[str, Domain]):
+        if not isinstance(domain, str):
+            domain = domain.name.lower()
+        super().__init__(domain=domain, codomain=domain,
+                         function=lambda *args, **kwargs: kwargs[domain])
+
+
+class Factor(GroundingFunction):
     """Represents a factor of the state space.
 
     Args:
@@ -139,7 +244,7 @@ class Factor(StateGroundingFunction):
         return f"<Factor ({self.domain.name}): {str(self._state_indexer)}>"
 
 
-class Feature(StateGroundingFunction):
+class Feature(GroundingFunction):
     """Represents a feature of the state space.
 
     Can represent any function of the state space.
@@ -157,11 +262,10 @@ class Feature(StateGroundingFunction):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
 
 
-class Predicate(StateGroundingFunction):
-    """Represents a function of state which has a truth value.
+class Predicate(GroundingFunction):
+    """Represents a function which has a truth value.
 
-    A Predicate is a feature of the state space with a codomain
-    restricted to True or False.
+    A Predicate is a feature with a codomain restricted to True or False.
 
     Args:
         function: a function of state that evaluates to a bool.
@@ -170,6 +274,12 @@ class Predicate(StateGroundingFunction):
     """
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
         super().__init__(function=function, codomain=Domain.BOOLEAN, domain=domain, name=name)
+
+    @classmethod
+    def from_PrimitiveGrounding(cls, primitive_grounding: PrimitiveGrounding):
+        if primitive_grounding.codomain != Domain.BOOLEAN:
+            raise RLangGroundingError(f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Predicate")
+        return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
     def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):
@@ -206,7 +316,7 @@ class Predicate(StateGroundingFunction):
         return f"<Predicate ({self.domain.name})>"
 
 
-class Policy(StateGroundingFunction):
+class Policy(GroundingFunction):
     """Represents a policy function
 
     Args:
