@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 import rlang
 from rlang.src.grounding import *
@@ -57,8 +58,11 @@ def test_Feature():
     x = Feature(position[0] + 4 * 2 + 3 / position[1], "x")
     assert x(state=state) == x_parsed(state=state)
 
-    x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)")['x']
+    x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)", metadata)['x']
     assert x_parsed(state=state) == 14
+
+    x_parsed = rlang.parse("Feature x := [0, 1] * 2 * S[0]", metadata)['x']
+    print(x_parsed(state=state))
 
 
 def test_Predicate():
@@ -71,8 +75,12 @@ def test_Predicate():
     hi = Predicate(x == 1 & True | False)
     assert hi(state=state) == hi_parsed(state=state)
 
-    hi_parsed = rlang.parse("Predicate hi := True or False", metadata)['hi']
+    hi_parsed = rlang.parse("Predicate hi := True or False and True == True and 14 == 14", metadata)['hi']
+    print(hi_parsed(state=state))
     assert hi_parsed(state=state) == True
+
+    hi_parsed = rlang.parse("Predicate hi := True or False and False or True", metadata)['hi']
+    print(hi_parsed(state=state))
 
     # TODO: Need more tests for Predicate
 

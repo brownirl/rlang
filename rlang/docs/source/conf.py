@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'RLang'
-copyright = '2021, Benjamin Spiegel, Jennifer Wang, Rafael Rodriguez-Sanchez'
-author = 'Benjamin Spiegel, Jennifer Wang, Rafael Rodriguez-Sanchez'
+copyright = '2021, Benjamin Spiegel, Rafael Rodriguez-Sanchez, Jennifer Wang'
+author = 'Benjamin Spiegel, Rafael Rodriguez-Sanchez, Jennifer Wang'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
@@ -44,21 +44,8 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'lmdp/']
+exclude_patterns = ['_build', 'Thumbs.db']
 
-autodoc_default_options = {
-    'undoc-members': False
-}
-#     'members': True,
-#     'member-order': 'bysource',
-#     'special-members': '__init__',
-#     'undoc-members': True,
-#     'exclude-members': '__weakref__'
-# }
-
-autodoc_type_aliases = {
-    'Predicate': 'Predicate'
-}
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -71,3 +58,7 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_sidebars = {
+    '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']
+}

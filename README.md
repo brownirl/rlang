@@ -38,4 +38,4 @@
 ## Building the documentation with Sphinx
 
 - You can easily generate html files by running `make html` from `rlang/docs/`
-- If you add or remove a module, run `sphinx-apidoc -o source ../src` from `rlang/docs/`
+- If you add or remove a module, run `sphinx-apidoc -o source/ ../src/ ../src/language ../src/lmdp` from `rlang/docs/`

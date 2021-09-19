@@ -1,17 +1,23 @@
-"""
-    Knowledge class
-        - stores groundings for retrieval by user
-        - this is the base-level knowledge class
-    author: Benjamin Spiegel (bspiegel@cs.brown.edu), Jennifer Wang (plz put ur email here)
-    date: September 2021
-"""
-
-from rlang.src.grounding.knowledge_grounding import Grounding
-from rlang.src.grounding.groundings.state import Factor
+from __future__ import annotations
+from typing import Callable
 from collections.abc import MutableMapping
+from rlang.src.exceptions import RLangGroundingError
+from rlang.src.grounding.internals import State
+from rlang.src.grounding.groundings import Grounding, Factor
 
 
 class RLangKnowledge(MutableMapping):
+    """Acts as a container for Groundings.
+
+    Acts just like a Python dictionary.
+
+    Examples:
+        .. code-block:: python
+
+            base = RLangKnowledge()
+            base['x_location'] = Factor([1])
+
+    """
 
     def __init__(self):
         self.store = dict()
