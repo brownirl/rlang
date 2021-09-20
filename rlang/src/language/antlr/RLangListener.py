@@ -64,8 +64,16 @@ class RLangListener(RLangParserListener):
         new_constant = ConstantGrounding(codomain=Domain.ANY, value=new_constant(), name=ctx.IDENTIFIER().getText())
         self.addVariable(new_constant.name, new_constant)
 
+    def exitAction(self, ctx: RLangParser.ActionContext):
+        if ctx.any_number() is not None:
+            new_action = ActionReference(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.int_array_exp() is not None:
+            new_action = ActionReference(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.any_array_exp() is not None:
+            new_action = ActionReference(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
+        self.addVariable(new_action.name, new_action)
+
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        # TODO: Consider modifying grammar to include S' for factor definition
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
         if ctx.trailer() is not None:
             if isinstance(ctx.trailer().value, slice):
@@ -74,6 +82,11 @@ class RLangListener(RLangParserListener):
                 feature_positions = ctx.trailer().value
         new_factor = Factor(state_indexer=feature_positions, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_factor.name, new_factor)
+
+    def exitPredicate(self, ctx: RLangParser.PredicateContext):
+        new_predicate = ctx.boolean_exp().value
+        new_predicate.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_predicate.name, new_predicate)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value
@@ -84,24 +97,7 @@ class RLangListener(RLangParserListener):
             new_feature.name = ctx.IDENTIFIER().getText()
         self.addVariable(new_feature.name, new_feature)
 
-    def exitPredicate(self, ctx: RLangParser.PredicateContext):
-        new_predicate = ctx.boolean_exp().value
-        new_predicate.name = ctx.IDENTIFIER().getText()
-        self.addVariable(new_predicate.name, new_predicate)
-
-    def exitAction(self, ctx: RLangParser.ActionContext):
-        if ctx.any_number() is not None:
-            new_action = ActionReference(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
-        elif ctx.int_array_exp() is not None:
-            new_action = ActionReference(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
-        elif ctx.any_array_exp() is not None:
-            new_action = ActionReference(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
-        else:
-            raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
-        self.addVariable(new_action.name, new_action)
-
     def exitMarkov_feature(self, ctx: RLangParser.Markov_featureContext):
-        # TODO: Extend this
         arith_exp = ctx.arithmetic_exp().value
         if isinstance(arith_exp, Factor):
             new_markov_feature = MarkovFeature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
@@ -135,6 +131,13 @@ class RLangListener(RLangParserListener):
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_policy.name, new_policy)
+
+    def exitReward(self, ctx: RLangParser.RewardContext):
+        if ctx.arithmetic_exp().value.domain != Domain.ANY:
+            raise RLangSemanticError(f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
+        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
+            raise RLangSemanticError(f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
+        ctx.value = Reward(ctx.arithmetic_exp().value)
 
     def exitPolicy_stat_execute(self, ctx: RLangParser.Policy_stat_executeContext):
         ctx.value = ctx.execute().value

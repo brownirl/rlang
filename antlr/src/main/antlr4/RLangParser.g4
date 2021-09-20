@@ -24,16 +24,16 @@ dec
     ;
 
 constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
-
-factor: FACTOR IDENTIFIER BIND S trailer?;
-feature: FEATURE IDENTIFIER BIND arithmetic_exp;
-predicate: PREDICATE IDENTIFIER BIND boolean_exp;
 action: ACTION IDENTIFIER BIND (any_number | int_array_exp | any_array_exp);
-goal: GOAL IDENTIFIER BIND boolean_exp;
+factor: FACTOR IDENTIFIER BIND S trailer?;
+predicate: PREDICATE IDENTIFIER BIND boolean_exp;
+feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
-effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
 option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT (stats+=policy_stat NL*)+ DEDENT UNTIL until=boolean_exp NL* DEDENT;
 policy: POLICY IDENTIFIER COL INDENT (stats+=policy_stat NL*)+ DEDENT;
+
+goal: GOAL IDENTIFIER BIND boolean_exp;
+effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
 
 effect_stat
     : reward
@@ -41,7 +41,7 @@ effect_stat
     | constant
     ;
 
-reward: REWARD any_number;
+reward: REWARD arithmetic_exp;
 assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) ((IDENTIFIER | S) trailer* | boolean_exp | arithmetic_exp | int_array_exp);
 
 policy_stat

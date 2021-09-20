@@ -62,21 +62,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#action.
+    def enterAction(self, ctx:RLangParser.ActionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#action.
+    def exitAction(self, ctx:RLangParser.ActionContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#factor.
     def enterFactor(self, ctx:RLangParser.FactorContext):
         pass
 
     # Exit a parse tree produced by RLangParser#factor.
     def exitFactor(self, ctx:RLangParser.FactorContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#feature.
-    def enterFeature(self, ctx:RLangParser.FeatureContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#feature.
-    def exitFeature(self, ctx:RLangParser.FeatureContext):
         pass
 
 
@@ -89,21 +89,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#action.
-    def enterAction(self, ctx:RLangParser.ActionContext):
+    # Enter a parse tree produced by RLangParser#feature.
+    def enterFeature(self, ctx:RLangParser.FeatureContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#action.
-    def exitAction(self, ctx:RLangParser.ActionContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#goal.
-    def enterGoal(self, ctx:RLangParser.GoalContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#goal.
-    def exitGoal(self, ctx:RLangParser.GoalContext):
+    # Exit a parse tree produced by RLangParser#feature.
+    def exitFeature(self, ctx:RLangParser.FeatureContext):
         pass
 
 
@@ -113,15 +104,6 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#markov_feature.
     def exitMarkov_feature(self, ctx:RLangParser.Markov_featureContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#effect.
-    def enterEffect(self, ctx:RLangParser.EffectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#effect.
-    def exitEffect(self, ctx:RLangParser.EffectContext):
         pass
 
 
@@ -140,6 +122,24 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#policy.
     def exitPolicy(self, ctx:RLangParser.PolicyContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#goal.
+    def enterGoal(self, ctx:RLangParser.GoalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#goal.
+    def exitGoal(self, ctx:RLangParser.GoalContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#effect.
+    def enterEffect(self, ctx:RLangParser.EffectContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect.
+    def exitEffect(self, ctx:RLangParser.EffectContext):
         pass
 
 

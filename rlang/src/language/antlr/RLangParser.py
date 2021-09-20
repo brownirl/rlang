@@ -25,130 +25,129 @@ def serializedATN():
         buf.write("\16\6v\3\6\3\6\6\6{\n\6\r\6\16\6|\3\6\3\6\6\6\u0081\n")
         buf.write("\6\r\6\16\6\u0082\3\6\3\6\6\6\u0087\n\6\r\6\16\6\u0088")
         buf.write("\3\6\3\6\3\6\5\6\u008e\n\6\3\7\3\7\3\7\3\7\3\7\5\7\u0095")
-        buf.write("\n\7\3\b\3\b\3\b\3\b\3\b\5\b\u009c\n\b\3\t\3\t\3\t\3\t")
-        buf.write("\3\t\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\13\3\13")
-        buf.write("\5\13\u00ae\n\13\3\f\3\f\3\f\3\f\3\f\3\r\3\r\3\r\3\r\3")
-        buf.write("\r\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u00c0\n\16\f\16")
-        buf.write("\16\16\u00c3\13\16\7\16\u00c5\n\16\f\16\16\16\u00c8\13")
-        buf.write("\16\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17")
-        buf.write("\3\17\7\17\u00d5\n\17\f\17\16\17\u00d8\13\17\6\17\u00da")
-        buf.write("\n\17\r\17\16\17\u00db\3\17\3\17\3\17\3\17\7\17\u00e2")
-        buf.write("\n\17\f\17\16\17\u00e5\13\17\3\17\3\17\3\20\3\20\3\20")
-        buf.write("\3\20\3\20\3\20\7\20\u00ef\n\20\f\20\16\20\u00f2\13\20")
-        buf.write("\6\20\u00f4\n\20\r\20\16\20\u00f5\3\20\3\20\3\21\3\21")
-        buf.write("\3\21\5\21\u00fd\n\21\3\22\3\22\3\22\3\23\3\23\7\23\u0104")
-        buf.write("\n\23\f\23\16\23\u0107\13\23\3\23\3\23\3\23\7\23\u010c")
-        buf.write("\n\23\f\23\16\23\u010f\13\23\3\23\3\23\3\23\5\23\u0114")
-        buf.write("\n\23\3\24\3\24\3\24\3\24\3\24\3\24\3\24\7\24\u011d\n")
-        buf.write("\24\f\24\16\24\u0120\13\24\6\24\u0122\n\24\r\24\16\24")
-        buf.write("\u0123\3\24\3\24\3\24\3\24\3\24\3\24\3\24\7\24\u012d\n")
-        buf.write("\24\f\24\16\24\u0130\13\24\6\24\u0132\n\24\r\24\16\24")
-        buf.write("\u0133\3\24\3\24\7\24\u0138\n\24\f\24\16\24\u013b\13\24")
-        buf.write("\3\24\3\24\3\24\3\24\3\24\7\24\u0142\n\24\f\24\16\24\u0145")
-        buf.write("\13\24\6\24\u0147\n\24\r\24\16\24\u0148\3\24\3\24\7\24")
-        buf.write("\u014d\n\24\f\24\16\24\u0150\13\24\5\24\u0152\n\24\3\25")
-        buf.write("\3\25\3\25\5\25\u0157\n\25\3\26\3\26\3\26\3\26\3\26\3")
-        buf.write("\26\3\26\3\26\5\26\u0161\n\26\3\26\3\26\3\26\3\26\3\26")
-        buf.write("\3\26\7\26\u0169\n\26\f\26\16\26\u016c\13\26\3\27\3\27")
-        buf.write("\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27")
-        buf.write("\3\27\3\27\3\27\3\27\5\27\u017f\n\27\3\27\3\27\3\27\3")
-        buf.write("\27\3\27\3\27\3\27\3\27\3\27\7\27\u018a\n\27\f\27\16\27")
-        buf.write("\u018d\13\27\3\30\3\30\5\30\u0191\n\30\3\30\7\30\u0194")
-        buf.write("\n\30\f\30\16\30\u0197\13\30\3\30\3\30\5\30\u019b\n\30")
-        buf.write("\3\30\3\30\5\30\u019f\n\30\3\30\5\30\u01a2\n\30\3\31\3")
-        buf.write("\31\5\31\u01a6\n\31\3\32\3\32\3\32\3\32\5\32\u01ac\n\32")
-        buf.write("\7\32\u01ae\n\32\f\32\16\32\u01b1\13\32\3\32\3\32\3\33")
-        buf.write("\3\33\3\33\3\33\5\33\u01b9\n\33\7\33\u01bb\n\33\f\33\16")
-        buf.write("\33\u01be\13\33\3\33\3\33\3\34\3\34\5\34\u01c4\n\34\3")
-        buf.write("\34\3\34\5\34\u01c8\n\34\3\34\3\34\3\35\3\35\5\35\u01ce")
-        buf.write("\n\35\3\36\5\36\u01d1\n\36\3\36\3\36\3\37\5\37\u01d6\n")
-        buf.write("\37\3\37\3\37\3\37\2\4*, \2\4\6\b\n\f\16\20\22\24\26\30")
-        buf.write("\32\34\36 \"$&(*,.\60\62\64\668:<\2\n\4\2\23\2399\3\2")
-        buf.write("#\'\4\2\24\2499\3\2\64\65\3\2\66\67\4\2(+\62\63\3\2 !")
-        buf.write("\4\2((++\2\u020a\2A\3\2\2\2\4T\3\2\2\2\6W\3\2\2\2\b]\3")
-        buf.write("\2\2\2\n\u008d\3\2\2\2\f\u008f\3\2\2\2\16\u0096\3\2\2")
-        buf.write("\2\20\u009d\3\2\2\2\22\u00a2\3\2\2\2\24\u00a7\3\2\2\2")
-        buf.write("\26\u00af\3\2\2\2\30\u00b4\3\2\2\2\32\u00b9\3\2\2\2\34")
-        buf.write("\u00cb\3\2\2\2\36\u00e8\3\2\2\2 \u00fc\3\2\2\2\"\u00fe")
-        buf.write("\3\2\2\2$\u0101\3\2\2\2&\u0151\3\2\2\2(\u0153\3\2\2\2")
-        buf.write("*\u0160\3\2\2\2,\u017e\3\2\2\2.\u01a1\3\2\2\2\60\u01a5")
-        buf.write("\3\2\2\2\62\u01a7\3\2\2\2\64\u01b4\3\2\2\2\66\u01c1\3")
-        buf.write("\2\2\28\u01cd\3\2\2\2:\u01d0\3\2\2\2<\u01d5\3\2\2\2>@")
-        buf.write("\7\5\2\2?>\3\2\2\2@C\3\2\2\2A?\3\2\2\2AB\3\2\2\2BD\3\2")
-        buf.write("\2\2CA\3\2\2\2DE\5\4\3\2EI\5\b\5\2FH\7\5\2\2GF\3\2\2\2")
-        buf.write("HK\3\2\2\2IG\3\2\2\2IJ\3\2\2\2J\3\3\2\2\2KI\3\2\2\2LN")
-        buf.write("\5\6\4\2MO\7\5\2\2NM\3\2\2\2OP\3\2\2\2PN\3\2\2\2PQ\3\2")
-        buf.write("\2\2QS\3\2\2\2RL\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2")
-        buf.write("U\5\3\2\2\2VT\3\2\2\2WX\7\22\2\2XY\78\2\2Y\7\3\2\2\2Z")
-        buf.write("\\\5\n\6\2[Z\3\2\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^\t")
-        buf.write("\3\2\2\2_]\3\2\2\2`b\5\f\7\2ac\7\5\2\2ba\3\2\2\2cd\3\2")
-        buf.write("\2\2db\3\2\2\2de\3\2\2\2e\u008e\3\2\2\2fh\5\16\b\2gi\7")
-        buf.write("\5\2\2hg\3\2\2\2ij\3\2\2\2jh\3\2\2\2jk\3\2\2\2k\u008e")
-        buf.write("\3\2\2\2ln\5\20\t\2mo\7\5\2\2nm\3\2\2\2op\3\2\2\2pn\3")
-        buf.write("\2\2\2pq\3\2\2\2q\u008e\3\2\2\2rt\5\22\n\2su\7\5\2\2t")
-        buf.write("s\3\2\2\2uv\3\2\2\2vt\3\2\2\2vw\3\2\2\2w\u008e\3\2\2\2")
-        buf.write("xz\5\26\f\2y{\7\5\2\2zy\3\2\2\2{|\3\2\2\2|z\3\2\2\2|}")
-        buf.write("\3\2\2\2}\u008e\3\2\2\2~\u0080\5\24\13\2\177\u0081\7\5")
-        buf.write("\2\2\u0080\177\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0080")
-        buf.write("\3\2\2\2\u0082\u0083\3\2\2\2\u0083\u008e\3\2\2\2\u0084")
-        buf.write("\u0086\5\30\r\2\u0085\u0087\7\5\2\2\u0086\u0085\3\2\2")
-        buf.write("\2\u0087\u0088\3\2\2\2\u0088\u0086\3\2\2\2\u0088\u0089")
-        buf.write("\3\2\2\2\u0089\u008e\3\2\2\2\u008a\u008e\5\32\16\2\u008b")
-        buf.write("\u008e\5\34\17\2\u008c\u008e\5\36\20\2\u008d`\3\2\2\2")
-        buf.write("\u008df\3\2\2\2\u008dl\3\2\2\2\u008dr\3\2\2\2\u008dx\3")
-        buf.write("\2\2\2\u008d~\3\2\2\2\u008d\u0084\3\2\2\2\u008d\u008a")
-        buf.write("\3\2\2\2\u008d\u008b\3\2\2\2\u008d\u008c\3\2\2\2\u008e")
-        buf.write("\13\3\2\2\2\u008f\u0090\7\n\2\2\u0090\u0091\79\2\2\u0091")
-        buf.write("\u0094\7\"\2\2\u0092\u0095\5*\26\2\u0093\u0095\5,\27\2")
-        buf.write("\u0094\u0092\3\2\2\2\u0094\u0093\3\2\2\2\u0095\r\3\2\2")
-        buf.write("\2\u0096\u0097\7\b\2\2\u0097\u0098\79\2\2\u0098\u0099")
-        buf.write("\7\"\2\2\u0099\u009b\7\24\2\2\u009a\u009c\5\60\31\2\u009b")
-        buf.write("\u009a\3\2\2\2\u009b\u009c\3\2\2\2\u009c\17\3\2\2\2\u009d")
-        buf.write("\u009e\7\7\2\2\u009e\u009f\79\2\2\u009f\u00a0\7\"\2\2")
-        buf.write("\u00a0\u00a1\5*\26\2\u00a1\21\3\2\2\2\u00a2\u00a3\7\6")
-        buf.write("\2\2\u00a3\u00a4\79\2\2\u00a4\u00a5\7\"\2\2\u00a5\u00a6")
-        buf.write("\5,\27\2\u00a6\23\3\2\2\2\u00a7\u00a8\7\13\2\2\u00a8\u00a9")
-        buf.write("\79\2\2\u00a9\u00ad\7\"\2\2\u00aa\u00ae\58\35\2\u00ab")
-        buf.write("\u00ae\5\62\32\2\u00ac\u00ae\5\64\33\2\u00ad\u00aa\3\2")
-        buf.write("\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ac\3\2\2\2\u00ae\25")
-        buf.write("\3\2\2\2\u00af\u00b0\7\t\2\2\u00b0\u00b1\79\2\2\u00b1")
-        buf.write("\u00b2\7\"\2\2\u00b2\u00b3\5,\27\2\u00b3\27\3\2\2\2\u00b4")
-        buf.write("\u00b5\7\21\2\2\u00b5\u00b6\79\2\2\u00b6\u00b7\7\"\2\2")
-        buf.write("\u00b7\u00b8\5*\26\2\u00b8\31\3\2\2\2\u00b9\u00ba\7\f")
-        buf.write("\2\2\u00ba\u00bb\5,\27\2\u00bb\u00bc\7,\2\2\u00bc\u00c6")
-        buf.write("\7\3\2\2\u00bd\u00c1\5 \21\2\u00be\u00c0\7\5\2\2\u00bf")
-        buf.write("\u00be\3\2\2\2\u00c0\u00c3\3\2\2\2\u00c1\u00bf\3\2\2\2")
-        buf.write("\u00c1\u00c2\3\2\2\2\u00c2\u00c5\3\2\2\2\u00c3\u00c1\3")
-        buf.write("\2\2\2\u00c4\u00bd\3\2\2\2\u00c5\u00c8\3\2\2\2\u00c6\u00c4")
-        buf.write("\3\2\2\2\u00c6\u00c7\3\2\2\2\u00c7\u00c9\3\2\2\2\u00c8")
-        buf.write("\u00c6\3\2\2\2\u00c9\u00ca\7\4\2\2\u00ca\33\3\2\2\2\u00cb")
-        buf.write("\u00cc\7\20\2\2\u00cc\u00cd\79\2\2\u00cd\u00ce\7,\2\2")
-        buf.write("\u00ce\u00cf\7\3\2\2\u00cf\u00d0\7\33\2\2\u00d0\u00d1")
-        buf.write("\5,\27\2\u00d1\u00d9\7\3\2\2\u00d2\u00d6\5&\24\2\u00d3")
-        buf.write("\u00d5\7\5\2\2\u00d4\u00d3\3\2\2\2\u00d5\u00d8\3\2\2\2")
-        buf.write("\u00d6\u00d4\3\2\2\2\u00d6\u00d7\3\2\2\2\u00d7\u00da\3")
-        buf.write("\2\2\2\u00d8\u00d6\3\2\2\2\u00d9\u00d2\3\2\2\2\u00da\u00db")
-        buf.write("\3\2\2\2\u00db\u00d9\3\2\2\2\u00db\u00dc\3\2\2\2\u00dc")
-        buf.write("\u00dd\3\2\2\2\u00dd\u00de\7\4\2\2\u00de\u00df\7\34\2")
-        buf.write("\2\u00df\u00e3\5,\27\2\u00e0\u00e2\7\5\2\2\u00e1\u00e0")
-        buf.write("\3\2\2\2\u00e2\u00e5\3\2\2\2\u00e3\u00e1\3\2\2\2\u00e3")
-        buf.write("\u00e4\3\2\2\2\u00e4\u00e6\3\2\2\2\u00e5\u00e3\3\2\2\2")
-        buf.write("\u00e6\u00e7\7\4\2\2\u00e7\35\3\2\2\2\u00e8\u00e9\7\16")
-        buf.write("\2\2\u00e9\u00ea\79\2\2\u00ea\u00eb\7,\2\2\u00eb\u00f3")
-        buf.write("\7\3\2\2\u00ec\u00f0\5&\24\2\u00ed\u00ef\7\5\2\2\u00ee")
-        buf.write("\u00ed\3\2\2\2\u00ef\u00f2\3\2\2\2\u00f0\u00ee\3\2\2\2")
-        buf.write("\u00f0\u00f1\3\2\2\2\u00f1\u00f4\3\2\2\2\u00f2\u00f0\3")
-        buf.write("\2\2\2\u00f3\u00ec\3\2\2\2\u00f4\u00f5\3\2\2\2\u00f5\u00f3")
-        buf.write("\3\2\2\2\u00f5\u00f6\3\2\2\2\u00f6\u00f7\3\2\2\2\u00f7")
-        buf.write("\u00f8\7\4\2\2\u00f8\37\3\2\2\2\u00f9\u00fd\5\"\22\2\u00fa")
-        buf.write("\u00fd\5$\23\2\u00fb\u00fd\5\f\7\2\u00fc\u00f9\3\2\2\2")
-        buf.write("\u00fc\u00fa\3\2\2\2\u00fc\u00fb\3\2\2\2\u00fd!\3\2\2")
-        buf.write("\2\u00fe\u00ff\7\r\2\2\u00ff\u0100\58\35\2\u0100#\3\2")
-        buf.write("\2\2\u0101\u0105\t\2\2\2\u0102\u0104\5\60\31\2\u0103\u0102")
-        buf.write("\3\2\2\2\u0104\u0107\3\2\2\2\u0105\u0103\3\2\2\2\u0105")
-        buf.write("\u0106\3\2\2\2\u0106\u0108\3\2\2\2\u0107\u0105\3\2\2\2")
-        buf.write("\u0108\u0113\t\3\2\2\u0109\u010d\t\4\2\2\u010a\u010c\5")
-        buf.write("\60\31\2\u010b\u010a\3\2\2\2\u010c\u010f\3\2\2\2\u010d")
+        buf.write("\n\7\3\b\3\b\3\b\3\b\3\b\3\b\5\b\u009d\n\b\3\t\3\t\3\t")
+        buf.write("\3\t\3\t\5\t\u00a4\n\t\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3")
+        buf.write("\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\r\3\r\3\r\3\r\3\r")
+        buf.write("\3\r\3\r\3\r\3\r\7\r\u00be\n\r\f\r\16\r\u00c1\13\r\6\r")
+        buf.write("\u00c3\n\r\r\r\16\r\u00c4\3\r\3\r\3\r\3\r\7\r\u00cb\n")
+        buf.write("\r\f\r\16\r\u00ce\13\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16")
+        buf.write("\3\16\7\16\u00d8\n\16\f\16\16\16\u00db\13\16\6\16\u00dd")
+        buf.write("\n\16\r\16\16\16\u00de\3\16\3\16\3\17\3\17\3\17\3\17\3")
+        buf.write("\17\3\20\3\20\3\20\3\20\3\20\3\20\7\20\u00ee\n\20\f\20")
+        buf.write("\16\20\u00f1\13\20\7\20\u00f3\n\20\f\20\16\20\u00f6\13")
+        buf.write("\20\3\20\3\20\3\21\3\21\3\21\5\21\u00fd\n\21\3\22\3\22")
+        buf.write("\3\22\3\23\3\23\7\23\u0104\n\23\f\23\16\23\u0107\13\23")
+        buf.write("\3\23\3\23\3\23\7\23\u010c\n\23\f\23\16\23\u010f\13\23")
+        buf.write("\3\23\3\23\3\23\5\23\u0114\n\23\3\24\3\24\3\24\3\24\3")
+        buf.write("\24\3\24\3\24\7\24\u011d\n\24\f\24\16\24\u0120\13\24\6")
+        buf.write("\24\u0122\n\24\r\24\16\24\u0123\3\24\3\24\3\24\3\24\3")
+        buf.write("\24\3\24\3\24\7\24\u012d\n\24\f\24\16\24\u0130\13\24\6")
+        buf.write("\24\u0132\n\24\r\24\16\24\u0133\3\24\3\24\7\24\u0138\n")
+        buf.write("\24\f\24\16\24\u013b\13\24\3\24\3\24\3\24\3\24\3\24\7")
+        buf.write("\24\u0142\n\24\f\24\16\24\u0145\13\24\6\24\u0147\n\24")
+        buf.write("\r\24\16\24\u0148\3\24\3\24\7\24\u014d\n\24\f\24\16\24")
+        buf.write("\u0150\13\24\5\24\u0152\n\24\3\25\3\25\3\25\5\25\u0157")
+        buf.write("\n\25\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\5\26\u0161")
+        buf.write("\n\26\3\26\3\26\3\26\3\26\3\26\3\26\7\26\u0169\n\26\f")
+        buf.write("\26\16\26\u016c\13\26\3\27\3\27\3\27\3\27\3\27\3\27\3")
+        buf.write("\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27")
+        buf.write("\5\27\u017f\n\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3")
+        buf.write("\27\3\27\7\27\u018a\n\27\f\27\16\27\u018d\13\27\3\30\3")
+        buf.write("\30\5\30\u0191\n\30\3\30\7\30\u0194\n\30\f\30\16\30\u0197")
+        buf.write("\13\30\3\30\3\30\5\30\u019b\n\30\3\30\3\30\5\30\u019f")
+        buf.write("\n\30\3\30\5\30\u01a2\n\30\3\31\3\31\5\31\u01a6\n\31\3")
+        buf.write("\32\3\32\3\32\3\32\5\32\u01ac\n\32\7\32\u01ae\n\32\f\32")
+        buf.write("\16\32\u01b1\13\32\3\32\3\32\3\33\3\33\3\33\3\33\5\33")
+        buf.write("\u01b9\n\33\7\33\u01bb\n\33\f\33\16\33\u01be\13\33\3\33")
+        buf.write("\3\33\3\34\3\34\5\34\u01c4\n\34\3\34\3\34\5\34\u01c8\n")
+        buf.write("\34\3\34\3\34\3\35\3\35\5\35\u01ce\n\35\3\36\5\36\u01d1")
+        buf.write("\n\36\3\36\3\36\3\37\5\37\u01d6\n\37\3\37\3\37\3\37\2")
+        buf.write("\4*, \2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.")
+        buf.write("\60\62\64\668:<\2\n\4\2\23\2399\3\2#\'\4\2\24\2499\3\2")
+        buf.write("\64\65\3\2\66\67\4\2(+\62\63\3\2 !\4\2((++\2\u020a\2A")
+        buf.write("\3\2\2\2\4T\3\2\2\2\6W\3\2\2\2\b]\3\2\2\2\n\u008d\3\2")
+        buf.write("\2\2\f\u008f\3\2\2\2\16\u0096\3\2\2\2\20\u009e\3\2\2\2")
+        buf.write("\22\u00a5\3\2\2\2\24\u00aa\3\2\2\2\26\u00af\3\2\2\2\30")
+        buf.write("\u00b4\3\2\2\2\32\u00d1\3\2\2\2\34\u00e2\3\2\2\2\36\u00e7")
+        buf.write("\3\2\2\2 \u00fc\3\2\2\2\"\u00fe\3\2\2\2$\u0101\3\2\2\2")
+        buf.write("&\u0151\3\2\2\2(\u0153\3\2\2\2*\u0160\3\2\2\2,\u017e\3")
+        buf.write("\2\2\2.\u01a1\3\2\2\2\60\u01a5\3\2\2\2\62\u01a7\3\2\2")
+        buf.write("\2\64\u01b4\3\2\2\2\66\u01c1\3\2\2\28\u01cd\3\2\2\2:\u01d0")
+        buf.write("\3\2\2\2<\u01d5\3\2\2\2>@\7\5\2\2?>\3\2\2\2@C\3\2\2\2")
+        buf.write("A?\3\2\2\2AB\3\2\2\2BD\3\2\2\2CA\3\2\2\2DE\5\4\3\2EI\5")
+        buf.write("\b\5\2FH\7\5\2\2GF\3\2\2\2HK\3\2\2\2IG\3\2\2\2IJ\3\2\2")
+        buf.write("\2J\3\3\2\2\2KI\3\2\2\2LN\5\6\4\2MO\7\5\2\2NM\3\2\2\2")
+        buf.write("OP\3\2\2\2PN\3\2\2\2PQ\3\2\2\2QS\3\2\2\2RL\3\2\2\2SV\3")
+        buf.write("\2\2\2TR\3\2\2\2TU\3\2\2\2U\5\3\2\2\2VT\3\2\2\2WX\7\22")
+        buf.write("\2\2XY\78\2\2Y\7\3\2\2\2Z\\\5\n\6\2[Z\3\2\2\2\\_\3\2\2")
+        buf.write("\2][\3\2\2\2]^\3\2\2\2^\t\3\2\2\2_]\3\2\2\2`b\5\f\7\2")
+        buf.write("ac\7\5\2\2ba\3\2\2\2cd\3\2\2\2db\3\2\2\2de\3\2\2\2e\u008e")
+        buf.write("\3\2\2\2fh\5\20\t\2gi\7\5\2\2hg\3\2\2\2ij\3\2\2\2jh\3")
+        buf.write("\2\2\2jk\3\2\2\2k\u008e\3\2\2\2ln\5\24\13\2mo\7\5\2\2")
+        buf.write("nm\3\2\2\2op\3\2\2\2pn\3\2\2\2pq\3\2\2\2q\u008e\3\2\2")
+        buf.write("\2rt\5\22\n\2su\7\5\2\2ts\3\2\2\2uv\3\2\2\2vt\3\2\2\2")
+        buf.write("vw\3\2\2\2w\u008e\3\2\2\2xz\5\34\17\2y{\7\5\2\2zy\3\2")
+        buf.write("\2\2{|\3\2\2\2|z\3\2\2\2|}\3\2\2\2}\u008e\3\2\2\2~\u0080")
+        buf.write("\5\16\b\2\177\u0081\7\5\2\2\u0080\177\3\2\2\2\u0081\u0082")
+        buf.write("\3\2\2\2\u0082\u0080\3\2\2\2\u0082\u0083\3\2\2\2\u0083")
+        buf.write("\u008e\3\2\2\2\u0084\u0086\5\26\f\2\u0085\u0087\7\5\2")
+        buf.write("\2\u0086\u0085\3\2\2\2\u0087\u0088\3\2\2\2\u0088\u0086")
+        buf.write("\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008e\3\2\2\2\u008a")
+        buf.write("\u008e\5\36\20\2\u008b\u008e\5\30\r\2\u008c\u008e\5\32")
+        buf.write("\16\2\u008d`\3\2\2\2\u008df\3\2\2\2\u008dl\3\2\2\2\u008d")
+        buf.write("r\3\2\2\2\u008dx\3\2\2\2\u008d~\3\2\2\2\u008d\u0084\3")
+        buf.write("\2\2\2\u008d\u008a\3\2\2\2\u008d\u008b\3\2\2\2\u008d\u008c")
+        buf.write("\3\2\2\2\u008e\13\3\2\2\2\u008f\u0090\7\n\2\2\u0090\u0091")
+        buf.write("\79\2\2\u0091\u0094\7\"\2\2\u0092\u0095\5*\26\2\u0093")
+        buf.write("\u0095\5,\27\2\u0094\u0092\3\2\2\2\u0094\u0093\3\2\2\2")
+        buf.write("\u0095\r\3\2\2\2\u0096\u0097\7\13\2\2\u0097\u0098\79\2")
+        buf.write("\2\u0098\u009c\7\"\2\2\u0099\u009d\58\35\2\u009a\u009d")
+        buf.write("\5\62\32\2\u009b\u009d\5\64\33\2\u009c\u0099\3\2\2\2\u009c")
+        buf.write("\u009a\3\2\2\2\u009c\u009b\3\2\2\2\u009d\17\3\2\2\2\u009e")
+        buf.write("\u009f\7\b\2\2\u009f\u00a0\79\2\2\u00a0\u00a1\7\"\2\2")
+        buf.write("\u00a1\u00a3\7\24\2\2\u00a2\u00a4\5\60\31\2\u00a3\u00a2")
+        buf.write("\3\2\2\2\u00a3\u00a4\3\2\2\2\u00a4\21\3\2\2\2\u00a5\u00a6")
+        buf.write("\7\6\2\2\u00a6\u00a7\79\2\2\u00a7\u00a8\7\"\2\2\u00a8")
+        buf.write("\u00a9\5,\27\2\u00a9\23\3\2\2\2\u00aa\u00ab\7\7\2\2\u00ab")
+        buf.write("\u00ac\79\2\2\u00ac\u00ad\7\"\2\2\u00ad\u00ae\5*\26\2")
+        buf.write("\u00ae\25\3\2\2\2\u00af\u00b0\7\21\2\2\u00b0\u00b1\79")
+        buf.write("\2\2\u00b1\u00b2\7\"\2\2\u00b2\u00b3\5*\26\2\u00b3\27")
+        buf.write("\3\2\2\2\u00b4\u00b5\7\20\2\2\u00b5\u00b6\79\2\2\u00b6")
+        buf.write("\u00b7\7,\2\2\u00b7\u00b8\7\3\2\2\u00b8\u00b9\7\33\2\2")
+        buf.write("\u00b9\u00ba\5,\27\2\u00ba\u00c2\7\3\2\2\u00bb\u00bf\5")
+        buf.write("&\24\2\u00bc\u00be\7\5\2\2\u00bd\u00bc\3\2\2\2\u00be\u00c1")
+        buf.write("\3\2\2\2\u00bf\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0")
+        buf.write("\u00c3\3\2\2\2\u00c1\u00bf\3\2\2\2\u00c2\u00bb\3\2\2\2")
+        buf.write("\u00c3\u00c4\3\2\2\2\u00c4\u00c2\3\2\2\2\u00c4\u00c5\3")
+        buf.write("\2\2\2\u00c5\u00c6\3\2\2\2\u00c6\u00c7\7\4\2\2\u00c7\u00c8")
+        buf.write("\7\34\2\2\u00c8\u00cc\5,\27\2\u00c9\u00cb\7\5\2\2\u00ca")
+        buf.write("\u00c9\3\2\2\2\u00cb\u00ce\3\2\2\2\u00cc\u00ca\3\2\2\2")
+        buf.write("\u00cc\u00cd\3\2\2\2\u00cd\u00cf\3\2\2\2\u00ce\u00cc\3")
+        buf.write("\2\2\2\u00cf\u00d0\7\4\2\2\u00d0\31\3\2\2\2\u00d1\u00d2")
+        buf.write("\7\16\2\2\u00d2\u00d3\79\2\2\u00d3\u00d4\7,\2\2\u00d4")
+        buf.write("\u00dc\7\3\2\2\u00d5\u00d9\5&\24\2\u00d6\u00d8\7\5\2\2")
+        buf.write("\u00d7\u00d6\3\2\2\2\u00d8\u00db\3\2\2\2\u00d9\u00d7\3")
+        buf.write("\2\2\2\u00d9\u00da\3\2\2\2\u00da\u00dd\3\2\2\2\u00db\u00d9")
+        buf.write("\3\2\2\2\u00dc\u00d5\3\2\2\2\u00dd\u00de\3\2\2\2\u00de")
+        buf.write("\u00dc\3\2\2\2\u00de\u00df\3\2\2\2\u00df\u00e0\3\2\2\2")
+        buf.write("\u00e0\u00e1\7\4\2\2\u00e1\33\3\2\2\2\u00e2\u00e3\7\t")
+        buf.write("\2\2\u00e3\u00e4\79\2\2\u00e4\u00e5\7\"\2\2\u00e5\u00e6")
+        buf.write("\5,\27\2\u00e6\35\3\2\2\2\u00e7\u00e8\7\f\2\2\u00e8\u00e9")
+        buf.write("\5,\27\2\u00e9\u00ea\7,\2\2\u00ea\u00f4\7\3\2\2\u00eb")
+        buf.write("\u00ef\5 \21\2\u00ec\u00ee\7\5\2\2\u00ed\u00ec\3\2\2\2")
+        buf.write("\u00ee\u00f1\3\2\2\2\u00ef\u00ed\3\2\2\2\u00ef\u00f0\3")
+        buf.write("\2\2\2\u00f0\u00f3\3\2\2\2\u00f1\u00ef\3\2\2\2\u00f2\u00eb")
+        buf.write("\3\2\2\2\u00f3\u00f6\3\2\2\2\u00f4\u00f2\3\2\2\2\u00f4")
+        buf.write("\u00f5\3\2\2\2\u00f5\u00f7\3\2\2\2\u00f6\u00f4\3\2\2\2")
+        buf.write("\u00f7\u00f8\7\4\2\2\u00f8\37\3\2\2\2\u00f9\u00fd\5\"")
+        buf.write("\22\2\u00fa\u00fd\5$\23\2\u00fb\u00fd\5\f\7\2\u00fc\u00f9")
+        buf.write("\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fc\u00fb\3\2\2\2\u00fd")
+        buf.write("!\3\2\2\2\u00fe\u00ff\7\r\2\2\u00ff\u0100\5*\26\2\u0100")
+        buf.write("#\3\2\2\2\u0101\u0105\t\2\2\2\u0102\u0104\5\60\31\2\u0103")
+        buf.write("\u0102\3\2\2\2\u0104\u0107\3\2\2\2\u0105\u0103\3\2\2\2")
+        buf.write("\u0105\u0106\3\2\2\2\u0106\u0108\3\2\2\2\u0107\u0105\3")
+        buf.write("\2\2\2\u0108\u0113\t\3\2\2\u0109\u010d\t\4\2\2\u010a\u010c")
+        buf.write("\5\60\31\2\u010b\u010a\3\2\2\2\u010c\u010f\3\2\2\2\u010d")
         buf.write("\u010b\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u0114\3\2\2\2")
         buf.write("\u010f\u010d\3\2\2\2\u0110\u0114\5,\27\2\u0111\u0114\5")
         buf.write("*\26\2\u0112\u0114\5\62\32\2\u0113\u0109\3\2\2\2\u0113")
@@ -239,8 +238,8 @@ def serializedATN():
         buf.write("\2\u01d1\u01d2\3\2\2\2\u01d2\u01d3\7;\2\2\u01d3;\3\2\2")
         buf.write("\2\u01d4\u01d6\7\67\2\2\u01d5\u01d4\3\2\2\2\u01d5\u01d6")
         buf.write("\3\2\2\2\u01d6\u01d7\3\2\2\2\u01d7\u01d8\7:\2\2\u01d8")
-        buf.write("=\3\2\2\2<AIPT]djpv|\u0082\u0088\u008d\u0094\u009b\u00ad")
-        buf.write("\u00c1\u00c6\u00d6\u00db\u00e3\u00f0\u00f5\u00fc\u0105")
+        buf.write("=\3\2\2\2<AIPT]djpv|\u0082\u0088\u008d\u0094\u009c\u00a3")
+        buf.write("\u00bf\u00c4\u00cc\u00d9\u00de\u00ef\u00f4\u00fc\u0105")
         buf.write("\u010d\u0113\u011e\u0123\u012e\u0133\u0139\u0143\u0148")
         buf.write("\u014e\u0151\u0156\u0160\u0168\u016a\u017e\u0189\u018b")
         buf.write("\u0190\u0195\u019a\u019e\u01a1\u01a5\u01ab\u01af\u01b8")
@@ -287,15 +286,15 @@ class RLangParser ( Parser ):
     RULE_declarations = 3
     RULE_dec = 4
     RULE_constant = 5
-    RULE_factor = 6
-    RULE_feature = 7
+    RULE_action = 6
+    RULE_factor = 7
     RULE_predicate = 8
-    RULE_action = 9
-    RULE_goal = 10
-    RULE_markov_feature = 11
-    RULE_effect = 12
-    RULE_option = 13
-    RULE_policy = 14
+    RULE_feature = 9
+    RULE_markov_feature = 10
+    RULE_option = 11
+    RULE_policy = 12
+    RULE_goal = 13
+    RULE_effect = 14
     RULE_effect_stat = 15
     RULE_reward = 16
     RULE_assignment = 17
@@ -313,9 +312,9 @@ class RLangParser ( Parser ):
     RULE_any_decimal = 29
 
     ruleNames =  [ "program", "imports", "import_stat", "declarations", 
-                   "dec", "constant", "factor", "feature", "predicate", 
-                   "action", "goal", "markov_feature", "effect", "option", 
-                   "policy", "effect_stat", "reward", "assignment", "policy_stat", 
+                   "dec", "constant", "action", "factor", "predicate", "feature", 
+                   "markov_feature", "option", "policy", "goal", "effect", 
+                   "effect_stat", "reward", "assignment", "policy_stat", 
                    "execute", "arithmetic_exp", "boolean_exp", "any_bound_var", 
                    "trailer", "int_array_exp", "any_array_exp", "slice_exp", 
                    "any_number", "any_integer", "any_decimal" ]
@@ -948,6 +947,88 @@ class RLangParser ( Parser ):
         return localctx
 
 
+    class ActionContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+        def ACTION(self):
+            return self.getToken(RLangParser.ACTION, 0)
+
+        def IDENTIFIER(self):
+            return self.getToken(RLangParser.IDENTIFIER, 0)
+
+        def BIND(self):
+            return self.getToken(RLangParser.BIND, 0)
+
+        def any_number(self):
+            return self.getTypedRuleContext(RLangParser.Any_numberContext,0)
+
+
+        def int_array_exp(self):
+            return self.getTypedRuleContext(RLangParser.Int_array_expContext,0)
+
+
+        def any_array_exp(self):
+            return self.getTypedRuleContext(RLangParser.Any_array_expContext,0)
+
+
+        def getRuleIndex(self):
+            return RLangParser.RULE_action
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterAction" ):
+                listener.enterAction(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitAction" ):
+                listener.exitAction(self)
+
+
+
+
+    def action(self):
+
+        localctx = RLangParser.ActionContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 12, self.RULE_action)
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 148
+            self.match(RLangParser.ACTION)
+            self.state = 149
+            self.match(RLangParser.IDENTIFIER)
+            self.state = 150
+            self.match(RLangParser.BIND)
+            self.state = 154
+            self._errHandler.sync(self)
+            la_ = self._interp.adaptivePredict(self._input,14,self._ctx)
+            if la_ == 1:
+                self.state = 151
+                self.any_number()
+                pass
+
+            elif la_ == 2:
+                self.state = 152
+                self.int_array_exp()
+                pass
+
+            elif la_ == 3:
+                self.state = 153
+                self.any_array_exp()
+                pass
+
+
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
     class FactorContext(ParserRuleContext):
         __slots__ = 'parser'
 
@@ -988,83 +1069,26 @@ class RLangParser ( Parser ):
     def factor(self):
 
         localctx = RLangParser.FactorContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 12, self.RULE_factor)
+        self.enterRule(localctx, 14, self.RULE_factor)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 148
+            self.state = 156
             self.match(RLangParser.FACTOR)
-            self.state = 149
+            self.state = 157
             self.match(RLangParser.IDENTIFIER)
-            self.state = 150
+            self.state = 158
             self.match(RLangParser.BIND)
-            self.state = 151
+            self.state = 159
             self.match(RLangParser.S)
-            self.state = 153
+            self.state = 161
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==RLangParser.L_BRK:
-                self.state = 152
+                self.state = 160
                 self.trailer()
 
 
-        except RecognitionException as re:
-            localctx.exception = re
-            self._errHandler.reportError(self, re)
-            self._errHandler.recover(self, re)
-        finally:
-            self.exitRule()
-        return localctx
-
-
-    class FeatureContext(ParserRuleContext):
-        __slots__ = 'parser'
-
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
-            super().__init__(parent, invokingState)
-            self.parser = parser
-
-        def FEATURE(self):
-            return self.getToken(RLangParser.FEATURE, 0)
-
-        def IDENTIFIER(self):
-            return self.getToken(RLangParser.IDENTIFIER, 0)
-
-        def BIND(self):
-            return self.getToken(RLangParser.BIND, 0)
-
-        def arithmetic_exp(self):
-            return self.getTypedRuleContext(RLangParser.Arithmetic_expContext,0)
-
-
-        def getRuleIndex(self):
-            return RLangParser.RULE_feature
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFeature" ):
-                listener.enterFeature(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFeature" ):
-                listener.exitFeature(self)
-
-
-
-
-    def feature(self):
-
-        localctx = RLangParser.FeatureContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 14, self.RULE_feature)
-        try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 155
-            self.match(RLangParser.FEATURE)
-            self.state = 156
-            self.match(RLangParser.IDENTIFIER)
-            self.state = 157
-            self.match(RLangParser.BIND)
-            self.state = 158
-            self.arithmetic_exp(0)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1114,13 +1138,13 @@ class RLangParser ( Parser ):
         self.enterRule(localctx, 16, self.RULE_predicate)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 160
-            self.match(RLangParser.PREDICATE)
-            self.state = 161
-            self.match(RLangParser.IDENTIFIER)
-            self.state = 162
-            self.match(RLangParser.BIND)
             self.state = 163
+            self.match(RLangParser.PREDICATE)
+            self.state = 164
+            self.match(RLangParser.IDENTIFIER)
+            self.state = 165
+            self.match(RLangParser.BIND)
+            self.state = 166
             self.boolean_exp(0)
         except RecognitionException as re:
             localctx.exception = re
@@ -1131,15 +1155,15 @@ class RLangParser ( Parser ):
         return localctx
 
 
-    class ActionContext(ParserRuleContext):
+    class FeatureContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def ACTION(self):
-            return self.getToken(RLangParser.ACTION, 0)
+        def FEATURE(self):
+            return self.getToken(RLangParser.FEATURE, 0)
 
         def IDENTIFIER(self):
             return self.getToken(RLangParser.IDENTIFIER, 0)
@@ -1147,120 +1171,38 @@ class RLangParser ( Parser ):
         def BIND(self):
             return self.getToken(RLangParser.BIND, 0)
 
-        def any_number(self):
-            return self.getTypedRuleContext(RLangParser.Any_numberContext,0)
-
-
-        def int_array_exp(self):
-            return self.getTypedRuleContext(RLangParser.Int_array_expContext,0)
-
-
-        def any_array_exp(self):
-            return self.getTypedRuleContext(RLangParser.Any_array_expContext,0)
+        def arithmetic_exp(self):
+            return self.getTypedRuleContext(RLangParser.Arithmetic_expContext,0)
 
 
         def getRuleIndex(self):
-            return RLangParser.RULE_action
+            return RLangParser.RULE_feature
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterAction" ):
-                listener.enterAction(self)
+            if hasattr( listener, "enterFeature" ):
+                listener.enterFeature(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitAction" ):
-                listener.exitAction(self)
+            if hasattr( listener, "exitFeature" ):
+                listener.exitFeature(self)
 
 
 
 
-    def action(self):
+    def feature(self):
 
-        localctx = RLangParser.ActionContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 18, self.RULE_action)
+        localctx = RLangParser.FeatureContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 18, self.RULE_feature)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 165
-            self.match(RLangParser.ACTION)
-            self.state = 166
+            self.state = 168
+            self.match(RLangParser.FEATURE)
+            self.state = 169
             self.match(RLangParser.IDENTIFIER)
-            self.state = 167
+            self.state = 170
             self.match(RLangParser.BIND)
             self.state = 171
-            self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
-            if la_ == 1:
-                self.state = 168
-                self.any_number()
-                pass
-
-            elif la_ == 2:
-                self.state = 169
-                self.int_array_exp()
-                pass
-
-            elif la_ == 3:
-                self.state = 170
-                self.any_array_exp()
-                pass
-
-
-        except RecognitionException as re:
-            localctx.exception = re
-            self._errHandler.reportError(self, re)
-            self._errHandler.recover(self, re)
-        finally:
-            self.exitRule()
-        return localctx
-
-
-    class GoalContext(ParserRuleContext):
-        __slots__ = 'parser'
-
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
-            super().__init__(parent, invokingState)
-            self.parser = parser
-
-        def GOAL(self):
-            return self.getToken(RLangParser.GOAL, 0)
-
-        def IDENTIFIER(self):
-            return self.getToken(RLangParser.IDENTIFIER, 0)
-
-        def BIND(self):
-            return self.getToken(RLangParser.BIND, 0)
-
-        def boolean_exp(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expContext,0)
-
-
-        def getRuleIndex(self):
-            return RLangParser.RULE_goal
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterGoal" ):
-                listener.enterGoal(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitGoal" ):
-                listener.exitGoal(self)
-
-
-
-
-    def goal(self):
-
-        localctx = RLangParser.GoalContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 20, self.RULE_goal)
-        try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 173
-            self.match(RLangParser.GOAL)
-            self.state = 174
-            self.match(RLangParser.IDENTIFIER)
-            self.state = 175
-            self.match(RLangParser.BIND)
-            self.state = 176
-            self.boolean_exp(0)
+            self.arithmetic_exp(0)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1307,113 +1249,17 @@ class RLangParser ( Parser ):
     def markov_feature(self):
 
         localctx = RLangParser.Markov_featureContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 22, self.RULE_markov_feature)
+        self.enterRule(localctx, 20, self.RULE_markov_feature)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 178
+            self.state = 173
             self.match(RLangParser.MARKOVFEATURE)
-            self.state = 179
+            self.state = 174
             self.match(RLangParser.IDENTIFIER)
-            self.state = 180
+            self.state = 175
             self.match(RLangParser.BIND)
-            self.state = 181
+            self.state = 176
             self.arithmetic_exp(0)
-        except RecognitionException as re:
-            localctx.exception = re
-            self._errHandler.reportError(self, re)
-            self._errHandler.recover(self, re)
-        finally:
-            self.exitRule()
-        return localctx
-
-
-    class EffectContext(ParserRuleContext):
-        __slots__ = 'parser'
-
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
-            super().__init__(parent, invokingState)
-            self.parser = parser
-
-        def EFFECT(self):
-            return self.getToken(RLangParser.EFFECT, 0)
-
-        def boolean_exp(self):
-            return self.getTypedRuleContext(RLangParser.Boolean_expContext,0)
-
-
-        def COL(self):
-            return self.getToken(RLangParser.COL, 0)
-
-        def INDENT(self):
-            return self.getToken(RLangParser.INDENT, 0)
-
-        def DEDENT(self):
-            return self.getToken(RLangParser.DEDENT, 0)
-
-        def effect_stat(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(RLangParser.Effect_statContext)
-            else:
-                return self.getTypedRuleContext(RLangParser.Effect_statContext,i)
-
-
-        def NL(self, i:int=None):
-            if i is None:
-                return self.getTokens(RLangParser.NL)
-            else:
-                return self.getToken(RLangParser.NL, i)
-
-        def getRuleIndex(self):
-            return RLangParser.RULE_effect
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterEffect" ):
-                listener.enterEffect(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitEffect" ):
-                listener.exitEffect(self)
-
-
-
-
-    def effect(self):
-
-        localctx = RLangParser.EffectContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 24, self.RULE_effect)
-        self._la = 0 # Token type
-        try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 183
-            self.match(RLangParser.EFFECT)
-            self.state = 184
-            self.boolean_exp(0)
-            self.state = 185
-            self.match(RLangParser.COL)
-            self.state = 186
-            self.match(RLangParser.INDENT)
-            self.state = 196
-            self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.CONSTANT) | (1 << RLangParser.REWARD) | (1 << RLangParser.S_PRIME) | (1 << RLangParser.IDENTIFIER))) != 0):
-                self.state = 187
-                self.effect_stat()
-                self.state = 191
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                while _la==RLangParser.NL:
-                    self.state = 188
-                    self.match(RLangParser.NL)
-                    self.state = 193
-                    self._errHandler.sync(self)
-                    _la = self._input.LA(1)
-
-                self.state = 198
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-
-            self.state = 199
-            self.match(RLangParser.DEDENT)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1498,64 +1344,64 @@ class RLangParser ( Parser ):
     def option(self):
 
         localctx = RLangParser.OptionContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 26, self.RULE_option)
+        self.enterRule(localctx, 22, self.RULE_option)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 201
+            self.state = 178
             self.match(RLangParser.OPTION)
-            self.state = 202
+            self.state = 179
             self.match(RLangParser.IDENTIFIER)
-            self.state = 203
+            self.state = 180
             self.match(RLangParser.COL)
-            self.state = 204
+            self.state = 181
             self.match(RLangParser.INDENT)
-            self.state = 205
+            self.state = 182
             self.match(RLangParser.INIT)
-            self.state = 206
+            self.state = 183
             localctx.init = self.boolean_exp(0)
-            self.state = 207
+            self.state = 184
             self.match(RLangParser.INDENT)
-            self.state = 215 
+            self.state = 192 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 208
+                self.state = 185
                 localctx._policy_stat = self.policy_stat()
                 localctx.stats.append(localctx._policy_stat)
-                self.state = 212
+                self.state = 189
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==RLangParser.NL:
-                    self.state = 209
+                    self.state = 186
                     self.match(RLangParser.NL)
-                    self.state = 214
+                    self.state = 191
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
-                self.state = 217 
+                self.state = 194 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not (_la==RLangParser.EXECUTE or _la==RLangParser.IF):
                     break
 
-            self.state = 219
+            self.state = 196
             self.match(RLangParser.DEDENT)
-            self.state = 220
+            self.state = 197
             self.match(RLangParser.UNTIL)
-            self.state = 221
+            self.state = 198
             localctx.until = self.boolean_exp(0)
-            self.state = 225
+            self.state = 202
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==RLangParser.NL:
-                self.state = 222
+                self.state = 199
                 self.match(RLangParser.NL)
-                self.state = 227
+                self.state = 204
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 228
+            self.state = 205
             self.match(RLangParser.DEDENT)
         except RecognitionException as re:
             localctx.exception = re
@@ -1620,40 +1466,193 @@ class RLangParser ( Parser ):
     def policy(self):
 
         localctx = RLangParser.PolicyContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 28, self.RULE_policy)
+        self.enterRule(localctx, 24, self.RULE_policy)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 230
+            self.state = 207
             self.match(RLangParser.POLICY)
-            self.state = 231
+            self.state = 208
             self.match(RLangParser.IDENTIFIER)
-            self.state = 232
+            self.state = 209
             self.match(RLangParser.COL)
-            self.state = 233
+            self.state = 210
             self.match(RLangParser.INDENT)
-            self.state = 241 
+            self.state = 218 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 234
+                self.state = 211
                 localctx._policy_stat = self.policy_stat()
                 localctx.stats.append(localctx._policy_stat)
-                self.state = 238
+                self.state = 215
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==RLangParser.NL:
-                    self.state = 235
+                    self.state = 212
                     self.match(RLangParser.NL)
-                    self.state = 240
+                    self.state = 217
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
-                self.state = 243 
+                self.state = 220 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not (_la==RLangParser.EXECUTE or _la==RLangParser.IF):
                     break
+
+            self.state = 222
+            self.match(RLangParser.DEDENT)
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class GoalContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+        def GOAL(self):
+            return self.getToken(RLangParser.GOAL, 0)
+
+        def IDENTIFIER(self):
+            return self.getToken(RLangParser.IDENTIFIER, 0)
+
+        def BIND(self):
+            return self.getToken(RLangParser.BIND, 0)
+
+        def boolean_exp(self):
+            return self.getTypedRuleContext(RLangParser.Boolean_expContext,0)
+
+
+        def getRuleIndex(self):
+            return RLangParser.RULE_goal
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterGoal" ):
+                listener.enterGoal(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitGoal" ):
+                listener.exitGoal(self)
+
+
+
+
+    def goal(self):
+
+        localctx = RLangParser.GoalContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 26, self.RULE_goal)
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 224
+            self.match(RLangParser.GOAL)
+            self.state = 225
+            self.match(RLangParser.IDENTIFIER)
+            self.state = 226
+            self.match(RLangParser.BIND)
+            self.state = 227
+            self.boolean_exp(0)
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class EffectContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+        def EFFECT(self):
+            return self.getToken(RLangParser.EFFECT, 0)
+
+        def boolean_exp(self):
+            return self.getTypedRuleContext(RLangParser.Boolean_expContext,0)
+
+
+        def COL(self):
+            return self.getToken(RLangParser.COL, 0)
+
+        def INDENT(self):
+            return self.getToken(RLangParser.INDENT, 0)
+
+        def DEDENT(self):
+            return self.getToken(RLangParser.DEDENT, 0)
+
+        def effect_stat(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(RLangParser.Effect_statContext)
+            else:
+                return self.getTypedRuleContext(RLangParser.Effect_statContext,i)
+
+
+        def NL(self, i:int=None):
+            if i is None:
+                return self.getTokens(RLangParser.NL)
+            else:
+                return self.getToken(RLangParser.NL, i)
+
+        def getRuleIndex(self):
+            return RLangParser.RULE_effect
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterEffect" ):
+                listener.enterEffect(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitEffect" ):
+                listener.exitEffect(self)
+
+
+
+
+    def effect(self):
+
+        localctx = RLangParser.EffectContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 28, self.RULE_effect)
+        self._la = 0 # Token type
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 229
+            self.match(RLangParser.EFFECT)
+            self.state = 230
+            self.boolean_exp(0)
+            self.state = 231
+            self.match(RLangParser.COL)
+            self.state = 232
+            self.match(RLangParser.INDENT)
+            self.state = 242
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.CONSTANT) | (1 << RLangParser.REWARD) | (1 << RLangParser.S_PRIME) | (1 << RLangParser.IDENTIFIER))) != 0):
+                self.state = 233
+                self.effect_stat()
+                self.state = 237
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+                while _la==RLangParser.NL:
+                    self.state = 234
+                    self.match(RLangParser.NL)
+                    self.state = 239
+                    self._errHandler.sync(self)
+                    _la = self._input.LA(1)
+
+                self.state = 244
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
 
             self.state = 245
             self.match(RLangParser.DEDENT)
@@ -1744,8 +1743,8 @@ class RLangParser ( Parser ):
         def REWARD(self):
             return self.getToken(RLangParser.REWARD, 0)
 
-        def any_number(self):
-            return self.getTypedRuleContext(RLangParser.Any_numberContext,0)
+        def arithmetic_exp(self):
+            return self.getTypedRuleContext(RLangParser.Arithmetic_expContext,0)
 
 
         def getRuleIndex(self):
@@ -1771,7 +1770,7 @@ class RLangParser ( Parser ):
             self.state = 252
             self.match(RLangParser.REWARD)
             self.state = 253
-            self.any_number()
+            self.arithmetic_exp(0)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)

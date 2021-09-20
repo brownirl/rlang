@@ -2,3 +2,4 @@ Factor f1 := S[0, 2]
 MarkovFeature f2 := f1'
 Feature f3 := f1 * 2
 MarkovFeature f4 := f3'
+MarkovFeature f5 := S[1] + S'[1]

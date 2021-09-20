@@ -227,6 +227,13 @@ class ActionReference(PrimitiveGrounding):
         super().__init__(codomain=Domain.ACTION, value=action, name=name)
 
 
+class Reward(PrimitiveGrounding):
+    def __init__(self, reward: Any, name: str = None):
+        if isinstance(reward, (int, float)):
+            reward = np.array(reward)
+        super().__init__(codomain=Domain.REWARD, value=reward, name=name)
+
+
 class IdentityGrounding(GroundingFunction):
     """Represents S, A, and S'
 
