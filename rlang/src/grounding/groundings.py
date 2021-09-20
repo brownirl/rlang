@@ -15,6 +15,10 @@ class Grounding(object):
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, name: str):
+        self._name = name
+
     def __hash__(self):
         return self._name.__hash__()
 
@@ -47,9 +51,25 @@ class GroundingFunction(Grounding):
             codomain = Domain.from_name(codomain)
 
         super().__init__(name)
-        self.domain = domain
-        self.codomain = codomain
+        self._domain = domain
+        self._codomain = codomain
         self._function = function
+
+    @property
+    def domain(self):
+        return self._domain
+
+    @domain.setter
+    def domain(self, domain: Domain):
+        self._domain = domain
+
+    @property
+    def codomain(self):
+        return self._codomain
+
+    @codomain.setter
+    def codomain(self, codomain: Domain):
+        self._codomain = codomain
 
     def __call__(self, *args, **kwargs):
         if 'state' in kwargs.keys():
@@ -175,6 +195,11 @@ class PrimitiveGrounding(GroundingFunction):
                          function=lambda *args, **kwargs: self._value, name=name)
 
 
+class ConstantGrounding(PrimitiveGrounding):
+    """GroundingFunction for constants"""
+    pass
+
+
 class ActionReference(PrimitiveGrounding):
     """Represents a reference to a specified action.
 
@@ -260,6 +285,20 @@ class Feature(GroundingFunction):
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
+
+
+class MarkovFeature(GroundingFunction):
+    """Represents a Grounding that is a function of (state, action, next_state)
+
+    Args:
+        function: a function of (state, action, next_state)
+    """
+    def __init__(self, function: Callable, name: str):
+        super().__init__(domain=Domain.STATE_ACTION_NEXT_STATE, function=function, codomain=Domain.REAL_VALUE, name=name)
+
+    @classmethod
+    def from_Factor(cls, factor: Factor, name: str = None):
+        return cls(function=factor.__call__, name=name)
 
 
 class Predicate(GroundingFunction):

@@ -23,6 +23,8 @@ dec
     | policy
     ;
 
+constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
+
 factor: FACTOR IDENTIFIER BIND S trailer?;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
@@ -41,7 +43,6 @@ effect_stat
 
 reward: REWARD any_number;
 assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) ((IDENTIFIER | S) trailer* | boolean_exp | arithmetic_exp | int_array_exp);
-constant: CONSTANT IDENTIFIER BIND (any_bound_var | boolean_exp | arithmetic_exp | int_array_exp);
 
 policy_stat
     : execute        # policy_stat_execute

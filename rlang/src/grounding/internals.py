@@ -37,7 +37,7 @@ class Domain(Enum):
                 if enum_value in set(item.value for item in Domain):
                     return Domain(enum_value)
                 else:
-                    raise RLangGroundingError(f"The ({self.name}, {other.name}) Domain or Codomain is not supported")
+                    raise RLangGroundingError(f"The ({self.name}, {other.name}) Domain/Codomain is not supported")
         else:
             raise RLangGroundingError(f"Can't add a Domain enum to a {type(other)}")
 
@@ -97,7 +97,7 @@ class BatchedPrimitive(np.ndarray):
     def __eq__(self, other):
         # print(self.shape)
         # print(other.shape)
-        # TODO: This fails due to 'logical and', need to check array dimension
+        # TODO: This fails due to 'logical and', need to check array dimension and & with result?
         # TODO: Consider implementing two separate eq methods
         # Try BatchedPrimitive(0) == BatchedPrimitive([[1, 0], [0, 0]). Returns [[False],[True]] instead of [[False],[False]]
         return BatchedPrimitive(np.asarray(np.all(super().__eq__(other), axis=1, keepdims=True)))
@@ -107,6 +107,26 @@ class BatchedPrimitive(np.ndarray):
 
 
 class State(BatchedPrimitive):
+    """Represents a State object.
+
+    RLang expects MDP states to always be of a single dimension. This class makes
+    it easy to batch single-dimensional states together.
+
+    Args:
+        input_array: a numpy array or list representing a state or set of states.
+
+    Examples:
+        .. code-block:: python
+
+            s1 = State(3)
+            >> State([[3]])
+            s2 = State([3, 4])
+            >> State([[3, 4]]})
+            s3 = State([[3, 4], [5, 6]])
+            Factor([0])(state=s3)
+            >> State([[3], [5]])
+
+    """
     pass
 
 
