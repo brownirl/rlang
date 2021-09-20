@@ -1,3 +1,4 @@
+import copy
 import json
 
 from rlang.src.grounding import *
@@ -104,6 +105,8 @@ class RLangListener(RLangParserListener):
         arith_exp = ctx.arithmetic_exp().value
         if isinstance(arith_exp, Factor):
             new_markov_feature = MarkovFeature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
+        elif isinstance(arith_exp, Feature):
+            new_markov_feature = MarkovFeature(function=arith_exp, name=ctx.IDENTIFIER().getText())
         else:
             raise RLangSemanticError(f"Cannot make a MarkovFeature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
@@ -250,24 +253,32 @@ class RLangListener(RLangParserListener):
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not ctx.trailer():  # Check if it's not empty
-            ctx.value = variable
-            return
+        new_var = None
 
-        if isinstance(variable, Factor):
+        if not ctx.trailer():  # Check if it's not empty
+            new_var = variable
+        elif isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
-            ctx.value = variable[ctx.trailer()[0].value]
-            return
+            new_var = variable[ctx.trailer()[0].value]
         elif isinstance(variable, Feature):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Feature")
-            ctx.value = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
-                                domain=variable.domain)
-            return
+            new_var = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
+                              domain=variable.domain)
+        else:
+            raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
 
-        # TODO: Implement subscripting for other StateGroundings
-        raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
+        if ctx.PRIME() is not None:
+            if new_var.domain == Domain.STATE:
+                if isinstance(new_var, Factor):
+                    ctx.value = Factor(new_var.indexer, domain=Domain.NEXT_STATE)
+                elif isinstance(new_var, Feature):
+                    ctx.value = Feature(function=lambda *args, **kwargs: new_var(state=kwargs['next_state']), domain=Domain.NEXT_STATE)
+            else:
+                raise RLangSemanticError(f"Cannot use the ' operator on a {type(ctx.value)} with domain {ctx.value.domain.name}")
+        else:
+            ctx.value = new_var
 
     def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
         if ctx.trailer() is not None:

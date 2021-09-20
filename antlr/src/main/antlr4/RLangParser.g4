@@ -73,10 +73,10 @@ boolean_exp
     ;
 
 any_bound_var
-    : IDENTIFIER trailer*    # bound_identifier
-    | S trailer?             # bound_state
-    | S_PRIME trailer?       # bound_next_state
-    | A			             # bound_action
+    : IDENTIFIER PRIME? trailer*    # bound_identifier
+    | S trailer?                    # bound_state
+    | S_PRIME trailer?              # bound_next_state
+    | A			                    # bound_action
     ;
 
 trailer
@@ -93,5 +93,5 @@ any_number
     | any_decimal   # any_num_dec
     ;
 
-any_integer: (MINUS)? INTEGER;
-any_decimal: (MINUS)? DECIMAL;
+any_integer: MINUS? INTEGER;
+any_decimal: MINUS? DECIMAL;

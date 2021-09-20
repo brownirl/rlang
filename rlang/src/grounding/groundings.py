@@ -71,6 +71,14 @@ class GroundingFunction(Grounding):
     def codomain(self, codomain: Domain):
         self._codomain = codomain
 
+    @property
+    def function(self):
+        return self._function
+
+    @function.setter
+    def function(self, function: Callable):
+        self._function = function
+
     def __call__(self, *args, **kwargs):
         if 'state' in kwargs.keys():
             if not isinstance(kwargs['state'], State):
@@ -258,6 +266,10 @@ class Factor(GroundingFunction):
         super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self._state_indexer),
                          codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
+    @property
+    def indexer(self):
+        return self._state_indexer
+
     def __getitem__(self, item):
         if isinstance(self._state_indexer, slice):
             print("This is weird")
@@ -285,6 +297,9 @@ class Feature(GroundingFunction):
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
+
+    def __repr__(self):
+        return f"<Feature ({self.domain.name})>"
 
 
 class MarkovFeature(GroundingFunction):
