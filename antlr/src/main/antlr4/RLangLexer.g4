@@ -44,9 +44,11 @@ OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
 IMPORT: 'import';
 
-S_PRIME: 'S\'';
+S_PRIME: S PRIME;
 S: 'S';
 A: 'A';
+
+PRIME: '\'';
 
 IF: 'if';
 ELSE: 'else';

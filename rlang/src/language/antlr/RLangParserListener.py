@@ -53,6 +53,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#constant.
+    def enterConstant(self, ctx:RLangParser.ConstantContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#constant.
+    def exitConstant(self, ctx:RLangParser.ConstantContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#factor.
     def enterFactor(self, ctx:RLangParser.FactorContext):
         pass
@@ -158,15 +167,6 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#assignment.
     def exitAssignment(self, ctx:RLangParser.AssignmentContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#constant.
-    def enterConstant(self, ctx:RLangParser.ConstantContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#constant.
-    def exitConstant(self, ctx:RLangParser.ConstantContext):
         pass
 
 

@@ -15,6 +15,10 @@ class Grounding(object):
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, name: str):
+        self._name = name
+
     def __hash__(self):
         return self._name.__hash__()
 
@@ -47,8 +51,32 @@ class GroundingFunction(Grounding):
             codomain = Domain.from_name(codomain)
 
         super().__init__(name)
-        self.domain = domain
-        self.codomain = codomain
+        self._domain = domain
+        self._codomain = codomain
+        self._function = function
+
+    @property
+    def domain(self):
+        return self._domain
+
+    @domain.setter
+    def domain(self, domain: Domain):
+        self._domain = domain
+
+    @property
+    def codomain(self):
+        return self._codomain
+
+    @codomain.setter
+    def codomain(self, codomain: Domain):
+        self._codomain = codomain
+
+    @property
+    def function(self):
+        return self._function
+
+    @function.setter
+    def function(self, function: Callable):
         self._function = function
 
     def __call__(self, *args, **kwargs):
@@ -175,6 +203,11 @@ class PrimitiveGrounding(GroundingFunction):
                          function=lambda *args, **kwargs: self._value, name=name)
 
 
+class ConstantGrounding(PrimitiveGrounding):
+    """GroundingFunction for constants"""
+    pass
+
+
 class ActionReference(PrimitiveGrounding):
     """Represents a reference to a specified action.
 
@@ -233,6 +266,10 @@ class Factor(GroundingFunction):
         super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self._state_indexer),
                          codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
+    @property
+    def indexer(self):
+        return self._state_indexer
+
     def __getitem__(self, item):
         if isinstance(self._state_indexer, slice):
             print("This is weird")
@@ -260,6 +297,23 @@ class Feature(GroundingFunction):
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
+
+    def __repr__(self):
+        return f"<Feature ({self.domain.name})>"
+
+
+class MarkovFeature(GroundingFunction):
+    """Represents a Grounding that is a function of (state, action, next_state)
+
+    Args:
+        function: a function of (state, action, next_state)
+    """
+    def __init__(self, function: Callable, name: str):
+        super().__init__(domain=Domain.STATE_ACTION_NEXT_STATE, function=function, codomain=Domain.REAL_VALUE, name=name)
+
+    @classmethod
+    def from_Factor(cls, factor: Factor, name: str = None):
+        return cls(function=factor.__call__, name=name)
 
 
 class Predicate(GroundingFunction):

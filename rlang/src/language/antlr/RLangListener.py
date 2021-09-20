@@ -1,7 +1,8 @@
+import copy
 import json
 
 from rlang.src.grounding import *
-from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding, IdentityGrounding
+from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding, ConstantGrounding, IdentityGrounding
 
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
@@ -51,6 +52,18 @@ class RLangListener(RLangParserListener):
         self.vocab_fnames = list(set(self.vocab_fnames))  # Remove duplicates
         self.parseVocabFiles()
 
+    def exitConstant(self, ctx: RLangParser.ConstantContext):
+        if ctx.arithmetic_exp() is not None:
+            new_constant = ctx.arithmetic_exp().value
+        else:
+            new_constant = ctx.boolean_exp().value
+
+        if new_constant.domain is not Domain.ANY:
+            raise RLangSemanticError(
+                f"The value of a constant must be known at compile time. This is a function of {new_constant.domain.name}")
+        new_constant = ConstantGrounding(codomain=Domain.ANY, value=new_constant(), name=ctx.IDENTIFIER().getText())
+        self.addVariable(new_constant.name, new_constant)
+
     def exitFactor(self, ctx: RLangParser.FactorContext):
         # TODO: Consider modifying grammar to include S' for factor definition
         feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
@@ -68,10 +81,13 @@ class RLangListener(RLangParserListener):
             new_feature = Feature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
         else:
             new_feature = arith_exp
-        self.addVariable(ctx.IDENTIFIER().getText(), new_feature)
+            new_feature.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_feature.name, new_feature)
 
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
-        self.addVariable(ctx.IDENTIFIER().getText(), ctx.boolean_exp().value)
+        new_predicate = ctx.boolean_exp().value
+        new_predicate.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_predicate.name, new_predicate)
 
     def exitAction(self, ctx: RLangParser.ActionContext):
         if ctx.any_number() is not None:
@@ -82,12 +98,15 @@ class RLangListener(RLangParserListener):
             new_action = ActionReference(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
         else:
             raise RLangSemanticError(f"FATAL ERROR - You've done the impossible")
-        self.addVariable(ctx.IDENTIFIER().getText(), new_action)
+        self.addVariable(new_action.name, new_action)
 
     def exitMarkov_feature(self, ctx: RLangParser.Markov_featureContext):
+        # TODO: Extend this
         arith_exp = ctx.arithmetic_exp().value
         if isinstance(arith_exp, Factor):
             new_markov_feature = MarkovFeature.from_Factor(arith_exp, name=ctx.IDENTIFIER().getText())
+        elif isinstance(arith_exp, Feature):
+            new_markov_feature = MarkovFeature(function=arith_exp, name=ctx.IDENTIFIER().getText())
         else:
             raise RLangSemanticError(f"Cannot make a MarkovFeature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
@@ -109,13 +128,13 @@ class RLangListener(RLangParserListener):
 
         new_option = Option(initiation=init_predicate, termination=until_predicate, policy=new_policy,
                             name=ctx.IDENTIFIER().getText())
-        self.addVariable(ctx.IDENTIFIER().getText(), new_option)
+        self.addVariable(new_option.name, new_option)
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
         policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
-        self.addVariable(ctx.IDENTIFIER().getText(), new_policy)
+        self.addVariable(new_policy.name, new_policy)
 
     def exitPolicy_stat_execute(self, ctx: RLangParser.Policy_stat_executeContext):
         ctx.value = ctx.execute().value
@@ -234,24 +253,32 @@ class RLangListener(RLangParserListener):
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not ctx.trailer():  # Check if it's not empty
-            ctx.value = variable
-            return
+        new_var = None
 
-        if isinstance(variable, Factor):
+        if not ctx.trailer():  # Check if it's not empty
+            new_var = variable
+        elif isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
-            ctx.value = variable[ctx.trailer()[0].value]
-            return
+            new_var = variable[ctx.trailer()[0].value]
         elif isinstance(variable, Feature):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Feature")
-            ctx.value = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
-                                domain=variable.domain)
-            return
+            new_var = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
+                              domain=variable.domain)
+        else:
+            raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
 
-        # TODO: Implement subscripting for other StateGroundings
-        raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
+        if ctx.PRIME() is not None:
+            if new_var.domain == Domain.STATE:
+                if isinstance(new_var, Factor):
+                    ctx.value = Factor(new_var.indexer, domain=Domain.NEXT_STATE)
+                elif isinstance(new_var, Feature):
+                    ctx.value = Feature(function=lambda *args, **kwargs: new_var(state=kwargs['next_state']), domain=Domain.NEXT_STATE)
+            else:
+                raise RLangSemanticError(f"Cannot use the ' operator on a {type(ctx.value)} with domain {ctx.value.domain.name}")
+        else:
+            ctx.value = new_var
 
     def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
         if ctx.trailer() is not None:
