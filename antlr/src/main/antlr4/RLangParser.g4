@@ -4,52 +4,56 @@ options {
     tokenVocab=RLangLexer;
 }
 
+
 program: NL* imports declarations NL*;
+
 
 imports: (import_stat NL+)*;
 import_stat: IMPORT FNAME;
-
 declarations: dec*;
 dec
     : constant NL+
+    | action NL+
     | factor NL+
-    | feature NL+
     | predicate NL+
     | goal NL+
-    | action NL+
+    | feature NL+
     | markov_feature NL+
-    | effect
     | option
     | policy
+    | effect
     ;
+
 
 constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
 action: ACTION IDENTIFIER BIND (any_number | int_array_exp | any_array_exp);
 factor: FACTOR IDENTIFIER BIND S trailer?;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
+goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
+
+
 option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT (stats+=policy_stat NL*)+ DEDENT UNTIL until=boolean_exp NL* DEDENT;
 policy: POLICY IDENTIFIER COL INDENT (stats+=policy_stat NL*)+ DEDENT;
-
-goal: GOAL IDENTIFIER BIND boolean_exp;
-effect: EFFECT boolean_exp COL INDENT (effect_stat NL*)* DEDENT;
-
-effect_stat
-    : reward
-    | assignment
-    | constant
-    ;
-
-reward: REWARD arithmetic_exp;
-assignment: ((IDENTIFIER | S_PRIME) trailer*) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) ((IDENTIFIER | S) trailer* | boolean_exp | arithmetic_exp | int_array_exp);
-
 policy_stat
-    : execute        # policy_stat_execute
-    | IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*  # policy_stat_conditional
+    : execute                    # policy_stat_execute
+    | conditional_policy_stat    # policy_stat_conditional
     ;
-
 execute: EXECUTE (IDENTIFIER | arithmetic_exp);
+conditional_policy_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*;
+
+
+effect: EFFECT COL INDENT (stats+=effect_stat NL*)+ DEDENT;
+effect_stat
+    : reward                    # effect_stat_reward
+    | prediction                # effect_stat_prediction
+    | conditional_effect_stat   # effect_stat_conditional
+    ;
+reward: REWARD arithmetic_exp;
+prediction: (IDENTIFIER PRIME? | S_PRIME) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) arithmetic_exp;
+conditional_effect_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=effect_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=effect_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=effect_stat NL*)+ DEDENT)*;
+
 
 arithmetic_exp
     : L_PAR arithmetic_exp R_PAR                                # arith_paren
@@ -59,6 +63,7 @@ arithmetic_exp
     | any_array_exp                                             # arith_array
     | any_bound_var                                             # arith_bound_var
     ;
+
 
 boolean_exp
     : L_PAR boolean_exp R_PAR                                   # bool_paren
@@ -72,6 +77,7 @@ boolean_exp
     | (TRUE | FALSE)                                            # bool_tf
     ;
 
+
 any_bound_var
     : IDENTIFIER PRIME? trailer*    # bound_identifier
     | S trailer?                    # bound_state
@@ -79,19 +85,23 @@ any_bound_var
     | A			                    # bound_action
     ;
 
+
 trailer
     : int_array_exp     # trailer_array
     | slice_exp         # trailer_slice
     ;
 
+
 int_array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)* R_BRK;
 any_array_exp: L_BRK arr+=any_number (COM arr+=any_number?)* R_BRK;
 slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
+
 
 any_number
     : any_integer   # any_num_int
     | any_decimal   # any_num_dec
     ;
+
 
 any_integer: MINUS? INTEGER;
 any_decimal: MINUS? DECIMAL;

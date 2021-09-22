@@ -24,7 +24,7 @@ class RLangListener(RLangParserListener):
         def parseVocabFile(file: str):
             with open(file, 'r') as f:
                 vocab = json.load(f)
-                # I'm not sure if this is best practice, maybe I should make VocabularyAssembler callable
+                # I'm not sure if this is best practice, maybe I should make VocabularyAssembler a util function
                 voc_assembler = VocabularyAssembler(vocab)
                 self.grounded_vars.update(voc_assembler.lmdp_objects)
                 # self.state_size = voc_assembler.state_size
@@ -88,6 +88,9 @@ class RLangListener(RLangParserListener):
         new_predicate.name = ctx.IDENTIFIER().getText()
         self.addVariable(new_predicate.name, new_predicate)
 
+    def exitGoal(self, ctx: RLangParser.GoalContext):
+        pass
+
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value
         if isinstance(arith_exp, Factor):
@@ -132,17 +135,22 @@ class RLangListener(RLangParserListener):
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_policy.name, new_policy)
 
-    def exitReward(self, ctx: RLangParser.RewardContext):
-        if ctx.arithmetic_exp().value.domain != Domain.ANY:
-            raise RLangSemanticError(f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
-        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
-            raise RLangSemanticError(f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
-        ctx.value = Reward(ctx.arithmetic_exp().value)
-
     def exitPolicy_stat_execute(self, ctx: RLangParser.Policy_stat_executeContext):
         ctx.value = ctx.execute().value
 
     def exitPolicy_stat_conditional(self, ctx: RLangParser.Policy_stat_conditionalContext):
+        ctx.value = ctx.conditional_policy_stat().value
+
+    def exitExecute(self, ctx: RLangParser.ExecuteContext):
+        if ctx.IDENTIFIER() is not None:
+            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+            if not isinstance(variable, (Option, Policy, ActionReference)):
+                raise RLangSemanticError(f"Cannot execute a {type(variable)}")
+            ctx.value = variable
+        else:
+            ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
+
+    def exitConditional_policy_stat(self, ctx: RLangParser.Conditional_policy_statContext):
         if_condition = ctx.if_condition.value
         if_statements = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.if_statements)), *args, **kwargs)
@@ -162,14 +170,32 @@ class RLangListener(RLangParserListener):
         ctx.value = lambda *args, **kwargs: conditional_policy_statement(
             if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
 
-    def exitExecute(self, ctx: RLangParser.ExecuteContext):
-        if ctx.IDENTIFIER() is not None:
-            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (Option, Policy, ActionReference)):
-                raise RLangSemanticError(f"Cannot execute a {type(variable)}")
-            ctx.value = variable
-        else:
-            ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
+    def exitEffect(self, ctx: RLangParser.EffectContext):
+        pass
+
+    def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
+        ctx.value = ctx.reward().value
+
+    def exitEffect_stat_prediction(self, ctx: RLangParser.Effect_stat_predictionContext):
+        ctx.value = ctx.prediction().value
+
+    def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
+        ctx.value = ctx.conditional_effect_stat().value
+
+    def exitReward(self, ctx: RLangParser.RewardContext):
+        if ctx.arithmetic_exp().value.domain != Domain.ANY:
+            raise RLangSemanticError(
+                f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
+        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
+            raise RLangSemanticError(
+                f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
+        ctx.value = Reward(ctx.arithmetic_exp().value)
+
+    def exitPrediction(self, ctx: RLangParser.PredictionContext):
+        pass
+
+    def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
+        pass
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -277,9 +303,11 @@ class RLangListener(RLangParserListener):
                 if isinstance(new_var, Factor):
                     ctx.value = Factor(new_var.indexer, domain=Domain.NEXT_STATE)
                 elif isinstance(new_var, Feature):
-                    ctx.value = Feature(function=lambda *args, **kwargs: new_var(state=kwargs['next_state']), domain=Domain.NEXT_STATE)
+                    ctx.value = Feature(function=lambda *args, **kwargs: new_var(state=kwargs['next_state']),
+                                        domain=Domain.NEXT_STATE)
             else:
-                raise RLangSemanticError(f"Cannot use the ' operator on a {type(ctx.value)} with domain {ctx.value.domain.name}")
+                raise RLangSemanticError(
+                    f"Cannot use the ' operator on a {type(ctx.value)} with domain {ctx.value.domain.name}")
         else:
             ctx.value = new_var
 
