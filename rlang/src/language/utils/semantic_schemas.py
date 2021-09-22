@@ -1,6 +1,4 @@
-"""
-Return a lambda function which fits the input specs
-"""
+"""These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
 def policy_stat_collection(policy_stats, *args, **kwargs):
