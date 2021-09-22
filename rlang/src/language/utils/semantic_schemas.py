@@ -1,12 +1,11 @@
-"""
-Return a lambda function which fits the input specs
-"""
+"""These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
 def policy_stat_collection(policy_stats, *args, **kwargs):
     for policy_stat in policy_stats:
-        if policy_stat(*args, **kwargs) is not None:
-            return policy_stat(*args, **kwargs)
+        stat = policy_stat(*args, **kwargs)
+        if stat is not None:
+            return stat
     return None
 
 

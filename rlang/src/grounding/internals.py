@@ -1,10 +1,12 @@
 from __future__ import annotations
 from typing import Any
 from enum import Enum
+from functools import total_ordering
 import numpy as np
 from rlang.src.exceptions import RLangGroundingError
 
 
+@total_ordering
 class Domain(Enum):
     """Enum representing the domain or codomain of a OldGroundingFunction
 
@@ -24,7 +26,13 @@ class Domain(Enum):
     STATE_ACTION_NEXT_STATE = 30
     BOOLEAN = 7
     REAL_VALUE = 11
-    REWARD = 13
+    STATE_VALUE = 13
+    FACTOR_STATE = 17
+    REWARD = 19
+
+    @classmethod
+    def from_name(cls, name: str) -> Domain:
+        return Domain[name.upper()]
 
     def __add__(self, other) -> Domain:
         if isinstance(other, Domain):
@@ -41,9 +49,27 @@ class Domain(Enum):
         else:
             raise RLangGroundingError(f"Can't add a Domain enum to a {type(other)}")
 
-    @classmethod
-    def from_name(cls, name: str) -> Domain:
-        return Domain[name.upper()]
+    def __lt__(self, other) -> bool:
+        if isinstance(other, Domain):
+            if self.value == other.value:
+                return False
+            elif other.value % self.value == 0:
+                return True
+            else:
+                return False
+        else:
+            raise RLangGroundingError(f"Can't compare a Domain enum to a {type(other)}")
+
+    def __gt__(self, other) -> bool:
+        if isinstance(other, Domain):
+            if self.value == other.value:
+                return False
+            elif self.value % other.value == 0:
+                return True
+            else:
+                return False
+        else:
+            raise RLangGroundingError(f"Can't compare a Domain enum to a {type(other)}")
 
 
 class ActionSpace:

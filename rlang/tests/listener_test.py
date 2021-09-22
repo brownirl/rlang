@@ -130,6 +130,7 @@ def test_Option():
 def test_MarkovFeature():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     s = State([3, 1, 2, 3, 4])
+    s2 = State([3, 2, 2, 3, 4])
 
     # This syntax is cool. It allows you to cast a function of state to a function of next_state
     knowledge = rlang.parse_file("tests_resources/listener_tests/markov_feature.rlang", metadata)
@@ -137,11 +138,13 @@ def test_MarkovFeature():
     f2 = knowledge['f2']
     f3 = knowledge['f3']
     f4 = knowledge['f4']
+    f5 = knowledge['f5']
 
     print(f1(state=s))
     print(f2(next_state=s))
     print(f3(state=s))
     print(f4(next_state=s))
+    print(f5(state=s, next_state=s2))
 
 
 if __name__ == "__main__":

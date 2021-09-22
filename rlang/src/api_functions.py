@@ -6,6 +6,16 @@ from rlang.src.language.antlr.RLangErrorListener import RLangErrorListener
 
 
 def parse_file(rlang_fname: str, mdp_metadata: MDPMetadata = None) -> RLangKnowledge:
+    """Parses a .rlang file
+
+    Args:
+        rlang_fname: filename
+        mdp_metadata (optional): an MDPMetadata object
+
+    Returns:
+        An RLangKnowledge object
+
+    """
     rlang_file = FileStream(rlang_fname)
     lexer = RLangLexer(rlang_file)
     stream = CommonTokenStream(lexer)
@@ -19,6 +29,16 @@ def parse_file(rlang_fname: str, mdp_metadata: MDPMetadata = None) -> RLangKnowl
 
 
 def parse(rlang: str, mdp_metadata: MDPMetadata = None) -> RLangKnowledge:
+    """Parses an rlang string
+
+    Args:
+        rlang: string containing rlang
+        mdp_metadata (optional): an MDPMetadata object
+
+    Returns:
+        An RLangKnowledge object
+
+    """
     rlang = InputStream(rlang)
     lexer = RLangLexer(rlang)
     stream = CommonTokenStream(lexer)
