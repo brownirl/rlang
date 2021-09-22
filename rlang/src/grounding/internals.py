@@ -24,7 +24,9 @@ class Domain(Enum):
     STATE_ACTION_NEXT_STATE = 30
     BOOLEAN = 7
     REAL_VALUE = 11
-    REWARD = 13
+    STATE_VALUE = 13
+    FACTOR_STATE = 17
+    REWARD = 19
 
     def __add__(self, other) -> Domain:
         if isinstance(other, Domain):

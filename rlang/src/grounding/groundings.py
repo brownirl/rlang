@@ -419,3 +419,31 @@ class Option(Grounding):
             bool: True iff the option can be executed in the given state.
         """
         return self._initiation(*args, **kwargs)
+
+
+class RewardFunction(GroundingFunction):
+    """Represents a reward function."""
+    def __init__(self, function: Callable):
+        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.REWARD, function=function)
+
+
+class ValueFunction(GroundingFunction):
+    """Represents a value function."""
+    def __init__(self, function: Callable):
+        super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
+
+
+class TransitionFunction(GroundingFunction):
+    """Represents a transition function."""
+    def __init__(self, function: Callable, name: str):
+        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name)
+
+
+class PartialTransitionFunction(GroundingFunction):
+    """Represents a transition function that does not return the entire state.
+
+    Can be used to specify partial knowledge of the transition function, including
+    the value of a Factor of the next state.
+    """
+    def __init__(self, function: Callable, name: str):
+        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.FACTOR_STATE, function=function, name=name)
