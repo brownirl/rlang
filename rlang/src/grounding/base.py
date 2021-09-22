@@ -3,7 +3,7 @@ from typing import Callable
 from collections.abc import MutableMapping
 from rlang.src.exceptions import RLangGroundingError
 from rlang.src.grounding.internals import State
-from rlang.src.grounding.groundings import Grounding, Factor, RewardFunction
+from rlang.src.grounding.groundings import Grounding, Factor, RewardFunction, TransitionFunction
 
 
 class RLangKnowledge(MutableMapping):
@@ -22,6 +22,7 @@ class RLangKnowledge(MutableMapping):
     def __init__(self):
         self.store = dict()
         self._reward_function = RewardFunction(reward=0)
+        self._transition_function = TransitionFunction()
 
     @property
     def reward_function(self):
@@ -30,6 +31,14 @@ class RLangKnowledge(MutableMapping):
     @reward_function.setter
     def reward_function(self, function: RewardFunction):
         self._reward_function = function
+
+    @property
+    def transition_function(self):
+        return self._transition_function
+
+    @transition_function.setter
+    def transition_function(self, function: TransitionFunction):
+        self._transition_function = function
 
     def __getitem__(self, key: str):
         return self.store[key]

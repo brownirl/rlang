@@ -149,12 +149,14 @@ def test_MarkovFeature():
 
 def test_Effect():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-    s = State([2, 2, 2, 3, 4])
+    s = State([3, 2, 2, 3, 4])
     s2 = State([3, 2, 2, 3, 4])
 
     knowledge = rlang.parse_file("tests_resources/listener_tests/effect.rlang", metadata)
     r = knowledge.reward_function
     print(r(state=s))
+    t = knowledge.transition_function
+    print(t(state=s))
 
 
 if __name__ == "__main__":

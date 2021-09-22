@@ -1,43 +1,50 @@
 Factor f1 := S[0]
 Factor f2 := S[1]
 
-#Effect:
-#    Reward 10
-#    Reward 10
-
-#Effect:
-#    if f1 == 1:
-#        Reward 10
-#        Reward 10
-
-#Effect:
-#    if f1 == 1:
-#        if f2 == 1:
-#            Reward 10
-#            Reward 10
-#        if f2 == 1:
-#            Reward 10
-#            Reward 10
+Effect:
+    Reward 10
+    Reward 10
+    if f1 == 2:
+        S' -> [4]
 
 Effect:
-    Reward -10
     if f1 == 1:
-        Reward 20
-        f2' -> 1
-        f1' -> 2
-        S' -> [2, 1]
-    elif f1 == 2:
-        if f2 == 2:
+        Reward 10
+        Reward 10
+        S' -> [3]
+
+Effect:
+    if f1 == 3:
+        if f2 == 1:
             Reward 10
-            f2' -> 4
-            S' -> [3, 4]
-        else:
-            Reward 5
-            f2' -> 2
-        if f2 == 2:
             Reward 10
-            f2' -> 4
-            S' -> [3, 4]
-        else:
-            Reward 5
-            f2' -> 2
+            S' -> [2]
+        if f2 == 1:
+            Reward 10
+            Reward 10
+        elif f2 == 2:
+            Reward 10
+            S' -> [6]
+
+#Effect:
+#    Reward -10
+#    if f1 == 1:
+#        Reward 20
+#        f2' -> 1
+#        f1' -> 2
+#        S' -> [2, 1]
+#    elif f1 == 2:
+#        if f2 == 2:
+#            Reward 10
+#            f2' -> 4
+#            S' -> [3, 4]
+#        else:
+#            Reward 5
+#            f2' -> 2
+#        if f2 == 2:
+#            Reward 10
+#            f2' -> 4
+#            S' -> [3, 4]
+#        else:
+#            Reward 5
+#            f2' -> 2

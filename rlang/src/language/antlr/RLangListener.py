@@ -186,8 +186,12 @@ class RLangListener(RLangParserListener):
         reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_stats))
         reward_functions.append(self.rlang_knowledge.reward_function)
         reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
-
         self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats)
+
+        transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
+        transition_functions.append(self.rlang_knowledge.transition_function)
+        transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
+        self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats)
 
     def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
         ctx.value = ctx.reward().value

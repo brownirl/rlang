@@ -389,7 +389,7 @@ class ValueFunction(GroundingFunction):
 
 class TransitionFunction(GroundingFunction):
     """Represents a transition function."""
-    def __init__(self, function: Any, name: str = None):
+    def __init__(self, function: Any = lambda *args, **kwargs: None, name: str = None):
         if isinstance(function, GroundingFunction):
             if not function.domain <= Domain.STATE_ACTION:
                 raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
