@@ -223,15 +223,8 @@ class ActionReference(PrimitiveGrounding):
             if action.domain == Domain.ANY:
                 action = np.array(action())
             else:
-                raise RLangGroundingError(f"Actions cannot be functions of {action.domain}")
+                raise RLangGroundingError(f"Actions cannot be functions of {action.domain.name}")
         super().__init__(codomain=Domain.ACTION, value=action, name=name)
-
-
-class Reward(PrimitiveGrounding):
-    def __init__(self, reward: Any, name: str = None):
-        if isinstance(reward, (int, float)):
-            reward = np.array(reward)
-        super().__init__(codomain=Domain.REWARD, value=reward, name=name)
 
 
 class IdentityGrounding(GroundingFunction):
@@ -388,6 +381,90 @@ class Policy(GroundingFunction):
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name)
 
 
+class ValueFunction(GroundingFunction):
+    """Represents a value function."""
+    def __init__(self, function: Callable):
+        super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
+
+
+class TransitionFunction(GroundingFunction):
+    """Represents a transition function."""
+    def __init__(self, function: GroundingFunction, name: str = None):
+        if not function.domain <= Domain.STATE_ACTION:
+            raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
+        elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
+            # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
+            raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
+        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name)
+
+
+class RewardFunction(GroundingFunction):
+    """Represents a reward function."""
+    def __init__(self, reward: Any, name: str = None):
+        if isinstance(reward, (int, float, np.ndarray)):
+            function = lambda *args, **kwargs: np.array(reward)
+            domain = Domain.ANY
+            if isinstance(reward, np.ndarray) and reward.dtype == np.bool:
+                raise RLangGroundingError(f"Rewards must be real-valued, not {reward.dtype}")
+        elif isinstance(reward, GroundingFunction):
+            if reward.domain <= Domain.STATE_ACTION:
+                function = reward
+                domain = reward.domain
+            else:
+                raise RLangGroundingError(f"Rewards cannot be functions of {reward.domain.name}")
+            if reward.codomain != Domain.ANY:
+                raise RLangGroundingError(f"Rewards must return real values, not values of type {reward.codomain.name}")
+        else:
+            raise RLangGroundingError(f"Cannot construct a Reward from a {type(reward)}")
+        super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name)
+
+
+class Prediction(GroundingFunction):
+    """GroundingFunction for a prediction for the value of a GroundingFunction.
+
+    This should be used for Factors, Features, and Predicates
+    which are limited to functions of (state) or (state, action).
+
+    Args:
+        grounding_function: a GroundingFunction
+        value: the predicted value of the GroundingFunction (can also be a GroundingFunction)
+    """
+
+    def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None):
+        if isinstance(value, (bool, int, float, np.ndarray)):
+            function = lambda *args, **kwargs: np.array(value)
+            domain = Domain.ANY
+            if isinstance(value, bool) or (isinstance(value, np.ndarray) and value.dtype == np.bool):
+                codomain = Domain.BOOLEAN
+            else:
+                codomain = Domain.REAL_VALUE
+        elif isinstance(value, GroundingFunction):
+            if value.domain <= Domain.STATE_ACTION:
+                function = value
+                domain = value.domain
+                codomain = value.codomain
+            else:
+                raise RLangGroundingError(f"Cannot construct a Prediction based on a {value.domain.name}")
+        else:
+            raise RLangGroundingError(f"Cannot construct a Prediction from value of type {type(value)}")
+
+        if grounding_function.domain > Domain.STATE_ACTION:
+            raise RLangGroundingError(f"Cannot predict the value of a GroundingFunction with domain {grounding_function.domain.name}")
+
+        if grounding_function.codomain != codomain:
+            raise RLangGroundingError(f"Prediction value type ({codomain.name}) does not match grounding function type ({grounding_function.codomain.name})")
+
+        self._grounding_function = grounding_function
+        super().__init__(codomain=codomain, function=function, domain=domain, name=name)
+
+    @property
+    def grounding_predicted(self):
+        return self._grounding_function
+
+    def __repr__(self):
+        return f"<Prediction [{self._grounding_function.domain.name}] for {self._grounding_function.name}>"
+
+
 class Option(Grounding):
     """Grounding object for an option.
 
@@ -419,31 +496,3 @@ class Option(Grounding):
             bool: True iff the option can be executed in the given state.
         """
         return self._initiation(*args, **kwargs)
-
-
-class RewardFunction(GroundingFunction):
-    """Represents a reward function."""
-    def __init__(self, function: Callable):
-        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.REWARD, function=function)
-
-
-class ValueFunction(GroundingFunction):
-    """Represents a value function."""
-    def __init__(self, function: Callable):
-        super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
-
-
-class TransitionFunction(GroundingFunction):
-    """Represents a transition function."""
-    def __init__(self, function: Callable, name: str):
-        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name)
-
-
-class PartialTransitionFunction(GroundingFunction):
-    """Represents a transition function that does not return the entire state.
-
-    Can be used to specify partial knowledge of the transition function, including
-    the value of a Factor of the next state.
-    """
-    def __init__(self, function: Callable, name: str):
-        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.FACTOR_STATE, function=function, name=name)

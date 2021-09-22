@@ -64,7 +64,8 @@ NOT: 'not';
 TRUE: 'True';
 FALSE: 'False';
 
-BIND : ':=';
+BIND: ':=';
+PREDICT: '->';
 ASSIGN: '=';
 TIMES_EQ: '*=';
 DIV_EQ: '/=';

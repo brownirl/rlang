@@ -183,18 +183,22 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.conditional_effect_stat().value
 
     def exitReward(self, ctx: RLangParser.RewardContext):
-        if ctx.arithmetic_exp().value.domain != Domain.ANY:
+        if ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
         elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
-        ctx.value = Reward(ctx.arithmetic_exp().value)
+        ctx.value = RewardFunction(ctx.arithmetic_exp().value)
 
     def exitPrediction(self, ctx: RLangParser.PredictionContext):
-        pass
+        if ctx.IDENTIFIER() is not None:
+            Prediction(grounding_function=self.retrieveVariable(ctx.IDENTIFIER().getText()), value=ctx.arithmetic_exp().value)
+        elif ctx.S_PRIME() is not None:
+            TransitionFunction(ctx.arithmetic_exp().value)
 
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
+        # TODO: Write this after first writing some semantic schemas similar to the ones for policy
         pass
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):

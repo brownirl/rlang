@@ -51,7 +51,7 @@ effect_stat
     | conditional_effect_stat   # effect_stat_conditional
     ;
 reward: REWARD arithmetic_exp;
-prediction: (IDENTIFIER PRIME? | S_PRIME) (ASSIGN | TIMES_EQ | DIV_EQ | PLUS_EQ | MINUS_EQ) arithmetic_exp;
+prediction: (IDENTIFIER PRIME | S_PRIME) PREDICT arithmetic_exp;
 conditional_effect_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=effect_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=effect_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=effect_stat NL*)+ DEDENT)*;
 
 
