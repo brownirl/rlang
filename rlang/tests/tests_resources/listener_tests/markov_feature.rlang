@@ -3,3 +3,4 @@ MarkovFeature f2 := f1'
 Feature f3 := f1 * 2
 MarkovFeature f4 := f3'
 MarkovFeature f5 := S[1] + S'[1]
+MarkovFeature f6 := f1 - f1' + S'[1]

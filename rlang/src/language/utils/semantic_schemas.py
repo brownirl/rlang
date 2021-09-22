@@ -1,15 +1,15 @@
 """These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
-def policy_stat_collection(policy_stats, *args, **kwargs):
-    for policy_stat in policy_stats:
-        stat = policy_stat(*args, **kwargs)
-        if stat is not None:
-            return stat
+def stat_collection(stats, *args, **kwargs):
+    for stat in stats:
+        stat_val = stat(*args, **kwargs)
+        if stat_val is not None:
+            return stat_val
     return None
 
 
-def conditional_policy_statement(if_condition, if_statements, elif_condition=None, elif_statements=None, else_statements=None, *args, **kwargs):
+def conditional_statement(if_condition, if_statements, elif_condition=None, elif_statements=None, else_statements=None, *args, **kwargs):
     # These '== True' are necessary, don't remove them.
     if if_condition(*args, **kwargs) == True:
         return if_statements(*args, **kwargs)

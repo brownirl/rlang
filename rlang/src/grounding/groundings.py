@@ -389,13 +389,17 @@ class ValueFunction(GroundingFunction):
 
 class TransitionFunction(GroundingFunction):
     """Represents a transition function."""
-    def __init__(self, function: GroundingFunction, name: str = None):
-        if not function.domain <= Domain.STATE_ACTION:
-            raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
-        elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
-            # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
-            raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
+    def __init__(self, function: Any, name: str = None):
+        if isinstance(function, GroundingFunction):
+            if not function.domain <= Domain.STATE_ACTION:
+                raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
+            elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
+                # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
+                raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
         super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name)
+
+    def __repr__(self):
+        return "<TransitionFunction>"
 
 
 class RewardFunction(GroundingFunction):
@@ -412,11 +416,17 @@ class RewardFunction(GroundingFunction):
                 domain = reward.domain
             else:
                 raise RLangGroundingError(f"Rewards cannot be functions of {reward.domain.name}")
-            if reward.codomain != Domain.ANY:
+            if reward.codomain != Domain.REAL_VALUE:
                 raise RLangGroundingError(f"Rewards must return real values, not values of type {reward.codomain.name}")
+        elif isinstance(reward, Callable):
+            function = reward
+            domain = Domain.STATE_ACTION
         else:
             raise RLangGroundingError(f"Cannot construct a Reward from a {type(reward)}")
         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name)
+
+    def __repr__(self):
+        return "<RewardFunction>"
 
 
 class Prediction(GroundingFunction):

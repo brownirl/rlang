@@ -1,4 +1,5 @@
 import copy
+from functools import reduce
 import json
 
 from rlang.src.grounding import *
@@ -7,7 +8,7 @@ from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
-from rlang.src.language.utils.semantic_schemas import policy_stat_collection, conditional_policy_statement
+from rlang.src.language.utils.semantic_schemas import stat_collection, conditional_statement
 from .Exceptions import *
 
 
@@ -111,7 +112,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitOption(self, ctx: RLangParser.OptionContext):
-        policy_stats = lambda *args, **kwargs: policy_stat_collection(
+        policy_stats = lambda *args, **kwargs: stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats)
 
@@ -130,7 +131,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_option.name, new_option)
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
-        policy_stats = lambda *args, **kwargs: policy_stat_collection(
+        policy_stats = lambda *args, **kwargs: stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_policy.name, new_policy)
@@ -152,7 +153,7 @@ class RLangListener(RLangParserListener):
 
     def exitConditional_policy_stat(self, ctx: RLangParser.Conditional_policy_statContext):
         if_condition = ctx.if_condition.value
-        if_statements = lambda *args, **kwargs: policy_stat_collection(
+        if_statements = lambda *args, **kwargs: stat_collection(
             list(map(lambda x: x.value, ctx.if_statements)), *args, **kwargs)
         elif_condition = None
         elif_statements = None
@@ -160,14 +161,14 @@ class RLangListener(RLangParserListener):
 
         if ctx.elif_condition is not None:
             elif_condition = ctx.elif_condition.value
-            elif_statements = lambda *args, **kwargs: policy_stat_collection(
+            elif_statements = lambda *args, **kwargs: stat_collection(
                 list(map(lambda x: x.value, ctx.elif_statements)), *args, **kwargs)
 
         if len(ctx.else_statements) > 0:
-            else_statements = lambda *args, **kwargs: policy_stat_collection(
+            else_statements = lambda *args, **kwargs: stat_collection(
                 list(map(lambda x: x.value, ctx.else_statements)), *args, **kwargs)
 
-        ctx.value = lambda *args, **kwargs: conditional_policy_statement(
+        ctx.value = lambda *args, **kwargs: conditional_statement(
             if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
@@ -183,23 +184,75 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.conditional_effect_stat().value
 
     def exitReward(self, ctx: RLangParser.RewardContext):
-        if ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
+        if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
         elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
-        ctx.value = RewardFunction(ctx.arithmetic_exp().value)
+        ctx.value = RewardFunction(reward=ctx.arithmetic_exp().value)
 
     def exitPrediction(self, ctx: RLangParser.PredictionContext):
         if ctx.IDENTIFIER() is not None:
-            Prediction(grounding_function=self.retrieveVariable(ctx.IDENTIFIER().getText()), value=ctx.arithmetic_exp().value)
+            grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
+            if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
+                raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
+            # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
+            #     raise RLangSemanticError("")
+            ctx.value = Prediction(grounding_function=grounding_function, value=ctx.arithmetic_exp().value)
         elif ctx.S_PRIME() is not None:
-            TransitionFunction(ctx.arithmetic_exp().value)
+            ctx.value = TransitionFunction(function=ctx.arithmetic_exp().value)
+
+    def build_conditional_stat(self, ctx, filter_object):
+        if_condition = ctx.if_condition.value
+        if_stats = list(
+            filter(lambda x: isinstance(x, filter_object), ctx.if_statements))
+        if_statements = lambda *args, **kwargs: stat_collection(if_stats, *args, **kwargs)
+        elif_condition = None
+        elif_statements = None
+        else_statements = None
+
+        if ctx.elif_condition is not None:
+            elif_condition = ctx.elif_condition.value
+            elif_stats = list(
+                filter(lambda x: isinstance(x, filter_object), ctx.elif_statements))
+            elif_statements = lambda *args, **kwargs: stat_collection(elif_stats, *args, **kwargs)
+
+        if len(ctx.else_statements) > 0:
+            else_stats = list(
+                filter(lambda x: isinstance(x, filter_object), ctx.else_statements))
+            else_statements = lambda *args, **kwargs: stat_collection(else_stats, *args, **kwargs)
+
+        function = lambda *args, **kwargs: conditional_statement(
+            if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
+        return function
 
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
         # TODO: Write this after first writing some semantic schemas similar to the ones for policy
-        pass
+        # Need to think about disentangling reward statements from prediction statements
+        # May set ctx.value to a tuple? Where one is a transition function/prediction and one is a reward function
+
+        # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.if_statements
+        ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
+        if ifs:
+            ifs = list(reduce(lambda a, b: a + b, ifs))
+        elifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.elif_statements)))
+        if elifs:
+            elifs = list(reduce(lambda a, b: a + b, elifs))
+        elses = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.else_statements)))
+        if elses:
+            elses = list(reduce(lambda a, b: a + b, elses))
+
+        ctx.if_statements = list(map(lambda y: y.value, filter(lambda x: not isinstance(x, list), ctx.if_statements))) + ifs
+        ctx.elif_statements = list(map(lambda y: y.value, filter(lambda x: not isinstance(x, list), ctx.elif_statements))) + elifs
+        ctx.else_statements = list(map(lambda y: y.value, filter(lambda x: not isinstance(x, list), ctx.else_statements))) + elses
+
+        transition_function = self.build_conditional_stat(ctx, TransitionFunction)
+        reward_function = self.build_conditional_stat(ctx, RewardFunction)
+        # prediction_function = self.build_conditional_stat(ctx, RewardFunction)
+        # There may be multiple prediction functions here!! Need to modify build_conditional_stat to support it.
+
+        ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function)]
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -210,7 +263,6 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value * ctx.rhs.value
             elif ctx.DIVIDE() is not None:
                 ctx.value = ctx.lhs.value / ctx.rhs.value
-            return
 
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
         if isinstance(ctx.lhs.value, GroundingFunction) or isinstance(ctx.rhs.value, GroundingFunction):
@@ -218,7 +270,6 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value + ctx.rhs.value
             elif ctx.MINUS() is not None:
                 ctx.value = ctx.lhs.value - ctx.rhs.value
-            return
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_number().value)
