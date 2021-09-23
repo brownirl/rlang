@@ -8,19 +8,15 @@ def test_Factor():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
-    position_parsed = rlang.parse("Factor position := S", metadata)['position']
-    position = Factor([0, 1, 2, 3, 4], "position")
-    assert position(state=state) == position_parsed(state=state)
-
     position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
     position = Factor(0, "position")
     assert position(state=state) == position_parsed(state=state)
 
-    position_parsed = rlang.parse("Factor position := S[0:3]", metadata)['position']
+    position_parsed = rlang.parse("Factor position := S[0:3]\nFactor p2 := position[0]", metadata)['position']
     position = Factor([0, 1, 2], "position")
     assert position(state=state) == position_parsed(state=state)
 
-    position_parsed = rlang.parse("Factor position := S[:3]", metadata)['position']
+    position_parsed = rlang.parse("Factor position := S[0:3]", metadata)['position']
     assert position(state=state) == position_parsed(state=state)
 
     position_parsed = rlang.parse("Factor position := S[0, 3, 1]", metadata)['position']
@@ -160,4 +156,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Policy()
+    test_Factor()

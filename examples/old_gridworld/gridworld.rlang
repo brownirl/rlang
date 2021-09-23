@@ -1,0 +1,40 @@
+import vocab.json
+
+Factor position := S[0, 1]
+
+Feature x := position[0]
+Feature y := position[1]
+
+Predicate reached_goal := (x + 1) == 5 and not y == 1
+Predicate reached_wall := x == 3 and y == 1
+Predicate in_lava := position in lava_locs
+
+# define action
+# these may not be the correct action values
+Action up := 0
+Action down := 1
+Action left := 2
+Action right := 3
+
+Effect A == up:
+    position += [0,1]
+
+Effect A == down:
+    position += [0,-1]
+
+Effect A == left:
+    position += [-1,0]
+
+Effect A == right:
+    position += [0,1]
+
+Effect in_lava:
+    Reward -1
+
+Effect reached_goal:
+    Reward 1
+
+Effect reached_wall:
+    S' = S
+
+

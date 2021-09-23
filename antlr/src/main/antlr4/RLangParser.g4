@@ -27,7 +27,7 @@ dec
 
 constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
 action: ACTION IDENTIFIER BIND (any_number | int_array_exp | any_array_exp);
-factor: FACTOR IDENTIFIER BIND S trailer?;
+factor: FACTOR IDENTIFIER BIND any_bound_var;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;

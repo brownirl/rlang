@@ -260,7 +260,7 @@ class Factor(GroundingFunction):
         if domain is not Domain.STATE and domain is not Domain.NEXT_STATE:
             raise RLangGroundingError(f"Factor cannot have domain of type {domain.name}")
 
-        if type(state_indexer) == int:
+        elif isinstance(state_indexer, int):
             state_indexer = [state_indexer]
         self._state_indexer = state_indexer
         super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self._state_indexer),
@@ -270,12 +270,22 @@ class Factor(GroundingFunction):
     def indexer(self):
         return self._state_indexer
 
+    @indexer.setter
+    def indexer(self, new_indexer):
+        self._state_indexer = new_indexer
+
     def __getitem__(self, item):
         if isinstance(self._state_indexer, slice):
-            print("This is weird")
-        if isinstance(item, list):
-            return Factor([self._state_indexer[i] for i in item], domain=self.domain)
-        return Factor(self._state_indexer[item], domain=self.domain)
+            if self._state_indexer.stop is None:
+                raise RLangGroundingError("We don't know enough about the state space")
+            else:
+                self._state_indexer = list(range(*self._state_indexer.indices(self._state_indexer.stop)))
+        if isinstance(self._state_indexer, list):
+            if isinstance(item, int):
+                item = [item]
+            if isinstance(item, list):
+                return Factor([self._state_indexer[i] for i in item], domain=self.domain)
+
 
     def __repr__(self):
         return f"<Factor ({self.domain.name}): {str(self._state_indexer)}>"

@@ -28,7 +28,6 @@ class RLangListener(RLangParserListener):
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler a util function
                 voc_assembler = VocabularyAssembler(vocab)
                 self.grounded_vars.update(voc_assembler.lmdp_objects)
-                # self.state_size = voc_assembler.state_size
 
         for fname in self.vocab_fnames:
             parseVocabFile(fname)
@@ -75,13 +74,16 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_action.name, new_action)
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
-        feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))
-        if ctx.trailer() is not None:
-            if isinstance(ctx.trailer().value, slice):
-                feature_positions = list(range(self.mdp_metadata.state_space.shape[0]))[ctx.trailer().value]
-            else:
-                feature_positions = ctx.trailer().value
-        new_factor = Factor(state_indexer=feature_positions, name=ctx.IDENTIFIER().getText())
+        if isinstance(ctx.any_bound_var().value, Factor):
+            new_factor = ctx.any_bound_var().value
+            new_factor.name = ctx.IDENTIFIER().getText()
+            if isinstance(new_factor.indexer, slice):
+                if self.mdp_metadata is not None:
+                    new_factor.indexer = list(range(*new_factor.indexer.indices(self.mdp_metadata.state_space.shape[0])))
+        elif isinstance(ctx.any_bound_var().value, IdentityGrounding):
+            raise RLangSemanticError("A Factor must subscript from S or another Factor")
+        else:
+            raise RLangSemanticError(f"Cannot construct Factor with object type {type(ctx.any_bound_var().value)}")
         self.addVariable(new_factor.name, new_factor)
 
     def exitPredicate(self, ctx: RLangParser.PredicateContext):
