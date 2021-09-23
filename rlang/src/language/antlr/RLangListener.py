@@ -8,7 +8,7 @@ from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
-from rlang.src.language.utils.semantic_schemas import default_stat_collection, reward_stat_collection, conditional_statement, build_conditional_stat
+from rlang.src.language.utils.semantic_schemas import default_stat_collection, reward_stat_collection, build_conditional_stat
 from .Exceptions import *
 
 
@@ -209,7 +209,7 @@ class RLangListener(RLangParserListener):
             ctx.value = TransitionFunction(function=ctx.arithmetic_exp().value)
 
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
-        # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.if_statements
+        # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
         ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
         if ifs:
             ifs = list(reduce(lambda a, b: a + b, ifs))
@@ -220,9 +220,12 @@ class RLangListener(RLangParserListener):
         if elses:
             elses = list(reduce(lambda a, b: a + b, elses))
 
-        ctx.if_statements = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.if_statements))) + ifs
-        ctx.elif_statements = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.elif_statements))) + elifs
-        ctx.else_statements = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.else_statements))) + elses
+        ctx.if_statements = list(
+            filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.if_statements))) + ifs
+        ctx.elif_statements = list(
+            filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.elif_statements))) + elifs
+        ctx.else_statements = list(
+            filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.else_statements))) + elses
 
         transition_function = build_conditional_stat(ctx, TransitionFunction)
         reward_function = build_conditional_stat(ctx, RewardFunction)

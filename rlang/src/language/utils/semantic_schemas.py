@@ -1,14 +1,20 @@
 from rlang.src.grounding import *
+from rlang.src.exceptions import RLangGroundingError
 
 """These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
 def default_stat_collection(stats, *args, **kwargs):
+    val = None
     for stat in stats:
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
-            return stat_val
-    return None
+            if val is None:
+                val = stat_val
+            # else:
+            #     raise RLangGroundingError(
+            #         "GroundingFunction is attempting to return multiple objects. There should only be one.")
+    return val
 
 
 def reward_stat_collection(stats, *args, **kwargs):
@@ -20,7 +26,8 @@ def reward_stat_collection(stats, *args, **kwargs):
     return val
 
 
-def conditional_statement(if_condition, if_statements, elif_condition=None, elif_statements=None, else_statements=None, *args, **kwargs):
+def conditional_statement(if_condition, if_statements, elif_condition=None, elif_statements=None, else_statements=None,
+                          *args, **kwargs):
     # These '== True' are necessary, don't remove them.
     if if_condition(*args, **kwargs) == True:
         return if_statements(*args, **kwargs)
