@@ -1,5 +1,5 @@
-import copy
 from functools import reduce
+from typing import Callable
 import json
 
 from rlang.src.grounding import *
@@ -152,30 +152,14 @@ class RLangListener(RLangParserListener):
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
     def exitConditional_policy_stat(self, ctx: RLangParser.Conditional_policy_statContext):
-        # TODO: Migrate this to build_conditional_stat code if possible
-        if_condition = ctx.if_condition.value
-        if_statements = lambda *args, **kwargs: default_stat_collection(
-            list(map(lambda x: x.value, ctx.if_statements)), *args, **kwargs)
-        elif_condition = None
-        elif_statements = None
-        else_statements = None
+        ctx.if_statements = list(map(lambda x: x.value, ctx.if_statements))
+        ctx.elif_statements = list(map(lambda x: x.value, ctx.elif_statements))
+        ctx.else_statements = list(map(lambda x: x.value, ctx.else_statements))
 
-        if ctx.elif_condition is not None:
-            elif_condition = ctx.elif_condition.value
-            elif_statements = lambda *args, **kwargs: default_stat_collection(
-                list(map(lambda x: x.value, ctx.elif_statements)), *args, **kwargs)
-
-        if len(ctx.else_statements) > 0:
-            else_statements = lambda *args, **kwargs: default_stat_collection(
-                list(map(lambda x: x.value, ctx.else_statements)), *args, **kwargs)
-
-        ctx.value = lambda *args, **kwargs: conditional_statement(
-            if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
+        ctx.value = build_conditional_stat(ctx, Callable)
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
         stats = list(map(lambda x: x.value, ctx.stats))
-        # TODO: Join any matching effect stats here (i.e. if there are multiple TransitionFunctions)
-        # TODO: Match
         all_stats = list()
         for s in stats:
             if isinstance(s, list):
@@ -192,6 +176,8 @@ class RLangListener(RLangParserListener):
         transition_functions.append(self.rlang_knowledge.transition_function)
         transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
         self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats)
+
+        # TODO: Write code for Predictions
 
     def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
         ctx.value = ctx.reward().value

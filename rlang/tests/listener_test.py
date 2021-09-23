@@ -160,4 +160,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Effect()
+    test_Policy()

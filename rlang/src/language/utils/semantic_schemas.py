@@ -58,6 +58,5 @@ def build_conditional_stat(ctx, filter_object):
             filter(lambda x: isinstance(x, filter_object), ctx.else_statements))
         else_statements = lambda *args, **kwargs: stat_collection(else_stats, *args, **kwargs)
 
-    function = lambda *args, **kwargs: conditional_statement(
+    return lambda *args, **kwargs: conditional_statement(
         if_condition, if_statements, elif_condition, elif_statements, else_statements, *args, **kwargs)
-    return function
