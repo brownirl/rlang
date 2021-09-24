@@ -26,7 +26,7 @@ dec
 
 
 constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
-action: ACTION IDENTIFIER BIND (any_number | int_array_exp | any_array_exp);
+action: ACTION IDENTIFIER BIND (any_number | any_num_array_exp);
 factor: FACTOR IDENTIFIER BIND any_bound_var;
 predicate: PREDICATE IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
@@ -60,7 +60,7 @@ arithmetic_exp
     | lhs=arithmetic_exp (TIMES | DIVIDE) rhs=arithmetic_exp    # arith_times_divide
     | lhs=arithmetic_exp (PLUS | MINUS) rhs=arithmetic_exp      # arith_plus_minus
     | any_number                                                # arith_number
-    | any_array_exp                                             # arith_array
+    | any_array                                                 # arith_array
     | any_bound_var                                             # arith_bound_var
     ;
 
@@ -92,8 +92,18 @@ trailer
     ;
 
 
-int_array_exp: L_BRK arr+=any_integer (COM arr+=any_integer?)* R_BRK;
-any_array_exp: L_BRK arr+=any_number (COM arr+=any_number?)* R_BRK;
+any_array
+    : compound_array_exp    # any_array_compound
+    | any_num_array_exp     # any_array_any_num
+    ;
+
+compound_array_exp
+    : any_num_array_exp     # compound_array_simple
+    | L_BRK arr+=compound_array_exp (COM arr+=compound_array_exp)* R_BRK    # compound_array_compound
+    ;
+
+int_array_exp: L_BRK arr+=any_integer (COM arr+=any_integer)* R_BRK;
+any_num_array_exp: L_BRK arr+=any_number (COM arr+=any_number)* R_BRK;
 slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
 
 

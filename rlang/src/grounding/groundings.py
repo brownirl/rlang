@@ -1,4 +1,5 @@
 from __future__ import annotations
+import warnings
 from typing import Callable, Any, Union
 
 import numpy as np
@@ -78,6 +79,17 @@ class GroundingFunction(Grounding):
     @function.setter
     def function(self, function: Callable):
         self._function = function
+
+    def contains(self, item):
+        # Cannot override __contains__ and return a non-boolean
+        list_cast = lambda x: x.tolist() if isinstance(x, np.ndarray) else x
+        if isinstance(item, GroundingFunction):
+            return Predicate(function=lambda *args, **kwargs: list_cast(item(*args, **kwargs)) in list_cast(self(*args, **kwargs)),
+                             domain=self.domain + item.domain)
+        if isinstance(item, (int, float, np.ndarray)):
+            return Predicate(function=lambda *args, **kwargs: list_cast(item) in list_cast(self(*args, **kwargs)),
+                             domain=self.domain)
+        raise RLangGroundingError(message=f"Object of type {type(item)} cannot be in a GroundingFunction")
 
     def __call__(self, *args, **kwargs):
         if 'state' in kwargs.keys():
@@ -196,7 +208,7 @@ class GroundingFunction(Grounding):
 class PrimitiveGrounding(GroundingFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
     def __init__(self, codomain: Domain, value: Any, name: str = None):
-        if isinstance(value, (int, float, list)):
+        if isinstance(value, (int, float)):
             value = np.array(value)
         self._value = value
         super().__init__(domain=Domain.ANY, codomain=codomain,
@@ -285,7 +297,6 @@ class Factor(GroundingFunction):
                 item = [item]
             if isinstance(item, list):
                 return Factor([self._state_indexer[i] for i in item], domain=self.domain)
-
 
     def __repr__(self):
         return f"<Factor ({self.domain.name}): {str(self._state_indexer)}>"

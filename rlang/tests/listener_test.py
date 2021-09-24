@@ -57,8 +57,11 @@ def test_Feature():
     x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)", metadata)['x']
     assert x_parsed(state=state) == 14
 
-    x_parsed = rlang.parse("Feature x := [0, 1] * 2 * S[0]", metadata)['x']
+    x_parsed = rlang.parse("Feature x := [[[2, 1]]] * 2 * S[0]", metadata)['x']
     print(x_parsed(state=state))
+
+    # x_parsed = rlang.parse("Feature x := [[1, 0], [0, 1, 2]] * 2 * S[0]", metadata)['x']
+    # print(x_parsed(state=state))
 
 
 def test_Predicate():
@@ -77,6 +80,12 @@ def test_Predicate():
 
     hi_parsed = rlang.parse("Predicate hi := True or False and False or True", metadata)['hi']
     print(hi_parsed(state=state))
+
+    x_parsed = rlang.parse("Predicate x := [0] in [[2], [1], [2, 3]]", metadata)['x']
+    print(x_parsed(state=state))
+
+    x_parsed = rlang.parse("Predicate x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
+    print(x_parsed(state=state))
 
     # TODO: Need more tests for Predicate
 
@@ -156,4 +165,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Factor()
+    test_Feature()

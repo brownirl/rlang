@@ -1,6 +1,7 @@
 from functools import reduce
 from typing import Callable
 import json
+import numpy as np
 
 from rlang.src.grounding import *
 from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding, ConstantGrounding, IdentityGrounding
@@ -8,7 +9,8 @@ from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
-from rlang.src.language.utils.semantic_schemas import default_stat_collection, reward_stat_collection, build_conditional_stat
+from rlang.src.language.utils.semantic_schemas import default_stat_collection, reward_stat_collection, \
+    build_conditional_stat
 from .Exceptions import *
 
 
@@ -67,10 +69,8 @@ class RLangListener(RLangParserListener):
     def exitAction(self, ctx: RLangParser.ActionContext):
         if ctx.any_number() is not None:
             new_action = ActionReference(action=ctx.any_number().value, name=ctx.IDENTIFIER().getText())
-        elif ctx.int_array_exp() is not None:
-            new_action = ActionReference(action=ctx.int_array_exp().value, name=ctx.IDENTIFIER().getText())
-        elif ctx.any_array_exp() is not None:
-            new_action = ActionReference(action=ctx.any_array_exp().value, name=ctx.IDENTIFIER().getText())
+        elif ctx.any_num_array_exp() is not None:
+            new_action = ActionReference(action=ctx.any_num_array_exp().value, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_action.name, new_action)
 
     def exitFactor(self, ctx: RLangParser.FactorContext):
@@ -79,7 +79,8 @@ class RLangListener(RLangParserListener):
             new_factor.name = ctx.IDENTIFIER().getText()
             if isinstance(new_factor.indexer, slice):
                 if self.mdp_metadata is not None:
-                    new_factor.indexer = list(range(*new_factor.indexer.indices(self.mdp_metadata.state_space.shape[0])))
+                    new_factor.indexer = list(
+                        range(*new_factor.indexer.indices(self.mdp_metadata.state_space.shape[0])))
         elif isinstance(ctx.any_bound_var().value, IdentityGrounding):
             raise RLangSemanticError("A Factor must subscript from S or another Factor")
         else:
@@ -257,7 +258,7 @@ class RLangListener(RLangParserListener):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_number().value)
 
     def exitArith_array(self, ctx: RLangParser.Arith_arrayContext):
-        ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_array_exp().value)
+        ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_array().value)
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value, (Factor, Feature, Policy)):
@@ -278,7 +279,7 @@ class RLangListener(RLangParserListener):
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
         # TODO: This IS NOT so simple. Resolve this after migrating arithmetic expressions to PrimitiveGroundings
-        ctx.value = ctx.lhs.value in ctx.rhs.value
+        ctx.value = ctx.rhs.value.contains(ctx.lhs.value)
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
         if ctx.EQ_TO() is not None:
@@ -369,11 +370,35 @@ class RLangListener(RLangParserListener):
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
 
-    def exitAny_array_exp(self, ctx: RLangParser.Any_array_expContext):
+    def exitAny_array_compound(self, ctx: RLangParser.Any_array_compoundContext):
+        ctx.value = ctx.compound_array_exp().value
+
+    def exitAny_array_any_num(self, ctx: RLangParser.Any_array_any_numContext):
+        ctx.value = ctx.any_num_array_exp().value
+
+    def exitCompound_array_simple(self, ctx: RLangParser.Compound_array_simpleContext):
+        ctx.value = ctx.any_num_array_exp().value
+
+    def exitCompound_array_compound(self, ctx: RLangParser.Compound_array_compoundContext):
+        # This may be problematic
+        # array_value = []
+        # same_size = True
+        # size = None
+        # for item in ctx.arr:
+        #     if size is None:
+        #         array_value.append(item.value)
+        #         size = item.size
+        #     elif size != item.size:
+        #         same_size = False
         ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitInt_array_exp(self, ctx: RLangParser.Int_array_expContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
+        # ctx.len = len(ctx.arr)
+
+    def exitAny_num_array_exp(self, ctx: RLangParser.Any_num_array_expContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
+        # ctx.len = len(ctx.arr)
 
     def exitSlice_exp(self, ctx: RLangParser.Slice_expContext):
         start_ind = None
