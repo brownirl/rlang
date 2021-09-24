@@ -9,3 +9,8 @@ Predicate reached_goal := x == 5 and y == 1
 Predicate reached_wall := x == 3 and y == 1
 Predicate in_lava := position in lava_locs
 
+Effect:
+    if A == 1:
+        position' -> position + [0, 1]  # This is not yet supported!
+        S' -> S + [0, 1]
+

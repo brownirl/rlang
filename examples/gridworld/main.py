@@ -3,7 +3,7 @@ from simple_rl.tasks import GridWorldMDP
 from simple_rl.agents import QLearningAgent
 
 from rlang import parse_file
-from rlang.src.grounding import State
+from rlang.src.grounding import State, Action
 
 
 def run_simple_experiment():
@@ -22,6 +22,9 @@ def run_simple_experiment():
 def run_experiment_with_RLang():
     knowledge = parse_file("gridworld.rlang")
     print(knowledge['in_lava'](state=State([3, 2])))
+
+    t = knowledge.transition_function
+    print(t(state=State([0, 0]), action=Action(1)))
 
 
 if __name__ == '__main__':
