@@ -23,6 +23,10 @@ def test_Factor():
     position = Factor([0, 3, 1], "position")
     assert position(state=state) == position_parsed(state=state)
 
+    state2 = State(np.array([[0, 1], [2, 3]]))
+    position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
+    print(position_parsed(state=state2))
+
 
 def test_Feature():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
@@ -63,6 +67,13 @@ def test_Feature():
     # x_parsed = rlang.parse("Feature x := [[1, 0], [0, 1, 2]] * 2 * S[0]", metadata)['x']
     # print(x_parsed(state=state))
 
+    state2 =  State(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]))
+    # x_parsed = rlang.parse("Factor position := S[0:3]\nFeature x := position[0] + 4 * 2 + 3 / position[1]", metadata)[
+    #     'x']
+    x_parsed = rlang.parse("Factor position := S[0:3]\nFeature x := (2 * position + 3) / position[1]", metadata)[
+        'x']
+    print(x_parsed(state=state2))
+
 
 def test_Predicate():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
@@ -86,6 +97,16 @@ def test_Predicate():
 
     x_parsed = rlang.parse("Predicate x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
     print(x_parsed(state=state))
+
+    print("Down here")
+
+    state2 = State(np.array([[0, 1], [5, 6]]))
+    x_parsed = rlang.parse("Factor h := S[0, 1]\nPredicate x := h in [[0, 1], [2, 3]]", metadata)['x']
+    print(x_parsed(state=state2))
+
+    state2 = State(np.array([[0, 1], [5, 6]]))
+    x_parsed = rlang.parse("Predicate x := S[:2] == [0,1]", metadata)['x']
+    print(x_parsed(state=state2))
 
     # TODO: Need more tests for Predicate
 
@@ -165,4 +186,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Feature()
+    test_Predicate()

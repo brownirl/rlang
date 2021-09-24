@@ -84,12 +84,18 @@ class GroundingFunction(Grounding):
         # Cannot override __contains__ and return a non-boolean
         list_cast = lambda x: x.tolist() if isinstance(x, np.ndarray) else x
         # TODO: Fix this! 'in' only works for singleton batch items!
-        unbatch_cast = lambda x: np.asarray(x)[0] if isinstance(x, BatchedPrimitive) else x
+        unbatch_cast = lambda x, j: np.asarray(x)[j] if isinstance(x, BatchedPrimitive) else x
+        unbatch_size = lambda x: len(x) if isinstance(x, BatchedPrimitive) else 1
         if isinstance(item, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: list_cast(unbatch_cast(item(*args, **kwargs))) in list_cast(self(*args, **kwargs)),
+            return Predicate(function=lambda *args, **kwargs: [[list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in range(unbatch_size(item))],
                              domain=self.domain + item.domain)
+        elif isinstance(item, BatchedPrimitive):
+            return Predicate(function=lambda *args, **kwargs: [
+                [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
+                range(unbatch_size(item))],
+                             domain=self.domain)
         if isinstance(item, (int, float, np.ndarray)):
-            return Predicate(function=lambda *args, **kwargs: list_cast(item) in list_cast(self(*args, **kwargs)),
+            return Predicate(function=lambda *args, **kwargs: [list_cast(item) in list_cast(self(*args, **kwargs))],
                              domain=self.domain)
         raise RLangGroundingError(message=f"Object of type {type(item)} cannot be in a GroundingFunction")
 
@@ -210,6 +216,7 @@ class GroundingFunction(Grounding):
 class PrimitiveGrounding(GroundingFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
     def __init__(self, codomain: Domain, value: Any, name: str = None):
+        # TODO: What about lists? Should lists be cast? Only non-jagged ones?
         if isinstance(value, (int, float)):
             value = np.array(value)
         self._value = value
