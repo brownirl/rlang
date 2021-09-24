@@ -1,3 +1,5 @@
+Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
+
 Factor position := S[0, 1]
 
 Factor x := position[0]
@@ -5,5 +7,5 @@ Factor y := position[1]
 
 Predicate reached_goal := x == 5 and y == 1
 Predicate reached_wall := x == 3 and y == 1
-# in_lava is declared in the grounding file
+Predicate in_lava := position in lava_locs
 

@@ -3,7 +3,7 @@ import warnings
 from typing import Callable, Any, Union
 
 import numpy as np
-from rlang.src.grounding.internals import Domain, State, Action
+from rlang.src.grounding.internals import Domain, State, Action, BatchedPrimitive
 from rlang.src.exceptions import RLangGroundingError
 
 
@@ -83,8 +83,10 @@ class GroundingFunction(Grounding):
     def contains(self, item):
         # Cannot override __contains__ and return a non-boolean
         list_cast = lambda x: x.tolist() if isinstance(x, np.ndarray) else x
+        # TODO: Fix this! 'in' only works for singleton batch items!
+        unbatch_cast = lambda x: np.asarray(x)[0] if isinstance(x, BatchedPrimitive) else x
         if isinstance(item, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: list_cast(item(*args, **kwargs)) in list_cast(self(*args, **kwargs)),
+            return Predicate(function=lambda *args, **kwargs: list_cast(unbatch_cast(item(*args, **kwargs))) in list_cast(self(*args, **kwargs)),
                              domain=self.domain + item.domain)
         if isinstance(item, (int, float, np.ndarray)):
             return Predicate(function=lambda *args, **kwargs: list_cast(item) in list_cast(self(*args, **kwargs)),

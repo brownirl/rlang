@@ -261,7 +261,7 @@ class RLangListener(RLangParserListener):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_array().value)
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (Factor, Feature, Policy)):
+        if not isinstance(ctx.any_bound_var().value, (ConstantGrounding, Factor, Feature, Policy)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
