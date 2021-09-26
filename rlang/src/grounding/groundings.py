@@ -411,6 +411,39 @@ class Policy(GroundingFunction):
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name)
 
 
+class Option(Grounding):
+    """Grounding object for an option.
+
+    Args:
+        initiation: A Predicate capturing the initiation set of the option.
+        policy: A Policy capturing the policy of the option.
+        termination: A Predicate capturing the termination set of the option.
+        name (optional): the name of the grounding.
+    """
+    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
+        self._initiation = initiation
+        self._policy = policy
+        self._termination = termination
+        super().__init__(name)
+
+    def __call__(self, *args, **kwargs) -> Union[None, State]:
+        if self._termination(*args, **kwargs):
+            return None
+        else:
+            return self._policy(*args, **kwargs)
+
+    def can_execute(self, *args, **kwargs) -> bool:
+        """Determines whether the option can be executed in a given state.
+
+        Args:
+            state: A State object.
+
+        Returns:
+            bool: True iff the option can be executed in the given state.
+        """
+        return self._initiation(*args, **kwargs)
+
+
 class ValueFunction(GroundingFunction):
     """Represents a value function."""
     def __init__(self, function: Callable):
@@ -485,6 +518,10 @@ class Prediction(GroundingFunction):
                 codomain = value.codomain
             else:
                 raise RLangGroundingError(f"Cannot construct a Prediction based on a {value.domain.name}")
+        elif isinstance(value, Callable):
+            function = value
+            domain = Domain.STATE_ACTION
+            codomain = grounding_function.codomain
         else:
             raise RLangGroundingError(f"Cannot construct a Prediction from value of type {type(value)}")
 
@@ -502,37 +539,12 @@ class Prediction(GroundingFunction):
         return self._grounding_function
 
     def __repr__(self):
-        return f"<Prediction [{self._grounding_function.domain.name}] for {self._grounding_function.name}>"
+        return f"<Prediction [{self.domain.name}] for {self._grounding_function.name}>"
 
 
-class Option(Grounding):
-    """Grounding object for an option.
-
-    Args:
-        initiation: A Predicate capturing the initiation set of the option.
-        policy: A Policy capturing the policy of the option.
-        termination: A Predicate capturing the termination set of the option.
-        name (optional): the name of the grounding.
-    """
-    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
-        self._initiation = initiation
-        self._policy = policy
-        self._termination = termination
+class Effect(Grounding):
+    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str):
+        self.reward_functions = reward_functions
+        self.transition_functions = transition_functions
+        self.predictions = predictions
         super().__init__(name)
-
-    def __call__(self, *args, **kwargs) -> Union[None, State]:
-        if self._termination(*args, **kwargs):
-            return None
-        else:
-            return self._policy(*args, **kwargs)
-
-    def can_execute(self, *args, **kwargs) -> bool:
-        """Determines whether the option can be executed in a given state.
-
-        Args:
-            state: A State object.
-
-        Returns:
-            bool: True iff the option can be executed in the given state.
-        """
-        return self._initiation(*args, **kwargs)

@@ -3,11 +3,21 @@ Factor f2 := S[1]
 Action up := 1
 
 #Effect:
-#    if f1 == 1:
+#    if f1 == [5]:
 #        Reward 10
 #
-#Effect:
-#    Reward 10
+Effect jo:
+    Reward 10
+
+Effect:
+    -> jo
+    f1' -> 2
+    f2' -> 6
+    f1' -> 4
+    if f1 == [1]:
+        f1' -> 8
+        f1' -> 8
+        f2' -> 9
 #
 #Effect:
 #    Reward 10
@@ -34,9 +44,9 @@ Action up := 1
 #    if f2 == 4:
 #        -> f1_effect
 
-Effect:
-    if A == up:
-        S' -> S + [0, 1, 2, 3, 4]
+#Effect:
+#    if A == up:
+#        S' -> S + [0, 1, 2, 3, 4]
 
 #Effect:
 #    if f1 == 3:

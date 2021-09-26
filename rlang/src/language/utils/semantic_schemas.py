@@ -39,7 +39,7 @@ def conditional_statement(if_condition, if_statements, elif_condition=None, elif
         return None
 
 
-def build_conditional_stat(ctx, filter_object):
+def build_conditional_stat(ctx, filter_object, name_filter=lambda x: True):
     if filter_object == RewardFunction:
         stat_collection = reward_stat_collection
     else:
@@ -47,7 +47,7 @@ def build_conditional_stat(ctx, filter_object):
 
     if_condition = ctx.if_condition.value
     if_stats = list(
-        filter(lambda x: isinstance(x, filter_object), ctx.if_statements))
+        filter(lambda x: isinstance(x, filter_object) and name_filter(x), ctx.if_statements))
 
     if_statements = lambda *args, **kwargs: stat_collection(if_stats, *args, **kwargs)
     elif_condition = None
@@ -57,12 +57,16 @@ def build_conditional_stat(ctx, filter_object):
     if ctx.elif_condition is not None:
         elif_condition = ctx.elif_condition.value
         elif_stats = list(
-            filter(lambda x: isinstance(x, filter_object), ctx.elif_statements))
+            filter(lambda x: isinstance(x, filter_object) and name_filter(x), ctx.elif_statements))
+        # if len(elif_stats) == 0:
+        #     pass
         elif_statements = lambda *args, **kwargs: stat_collection(elif_stats, *args, **kwargs)
 
     if len(ctx.else_statements) > 0:
         else_stats = list(
-            filter(lambda x: isinstance(x, filter_object), ctx.else_statements))
+            filter(lambda x: isinstance(x, filter_object) and name_filter(x), ctx.else_statements))
+        # if len(else_stats) == 0:
+        #     pass
         else_statements = lambda *args, **kwargs: stat_collection(else_stats, *args, **kwargs)
 
     return lambda *args, **kwargs: conditional_statement(

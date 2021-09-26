@@ -23,6 +23,7 @@ class RLangKnowledge(MutableMapping):
         self.store = dict()
         self._reward_function = RewardFunction(reward=0)
         self._transition_function = TransitionFunction()
+        self.predictions = dict()
 
     @property
     def reward_function(self):

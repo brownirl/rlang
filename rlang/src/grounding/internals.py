@@ -112,6 +112,7 @@ class BatchedPrimitive(np.ndarray):
     def __new__(cls, input_array: Any):
         # All BatchablePrimitives are batched automatically
         obj = np.array(input_array, ndmin=2).view(cls)
+        obj.primitive_size = obj.shape[1]
         return obj
 
     def __getitem__(self, item):
@@ -121,12 +122,25 @@ class BatchedPrimitive(np.ndarray):
         return State(super().__getitem__(item))
 
     def __eq__(self, other):
-        # print(self.shape)
-        # print(other.shape)
-        # TODO: This fails due to 'logical and', need to check array dimension and & with result?
-        # TODO: Consider implementing two separate eq methods
-        # Try BatchedPrimitive(0) == BatchedPrimitive([[1, 0], [0, 0]). Returns [[False],[True]] instead of [[False],[False]]
+        if not isinstance(other, np.ndarray):
+            other = np.array(other)
+
+        if len(other.shape) == 0:
+            other = np.array(other, ndmin=1)
+
+        if other.shape[-1] != self.primitive_size:
+            return BatchedPrimitive(np.full((self.shape[0], 1), False))
+            # Should this take the shape of self or other?
+        #  Try BatchedPrimitive(0) == BatchedPrimitive([[1, 0], [0, 0]]).
+        #  Returns [[False],[True]] instead of [[False],[False]]
+        #  UPDATE: Now returns [[False]], but should it return [[False],[False]]?
         return BatchedPrimitive(np.asarray(np.all(super().__eq__(other), axis=1, keepdims=True)))
+
+    def unbatched_eq(self, other):
+        if isinstance(other, BatchedPrimitive):
+            return np.all(super().__eq__(other))
+        else:
+            return False
 
     def __ne__(self, other):
         return np.bitwise_not(self.__eq__(other))

@@ -175,7 +175,7 @@ def test_MarkovFeature():
 
 def test_Effect():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-    s = State([3, 2, 2, 3, 4])
+    s = State([1, 1, 2, 3, 4])
     s2 = State([3, 2, 2, 3, 4])
     action = Action(1)
 
@@ -184,6 +184,11 @@ def test_Effect():
     print(r(state=s, action=action))
     t = knowledge.transition_function
     print(t(state=s, action=action))
+
+    predictions = knowledge.predictions
+    print(predictions)
+    print(predictions['f1'](state=s))
+    print(predictions['f2'](state=s))
 
 
 if __name__ == "__main__":

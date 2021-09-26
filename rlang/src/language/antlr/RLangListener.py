@@ -1,3 +1,4 @@
+import copy
 from functools import reduce
 from typing import Callable
 import json
@@ -164,23 +165,51 @@ class RLangListener(RLangParserListener):
     def exitEffect(self, ctx: RLangParser.EffectContext):
         stats = list(map(lambda x: x.value, ctx.stats))
         all_stats = list()
-        for s in stats:
+        for s in stats:  # Collect all the effect statements. Some stats will be lists of effect statements.
             if isinstance(s, list):
                 all_stats.extend(s)
             else:
                 all_stats.append(s)
 
         reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_stats))
-        reward_functions.append(self.rlang_knowledge.reward_function)
-        reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
-        self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats)
-
         transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
-        transition_functions.append(self.rlang_knowledge.transition_function)
-        transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
-        self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats)
+        prediction_list = list(filter(lambda x: isinstance(x, Prediction), all_stats))
 
-        # TODO: Write code for Predictions
+        if ctx.IDENTIFIER() is not None:  # This is a named effect which should not merge into the existing transition function
+            new_effect = Effect(reward_functions=reward_functions,
+                                transition_functions=transition_functions,
+                                predictions=prediction_list,
+                                name=ctx.IDENTIFIER().getText())
+            self.addVariable(new_effect.name, new_effect)
+        else:
+            reward_functions.append(self.rlang_knowledge.reward_function)
+            reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
+            self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats)
+
+            transition_functions.append(self.rlang_knowledge.transition_function)
+            transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
+            self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats)
+
+            predictions = dict()
+            for p in [*prediction_list, *self.rlang_knowledge.predictions.values()]:
+                p_name = p.grounding_predicted.name
+                if p_name in predictions:
+                    predictions.update({p_name: [*predictions[p_name], p]})
+                else:
+                    predictions.update({p_name: [p]})
+
+            new_predictions = dict()
+            for p_name2, p_value in predictions.items():
+                # This is absolutely insane, but please do not remove it. Google Python for loop variable capture.
+                def lambda_generator(these_stats):
+                    return lambda *args, **kwargs: default_stat_collection(these_stats, *args, **kwargs)
+
+                new_p = Prediction(grounding_function=self.retrieveVariable(p_name2),
+                                   value=lambda_generator(p_value))
+                # new_p.domain
+                new_predictions.update({p_name2: new_p})
+
+            self.rlang_knowledge.predictions = new_predictions
 
     def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
         ctx.value = ctx.reward().value
@@ -188,10 +217,8 @@ class RLangListener(RLangParserListener):
     def exitEffect_stat_prediction(self, ctx: RLangParser.Effect_stat_predictionContext):
         ctx.value = ctx.prediction().value
 
-    # def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
-    #     effect = self.retrieveVariable(ctx.IDENTIFIER.getText())
-        # if not isinstance(effect, )
-        # ctx.value = effect
+    def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
+        ctx.value = ctx.effect_reference().value
 
     def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
         ctx.value = ctx.conditional_effect_stat().value
@@ -216,6 +243,12 @@ class RLangListener(RLangParserListener):
         elif ctx.S_PRIME() is not None:
             ctx.value = TransitionFunction(function=ctx.arithmetic_exp().value)
 
+    def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
+        effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if not isinstance(effect, Effect):
+            raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
+        ctx.value = effect.transition_functions + effect.reward_functions
+
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
         # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
         ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
@@ -237,10 +270,19 @@ class RLangListener(RLangParserListener):
 
         transition_function = build_conditional_stat(ctx, TransitionFunction)
         reward_function = build_conditional_stat(ctx, RewardFunction)
-        # prediction_function = self.build_conditional_stat(ctx, RewardFunction)
-        # There may be multiple prediction functions here!! Need to modify build_conditional_stat to support it.
 
-        ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function)]
+        prediction_names = list(set(list(map(lambda y: y.grounding_predicted.name,
+                                             filter(lambda x: isinstance(x, Prediction),
+                                                    [*ctx.if_statements, *ctx.else_statements,
+                                                     *ctx.else_statements])))))
+        predictions = []
+        for p_name in prediction_names:
+            new_p_function = build_conditional_stat(ctx, Prediction, name_filter=lambda x: x.grounding_predicted.name == p_name)
+            new_prediction = Prediction(grounding_function=self.retrieveVariable(p_name),
+                                        value=new_p_function)
+            predictions.append(new_prediction)
+
+        ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function), *predictions]
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
@@ -266,7 +308,8 @@ class RLangListener(RLangParserListener):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_array().value)
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (IdentityGrounding, ConstantGrounding, Factor, Feature, Policy, ActionReference)):
+        if not isinstance(ctx.any_bound_var().value,
+                          (IdentityGrounding, ConstantGrounding, Factor, Feature, Policy, ActionReference)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 

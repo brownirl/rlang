@@ -1,6 +1,6 @@
 {
   "domain": "gridworld",
-  "mdp_parameters": {
+  "mdp_metadata": {
     "state_space": {
       "size": 10,
       "dtype": "int"
