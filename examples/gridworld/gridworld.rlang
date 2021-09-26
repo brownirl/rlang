@@ -1,6 +1,12 @@
+import vocab.json
+
 Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
 
 Factor position := S[0, 1]
+Action up := 1
+Action down := 2
+Action left := 3
+Action right := 4
 
 Factor x := position[0]
 Factor y := position[1]
@@ -9,7 +15,22 @@ Predicate reached_goal := x == 5 and y == 1
 Predicate reached_wall := x == 3 and y == 1
 Predicate in_lava := position in lava_locs
 
+Effect action_effect:
+    if A == up:
+        position' -> position + [0, 1]
+    elif A == down:
+        position' -> position + [0, -1]
+    elif A == left:
+        position' -> position + [-1, 0]
+    elif A == right:
+        position' -> position + [1, 0]
+
 Effect:
-    if A == 1:
-        position' -> position + [0, 1]  # This is not yet supported!
-        S' -> S + [0, 1]
+    if in_lava:
+        Reward -1
+    if reached_goal:
+        Reward 10
+    if reached_wall:
+        S' -> S
+    else:
+        -> action_effect

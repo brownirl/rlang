@@ -128,7 +128,7 @@ class BatchedPrimitive(np.ndarray):
         if len(other.shape) == 0:
             other = np.array(other, ndmin=1)
 
-        if other.shape[-1] != self.primitive_size:
+        if other.shape[-1] != self.shape[-1]:
             return BatchedPrimitive(np.full((self.shape[0], 1), False))
             # Should this take the shape of self or other?
         #  Try BatchedPrimitive(0) == BatchedPrimitive([[1, 0], [0, 0]]).

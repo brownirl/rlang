@@ -21,10 +21,18 @@ def run_simple_experiment():
 
 def run_experiment_with_RLang():
     knowledge = parse_file("gridworld.rlang")
-    print(knowledge['in_lava'](state=State([3, 2])))
+
+    exec = {'state': State([3, 1]), 'action': knowledge['up']}
 
     t = knowledge.transition_function
-    print(t(state=State([0, 0]), action=Action(1)))
+    predictions = knowledge.full_predictions(**exec)
+    next_position = predictions['position']
+
+    print(next_position(**exec))
+    # print(knowledge.transition_function(**a))
+
+    # knowledge.full_predictions(**a)
+
 
 
 if __name__ == '__main__':

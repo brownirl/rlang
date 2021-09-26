@@ -13,6 +13,8 @@ class VocabularyAssembler:
         self.retrieve_state_size(vocab_json)
 
     def import_modules(self, vocab_json):
+        if 'modules' not in vocab_json:
+            return
         # Add grounding modules to self.modules
         modules_json = vocab_json['modules']
         modules = {}
@@ -28,6 +30,8 @@ class VocabularyAssembler:
         self.modules = modules
 
     def import_lmdp_objects(self, vocab_json):
+        if 'vocabulary' not in vocab_json:
+            return
         # import the objects mentioned in vocabulary
         for k, v in vocab_json['vocabulary'].items():
             # print(f"Importing {k}")
@@ -40,4 +44,4 @@ class VocabularyAssembler:
                 self.lmdp_objects.update({var_info['name']: the_var})
 
     def retrieve_state_size(self, vocab_json):
-        self.state_size = vocab_json['mdp_parameters']['state_space']['size']
+        self.state_size = vocab_json['mdp_metadata']['state_space']['size']

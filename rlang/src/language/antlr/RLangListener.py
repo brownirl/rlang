@@ -168,6 +168,10 @@ class RLangListener(RLangParserListener):
         for s in stats:  # Collect all the effect statements. Some stats will be lists of effect statements.
             if isinstance(s, list):
                 all_stats.extend(s)
+            elif isinstance(s, Effect):
+                all_stats.extend(s.transition_functions)
+                all_stats.extend(s.reward_functions)
+                all_stats.extend(s.predictions)
             else:
                 all_stats.append(s)
 
@@ -197,7 +201,6 @@ class RLangListener(RLangParserListener):
                     predictions.update({p_name: [*predictions[p_name], p]})
                 else:
                     predictions.update({p_name: [p]})
-
             new_predictions = dict()
             for p_name2, p_value in predictions.items():
                 # This is absolutely insane, but please do not remove it. Google Python for loop variable capture.
@@ -247,7 +250,7 @@ class RLangListener(RLangParserListener):
         effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
         if not isinstance(effect, Effect):
             raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
-        ctx.value = effect.transition_functions + effect.reward_functions
+        ctx.value = effect.transition_functions + effect.reward_functions + effect.predictions
 
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
         # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
@@ -273,7 +276,7 @@ class RLangListener(RLangParserListener):
 
         prediction_names = list(set(list(map(lambda y: y.grounding_predicted.name,
                                              filter(lambda x: isinstance(x, Prediction),
-                                                    [*ctx.if_statements, *ctx.else_statements,
+                                                    [*ctx.if_statements, *ctx.elif_statements,
                                                      *ctx.else_statements])))))
         predictions = []
         for p_name in prediction_names:
@@ -281,7 +284,6 @@ class RLangListener(RLangParserListener):
             new_prediction = Prediction(grounding_function=self.retrieveVariable(p_name),
                                         value=new_p_function)
             predictions.append(new_prediction)
-
         ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function), *predictions]
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
