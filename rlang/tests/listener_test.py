@@ -177,13 +177,14 @@ def test_Effect():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     s = State([3, 2, 2, 3, 4])
     s2 = State([3, 2, 2, 3, 4])
+    action = Action(1)
 
     knowledge = rlang.parse_file("tests_resources/listener_tests/effect.rlang", metadata)
     r = knowledge.reward_function
-    print(r(state=s))
+    print(r(state=s, action=action))
     t = knowledge.transition_function
-    print(t(state=s))
+    print(t(state=s, action=action))
 
 
 if __name__ == "__main__":
-    test_Predicate()
+    test_Effect()

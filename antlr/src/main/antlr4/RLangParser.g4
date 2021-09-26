@@ -44,14 +44,16 @@ execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 conditional_policy_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*;
 
 
-effect: EFFECT COL INDENT (stats+=effect_stat NL*)+ DEDENT;
+effect: EFFECT IDENTIFIER? COL INDENT (stats+=effect_stat NL*)+ DEDENT;
 effect_stat
     : reward                    # effect_stat_reward
     | prediction                # effect_stat_prediction
+    | effect_reference          # effect_stat_effect_reference
     | conditional_effect_stat   # effect_stat_conditional
     ;
 reward: REWARD arithmetic_exp;
 prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
+effect_reference: PREDICT IDENTIFIER;
 conditional_effect_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=effect_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=effect_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=effect_stat NL*)+ DEDENT)*;
 
 

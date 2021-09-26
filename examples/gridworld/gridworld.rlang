@@ -13,4 +13,3 @@ Effect:
     if A == 1:
         position' -> position + [0, 1]  # This is not yet supported!
         S' -> S + [0, 1]
-

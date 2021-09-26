@@ -188,6 +188,11 @@ class RLangListener(RLangParserListener):
     def exitEffect_stat_prediction(self, ctx: RLangParser.Effect_stat_predictionContext):
         ctx.value = ctx.prediction().value
 
+    # def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
+    #     effect = self.retrieveVariable(ctx.IDENTIFIER.getText())
+        # if not isinstance(effect, )
+        # ctx.value = effect
+
     def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
         ctx.value = ctx.conditional_effect_stat().value
 
@@ -261,7 +266,7 @@ class RLangListener(RLangParserListener):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_array().value)
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (IdentityGrounding, ConstantGrounding, Factor, Feature, Policy)):
+        if not isinstance(ctx.any_bound_var().value, (IdentityGrounding, ConstantGrounding, Factor, Feature, Policy, ActionReference)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 

@@ -197,6 +197,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#effect_stat_effect_reference.
+    def enterEffect_stat_effect_reference(self, ctx:RLangParser.Effect_stat_effect_referenceContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect_stat_effect_reference.
+    def exitEffect_stat_effect_reference(self, ctx:RLangParser.Effect_stat_effect_referenceContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#effect_stat_conditional.
     def enterEffect_stat_conditional(self, ctx:RLangParser.Effect_stat_conditionalContext):
         pass
@@ -221,6 +230,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#prediction.
     def exitPrediction(self, ctx:RLangParser.PredictionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#effect_reference.
+    def enterEffect_reference(self, ctx:RLangParser.Effect_referenceContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect_reference.
+    def exitEffect_reference(self, ctx:RLangParser.Effect_referenceContext):
         pass
 
 
