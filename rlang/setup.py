@@ -4,10 +4,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="rlang-skittlepox",
-    version="0.0.1",
+    name="rlang-irl",
+    version="0.1.0",
     author="Benjamin Spiegel",
-    author_email="benjamin_spiegel@brown.edu",
+    author_email="bspiegel@cs.brown.edu",
     description="A symbolic interface to grounded agent knowledge.",
     long_description=long_description,
     long_description_content_type="text/markdown",
