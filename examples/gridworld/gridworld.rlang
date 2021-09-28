@@ -27,11 +27,7 @@ Effect action_effect:
 
 Effect:
     if in_lava:
-        P(0.2):
-            Reward -1
-        P(0.8):
-            P(0.1):
-                Reward -5
+        Reward -1
     if reached_goal:
         Reward 10
     if reached_wall:

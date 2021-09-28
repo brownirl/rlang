@@ -408,7 +408,7 @@ class Predicate(GroundingFunction):
         return self.__or__(other)
 
     def __invert__(self) -> Predicate:
-        return Predicate(function=lambda *args, **kwargs: bool(~ self(*args, **kwargs)), domain=self.domain)
+        return Predicate(function=lambda *args, **kwargs: bool(not self(*args, **kwargs)), domain=self.domain)
 
     def __repr__(self):
         return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
