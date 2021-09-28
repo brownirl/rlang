@@ -1,8 +1,9 @@
 from __future__ import annotations
 from typing import Callable
 from collections.abc import MutableMapping
+
 from rlang.src.exceptions import RLangGroundingError
-from rlang.src.grounding.internals import State, Domain
+from rlang.src.grounding.internals import State, Domain, MDPMetadata
 from rlang.src.grounding.groundings import Grounding, GroundingFunction, Factor, RewardFunction, TransitionFunction
 
 
@@ -30,6 +31,13 @@ class RLangKnowledge(MutableMapping):
         self._reward_function = RewardFunction(reward=0)
         self._transition_function = TransitionFunction()
         self._predictions = dict()
+        self._mdp_metadata = None
+
+    # def parse(self, rlang: str):
+    #     self = parse(rlang, prior_knowledge=self)
+    #
+    # def parse_file(self, rlang_fname: str):
+    #     self = parse_file(rlang_fname, prior_knowledge=self)
 
     @property
     def reward_function(self):
@@ -54,6 +62,14 @@ class RLangKnowledge(MutableMapping):
     @predictions.setter
     def predictions(self, new_predictions: dict):
         self._predictions = new_predictions
+
+    @property
+    def mdp_metadata(self):
+        return self._mdp_metadata
+
+    @mdp_metadata.setter
+    def mdp_metadata(self, mdp_metadata: MDPMetadata):
+        self._mdp_metadata = mdp_metadata
 
     def full_predictions(self, *args, **kwargs):
         """

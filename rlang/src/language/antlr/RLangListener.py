@@ -16,10 +16,15 @@ from .Exceptions import *
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self, mdp_metadata: MDPMetadata = None):
+    def __init__(self, mdp_metadata: MDPMetadata = None, prior_knowledge: RLangKnowledge = None):
+        if prior_knowledge is not None:
+            mdp_metadata = prior_knowledge.mdp_metadata
+        else:
+            prior_knowledge = RLangKnowledge()
+
         self.vocab_fnames = []
         self.grounded_vars = {}
-        self.rlang_knowledge = RLangKnowledge()
+        self.rlang_knowledge = prior_knowledge
         self.mdp_metadata = mdp_metadata
 
     # This function adds the lmdp objects in the vocabulary files to self.grounded_vars

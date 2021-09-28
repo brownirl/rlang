@@ -2,7 +2,7 @@ from simple_rl.run_experiments import run_agents_on_mdp
 from simple_rl.tasks import GridWorldMDP
 from simple_rl.agents import QLearningAgent
 
-from rlang import parse_file
+from rlang import parse_file, parse
 from rlang.src.grounding import State, Action
 
 
@@ -27,6 +27,14 @@ def simple_experiment():
 def rlang_experiment():
     mdp = create_mdp()
     knowledge = parse_file("gridworld.rlang")
+
+    knowledge = parse("Action zonk := 6", prior_knowledge=knowledge)
+
+    print(knowledge['up'])
+    print(knowledge['position'])
+    print(knowledge['reached_goal'])
+    print(knowledge['action_effect'])
+    print(knowledge['lava_locs'])
 
     # exec = {'state': State([3, 1]), 'action': knowledge['up']}
     #

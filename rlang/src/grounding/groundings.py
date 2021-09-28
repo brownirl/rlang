@@ -223,10 +223,15 @@ class PrimitiveGrounding(GroundingFunction):
         super().__init__(domain=Domain.ANY, codomain=codomain,
                          function=lambda *args, **kwargs: self._value, name=name)
 
+    def __repr__(self):
+        return f"<PrimitiveGrounding \"{self.name}\" = {self()}>"
+
 
 class ConstantGrounding(PrimitiveGrounding):
     """GroundingFunction for constants"""
-    pass
+
+    def __repr__(self):
+        return f"<Constant \"{self.name}\" = {self()}>"
 
 
 class ActionReference(PrimitiveGrounding):
@@ -247,6 +252,9 @@ class ActionReference(PrimitiveGrounding):
                 raise RLangGroundingError(f"Actions cannot be functions of {action.domain.name}")
         super().__init__(codomain=Domain.ACTION, value=action, name=name)
 
+    def __repr__(self):
+        return f"<ActionReference \"{self.name}\" = {self()}>"
+
 
 class IdentityGrounding(GroundingFunction):
     """Represents S, A, and S'
@@ -259,6 +267,9 @@ class IdentityGrounding(GroundingFunction):
             domain = domain.name.lower()
         super().__init__(domain=domain, codomain=domain,
                          function=lambda *args, **kwargs: kwargs[domain])
+
+    def __repr__(self):
+        return f"<IdentityGrounding {self.codomain.name}>"
 
 
 class Factor(GroundingFunction):
@@ -308,7 +319,7 @@ class Factor(GroundingFunction):
                 return Factor([self._state_indexer[i] for i in item], domain=self.domain)
 
     def __repr__(self):
-        return f"<Factor ({self.domain.name}): {str(self._state_indexer)}>"
+        return f"<Factor [{self.domain.name}]->[{self.codomain.name}]: S[{str(self._state_indexer)[1:-1] if isinstance(self._state_indexer, list) else str(self._state_indexer)}]>"
 
 
 class Feature(GroundingFunction):
@@ -329,7 +340,7 @@ class Feature(GroundingFunction):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
 
     def __repr__(self):
-        return f"<Feature ({self.domain.name})>"
+        return f"<Feature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class MarkovFeature(GroundingFunction):
@@ -344,6 +355,9 @@ class MarkovFeature(GroundingFunction):
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
         return cls(function=factor.__call__, name=name)
+
+    def __repr__(self):
+        return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class Predicate(GroundingFunction):
@@ -397,7 +411,7 @@ class Predicate(GroundingFunction):
         return Predicate(function=lambda *args, **kwargs: bool(~ self(*args, **kwargs)), domain=self.domain)
 
     def __repr__(self):
-        return f"<Predicate ({self.domain.name})>"
+        return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class Policy(GroundingFunction):
@@ -409,6 +423,9 @@ class Policy(GroundingFunction):
     """
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name)
+
+    def __repr__(self):
+        return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class Option(Grounding):
@@ -443,6 +460,9 @@ class Option(Grounding):
         """
         return self._initiation(*args, **kwargs)
 
+    def __repr__(self):
+        return f"<Option \"{self.name}\">"
+
 
 class ValueFunction(GroundingFunction):
     """Represents a value function."""
@@ -462,7 +482,7 @@ class TransitionFunction(GroundingFunction):
         super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name)
 
     def __repr__(self):
-        return "<TransitionFunction>"
+        return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class RewardFunction(GroundingFunction):
@@ -489,7 +509,7 @@ class RewardFunction(GroundingFunction):
         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name)
 
     def __repr__(self):
-        return "<RewardFunction>"
+        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class Prediction(GroundingFunction):
@@ -539,12 +559,15 @@ class Prediction(GroundingFunction):
         return self._grounding_function
 
     def __repr__(self):
-        return f"<Prediction [{self.domain.name}] for {self._grounding_function.name}>"
+        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\">"
 
 
 class Effect(Grounding):
-    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str):
+    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str = None):
         self.reward_functions = reward_functions
         self.transition_functions = transition_functions
         self.predictions = predictions
         super().__init__(name)
+
+    def __repr__(self):
+        return f"<Effect \"{self.name}\">"
