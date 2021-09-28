@@ -4,6 +4,7 @@ from rlang.src.exceptions import RLangGroundingError
 """These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
+# TODO: Augment this function to handle probabilities
 def default_stat_collection(stats, *args, **kwargs):
     val = None
     for stat in stats:
@@ -17,6 +18,7 @@ def default_stat_collection(stats, *args, **kwargs):
     return val
 
 
+# TODO: Augment this function to handle probabilities
 def reward_stat_collection(stats, *args, **kwargs):
     val = 0
     for stat in stats:

@@ -470,24 +470,39 @@ class ValueFunction(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
 
 
-class TransitionFunction(GroundingFunction):
+class ProbabilisticFunction(GroundingFunction):
+    """Represents a function which provides stochastic output."""
+    def __init__(self, probability: Any = 1.0, *args, **kwargs):
+        self._probability = probability
+        super().__init__(*args, **kwargs)
+
+    @property
+    def probability(self):
+        return self._probability
+
+    @probability.setter
+    def probability(self, probability: Any):
+        self._probability = probability
+
+
+class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
-    def __init__(self, function: Any = lambda *args, **kwargs: None, name: str = None):
+    def __init__(self, function: Any = lambda *args, **kwargs: None, name: str = None, probability: float = 1.0):
         if isinstance(function, GroundingFunction):
             if not function.domain <= Domain.STATE_ACTION:
                 raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
             elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
                 # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
                 raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
-        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name)
+        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name, probability=probability)
 
     def __repr__(self):
         return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class RewardFunction(GroundingFunction):
+class RewardFunction(ProbabilisticFunction):
     """Represents a reward function."""
-    def __init__(self, reward: Any, name: str = None):
+    def __init__(self, reward: Any, name: str = None, probability: float = 1.0):
         if isinstance(reward, (int, float, np.ndarray)):
             function = lambda *args, **kwargs: np.array(reward)
             domain = Domain.ANY
@@ -506,13 +521,14 @@ class RewardFunction(GroundingFunction):
             domain = Domain.STATE_ACTION
         else:
             raise RLangGroundingError(f"Cannot construct a Reward from a {type(reward)}")
-        super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name)
+
+        super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
 
     def __repr__(self):
         return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class Prediction(GroundingFunction):
+class Prediction(ProbabilisticFunction):
     """GroundingFunction for a prediction for the value of a GroundingFunction.
 
     This should be used for Factors, Features, and Predicates
@@ -523,7 +539,7 @@ class Prediction(GroundingFunction):
         value: the predicted value of the GroundingFunction (can also be a GroundingFunction)
     """
 
-    def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None):
+    def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None, probability: float = 1.0):
         if isinstance(value, (bool, int, float, np.ndarray)):
             function = lambda *args, **kwargs: np.array(value)
             domain = Domain.ANY
@@ -552,11 +568,19 @@ class Prediction(GroundingFunction):
             raise RLangGroundingError(f"Prediction value type ({codomain.name}) does not match grounding function type ({grounding_function.codomain.name})")
 
         self._grounding_function = grounding_function
-        super().__init__(codomain=codomain, function=function, domain=domain, name=name)
+        super().__init__(codomain=codomain, function=function, domain=domain, name=name, probability=probability)
 
     @property
     def grounding_predicted(self):
         return self._grounding_function
+
+    @property
+    def probability(self):
+        return self._probability
+
+    @probability.setter
+    def probability(self, probability: float):
+        self._probability = probability
 
     def __repr__(self):
         return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\">"

@@ -262,8 +262,14 @@ class RLangListener(RLangParserListener):
 
     def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
         probability = ctx.arithmetic_exp().value
-        # ctx.stats
-        # TODO: Implement this
+        stats = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.stats)))
+        ctx.stats = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.stats))) + stats
+
+        # TODO: This is probably not that simple. stochastic functions will return probability distributions
+        for s in ctx.stats:
+            s.probability = probability
+
+        ctx.value = ctx.stats
 
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
         # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
