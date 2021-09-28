@@ -17,10 +17,7 @@ Predicate in_lava := position in lava_locs
 
 Effect action_effect:
     if A == up:
-        P(0.2):
-            position' -> position + [0, 1]
-        P(0.8):
-            position' -> position
+        position' -> position + [0, 1]
     elif A == down:
         position' -> position + [0, -1]
     elif A == left:
@@ -30,7 +27,11 @@ Effect action_effect:
 
 Effect:
     if in_lava:
-        Reward -1
+        P(0.2):
+            Reward -1
+        P(0.8):
+            P(0.1):
+                Reward -5
     if reached_goal:
         Reward 10
     if reached_wall:

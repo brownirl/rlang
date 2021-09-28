@@ -472,7 +472,7 @@ class ValueFunction(GroundingFunction):
 
 class ProbabilisticFunction(GroundingFunction):
     """Represents a function which provides stochastic output."""
-    def __init__(self, probability: Any = 1.0, *args, **kwargs):
+    def __init__(self, probability: float = 1.0, *args, **kwargs):
         self._probability = probability
         super().__init__(*args, **kwargs)
 
@@ -481,7 +481,7 @@ class ProbabilisticFunction(GroundingFunction):
         return self._probability
 
     @probability.setter
-    def probability(self, probability: Any):
+    def probability(self, probability: float):
         self._probability = probability
 
 
@@ -497,7 +497,7 @@ class TransitionFunction(ProbabilisticFunction):
         super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name, probability=probability)
 
     def __repr__(self):
-        return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
 
 
 class RewardFunction(ProbabilisticFunction):
@@ -525,7 +525,7 @@ class RewardFunction(ProbabilisticFunction):
         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
 
     def __repr__(self):
-        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
 
 
 class Prediction(ProbabilisticFunction):
@@ -583,15 +583,25 @@ class Prediction(ProbabilisticFunction):
         self._probability = probability
 
     def __repr__(self):
-        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\">"
+        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\" with P={self.probability}>"
 
 
 class Effect(Grounding):
-    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str = None):
+    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str = None, probability: float = 1.0):
         self.reward_functions = reward_functions
         self.transition_functions = transition_functions
         self.predictions = predictions
+        self._probability = probability
         super().__init__(name)
 
+    @property
+    def probability(self):
+        return self._probability
+
+    @probability.setter
+    def probability(self, probability: float):
+        for s in [*self.reward_functions, *self.transition_functions, *self.predictions]:
+            s.probability = s.probability * probability
+
     def __repr__(self):
-        return f"<Effect \"{self.name}\">"
+        return f"<Effect \"{self.name}\" with P={self.probability}>"

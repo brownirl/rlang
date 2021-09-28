@@ -11,7 +11,7 @@ from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
 from rlang.src.language.utils.semantic_schemas import default_stat_collection, reward_stat_collection, \
-    build_conditional_stat
+    build_conditional_stat, policy_stat_collection
 from .Exceptions import *
 
 
@@ -121,7 +121,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitOption(self, ctx: RLangParser.OptionContext):
-        policy_stats = lambda *args, **kwargs: default_stat_collection(
+        policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats)
 
@@ -140,7 +140,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_option.name, new_option)
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
-        policy_stats = lambda *args, **kwargs: default_stat_collection(
+        policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_policy.name, new_policy)
@@ -261,15 +261,23 @@ class RLangListener(RLangParserListener):
         ctx.value = effect.transition_functions + effect.reward_functions + effect.predictions
 
     def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
-        probability = ctx.arithmetic_exp().value
-        stats = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.stats)))
-        ctx.stats = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.stats))) + stats
+        probability = ctx.any_number().value
+        if probability > 1.0 or probability < 0.0:
+            raise RLangSemanticError("Effect probability must be between 0 and 1")
+        stats = []
+        for s in ctx.stats:
+            if isinstance(s.value, list):
+                stats.extend(s.value)
+            else:
+                stats.append(s.value)
+        # stats = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.stats)))
+        # ctx.stats = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.stats))) + stats
 
         # TODO: This is probably not that simple. stochastic functions will return probability distributions
-        for s in ctx.stats:
-            s.probability = probability
+        for s in stats:
+            s.probability = s.probability * probability
 
-        ctx.value = ctx.stats
+        ctx.value = stats
 
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
         # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements

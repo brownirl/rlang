@@ -94,7 +94,14 @@ class RLangKnowledge(MutableMapping):
             # Augment the function for each GroundingFunction to automatically take next_state
             for v in vars:
                 def lambda_generator(function):
-                    return lambda *args, **kwargs: function(*args, **kwargs, next_state=next_state)
+                    def the_lambda(*args, **kwargs):
+                        if 'next_state' in kwargs:
+                            if not kwargs['next_state'].unbatched_eq(next_state):
+                                raise RLangGroundingError("Transition function conflict")
+                            return function(*args, **kwargs)
+                        else:
+                            return function(*args, **kwargs, next_state=next_state)
+                    return the_lambda
                 v.function = lambda_generator(v.function)
             # Construct a dictionary and return it
             var_names = list(map(lambda x: x.name, vars))

@@ -36,13 +36,14 @@ def rlang_experiment():
     print(knowledge['action_effect'])
     print(knowledge['lava_locs'])
 
-    # exec = {'state': State([3, 1]), 'action': knowledge['up']}
+    exec = {'state': State([3, 1]), 'action': knowledge['up']}
     #
     # t = knowledge.transition_function
-    # predictions = knowledge.full_predictions(**exec)
-    # next_position = predictions['position']
-    #
-    # print(next_position(**exec))
+    predictions = knowledge.full_predictions(**exec)
+    next_position = predictions['position']
+
+    print(next_position(**exec))
+    print(knowledge.reward_function(**exec))
     # print(knowledge.transition_function(**a))
 
     # knowledge.full_predictions(**a)

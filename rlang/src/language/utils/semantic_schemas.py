@@ -18,10 +18,25 @@ def default_stat_collection(stats, *args, **kwargs):
     return val
 
 
+def policy_stat_collection(stats, *args, **kwargs):
+    val = None
+    for stat in stats:
+        stat_val = stat(*args, **kwargs)
+        if stat_val is not None:
+            if val is None:
+                val = stat_val
+            # else:
+            #     raise RLangGroundingError(
+            #         "GroundingFunction is attempting to return multiple objects. There should only be one.")
+    return val
+
+
 # TODO: Augment this function to handle probabilities
 def reward_stat_collection(stats, *args, **kwargs):
     val = 0
+    # print("asdfsd")
     for stat in stats:
+        # print(stat.probability)
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
             val += stat_val
@@ -44,6 +59,8 @@ def conditional_statement(if_condition, if_statements, elif_condition=None, elif
 def build_conditional_stat(ctx, filter_object, name_filter=lambda x: True):
     if filter_object == RewardFunction:
         stat_collection = reward_stat_collection
+    elif filter_object == Policy:
+        stat_collection = policy_stat_collection
     else:
         stat_collection = default_stat_collection
 
