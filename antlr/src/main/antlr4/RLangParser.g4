@@ -49,11 +49,13 @@ effect_stat
     : reward                    # effect_stat_reward
     | prediction                # effect_stat_prediction
     | effect_reference          # effect_stat_effect_reference
+    | stochastic_effect         # effect_stat_stochastic_effect
     | conditional_effect_stat   # effect_stat_conditional
     ;
 reward: REWARD arithmetic_exp;
 prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
 effect_reference: PREDICT IDENTIFIER;
+stochastic_effect: P L_PAR arithmetic_exp R_PAR COL INDENT (stats+=effect_stat NL*)+ DEDENT;
 conditional_effect_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=effect_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=effect_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=effect_stat NL*)+ DEDENT)*;
 
 

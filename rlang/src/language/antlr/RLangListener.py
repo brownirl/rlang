@@ -228,6 +228,9 @@ class RLangListener(RLangParserListener):
     def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
         ctx.value = ctx.effect_reference().value
 
+    def exitEffect_stat_stochastic_effect(self, ctx: RLangParser.Effect_stat_stochastic_effectContext):
+        ctx.value = ctx.stochastic_effect().value
+
     def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
         ctx.value = ctx.conditional_effect_stat().value
 
@@ -257,6 +260,11 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
         ctx.value = effect.transition_functions + effect.reward_functions + effect.predictions
 
+    def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
+        probability = ctx.arithmetic_exp().value
+        # ctx.stats
+        # TODO: Implement this
+
     def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
         # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
         ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
@@ -285,11 +293,13 @@ class RLangListener(RLangParserListener):
                                                      *ctx.else_statements])))))
         predictions = []
         for p_name in prediction_names:
-            new_p_function = build_conditional_stat(ctx, Prediction, name_filter=lambda x: x.grounding_predicted.name == p_name)
+            new_p_function = build_conditional_stat(ctx, Prediction,
+                                                    name_filter=lambda x: x.grounding_predicted.name == p_name)
             new_prediction = Prediction(grounding_function=self.retrieveVariable(p_name),
                                         value=new_p_function)
             predictions.append(new_prediction)
-        ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function), *predictions]
+        ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function),
+                     *predictions]
 
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value

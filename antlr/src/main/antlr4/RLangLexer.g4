@@ -47,6 +47,7 @@ IMPORT: 'import';
 S_PRIME: S PRIME;
 S: 'S';
 A: 'A';
+P: 'P';
 
 PRIME: '\'';
 

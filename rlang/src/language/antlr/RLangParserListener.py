@@ -206,6 +206,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#effect_stat_stochastic_effect.
+    def enterEffect_stat_stochastic_effect(self, ctx:RLangParser.Effect_stat_stochastic_effectContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect_stat_stochastic_effect.
+    def exitEffect_stat_stochastic_effect(self, ctx:RLangParser.Effect_stat_stochastic_effectContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#effect_stat_conditional.
     def enterEffect_stat_conditional(self, ctx:RLangParser.Effect_stat_conditionalContext):
         pass
@@ -239,6 +248,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#effect_reference.
     def exitEffect_reference(self, ctx:RLangParser.Effect_referenceContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#stochastic_effect.
+    def enterStochastic_effect(self, ctx:RLangParser.Stochastic_effectContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#stochastic_effect.
+    def exitStochastic_effect(self, ctx:RLangParser.Stochastic_effectContext):
         pass
 
 
