@@ -18,9 +18,9 @@ class StateTest(unittest.TestCase):
         self.assertEqual(s1, s5)
         self.assertEqual(s1, s6)
         self.assertEqual(s3, s3b)
-        # self.assertTrue(np.all(s4 == s7))
-        # self.assertTrue(np.all(s1 != s7))
-        # self.assertFalse(np.all(s1 == s7))  # TODO
+        self.assertTrue(np.all(s4 == s7))
+        self.assertTrue(np.all(s1 != s7))
+        self.assertFalse(np.all(s1 == s7))
 
         # TODO: Test unbatched_eq() method. It's probably broken
 
