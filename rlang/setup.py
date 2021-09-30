@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1.0",
     author="Benjamin Spiegel",
     author_email="bspiegel@cs.brown.edu",
-    description="A symbolic interface to grounded agent knowledge.",
+    description="For specifying partial information about MDPs.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/rafarodsa/lmdp",

@@ -8,3 +8,13 @@ Policy test2:
 		Execute leave
 	else:
 		Execute left
+
+Action left := -1
+Action right := 1
+Factor velocity := S[0]
+
+Policy mountain_car:
+    if velocity > 0:
+        Execute right
+    else:
+        Execute left

@@ -11,6 +11,7 @@ def test_Factor():
     position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
     position = Factor(0, "position")
     assert position(state=state) == position_parsed(state=state)
+    # assert position_parsed(state=state) == BatchedPrimitive(4)
 
     position_parsed = rlang.parse("Factor position := S[0:3]\nFactor p2 := position[0]", metadata)['position']
     position = Factor([0, 1, 2], "position")
