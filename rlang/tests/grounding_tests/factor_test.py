@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from rlang.src.grounding import Factor, State
+from rlang.src.grounding import Factor, Feature, State
 
 
 class FactorTest(unittest.TestCase):
@@ -58,6 +58,23 @@ class FactorTest(unittest.TestCase):
         self.assertTrue(eq3(state=state2))
         self.assertFalse(eq4(state=state2))
         self.assertTrue(eq5(state=state2))
+
+    def test_comparison(self):
+        #TODO: TypeError: '<=' not supported between instances of 'Factor' and 'Factor'
+        state1 = State(np.array([2, 3]))
+        state2 = State(np.array([2, 2]))
+        x = Factor(0, "x")
+        y = Factor(1, "y")
+
+        comp2 = x <= y
+        comp3 = x > y
+        comp4 = x >= y
+
+        self.assertTrue(comp2(state=state1))
+        self.assertTrue(comp2(state=state2))
+        self.assertFalse(comp3(state=state2))
+        self.assertTrue(comp2(state=state2))
+        
 
 if __name__ == '__main__':
     unittest.main()
