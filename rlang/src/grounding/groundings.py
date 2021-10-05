@@ -312,12 +312,18 @@ class Factor(GroundingFunction):
             if self._state_indexer.stop is None:
                 raise RLangGroundingError("We don't know enough about the state space")
             else:
-                self._state_indexer = list(range(*self._state_indexer.indices(self._state_indexer.stop)))
+                new_indexer = list(range(*self._state_indexer.indices(self._state_indexer.stop)))
+                return Factor(state_indexer=new_indexer, domain=self.domain)
         if isinstance(self._state_indexer, list):
+            print("state_indexer is list")
             if isinstance(item, int):
                 item = [item]
             if isinstance(item, list):
                 return Factor([self._state_indexer[i] for i in item], domain=self.domain)
+            elif isinstance(item, slice):
+                new_indexer = self._state_indexer[item]
+                return Factor(state_indexer=new_indexer, domain=self.domain)
+
 
     def __repr__(self):
         return f"<Factor [{self.domain.name}]->[{self.codomain.name}]: S[{str(self._state_indexer)[1:-1] if isinstance(self._state_indexer, list) else str(self._state_indexer)}]>"
