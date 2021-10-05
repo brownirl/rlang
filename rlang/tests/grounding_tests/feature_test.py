@@ -16,7 +16,18 @@ class FeatureTest(unittest.TestCase):
         self.assertEqual(test2(state1), 5)
 
     def test_arithmetic(self):
-        pass
+        s1 = State(np.array([2, 3]))
+        pos = Factor([0, 1], "position")
+        x = Feature(pos[0], 1)
+        y = Feature(pos[1], 1)
+        x_y_sum = x + y
+        x_y_prod = x * y
+        x_y_div = x / y
+        x_y_diff = x - y
+        self.assertEqual(x_y_sum(state=s1), 5)
+        self.assertEqual(x_y_prod(state=s1), 6)
+        self.assertEqual(x_y_div(state=s1), 2/3)
+        self.assertEqual(x_y_diff(state=s1), -1)
     
     def test_equality(self):
         state1 = State(np.array([2, 3]))
