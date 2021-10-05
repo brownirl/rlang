@@ -3,7 +3,7 @@ import numpy as np
 from rlang.src.grounding import ActionSpace
 
 class ActionSpaceTest(unittest.TestCase):
-    def test_from_state(self):
+    def test_from_action(self):
         acts = ActionSpace(float, (0, 2))
         acts1 = ActionSpace.from_action(action=np.ndarray([0, 2]))
         self.assertEqual(acts.dtype, acts1.dtype)
