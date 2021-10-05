@@ -306,6 +306,7 @@ class Factor(GroundingFunction):
     def indexer(self, new_indexer):
         self._state_indexer = new_indexer
 
+
     def __getitem__(self, item):
         if isinstance(self._state_indexer, slice):
             if self._state_indexer.stop is None:
@@ -413,7 +414,6 @@ class Predicate(GroundingFunction):
     def __repr__(self):
         return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
-#TODO: test
 class Policy(GroundingFunction):
     """Represents a policy function
 

@@ -63,6 +63,5 @@ class PredicateTest(unittest.TestCase):
         false_or_true = BOOL_FALSE | (BOOL_TRUE)
         self.assertFalse((~false_or_true)(state=None))
 
-
 if __name__ == '__main__':
     unittest.main()

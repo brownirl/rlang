@@ -59,6 +59,33 @@ class FactorTest(unittest.TestCase):
         self.assertFalse(eq4(state=state2))
         self.assertTrue(eq5(state=state2))
         
+    def test_contains(self):
+        x = Factor(0, "x")
+        y = Factor([0, 1], "y")
+        z = Factor([0, 2, 3], "z")
+
+        s1 = State([4, 5, 6, 7])
+        pred1 = y.contains(x)
+        pred2 = z.contains(y)
+        
+        # QUESTION: should this be false?
+        print(pred1(state=s1))
+        
+
+    def test_getitem(self):
+        pos = Factor([0, 1], "pos")
+        factor = Factor([0, 1, 2, 3])
+        s1 = State([4, 5, 6, 7])
+        item = pos[1]
+        item1 = pos[-1]
+        item2 = factor[1:3]
+        self.assertEqual(item1(state=s1), 5)
+        self.assertEqual(item(state=s1), 5)
+        #QUESTION: Why is this a Nonetype?
+        print(item2(state=s1))
+        # self.assertEqual(item2(state=s1), [4, 5, 6, 7])
+
+
 
 if __name__ == '__main__':
     unittest.main()
