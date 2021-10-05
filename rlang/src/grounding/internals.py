@@ -38,8 +38,14 @@ class Domain(Enum):
         if isinstance(other, Domain):
             # You can think of domain values as being multiples of prime numbers.
             # If STATE is 3 and ACTION is 2, STATE_ACTION is 3*2 = 6.
-            if self.value % other.value == 0:
-                return self
+            if self.value > other.value:
+                larger = self
+                smaller = other
+            else:
+                larger = other
+                smaller = self
+            if larger.value % smaller.value == 0:
+                return larger
             else:
                 enum_value = self.value * other.value
                 if enum_value in set(item.value for item in Domain):

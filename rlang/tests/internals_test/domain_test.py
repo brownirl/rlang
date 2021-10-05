@@ -11,9 +11,8 @@ class DomainTest(unittest.TestCase):
     def test_add(self):
         dom0 = Domain.STATE + Domain.ACTION
         self.assertEqual(dom0, Domain.STATE_ACTION)
-        # dom1 = Domain.STATE + Domain.STATE_NEXT_STATE
-        # self.assertEqual(dom1, Domain.STATE)
-        # QUESTION: should _add_ be communtative?
+        dom1 = Domain.STATE + Domain.STATE_NEXT_STATE
+        self.assertEqual(dom1, Domain.STATE_NEXT_STATE)
         dom2 = Domain.STATE_NEXT_STATE + Domain.STATE
         self.assertEqual(dom2, Domain.STATE_NEXT_STATE)
         self.assertRaises(RLangGroundingError, lambda: Domain.FACTOR_STATE + Domain.STATE)
