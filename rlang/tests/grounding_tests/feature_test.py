@@ -15,6 +15,9 @@ class FeatureTest(unittest.TestCase):
         self.assertEqual(test(state1), 3)
         self.assertEqual(test2(state1), 5)
 
+    def test_arithmetic(self):
+        pass
+    
     def test_equality(self):
         state1 = State(np.array([2, 3]))
         pos = Factor([0, 1], "position")
