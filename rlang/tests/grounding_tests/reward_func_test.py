@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from rlang.src.grounding import Factor, Feature, State
 
-class FactorTest(unittest.TestCase):
+class RewardTest(unittest.TestCase):
     pass
 
 
