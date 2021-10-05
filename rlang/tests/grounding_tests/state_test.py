@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 from rlang.src.grounding import State
 
+# just test batched primitives
 
 class StateTest(unittest.TestCase):
     def test_instantiation(self):

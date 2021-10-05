@@ -413,7 +413,7 @@ class Predicate(GroundingFunction):
     def __repr__(self):
         return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
-
+#TODO: test
 class Policy(GroundingFunction):
     """Represents a policy function
 
@@ -427,7 +427,7 @@ class Policy(GroundingFunction):
     def __repr__(self):
         return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
-
+#TODO: test
 class Option(Grounding):
     """Grounding object for an option.
 
@@ -484,7 +484,7 @@ class ProbabilisticFunction(GroundingFunction):
     def probability(self, probability: float):
         self._probability = probability
 
-
+#TODO: test
 class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
     def __init__(self, function: Any = lambda *args, **kwargs: None, name: str = None, probability: float = 1.0):
@@ -499,7 +499,7 @@ class TransitionFunction(ProbabilisticFunction):
     def __repr__(self):
         return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
 
-
+#TODO: test
 class RewardFunction(ProbabilisticFunction):
     """Represents a reward function."""
     def __init__(self, reward: Any, name: str = None, probability: float = 1.0):
@@ -528,6 +528,7 @@ class RewardFunction(ProbabilisticFunction):
         return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
 
 
+#TODO: test
 class Prediction(ProbabilisticFunction):
     """GroundingFunction for a prediction for the value of a GroundingFunction.
 
