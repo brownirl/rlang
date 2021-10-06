@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="rlang-irl",
-    version="0.1.0",
+    name="rlang",
+    version="0.0.1",
     author="Benjamin Spiegel",
     author_email="bspiegel@cs.brown.edu",
     description="For specifying partial information about MDPs.",

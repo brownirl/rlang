@@ -21,7 +21,8 @@ def create_mdp():
 def simple_experiment():
     mdp = create_mdp()
     agent = QLearningAgent(mdp.get_actions())
-    run_agents_on_mdp([agent], mdp)
+    print(mdp)
+    # run_agents_on_mdp([agent], mdp)
 
 
 def rlang_experiment():
@@ -50,4 +51,4 @@ def rlang_experiment():
 
 
 if __name__ == '__main__':
-    rlang_experiment()
+    simple_experiment()
