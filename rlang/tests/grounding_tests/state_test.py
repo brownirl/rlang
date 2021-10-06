@@ -23,13 +23,7 @@ class StateTest(unittest.TestCase):
         self.assertTrue(np.all(s1 != s7))
         self.assertFalse(np.all(s1 == s7))
 
-        # TODO: Test unbatched_eq() method. It's probably broken
-
-    def test_equality(self):
-        pass
-
-    def test_repr(self):
-        pass
+        
 
 
 if __name__ == '__main__':

@@ -315,7 +315,6 @@ class Factor(GroundingFunction):
                 new_indexer = list(range(*self._state_indexer.indices(self._state_indexer.stop)))
                 return Factor(state_indexer=new_indexer, domain=self.domain)
         if isinstance(self._state_indexer, list):
-            print("state_indexer is list")
             if isinstance(item, int):
                 item = [item]
             if isinstance(item, list):
@@ -433,7 +432,7 @@ class Policy(GroundingFunction):
     def __repr__(self):
         return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
-#TODO: test
+
 class Option(Grounding):
     """Grounding object for an option.
 

@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from rlang.src.grounding import Factor, Feature, State
+
 class FeatureTest(unittest.TestCase): 
 
     def test_instantiation(self):
