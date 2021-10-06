@@ -70,7 +70,6 @@ class FactorTest(unittest.TestCase):
 
         #TODO: test different data types
         
-        # # QUESTION: should this be false?
         # print(x(state=s1))
         # print(y(state=s1))
         # print(pred1(state=s1))
@@ -86,8 +85,8 @@ class FactorTest(unittest.TestCase):
         item2 = factor[1:3]
         # self.assertEqual(item1(state=s1), 5)
         # self.assertEqual(item(state=s1), 5)
-        #QUESTION: Why is this a Nonetype?
         print(item2(state=s1))
+        #TODO: test batched state - check if indexing is same as batch primitive
         # self.assertEqual(item2(state=s1), [4, 5, 6, 7])
 
 
