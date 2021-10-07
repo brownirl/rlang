@@ -35,9 +35,13 @@ class BatchedPrimitiveTest(unittest.TestCase):
         self.assertTrue((bp1d[:] == arr1d))
         self.assertTrue((bp1d[::-1] == arr1d[::-1]))
 
-    def test_eq(self):
+        arr3d = np.random.randint(0, 100, size=(3, 3, 3))
+        print("arr3d\n", arr3d)
+        # QUESTION: is this batched?
+        print("batched\n", arr3d[0])
+        print("first col\n", arr3d[:, 0])
 
-        #TODO: Add more multidimensional arrays
+    def test_eq(self):
         arr1 = np.array([[1, 2, 3], [4, 5, 6]])
         bp = BatchedPrimitive(arr1)
         self.assertTrue(((bp == arr1) == [[True],[True]]).all())
@@ -45,6 +49,10 @@ class BatchedPrimitiveTest(unittest.TestCase):
         self.assertEqual((bp == arr1).shape, (2, 1))
         arr2 = np.array([[1, 2, 3], [4, 6, 6]])
         self.assertTrue(((bp == arr2) == [[True],[False]]).all())
+        arr3 = np.array([[1, 2, 3, 3], [4, 5, 6, 6]])
+        self.assertTrue(((bp == arr3) == [[False],[False]]).all())
+        arr4 = np.array([[1, 2], [3, 4], [5, 6]])
+        self.assertTrue(((bp == arr4) == [[False],[False]]).all())
 
         arr1d = np.array([1, 2, 3])
         bp1d = BatchedPrimitive(arr1d)
@@ -55,6 +63,15 @@ class BatchedPrimitiveTest(unittest.TestCase):
 
         self.assertTrue(((bp1d == bp) == [[True], [False]]).all())
         self.assertTrue(((bp == bp1d) == [[True], [False]]).all())
+
+        arr3d = np.random.randint(0, 100, size=(3, 3, 3))
+        arr3d2 = np.random.randint(0, 100, size=(3, 3, 3))
+        bp3d = BatchedPrimitive(arr3d)
+        n = 3
+        true_arr = [[[True for k in range(n)] for j in range(n)] for i in range(n)]
+        false_arr = [[[False for k in range(n)] for j in range(n)] for i in range(n)]
+        self.assertTrue(((bp3d == arr3d) == (true_arr)).all())
+        self.assertTrue(((bp3d == arr3d2) == (false_arr)).all())
 
         # bp3 = BatchedPrimitive([[1, 0], [0, 0]])
         # bp4 = BatchedPrimitive(0)
@@ -89,9 +106,17 @@ class BatchedPrimitiveTest(unittest.TestCase):
         self.assertFalse(bp1.unbatched_eq(bp1d))
 
         arr3 = np.array([[1, 2], [3, 4], [5, 6]])
-        #TODO: test on arrays of different sizes
+        bp3 = BatchedPrimitive(arr3)
+        # QUESTION: Not implement as well - bc of array dimension??
+        # self.assertFalse(bp.unbatched_eq(bp3))
 
+        arr3d = np.random.randint(0, 100, size=(3, 3, 3))
+        arr3d2 = np.random.randint(0, 100, size=(3, 3, 3))
+        bp3d = BatchedPrimitive(arr3d)
+        bp3d2 = BatchedPrimitive(arr3d2)
 
+        self.assertTrue(bp3d.unbatched_eq(bp3d))
+        self.assertFalse(bp3d.unbatched_eq(bp3d2))
 
     def test_ne(self):
         arr1 = np.array([[1, 2, 3], [4, 5, 6]])
@@ -114,6 +139,14 @@ class BatchedPrimitiveTest(unittest.TestCase):
         self.assertTrue(((bp1d != bp) == [[False], [True]]).all())
         self.assertTrue(((bp != bp1d) == [[False], [True]]).all())
 
+        arr3d = np.random.randint(0, 100, size=(3, 3, 3))
+        arr3d2 = np.random.randint(0, 100, size=(3, 3, 3))
+        bp3d = BatchedPrimitive(arr3d)
+        n = 3
+        true_arr = [[[True for k in range(n)] for j in range(n)] for i in range(n)]
+        false_arr = [[[False for k in range(n)] for j in range(n)] for i in range(n)]
+        self.assertTrue(((bp3d != arr3d) == (false_arr)).all())
+        self.assertTrue(((bp3d != arr3d2) == (true_arr)).all())
         
 
 if __name__ == '__main__':
