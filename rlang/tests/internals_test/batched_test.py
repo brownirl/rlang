@@ -148,6 +148,18 @@ class BatchedPrimitiveTest(unittest.TestCase):
         self.assertTrue(((bp3d != arr3d) == (false_arr)).all())
         self.assertTrue(((bp3d != arr3d2) == (true_arr)).all())
         
+    def test_batched_state(self):
+        arr1 = np.array([[1, 2, 3], [4, 5, 6]])
+        arr2 = np.array([[1, 2, 3], [4, 6, 6]])
+        bp = BatchedPrimitive(arr1)
+        bp1 = BatchedPrimitive(arr2)
+        bp3 = BatchedPrimitive(np.array([bp, bp1]))
+        self.assertTrue(((bp3) == np.array([arr1, arr2])).all())
+        print("truth arr\n", (bp3) == np.array([arr1, arr2]))
+        # QUESTION: not sure about why bp3) == [arr2, arr1] is all true
+        # print(bp3)
+        # self.assertFalse(((bp3) == np.array([arr1, arr2])).all())
+        self.assertEqual(((bp3) == np.array([arr1, arr2])).shape, (2, 1, 3))
 
 if __name__ == '__main__':
     unittest.main()
