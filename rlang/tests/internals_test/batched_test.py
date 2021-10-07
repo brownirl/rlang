@@ -35,11 +35,11 @@ class BatchedPrimitiveTest(unittest.TestCase):
         self.assertTrue((bp1d[:] == arr1d))
         self.assertTrue((bp1d[::-1] == arr1d[::-1]))
 
-        arr3d = np.random.randint(0, 100, size=(3, 3, 3))
-        print("arr3d\n", arr3d)
-        # QUESTION: is this batched?
-        print("batched\n", arr3d[0])
-        print("first col\n", arr3d[:, 0])
+        # arr3d = np.random.randint(0, 100, size=(3, 3, 3))
+        # print("arr3d\n", arr3d)
+        # # QUESTION: is this batched?
+        # print("batched\n", arr3d[0])
+        # print("first col\n", arr3d[:, 0])
 
     def test_eq(self):
         arr1 = np.array([[1, 2, 3], [4, 5, 6]])
@@ -92,23 +92,21 @@ class BatchedPrimitiveTest(unittest.TestCase):
         bp1d = BatchedPrimitive(arr1d)
         self.assertTrue(bp1d.unbatched_eq(bp1d))
         arr1d2 = np.array([1, 2, 3, 4])
-        bp2d = BatchedPrimitive(arr1d2)
+        bp1d2 = BatchedPrimitive(arr1d2)
         self.assertFalse(bp1d.unbatched_eq(arr1d2))
-        self.assertFalse(bp2d.unbatched_eq(arr1d2))
-
-        self.assertFalse(bp1.unbatched_eq(bp1d))
+        self.assertFalse(bp1d2.unbatched_eq(arr1d2))
+        
         # QUESTION: why is bp2d.unbatched_eq(bp1d) NotImplemented?
-        print(bp2d.unbatched_eq(bp1d))
-        # self.assertFalse(bp2d.unbatched_eq(bp1d))
+        #TODO: Debug
+        # print(bp1d2.unbatched_eq(bp1d))
+        # self.assertFalse(bp1d2.unbatched_eq(bp1d))
 
-        # QUESTION: deprecation warning
-        print(bp1.unbatched_eq(bp1d))
         self.assertFalse(bp1.unbatched_eq(bp1d))
 
         arr3 = np.array([[1, 2], [3, 4], [5, 6]])
         bp3 = BatchedPrimitive(arr3)
-        # QUESTION: Not implement as well - bc of array dimension??
-        # self.assertFalse(bp.unbatched_eq(bp3))
+        # # QUESTION: Not implement as well - bc of array dimension??
+        self.assertFalse(bp.unbatched_eq(bp3))
 
         arr3d = np.random.randint(0, 100, size=(3, 3, 3))
         arr3d2 = np.random.randint(0, 100, size=(3, 3, 3))
@@ -155,11 +153,11 @@ class BatchedPrimitiveTest(unittest.TestCase):
         bp1 = BatchedPrimitive(arr2)
         bp3 = BatchedPrimitive(np.array([bp, bp1]))
         self.assertTrue(((bp3) == np.array([arr1, arr2])).all())
-        print("truth arr\n", (bp3) == np.array([arr1, arr2]))
-        # QUESTION: not sure about why bp3) == [arr2, arr1] is all true
-        # print(bp3)
-        # self.assertFalse(((bp3) == np.array([arr1, arr2])).all())
-        self.assertEqual(((bp3) == np.array([arr1, arr2])).shape, (2, 1, 3))
+        # print("truth arr\n", (bp3) == np.array([arr1, arr2]))
+        # # QUESTION: not sure about why bp3) == [arr2, arr1] is all true
+        # # print(bp3)
+        # # self.assertFalse(((bp3) == np.array([arr1, arr2])).all())
+        # self.assertEqual(((bp3) == np.array([arr1, arr2])).shape, (2, 1, 3))
 
 if __name__ == '__main__':
     unittest.main()

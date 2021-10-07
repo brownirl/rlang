@@ -117,7 +117,10 @@ class BatchedPrimitive(np.ndarray):
 
     def __new__(cls, input_array: Any):
         # All BatchablePrimitives are batched automatically
-        obj = np.array(input_array, ndmin=2).view(cls)
+        obj_arr = np.array(input_array, ndmin=2)
+        if obj_arr.ndim != 2:
+            raise RLangGroundingError(f"Cannot construct a {str(cls)} with input array of shape {input_array.shape}.")
+        obj = obj_arr.view(cls)
         obj.primitive_size = obj.shape[1]
         return obj
 
@@ -144,6 +147,7 @@ class BatchedPrimitive(np.ndarray):
 
     def unbatched_eq(self, other):
         if isinstance(other, BatchedPrimitive):
+            #TODO: investigate deprecation cause - include version 
             return np.all(super().__eq__(other))
         else:
             return False
