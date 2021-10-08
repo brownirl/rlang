@@ -62,7 +62,7 @@
             ],
             "is_goal_terminal": true,
             "gamma": 0.99,
-            "slip_prob": 0.33,
+            "slip_prob": 0.0,
             "step_cost": 0,
             "lava_cost": 1.0
         }
@@ -76,7 +76,7 @@
                 "anneal": false,
                 "explore": "uniform"
             },
-            "index": 0
+            "index": 2
         }
     },
     "MISC": {
