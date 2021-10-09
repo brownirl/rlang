@@ -76,6 +76,16 @@
                 "anneal": false,
                 "explore": "uniform"
             },
+            "index": 0
+        },
+        "<class 'agents.RLangQLearningAgentClass.RLangQLearningAgent'>": {
+            "params": {
+                "alpha": 0.1,
+                "gamma": 0.99,
+                "epsilon": 0.1,
+                "anneal": false,
+                "explore": "uniform"
+            },
             "index": 2
         }
     },

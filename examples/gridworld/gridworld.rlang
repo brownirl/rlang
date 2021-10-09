@@ -3,10 +3,10 @@ import vocab.json
 Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
 
 Factor position := S[0, 1]
-Action up := 1
-Action down := 2
-Action left := 3
-Action right := 4
+Action up := 0
+Action down := 1
+Action left := 2
+Action right := 3
 
 Factor x := position[0]
 Factor y := position[1]
