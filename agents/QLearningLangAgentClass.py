@@ -6,7 +6,7 @@
 '''
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
 from agents.LangAgentClass import LangAgent
-# from lmdp.utils.collections import ArrayDict, Index, _cartesian
+from lmdp.utils.collections import ArrayDict, Index, _cartesian
 from collections import namedtuple
 import numpy as np
 import copy, time
@@ -15,8 +15,8 @@ from tqdm import tqdm
 indices = namedtuple("SAIndex", ["state_space", "action_space"])
 
 
-# def _indices(state_space_gen, action_space):
-#     return indices(Index(state_space_gen()), Index(action_space))
+def _indices(state_space_gen, action_space):
+    return indices(Index(state_space_gen()), Index(action_space))
 
 
 class QLearningLangAgent(LangAgent):
