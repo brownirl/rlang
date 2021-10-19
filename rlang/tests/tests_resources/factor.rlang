@@ -1,5 +1,0 @@
-Factor inventory := S[5:10]
-Factor iron := S[5]
-Factor test2 := S[:5]
-Factor test3 := S[5:-1]
-Factor test4 := S[:]
