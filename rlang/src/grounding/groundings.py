@@ -55,6 +55,16 @@ class GroundingFunction(Grounding):
         self._domain = domain
         self._codomain = codomain
         self._function = function
+    
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        if (ufunc == np.multiply):
+            return self.__rmul__(inputs[0])
+        if (ufunc == np.true_divide):
+            return self.__rtruediv__(inputs[0])
+        if (ufunc == np.add):
+            return self.__radd__(inputs[0])
+        if (ufunc == np.subtract):
+            return self.__rsub__(inputs[0])
 
     @property
     def domain(self):
@@ -110,6 +120,8 @@ class GroundingFunction(Grounding):
             if not isinstance(kwargs['next_state'], State):
                 kwargs.update({'next_state': State(kwargs['next_state'])})
         return self._function(*args, **kwargs)
+
+    #TODO: write leq/geq
 
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
@@ -210,8 +222,7 @@ class GroundingFunction(Grounding):
         raise RLangGroundingError(message=f"Cannot '+' a {type(self)} and a {type(other)}")
 
     def __radd__(self, other):
-        self.__add__(other)
-
+        return self.__add__(other)
 
 class PrimitiveGrounding(GroundingFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
