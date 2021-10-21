@@ -357,7 +357,6 @@ class RLangListener(RLangParserListener):
         ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        # TODO: This IS NOT so simple. Resolve this after migrating arithmetic expressions to PrimitiveGroundings
         ctx.value = ctx.rhs.value.contains(ctx.lhs.value)
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):

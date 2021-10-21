@@ -563,7 +563,7 @@ class RewardFunction(ProbabilisticFunction):
         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
 
     def __repr__(self):
-        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
+        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P({self.probability})>"
 
 
 # TODO: test
@@ -624,7 +624,7 @@ class Prediction(ProbabilisticFunction):
         self._probability = probability
 
     def __repr__(self):
-        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\" with P={self.probability}>"
+        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\" with P({self.probability})>"
 
 
 class Effect(Grounding):
@@ -643,7 +643,9 @@ class Effect(Grounding):
     @probability.setter
     def probability(self, probability: float):
         for s in [*self.reward_functions, *self.transition_functions, *self.predictions]:
+            if not isinstance(s, ProbabilisticFunction):
+                raise RLangGroundingError(f"Can't set the probability of a {type(s)} wrapped inside an Effect")
             s.probability = s.probability * probability
 
     def __repr__(self):
-        return f"<Effect \"{self.name}\" with P={self.probability}>"
+        return f"<Effect \"{self.name}\" with P({self.probability})>"
