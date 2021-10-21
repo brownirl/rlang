@@ -9,6 +9,7 @@ from rlang.src.exceptions import RLangGroundingError
 
 class Grounding(object):
     """Parent class for all grounded objects."""
+
     def __init__(self, name=None):
         self._name = name
 
@@ -44,6 +45,7 @@ class GroundingFunction(Grounding):
         function: the actual function.
         name (optional): the name of the Grounding.
     """
+
     def __init__(self, domain: Union[str, Domain], codomain: Union[str, Domain], function: Callable, name: str = None):
         if isinstance(domain, str):
             domain = Domain.from_name(domain)
@@ -55,15 +57,15 @@ class GroundingFunction(Grounding):
         self._domain = domain
         self._codomain = codomain
         self._function = function
-    
+
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
-        if (ufunc == np.multiply):
+        if ufunc == np.multiply:
             return self.__rmul__(inputs[0])
-        if (ufunc == np.true_divide):
+        if ufunc == np.true_divide:
             return self.__rtruediv__(inputs[0])
-        if (ufunc == np.add):
+        if ufunc == np.add:
             return self.__radd__(inputs[0])
-        if (ufunc == np.subtract):
+        if ufunc == np.subtract:
             return self.__rsub__(inputs[0])
 
     @property
@@ -97,7 +99,9 @@ class GroundingFunction(Grounding):
         unbatch_cast = lambda x, j: np.asarray(x)[j] if isinstance(x, BatchedPrimitive) else x
         unbatch_size = lambda x: len(x) if isinstance(x, BatchedPrimitive) else 1
         if isinstance(item, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: [[list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in range(unbatch_size(item))],
+            return Predicate(function=lambda *args, **kwargs: [
+                [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
+                range(unbatch_size(item))],
                              domain=self.domain + item.domain)
         elif isinstance(item, BatchedPrimitive):
             return Predicate(function=lambda *args, **kwargs: [
@@ -121,7 +125,7 @@ class GroundingFunction(Grounding):
                 kwargs.update({'next_state': State(kwargs['next_state'])})
         return self._function(*args, **kwargs)
 
-    #TODO: write leq/geq
+    # TODO: write leq/geq
 
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
@@ -149,7 +153,7 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             new_domain = self.domain + other.domain
             if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()*other())
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() * other())
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs),
                                domain=new_domain)
@@ -167,7 +171,7 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             new_domain = self.domain + other.domain
             if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()/other())
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() / other())
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs),
                                domain=new_domain)
@@ -190,7 +194,7 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             new_domain = self.domain + other.domain
             if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()-other())
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() - other())
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs),
                                domain=new_domain)
@@ -210,7 +214,7 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             new_domain = self.domain + other.domain
             if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self()+other())
+                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() + other())
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs),
                                domain=self.domain + other.domain)
@@ -224,8 +228,10 @@ class GroundingFunction(Grounding):
     def __radd__(self, other):
         return self.__add__(other)
 
+
 class PrimitiveGrounding(GroundingFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
+
     def __init__(self, codomain: Domain, value: Any, name: str = None):
         # TODO: What about lists? Should lists be cast? Only non-jagged ones?
         if isinstance(value, (int, float)):
@@ -252,6 +258,7 @@ class ActionReference(PrimitiveGrounding):
         action: the action.
         name (optional): name of the action.
     """
+
     def __init__(self, action: Any, name: str = None):
         # TODO: Integrate Action object into this constructor
         if isinstance(action, (int, float, list)):
@@ -273,6 +280,7 @@ class IdentityGrounding(GroundingFunction):
     Args:
         domain: 'state', 'action', or 'next_state'
     """
+
     def __init__(self, domain: Union[str, Domain]):
         if not isinstance(domain, str):
             domain = domain.name.lower()
@@ -291,6 +299,7 @@ class Factor(GroundingFunction):
         name (optional): the name of the grounding.
         domain (optional [str]): the domain of the Factor.
     """
+
     def __init__(self, state_indexer: Any, name: str = None, domain: Union[str, Domain] = Domain.STATE):
         if isinstance(domain, Domain):
             domain_arg = domain.name.lower()
@@ -317,7 +326,6 @@ class Factor(GroundingFunction):
     def indexer(self, new_indexer):
         self._state_indexer = new_indexer
 
-
     def __getitem__(self, item):
         if isinstance(self._state_indexer, slice):
             if self._state_indexer.stop is None:
@@ -334,7 +342,6 @@ class Factor(GroundingFunction):
                 new_indexer = self._state_indexer[item]
                 return Factor(state_indexer=new_indexer, domain=self.domain)
 
-
     def __repr__(self):
         return f"<Factor [{self.domain.name}]->[{self.codomain.name}]: S[{str(self._state_indexer)[1:-1] if isinstance(self._state_indexer, list) else str(self._state_indexer)}]>"
 
@@ -349,6 +356,7 @@ class Feature(GroundingFunction):
         name (optional): the name of the grounding.
         domain (optional [str]): the domain of the Feature.
     """
+
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
         super().__init__(function=function, codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
@@ -366,8 +374,10 @@ class MarkovFeature(GroundingFunction):
     Args:
         function: a function of (state, action, next_state)
     """
+
     def __init__(self, function: Callable, name: str):
-        super().__init__(domain=Domain.STATE_ACTION_NEXT_STATE, function=function, codomain=Domain.REAL_VALUE, name=name)
+        super().__init__(domain=Domain.STATE_ACTION_NEXT_STATE, function=function, codomain=Domain.REAL_VALUE,
+                         name=name)
 
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
@@ -387,13 +397,15 @@ class Predicate(GroundingFunction):
         name (optional): the name of the grounding.
         domain (optional [str]): the domain of the Predicate.
     """
+
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
         super().__init__(function=function, codomain=Domain.BOOLEAN, domain=domain, name=name)
 
     @classmethod
     def from_PrimitiveGrounding(cls, primitive_grounding: PrimitiveGrounding):
         if primitive_grounding.codomain != Domain.BOOLEAN:
-            raise RLangGroundingError(f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Predicate")
+            raise RLangGroundingError(
+                f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Predicate")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
     def __and__(self, other) -> Predicate:
@@ -430,6 +442,7 @@ class Predicate(GroundingFunction):
     def __repr__(self):
         return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
+
 class Policy(GroundingFunction):
     """Represents a policy function
 
@@ -437,6 +450,7 @@ class Policy(GroundingFunction):
         function: the policy function from states to actions.
         name (optional): the name of the grounding.
     """
+
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name)
 
@@ -453,6 +467,7 @@ class Option(Grounding):
         termination: A Predicate capturing the termination set of the option.
         name (optional): the name of the grounding.
     """
+
     def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
         self._initiation = initiation
         self._policy = policy
@@ -482,12 +497,14 @@ class Option(Grounding):
 
 class ValueFunction(GroundingFunction):
     """Represents a value function."""
+
     def __init__(self, function: Callable):
         super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
 
 
 class ProbabilisticFunction(GroundingFunction):
     """Represents a function which provides stochastic output."""
+
     def __init__(self, probability: float = 1.0, *args, **kwargs):
         self._probability = probability
         super().__init__(*args, **kwargs)
@@ -500,9 +517,11 @@ class ProbabilisticFunction(GroundingFunction):
     def probability(self, probability: float):
         self._probability = probability
 
-#TODO: test
+
+# TODO: test
 class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
+
     def __init__(self, function: Any = lambda *args, **kwargs: None, name: str = None, probability: float = 1.0):
         if isinstance(function, GroundingFunction):
             if not function.domain <= Domain.STATE_ACTION:
@@ -510,14 +529,17 @@ class TransitionFunction(ProbabilisticFunction):
             elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
                 # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
                 raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
-        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name, probability=probability)
+        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name,
+                         probability=probability)
 
     def __repr__(self):
         return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
 
-#TODO: test
+
+# TODO: test
 class RewardFunction(ProbabilisticFunction):
     """Represents a reward function."""
+
     def __init__(self, reward: Any, name: str = None, probability: float = 1.0):
         if isinstance(reward, (int, float, np.ndarray)):
             function = lambda *args, **kwargs: np.array(reward)
@@ -544,7 +566,7 @@ class RewardFunction(ProbabilisticFunction):
         return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
 
 
-#TODO: test
+# TODO: test
 class Prediction(ProbabilisticFunction):
     """GroundingFunction for a prediction for the value of a GroundingFunction.
 
@@ -579,10 +601,12 @@ class Prediction(ProbabilisticFunction):
             raise RLangGroundingError(f"Cannot construct a Prediction from value of type {type(value)}")
 
         if grounding_function.domain > Domain.STATE_ACTION:
-            raise RLangGroundingError(f"Cannot predict the value of a GroundingFunction with domain {grounding_function.domain.name}")
+            raise RLangGroundingError(
+                f"Cannot predict the value of a GroundingFunction with domain {grounding_function.domain.name}")
 
         if grounding_function.codomain != codomain:
-            raise RLangGroundingError(f"Prediction value type ({codomain.name}) does not match grounding function type ({grounding_function.codomain.name})")
+            raise RLangGroundingError(
+                f"Prediction value type ({codomain.name}) does not match grounding function type ({grounding_function.codomain.name})")
 
         self._grounding_function = grounding_function
         super().__init__(codomain=codomain, function=function, domain=domain, name=name, probability=probability)
@@ -604,7 +628,8 @@ class Prediction(ProbabilisticFunction):
 
 
 class Effect(Grounding):
-    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str = None, probability: float = 1.0):
+    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str = None,
+                 probability: float = 1.0):
         self.reward_functions = reward_functions
         self.transition_functions = transition_functions
         self.predictions = predictions
