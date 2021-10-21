@@ -517,12 +517,15 @@ class ProbabilisticFunction(GroundingFunction):
     def probability(self, probability: float):
         self._probability = probability
 
+    def compose_probability(self, probability: float):
+        self._probability = self._probability * probability
+
 
 # TODO: test
 class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
 
-    def __init__(self, function: Any = lambda *args, **kwargs: None, name: str = None, probability: float = 1.0):
+    def __init__(self, function: Any = lambda *args, **kwargs: None, domain: Domain = Domain.STATE_ACTION, name: str = None, probability: float = 1.0):
         if isinstance(function, GroundingFunction):
             if not function.domain <= Domain.STATE_ACTION:
                 raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
@@ -533,14 +536,17 @@ class TransitionFunction(ProbabilisticFunction):
                          probability=probability)
 
     def __repr__(self):
-        return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P={self.probability}>"
+        if self.name:
+            return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        else:
+            return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]>"
 
 
 # TODO: test
 class RewardFunction(ProbabilisticFunction):
-    """Represents a reward function."""
+    """Represents function of expected reward."""
 
-    def __init__(self, reward: Any, name: str = None, probability: float = 1.0):
+    def __init__(self, reward: Any = 0, name: str = None, domain: Domain = Domain.STATE_ACTION, probability: float = 1.0):
         if isinstance(reward, (int, float, np.ndarray)):
             function = lambda *args, **kwargs: np.array(reward)
             domain = Domain.ANY
@@ -556,14 +562,16 @@ class RewardFunction(ProbabilisticFunction):
                 raise RLangGroundingError(f"Rewards must return real values, not values of type {reward.codomain.name}")
         elif isinstance(reward, Callable):
             function = reward
-            domain = Domain.STATE_ACTION
         else:
             raise RLangGroundingError(f"Cannot construct a Reward from a {type(reward)}")
 
         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
 
     def __repr__(self):
-        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\" with P({self.probability})>"
+        if self.name:
+            return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        else:
+            return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}]>"
 
 
 # TODO: test

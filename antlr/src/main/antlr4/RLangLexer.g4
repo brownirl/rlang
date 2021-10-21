@@ -57,6 +57,7 @@ ELIF: 'elif';
 IN: 'in';
 INIT: 'init';
 UNTIL: 'until';
+WITH: 'with';
 
 AND: 'and';
 OR: 'or';

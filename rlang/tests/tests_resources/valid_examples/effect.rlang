@@ -2,22 +2,52 @@ Factor f1 := S[0]
 Factor f2 := S[1]
 Action up := 1
 
+#Effect jo2:
+#    with P(0.2):
+#        S' -> S * 2
+
+#Effect:
+#    with P(0.5):
+#        S' -> S
+#    with P(0.25):
+#        S' -> S * 2
+#
+#Effect:
+#    with P(0.25):
+#        S' -> S * 2
+
+Effect jo:
+    with P(0.1):
+        Reward 0.5
+
+Effect:
+    with P(0.5):
+        if f1 == 1:
+            Reward 10
+        else:
+            Reward 20
+    with P(0.2):
+        Reward 20
+    with P(0.1):
+        -> jo
+
+
 #Effect:
 #    if f1 == [5]:
 #        Reward 10
 #
-Effect jo:
-    Reward 10
-
-Effect:
-    -> jo
-    f1' -> 2
-    f2' -> 6
-    f1' -> 4
-    if f1 == [1]:
-        f1' -> 8
-        f1' -> 8
-        f2' -> 9
+#Effect jo:
+#    Reward 10
+#
+#Effect:
+#    -> jo
+#    f1' -> 2
+#    f2' -> 6
+#    f1' -> 4
+#    if f1 == [1]:
+#        f1' -> 8
+#        f1' -> 8
+#        f2' -> 9
 #
 #Effect:
 #    Reward 10

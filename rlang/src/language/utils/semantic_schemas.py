@@ -4,20 +4,29 @@ from rlang.src.exceptions import RLangGroundingError
 """These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
-# TODO: Augment this function to handle probabilities
 def default_stat_collection(stats, *args, **kwargs):
-    val = None
+    possibilities = dict()
     for stat in stats:
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
-            if val is None:
-                val = stat_val
-            # else:
-            #     raise RLangGroundingError(
-            #         "GroundingFunction is attempting to return multiple objects. There should only be one.")
-    return val
+            if isinstance(stat_val, dict):
+                for k, v in stat_val.items():
+                    # Add to dict or update existing entry
+                    if k in possibilities:
+                        possibilities[k] += v * stat.probability
+                    else:
+                        possibilities.update({k: v * stat.probability})
+            else:
+                # Add to dict or update existing entry
+                if stat_val in possibilities:
+                    possibilities[stat_val] = possibilities[stat_val] * stat.probability
+                else:
+                    possibilities.update({stat_val: stat.probability})
+
+    return possibilities
 
 
+# TODO: Augment this function to handle probabilities
 def policy_stat_collection(stats, *args, **kwargs):
     val = None
     for stat in stats:
@@ -31,15 +40,12 @@ def policy_stat_collection(stats, *args, **kwargs):
     return val
 
 
-# TODO: Augment this function to handle probabilities
 def reward_stat_collection(stats, *args, **kwargs):
     val = 0
-    # print("asdfsd")
     for stat in stats:
-        # print(stat.probability)
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
-            val += stat_val
+            val += stat_val * stat.probability
     return val
 
 

@@ -160,6 +160,9 @@ class BatchedPrimitive(np.ndarray):
         else:
             return False
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __ne__(self, other):
         return np.bitwise_not(self.__eq__(other))
 

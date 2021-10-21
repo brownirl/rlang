@@ -184,7 +184,8 @@ class RLangListener(RLangParserListener):
         transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
         prediction_list = list(filter(lambda x: isinstance(x, Prediction), all_stats))
 
-        if ctx.IDENTIFIER() is not None:  # This is a named effect which should not merge into the existing transition function
+        if ctx.IDENTIFIER() is not None:
+            # This is a named effect which should not merge into the existing transition function
             new_effect = Effect(reward_functions=reward_functions,
                                 transition_functions=transition_functions,
                                 predictions=prediction_list,
@@ -193,11 +194,17 @@ class RLangListener(RLangParserListener):
         else:
             reward_functions.append(self.rlang_knowledge.reward_function)
             reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
-            self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats)
+            domain = Domain.ANY
+            for funcs in reward_functions:
+                domain += funcs.domain
+            self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats, domain=domain)
 
             transition_functions.append(self.rlang_knowledge.transition_function)
             transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
-            self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats)
+            domain = Domain.ANY
+            for funcs in transition_functions:
+                domain += funcs.domain
+            self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats, domain=domain)
 
             predictions = dict()
             for p in [*prediction_list, *self.rlang_knowledge.predictions.values()]:
@@ -263,19 +270,16 @@ class RLangListener(RLangParserListener):
     def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
         probability = ctx.any_number().value
         if probability > 1.0 or probability < 0.0:
-            raise RLangSemanticError("Effect probability must be between 0 and 1")
+            raise RLangSemanticError("Effect probability must be between 0.0 and 1.0")
         stats = []
         for s in ctx.stats:
             if isinstance(s.value, list):
                 stats.extend(s.value)
             else:
                 stats.append(s.value)
-        # stats = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.stats)))
-        # ctx.stats = list(filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.stats))) + stats
 
-        # TODO: This is probably not that simple. stochastic functions will return probability distributions
         for s in stats:
-            s.probability = s.probability * probability
+            s.compose_probability(probability)
 
         ctx.value = stats
 
