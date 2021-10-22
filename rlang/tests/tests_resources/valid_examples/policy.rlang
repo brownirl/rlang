@@ -7,49 +7,62 @@ Predicate a := S[0] == 0
 Predicate b := S[0] == 1
 Predicate c := S[0] == 2
 
-Policy test1:
-	Execute [0, -0.5]
-	Execute down
-
-Policy test2:
-	if False:
-		Execute down
-	elif True:
-		Execute test1
-	else:
-		Execute down
-
-Policy test3:
-	if a:
-		Execute down
-	elif b:
-		Execute up
-	else:
-		if c:
-			Execute left
-		elif True:
-			Execute up
-		else:
-			Execute right
-
+#Policy test0:
+#    Execute up
 
 Policy test1:
-	Execute up
-	
-Policy test2:
-	if at_workshop:
-		Execute down
-	elif iron >= 1:
-		Execute leave
-	else:
-		Execute left
+    with P(0.1):
+        Execute down
+        Execute up
+    with P(0.4):
+        if True:
+            Execute down
+        else:
+            Execute right
 
-Action left := -1
-Action right := 1
-Factor velocity := S[0]
+#Policy test1:
+#	Execute [0, -0.5]
+#	Execute down
+#
+#Policy test2:
+#	if False:
+#		Execute down
+#	elif True:
+#		Execute test1
+#	else:
+#		Execute down
+#
+#Policy test3:
+#	if a:
+#		Execute down
+#	elif b:
+#		Execute up
+#	else:
+#		if c:
+#			Execute left
+#		elif True:
+#			Execute up
+#		else:
+#			Execute right
 
-Policy mountain_car:
-    if velocity > 0:
-        Execute right
-    else:
-        Execute left
+
+#Policy test1:
+#	Execute up
+#
+#Policy test2:
+#	if at_workshop:
+#		Execute down
+#	elif iron >= 1:
+#		Execute leave
+#	else:
+#		Execute left
+#
+#Action left := -1
+#Action right := 1
+#Factor velocity := S[0]
+#
+#Policy mountain_car:
+#    if velocity > 0:
+#        Execute right
+#    else:
+#        Execute left

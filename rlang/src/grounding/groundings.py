@@ -229,7 +229,26 @@ class GroundingFunction(Grounding):
         return self.__add__(other)
 
 
-class PrimitiveGrounding(GroundingFunction):
+class ProbabilisticFunction(GroundingFunction):
+    """Represents a function which provides stochastic output."""
+
+    def __init__(self, probability: float = 1.0, *args, **kwargs):
+        self._probability = probability
+        super().__init__(*args, **kwargs)
+
+    @property
+    def probability(self):
+        return self._probability
+
+    @probability.setter
+    def probability(self, probability: float):
+        self._probability = probability
+
+    def compose_probability(self, probability: float):
+        self._probability = self._probability * probability
+
+
+class PrimitiveGrounding(ProbabilisticFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
 
     def __init__(self, codomain: Domain, value: Any, name: str = None):
@@ -262,10 +281,10 @@ class ActionReference(PrimitiveGrounding):
     def __init__(self, action: Any, name: str = None):
         # TODO: Integrate Action object into this constructor
         if isinstance(action, (int, float, list)):
-            action = np.array(action)
+            action = Action(np.array(action))
         elif isinstance(action, GroundingFunction):
             if action.domain == Domain.ANY:
-                action = np.array(action())
+                action = Action(np.array(action()))
             else:
                 raise RLangGroundingError(f"Actions cannot be functions of {action.domain.name}")
         super().__init__(codomain=Domain.ACTION, value=action, name=name)
@@ -443,21 +462,6 @@ class Predicate(GroundingFunction):
         return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class Policy(GroundingFunction):
-    """Represents a policy function
-
-    Args:
-        function: the policy function from states to actions.
-        name (optional): the name of the grounding.
-    """
-
-    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
-        super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name)
-
-    def __repr__(self):
-        return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
-
-
 class Option(Grounding):
     """Grounding object for an option.
 
@@ -502,23 +506,19 @@ class ValueFunction(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
 
 
-class ProbabilisticFunction(GroundingFunction):
-    """Represents a function which provides stochastic output."""
+class Policy(ProbabilisticFunction):
+    """Represents a policy function
 
-    def __init__(self, probability: float = 1.0, *args, **kwargs):
-        self._probability = probability
-        super().__init__(*args, **kwargs)
+    Args:
+        function: the policy function from states to actions.
+        name (optional): the name of the grounding.
+    """
 
-    @property
-    def probability(self):
-        return self._probability
+    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE, probability: float = 1.0):
+        super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name, probability=probability)
 
-    @probability.setter
-    def probability(self, probability: float):
-        self._probability = probability
-
-    def compose_probability(self, probability: float):
-        self._probability = self._probability * probability
+    def __repr__(self):
+        return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 # TODO: test

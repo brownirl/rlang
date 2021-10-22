@@ -6,30 +6,31 @@ Action up := 1
 #    with P(0.2):
 #        S' -> S * 2
 
-#Effect:
-#    with P(0.5):
-#        S' -> S
-#    with P(0.25):
-#        S' -> S * 2
+Effect:
+    with P(0.5):
+        S' -> S
+    with P(0.25):
+        S' -> S * 2
+        S' -> S * 2
 #
 #Effect:
 #    with P(0.25):
 #        S' -> S * 2
 
-Effect jo:
-    with P(0.1):
-        Reward 0.5
-
-Effect:
-    with P(0.5):
-        if f1 == 1:
-            Reward 10
-        else:
-            Reward 20
-    with P(0.2):
-        Reward 20
-    with P(0.1):
-        -> jo
+#Effect jo:
+#    with P(0.1):
+#        Reward 0.5
+#
+#Effect:
+#    with P(0.5):
+#        if f1 == 1:
+#            Reward 10
+#        else:
+#            Reward 20
+#    with P(0.2):
+#        Reward 20
+#    with P(0.1):
+#        -> jo
 
 
 #Effect:

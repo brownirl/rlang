@@ -148,6 +148,9 @@ class RLangListener(RLangParserListener):
     def exitPolicy_stat_execute(self, ctx: RLangParser.Policy_stat_executeContext):
         ctx.value = ctx.execute().value
 
+    def exitPolicy_stat_stochastic(self, ctx: RLangParser.Policy_stat_stochasticContext):
+        ctx.value = ctx.stochastic_policy_stat().value
+
     def exitPolicy_stat_conditional(self, ctx: RLangParser.Policy_stat_conditionalContext):
         ctx.value = ctx.conditional_policy_stat().value
 
@@ -160,12 +163,29 @@ class RLangListener(RLangParserListener):
         else:
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
+    def exitStochastic_policy_stat(self, ctx: RLangParser.Stochastic_policy_statContext):
+        probability = ctx.any_number().value
+        if probability > 1.0 or probability < 0.0:
+            raise RLangSemanticError("Execute probability must be between 0.0 and 1.0")
+        stats = []
+        for s in ctx.stats:
+            if isinstance(s.value, list):
+                stats.extend(s.value)
+            else:
+                stats.append(s.value)
+
+        for s in stats:
+            # print(s)
+            s.compose_probability(probability)
+
+        ctx.value = Policy(lambda *args, **kwargs: policy_stat_collection(stats, *args, **kwargs))
+
     def exitConditional_policy_stat(self, ctx: RLangParser.Conditional_policy_statContext):
         ctx.if_statements = list(map(lambda x: x.value, ctx.if_statements))
         ctx.elif_statements = list(map(lambda x: x.value, ctx.elif_statements))
         ctx.else_statements = list(map(lambda x: x.value, ctx.else_statements))
 
-        ctx.value = build_conditional_stat(ctx, Callable)
+        ctx.value = Policy(build_conditional_stat(ctx, Callable))
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
         stats = list(map(lambda x: x.value, ctx.stats))

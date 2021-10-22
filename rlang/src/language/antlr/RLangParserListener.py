@@ -143,6 +143,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#policy_stat_stochastic.
+    def enterPolicy_stat_stochastic(self, ctx:RLangParser.Policy_stat_stochasticContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#policy_stat_stochastic.
+    def exitPolicy_stat_stochastic(self, ctx:RLangParser.Policy_stat_stochasticContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#policy_stat_conditional.
     def enterPolicy_stat_conditional(self, ctx:RLangParser.Policy_stat_conditionalContext):
         pass
@@ -158,6 +167,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#execute.
     def exitExecute(self, ctx:RLangParser.ExecuteContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#stochastic_policy_stat.
+    def enterStochastic_policy_stat(self, ctx:RLangParser.Stochastic_policy_statContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#stochastic_policy_stat.
+    def exitStochastic_policy_stat(self, ctx:RLangParser.Stochastic_policy_statContext):
         pass
 
 

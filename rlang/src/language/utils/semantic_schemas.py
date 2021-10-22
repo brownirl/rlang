@@ -19,7 +19,7 @@ def default_stat_collection(stats, *args, **kwargs):
             else:
                 # Add to dict or update existing entry
                 if stat_val in possibilities:
-                    possibilities[stat_val] = possibilities[stat_val] * stat.probability
+                    possibilities[stat_val] = possibilities[stat_val] + stat.probability
                 else:
                     possibilities.update({stat_val: stat.probability})
 
@@ -28,16 +28,27 @@ def default_stat_collection(stats, *args, **kwargs):
 
 # TODO: Augment this function to handle probabilities
 def policy_stat_collection(stats, *args, **kwargs):
-    val = None
+    possibilities = dict()
     for stat in stats:
+        probability = 1.0
+        if isinstance(stat, ProbabilisticFunction):
+            # print(stat)
+            probability = stat.probability
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
-            if val is None:
-                val = stat_val
-            # else:
-            #     raise RLangGroundingError(
-            #         "GroundingFunction is attempting to return multiple objects. There should only be one.")
-    return val
+            if isinstance(stat_val, dict):
+                for k, v in stat_val.items():
+                    # Add to dict or update existing entry
+                    if k in possibilities:
+                        possibilities[k] += v * probability
+                    else:
+                        possibilities.update({k: v * probability})
+            else:
+                if stat_val in possibilities:
+                    possibilities[stat_val] = possibilities[stat_val] + probability
+                else:
+                    possibilities.update({stat_val: probability})
+    return possibilities
 
 
 def reward_stat_collection(stats, *args, **kwargs):

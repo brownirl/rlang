@@ -126,15 +126,15 @@ def test_Action():
     # TODO: Need more tests for Action
 
 
-# def test_Policy():
-#     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-#     s = State([4, 1, 2, 3, 4])
+def test_Policy():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([4, 1, 2, 3, 4])
 
-#     knowledge = rlang.parse_file("tests_resources/listener_tests/policy.rlang", metadata)
-#     test1 = knowledge['test1']
-#     test2 = knowledge['test2']
+    knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
+    test1 = knowledge['test1']
+    # test2 = knowledge['test2']
 
-#     print(test1(state=s))
+    print(test1(state=s))
 
 #     # TODO: Need more tests, derive policy from factor and feature
 
@@ -182,12 +182,12 @@ def test_Effect():
     action = Action(1)
 
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
-    r = knowledge.reward_function
-    print(r)
-    print(r(state=s, action=action))
-    # t = knowledge.transition_function
-    # print(t)
-    # print(t(state=s, action=action))
+    # r = knowledge.reward_function
+    # print(r)
+    # print(r(state=s, action=action))
+    t = knowledge.transition_function
+    print(t)
+    print(t(state=s, action=action))
 
 #     predictions = knowledge.predictions
 #     print(predictions)
@@ -196,4 +196,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Effect()
+    test_Policy()

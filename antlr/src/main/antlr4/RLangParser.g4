@@ -38,9 +38,11 @@ option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT (stats+=policy
 policy: POLICY IDENTIFIER COL INDENT (stats+=policy_stat NL*)+ DEDENT;
 policy_stat
     : execute                    # policy_stat_execute
+    | stochastic_policy_stat     # policy_stat_stochastic
     | conditional_policy_stat    # policy_stat_conditional
     ;
 execute: EXECUTE (IDENTIFIER | arithmetic_exp);
+stochastic_policy_stat: WITH P L_PAR any_number R_PAR COL INDENT (stats+=policy_stat NL*)+ DEDENT;
 conditional_policy_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*;
 
 
