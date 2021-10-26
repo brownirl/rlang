@@ -31,7 +31,6 @@ class listenerTests(unittest.TestCase):
         position = Factor([0], "position")
         assert (position_parsed(state=state2) == position(state=state2)).all()
 
-        # TODO: is more complex indexing allowed? Like Factor test3 := S[5:-1], Factor test4 := S[:]
         position_parsed = rlang.parse("Factor position := S[:-1]", metadata)['position']
         position = Factor(slice(0, -1), "position")
         assert (position_parsed(state=state) == position(state=state)).all()
