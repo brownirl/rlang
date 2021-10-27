@@ -82,6 +82,7 @@ class RLangKnowledge(MutableMapping):
         Returns:
             dict: A dictionary containing all GroundingFunctions which can be predicted for the next state
         """
+        # TODO: This breaks after migrating to probabilistic functions. Fix this somehow.
         next_state = self._transition_function(*args, **kwargs)
         if next_state is not None:
             domain = Domain.NEXT_STATE

@@ -1,6 +1,7 @@
 from __future__ import annotations
 import warnings
 from typing import Callable, Any, Union
+import types
 
 import numpy as np
 from rlang.src.grounding.internals import Domain, State, Action, BatchedPrimitive
@@ -248,7 +249,7 @@ class ProbabilisticFunction(GroundingFunction):
         self._probability = self._probability * probability
 
 
-class PrimitiveGrounding(ProbabilisticFunction):
+class PrimitiveGrounding(GroundingFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
 
     def __init__(self, codomain: Domain, value: Any, name: str = None):
@@ -484,7 +485,7 @@ class Option(Grounding):
         else:
             return self._policy(*args, **kwargs)
 
-    def can_execute(self, *args, **kwargs) -> bool:
+    def can_initiate(self, *args, **kwargs) -> bool:
         """Determines whether the option can be executed in a given state.
 
         Args:
@@ -514,8 +515,27 @@ class Policy(ProbabilisticFunction):
         name (optional): the name of the grounding.
     """
 
+    # def s():
+    #     yield lambda *args, **kwargs: kwargs['state'] * 2 if kwargs['state'] == 5 else 0
+    #     yield lambda *args, **kwargs: 'up'
+
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE, probability: float = 1.0):
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name, probability=probability)
+
+    def __call__(self, *args, **kwargs):
+        if isinstance(self._function, types.GeneratorType):
+            try:
+                return next(self._function)(*args, **kwargs)
+            except StopIteration:
+                return None
+        else:
+            return self._function(*args, **kwargs)
+
+    def __iter__(self):
+        if isinstance(self._function, types.GeneratorType):
+            yield next(self._function)
+        else:
+            yield self._function
 
     def __repr__(self):
         return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"

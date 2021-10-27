@@ -58,6 +58,7 @@ IN: 'in';
 INIT: 'init';
 UNTIL: 'until';
 WITH: 'with';
+THEN: 'then';
 
 AND: 'and';
 OR: 'or';

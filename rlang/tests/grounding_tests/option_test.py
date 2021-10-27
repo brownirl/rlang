@@ -27,11 +27,11 @@ class OptionTest(unittest.TestCase):
         policy = Policy(lambda: a)
         termination = Predicate(x + 1 == y)
         option = Option(initiation, policy, termination)
-        self.assertTrue(option.can_execute(state=s))
+        self.assertTrue(option.can_initiate(state=s))
 
         initiation2 = Predicate(x == y)
         option2 = Option(initiation2, policy, termination)
-        self.assertFalse(option2.can_execute(state=s))
+        self.assertFalse(option2.can_initiate(state=s))
 
 
 if __name__ == '__main__':

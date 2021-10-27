@@ -34,16 +34,21 @@ feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
 
-option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT (stats+=policy_stat NL*)+ DEDENT UNTIL until=boolean_exp NL* DEDENT;
-policy: POLICY IDENTIFIER COL INDENT (stats+=policy_stat NL*)+ DEDENT;
-policy_stat
-    : execute                    # policy_stat_execute
-    | stochastic_policy_stat     # policy_stat_stochastic
-    | conditional_policy_stat    # policy_stat_conditional
+option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT policy_statement_collection DEDENT UNTIL until=boolean_exp NL* DEDENT;
+policy: POLICY IDENTIFIER COL INDENT policy_statement_collection DEDENT;
+policy_statement_collection: stats+=policy_statement NL+ (THEN stats+=policy_statement NL*)*;
+policy_statement
+    : execute                    # policy_statement_execute
+    | probabilistic_subpolicy    # policy_statement_probabilistic
+    | conditional_subpolicy      # policy_statement_conditional
     ;
 execute: EXECUTE (IDENTIFIER | arithmetic_exp);
-stochastic_policy_stat: WITH P L_PAR any_number R_PAR COL INDENT (stats+=policy_stat NL*)+ DEDENT;
-conditional_policy_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=policy_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=policy_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=policy_stat NL*)+ DEDENT)*;
+probabilistic_subpolicy
+    : probabilistic_condition COL INDENT policy_statement_collection DEDENT (OR probabilistic_subpolicy)*
+    | execute probabilistic_condition (OR probabilistic_subpolicy)*
+    ;
+conditional_subpolicy: IF if_condition=boolean_exp COL INDENT policy_statement_collection DEDENT (ELIF elif_condition=boolean_exp COL INDENT policy_statement_collection DEDENT)* (ELSE COL INDENT policy_statement_collection DEDENT)?;
+probabilistic_condition: WITH P L_PAR any_number R_PAR;
 
 
 effect: EFFECT IDENTIFIER? COL INDENT (stats+=effect_stat NL*)+ DEDENT;

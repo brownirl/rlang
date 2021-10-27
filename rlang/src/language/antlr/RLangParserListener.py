@@ -134,30 +134,39 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#policy_stat_execute.
-    def enterPolicy_stat_execute(self, ctx:RLangParser.Policy_stat_executeContext):
+    # Enter a parse tree produced by RLangParser#policy_statement_collection.
+    def enterPolicy_statement_collection(self, ctx:RLangParser.Policy_statement_collectionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#policy_stat_execute.
-    def exitPolicy_stat_execute(self, ctx:RLangParser.Policy_stat_executeContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#policy_stat_stochastic.
-    def enterPolicy_stat_stochastic(self, ctx:RLangParser.Policy_stat_stochasticContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#policy_stat_stochastic.
-    def exitPolicy_stat_stochastic(self, ctx:RLangParser.Policy_stat_stochasticContext):
+    # Exit a parse tree produced by RLangParser#policy_statement_collection.
+    def exitPolicy_statement_collection(self, ctx:RLangParser.Policy_statement_collectionContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#policy_stat_conditional.
-    def enterPolicy_stat_conditional(self, ctx:RLangParser.Policy_stat_conditionalContext):
+    # Enter a parse tree produced by RLangParser#policy_statement_execute.
+    def enterPolicy_statement_execute(self, ctx:RLangParser.Policy_statement_executeContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#policy_stat_conditional.
-    def exitPolicy_stat_conditional(self, ctx:RLangParser.Policy_stat_conditionalContext):
+    # Exit a parse tree produced by RLangParser#policy_statement_execute.
+    def exitPolicy_statement_execute(self, ctx:RLangParser.Policy_statement_executeContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#policy_statement_probabilistic.
+    def enterPolicy_statement_probabilistic(self, ctx:RLangParser.Policy_statement_probabilisticContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#policy_statement_probabilistic.
+    def exitPolicy_statement_probabilistic(self, ctx:RLangParser.Policy_statement_probabilisticContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#policy_statement_conditional.
+    def enterPolicy_statement_conditional(self, ctx:RLangParser.Policy_statement_conditionalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#policy_statement_conditional.
+    def exitPolicy_statement_conditional(self, ctx:RLangParser.Policy_statement_conditionalContext):
         pass
 
 
@@ -170,21 +179,30 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#stochastic_policy_stat.
-    def enterStochastic_policy_stat(self, ctx:RLangParser.Stochastic_policy_statContext):
+    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy.
+    def enterProbabilistic_subpolicy(self, ctx:RLangParser.Probabilistic_subpolicyContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#stochastic_policy_stat.
-    def exitStochastic_policy_stat(self, ctx:RLangParser.Stochastic_policy_statContext):
+    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy.
+    def exitProbabilistic_subpolicy(self, ctx:RLangParser.Probabilistic_subpolicyContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#conditional_policy_stat.
-    def enterConditional_policy_stat(self, ctx:RLangParser.Conditional_policy_statContext):
+    # Enter a parse tree produced by RLangParser#conditional_subpolicy.
+    def enterConditional_subpolicy(self, ctx:RLangParser.Conditional_subpolicyContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#conditional_policy_stat.
-    def exitConditional_policy_stat(self, ctx:RLangParser.Conditional_policy_statContext):
+    # Exit a parse tree produced by RLangParser#conditional_subpolicy.
+    def exitConditional_subpolicy(self, ctx:RLangParser.Conditional_subpolicyContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_condition.
+    def enterProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_condition.
+    def exitProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
         pass
 
 
