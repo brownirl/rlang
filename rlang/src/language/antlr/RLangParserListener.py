@@ -170,21 +170,30 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy_nosugar.
+    def enterProbabilistic_subpolicy_nosugar(self, ctx:RLangParser.Probabilistic_subpolicy_nosugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy_nosugar.
+    def exitProbabilistic_subpolicy_nosugar(self, ctx:RLangParser.Probabilistic_subpolicy_nosugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy_sugar.
+    def enterProbabilistic_subpolicy_sugar(self, ctx:RLangParser.Probabilistic_subpolicy_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy_sugar.
+    def exitProbabilistic_subpolicy_sugar(self, ctx:RLangParser.Probabilistic_subpolicy_sugarContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#execute.
     def enterExecute(self, ctx:RLangParser.ExecuteContext):
         pass
 
     # Exit a parse tree produced by RLangParser#execute.
     def exitExecute(self, ctx:RLangParser.ExecuteContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy.
-    def enterProbabilistic_subpolicy(self, ctx:RLangParser.Probabilistic_subpolicyContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy.
-    def exitProbabilistic_subpolicy(self, ctx:RLangParser.Probabilistic_subpolicyContext):
         pass
 
 
@@ -554,6 +563,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#slice_exp.
     def exitSlice_exp(self, ctx:RLangParser.Slice_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#integer_fraction.
+    def enterInteger_fraction(self, ctx:RLangParser.Integer_fractionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#integer_fraction.
+    def exitInteger_fraction(self, ctx:RLangParser.Integer_fractionContext):
         pass
 
 

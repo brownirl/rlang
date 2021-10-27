@@ -36,19 +36,19 @@ markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
 option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT policy_statement_collection DEDENT UNTIL until=boolean_exp NL* DEDENT;
 policy: POLICY IDENTIFIER COL INDENT policy_statement_collection DEDENT;
-policy_statement_collection: stats+=policy_statement NL+ (THEN stats+=policy_statement NL*)*;
+policy_statement_collection: statements+=policy_statement NL+ (THEN statements+=policy_statement NL*)*;
 policy_statement
     : execute                    # policy_statement_execute
     | probabilistic_subpolicy    # policy_statement_probabilistic
     | conditional_subpolicy      # policy_statement_conditional
     ;
-execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 probabilistic_subpolicy
-    : probabilistic_condition COL INDENT policy_statement_collection DEDENT (OR probabilistic_subpolicy)*
-    | execute probabilistic_condition (OR probabilistic_subpolicy)*
+    : probabilistic_condition COL INDENT policy_statement_collection DEDENT (OR probabilistic_subpolicy)*   # probabilistic_subpolicy_nosugar
+    | execute probabilistic_condition (OR probabilistic_subpolicy)*     # probabilistic_subpolicy_sugar
     ;
+execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 conditional_subpolicy: IF if_condition=boolean_exp COL INDENT policy_statement_collection DEDENT (ELIF elif_condition=boolean_exp COL INDENT policy_statement_collection DEDENT)* (ELSE COL INDENT policy_statement_collection DEDENT)?;
-probabilistic_condition: WITH P L_PAR any_number R_PAR;
+probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 
 
 effect: EFFECT IDENTIFIER? COL INDENT (stats+=effect_stat NL*)+ DEDENT;
@@ -117,6 +117,7 @@ int_array_exp: L_BRK arr+=any_integer (COM arr+=any_integer)* R_BRK;
 any_num_array_exp: L_BRK arr+=any_number (COM arr+=any_number)* R_BRK;
 slice_exp: L_BRK start_ind=any_integer? COL stop_ind=any_integer? R_BRK;
 
+integer_fraction: lhs=any_integer DIVIDE rhs=any_integer;
 
 any_number
     : any_integer   # any_num_int

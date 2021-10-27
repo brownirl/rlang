@@ -120,7 +120,10 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot make a MarkovFeature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
+    # ============================= Option =============================
+
     def exitOption(self, ctx: RLangParser.OptionContext):
+        # TODO: Fix this
         policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats)
@@ -139,21 +142,59 @@ class RLangListener(RLangParserListener):
                             name=ctx.IDENTIFIER().getText())
         self.addVariable(new_option.name, new_option)
 
+    # ============================= Policy =============================
+
+    # def exitStochastic_policy_stat(self, ctx: RLangParser.Stochastic_policy_statContext):
+    #     probability = ctx.any_number().value
+    #     if probability > 1.0 or probability < 0.0:
+    #         raise RLangSemanticError("Execute probability must be between 0.0 and 1.0")
+    #     stats = []
+    #     for s in ctx.stats:
+    #         if isinstance(s.value, list):
+    #             stats.extend(s.value)
+    #         else:
+    #             stats.append(s.value)
+    #
+    #     for s in stats:
+    #         # print(s)
+    #         s.compose_probability(probability)
+    #         print(s)
+    #
+    #     ctx.value = Policy(lambda *args, **kwargs: policy_stat_collection(stats, *args, **kwargs))
+
+    # def exitConditional_policy_stat(self, ctx: RLangParser.Conditional_policy_statContext):
+    #     ctx.if_statements = list(map(lambda x: x.value, ctx.if_statements))
+    #     ctx.elif_statements = list(map(lambda x: x.value, ctx.elif_statements))
+    #     ctx.else_statements = list(map(lambda x: x.value, ctx.else_statements))
+    #
+    #     ctx.value = Policy(build_conditional_stat(ctx, Callable))
+
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
+        # TODO: fix this
         print(list(map(lambda x: x.value, ctx.stats)))
         policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
         self.addVariable(new_policy.name, new_policy)
 
-    def exitPolicy_stat_execute(self, ctx: RLangParser.Policy_stat_executeContext):
+    def exitPolicy_statement_collection(self, ctx:RLangParser.Policy_statement_collectionContext):
+        ctx.value = ctx.statements
+
+    def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
         ctx.value = ctx.execute().value
 
-    def exitPolicy_stat_stochastic(self, ctx: RLangParser.Policy_stat_stochasticContext):
-        ctx.value = ctx.stochastic_policy_stat().value
+    def exitPolicy_statement_probabilistic(self, ctx: RLangParser.Policy_statement_probabilisticContext):
+        ctx.value = ctx.probabilistic_subpolicy().value
 
-    def exitPolicy_stat_conditional(self, ctx: RLangParser.Policy_stat_conditionalContext):
-        ctx.value = ctx.conditional_policy_stat().value
+    def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
+        ctx.value = ctx.conditional_subpolicy().value
+
+    def exitProbabilistic_subpolicy_nosugar(self, ctx: RLangParser.Probabilistic_subpolicy_nosugarContext):
+        # TODO: This should return a probabilistic grounding. Maybe make a new kind of object?
+
+    def exitProbabilistic_subpolicy_sugar(self, ctx: RLangParser.Probabilistic_subpolicy_sugarContext):
+        # TODO: This should return a probabilistic grounding. Maybe make a new kind of object?
+        pass
 
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
@@ -164,30 +205,20 @@ class RLangListener(RLangParserListener):
         else:
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
-    def exitStochastic_policy_stat(self, ctx: RLangParser.Stochastic_policy_statContext):
-        probability = ctx.any_number().value
+    def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):
+        # TODO: This should return a Policy with a generator function
+        pass
+
+    def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
+        if ctx.any_number():
+            probability = ctx.any_number().value
+        else:
+            probability = ctx.integer_fraction().value
         if probability > 1.0 or probability < 0.0:
-            raise RLangSemanticError("Execute probability must be between 0.0 and 1.0")
-        stats = []
-        for s in ctx.stats:
-            if isinstance(s.value, list):
-                stats.extend(s.value)
-            else:
-                stats.append(s.value)
+            raise RLangSemanticError("Probability must be between 0 and 1")
+        ctx.value = probability
 
-        for s in stats:
-            # print(s)
-            s.compose_probability(probability)
-            print(s)
-
-        ctx.value = Policy(lambda *args, **kwargs: policy_stat_collection(stats, *args, **kwargs))
-
-    def exitConditional_policy_stat(self, ctx: RLangParser.Conditional_policy_statContext):
-        ctx.if_statements = list(map(lambda x: x.value, ctx.if_statements))
-        ctx.elif_statements = list(map(lambda x: x.value, ctx.elif_statements))
-        ctx.else_statements = list(map(lambda x: x.value, ctx.else_statements))
-
-        ctx.value = Policy(build_conditional_stat(ctx, Callable))
+    # ============================= Effect =============================
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
         stats = list(map(lambda x: x.value, ctx.stats))
@@ -515,6 +546,11 @@ class RLangListener(RLangParserListener):
             stop_ind = ctx.stop_ind.value
         slc = slice(start_ind, stop_ind, step_size)
         ctx.value = slc
+
+    def exitInteger_fraction(self, ctx:RLangParser.Integer_fractionContext):
+        if ctx.rhs.value == 0:
+            raise RLangSemanticError("Divide by 0 error")
+        ctx.value = float(ctx.lhs.value) / float(ctx.rhs.value)
 
     def exitAny_num_int(self, ctx: RLangParser.Any_num_intContext):
         ctx.value = ctx.any_integer().value
