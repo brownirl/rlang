@@ -5,7 +5,7 @@ Action right := -2
 
 Predicate a := S[0] == 0
 Predicate b := S[0] == 1
-Predicate c := S[0] == 2
+Predicate c := S[0] == 4
 
 #Policy test0:
 #    Execute up
@@ -14,11 +14,13 @@ Policy test1:
     with P(0.1):
         Execute down
         Execute up
-    with P(0.4):
-        if True:
-            Execute down
-        else:
-            Execute right
+
+    Execute down
+#    with P(0.4):
+#        if c:
+#            Execute down
+#        else:
+#            Execute right
 
 #Policy test1:
 #	Execute [0, -0.5]

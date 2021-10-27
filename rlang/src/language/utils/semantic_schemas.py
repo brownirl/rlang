@@ -30,6 +30,7 @@ def default_stat_collection(stats, *args, **kwargs):
 def policy_stat_collection(stats, *args, **kwargs):
     possibilities = dict()
     for stat in stats:
+        print(type(stat))
         probability = 1.0
         if isinstance(stat, ProbabilisticFunction):
             # print(stat)
@@ -37,13 +38,16 @@ def policy_stat_collection(stats, *args, **kwargs):
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
             if isinstance(stat_val, dict):
+                # print(stat_val)
                 for k, v in stat_val.items():
+                    # print(v)
                     # Add to dict or update existing entry
                     if k in possibilities:
-                        possibilities[k] += v * probability
+                        possibilities[k] = possibilities[k] + v * probability
                     else:
                         possibilities.update({k: v * probability})
             else:
+                print("sdfsdf")
                 if stat_val in possibilities:
                     possibilities[stat_val] = possibilities[stat_val] + probability
                 else:

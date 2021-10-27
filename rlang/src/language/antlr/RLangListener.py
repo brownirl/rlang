@@ -140,6 +140,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_option.name, new_option)
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
+        print(list(map(lambda x: x.value, ctx.stats)))
         policy_stats = lambda *args, **kwargs: policy_stat_collection(
             list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
         new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
@@ -177,6 +178,7 @@ class RLangListener(RLangParserListener):
         for s in stats:
             # print(s)
             s.compose_probability(probability)
+            print(s)
 
         ctx.value = Policy(lambda *args, **kwargs: policy_stat_collection(stats, *args, **kwargs))
 
@@ -235,7 +237,7 @@ class RLangListener(RLangParserListener):
                     predictions.update({p_name: [p]})
             new_predictions = dict()
             for p_name2, p_value in predictions.items():
-                # This is absolutely insane, but please do not remove it. Google Python for loop variable capture.
+                # This is absolutely insane, but please do not remove it. Google 'Python for loop variable capture'
                 def lambda_generator(these_stats):
                     return lambda *args, **kwargs: default_stat_collection(these_stats, *args, **kwargs)
 
