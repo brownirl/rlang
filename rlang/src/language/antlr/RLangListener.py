@@ -11,7 +11,7 @@ from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
 from rlang.src.language.utils.semantic_schemas import default_stat_collection, reward_stat_collection, \
-    build_conditional_stat, policy_stat_collection
+    build_conditional_stat, policy_stat_collection, policy_generator_function
 from .Exceptions import *
 
 
@@ -169,32 +169,43 @@ class RLangListener(RLangParserListener):
     #
     #     ctx.value = Policy(build_conditional_stat(ctx, Callable))
 
-    def exitPolicy(self, ctx: RLangParser.PolicyContext):
-        # TODO: fix this
-        print(list(map(lambda x: x.value, ctx.stats)))
-        policy_stats = lambda *args, **kwargs: policy_stat_collection(
-            list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
-        new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
-        self.addVariable(new_policy.name, new_policy)
+    # def exitPolicy(self, ctx: RLangParser.PolicyContext):
+    #     print(list(map(lambda x: x.value, ctx.stats)))
+    #     policy_stats = lambda *args, **kwargs: policy_stat_collection(
+    #         list(map(lambda x: x.value, ctx.stats)), *args, **kwargs)
+    #     new_policy = Policy(function=policy_stats, name=ctx.IDENTIFIER().getText())
+    #     self.addVariable(new_policy.name, new_policy)
 
-    def exitPolicy_statement_collection(self, ctx:RLangParser.Policy_statement_collectionContext):
-        ctx.value = ctx.statements
+    def exitPolicy(self, ctx: RLangParser.PolicyContext):
+        policy_statements = ctx.policy_statement_collection().value['policy_statements']
+        never_statements = [statement.value for statement in
+                            ctx.policy_statement_collection().value['never_statements']]
+        # TODO: Implement never statements
+        name = ctx.IDENTIFIER().getText()
+        new_policy = Policy(function=policy_generator_function(policy_statements), name=name)
+        self.addVariable(name, new_policy)
+
+    def exitPolicy_statement_collection(self, ctx: RLangParser.Policy_statement_collectionContext):
+        ctx.value = {'never_statements': ctx.never_statements, 'policy_statements': ctx.non_negative_policy_statement_collection().value}
+
+    def exitNon_negative_policy_statement_collection(self, ctx:RLangParser.Non_negative_policy_statement_collectionContext):
+        ctx.value = [ps.value for ps in ctx.statements]
+
+    def exitNever_policy_statement(self, ctx: RLangParser.Never_policy_statementContext):
+        # TODO: Implement policy action constraints
+        ctx.value = Grounding('placeholder')
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
-        ctx.value = ctx.execute().value
+        if isinstance(ctx.execute().value, ActionReference):
+            ctx.value = Policy.from_action_reference(ctx.execute().value)
+        else:
+            ctx.value = ctx.execute().value
 
     def exitPolicy_statement_probabilistic(self, ctx: RLangParser.Policy_statement_probabilisticContext):
         ctx.value = ctx.probabilistic_subpolicy().value
 
     def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
         ctx.value = ctx.conditional_subpolicy().value
-
-    def exitProbabilistic_subpolicy_nosugar(self, ctx: RLangParser.Probabilistic_subpolicy_nosugarContext):
-        # TODO: This should return a probabilistic grounding. Maybe make a new kind of object?
-
-    def exitProbabilistic_subpolicy_sugar(self, ctx: RLangParser.Probabilistic_subpolicy_sugarContext):
-        # TODO: This should return a probabilistic grounding. Maybe make a new kind of object?
-        pass
 
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
@@ -208,6 +219,21 @@ class RLangListener(RLangParserListener):
     def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):
         # TODO: This should return a Policy with a generator function
         pass
+
+    def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
+        ctx.value = [subpolicy.value for subpolicy in ctx.subpolicies]
+
+    def exitProbabilistic_policy_statement_no_sugar(self,
+                                                    ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
+        policy_statements = ctx.non_negative_policy_statement_collection().value
+        for ps in policy_statements:
+            ps.compose_probability(ctx.probabilistic_condition().value)
+        ctx.value = policy_statements
+
+    def exitProbabilistic_policy_statement_sugar(self, ctx: RLangParser.Probabilistic_policy_statement_sugarContext):
+        policy_statement = ctx.execute().value
+        policy_statement.compose_probability(ctx.probabilistic_condition().value)
+        ctx.value = [policy_statement]
 
     def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
         if ctx.any_number():
@@ -547,7 +573,7 @@ class RLangListener(RLangParserListener):
         slc = slice(start_ind, stop_ind, step_size)
         ctx.value = slc
 
-    def exitInteger_fraction(self, ctx:RLangParser.Integer_fractionContext):
+    def exitInteger_fraction(self, ctx: RLangParser.Integer_fractionContext):
         if ctx.rhs.value == 0:
             raise RLangSemanticError("Divide by 0 error")
         ctx.value = float(ctx.lhs.value) / float(ctx.rhs.value)

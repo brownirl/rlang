@@ -26,6 +26,11 @@ def default_stat_collection(stats, *args, **kwargs):
     return possibilities
 
 
+def policy_generator_function(statements):
+    for stat in statements:
+        yield lambda *args, **kwargs: stat(*args, **kwargs)
+
+
 # TODO: Augment this function to handle probabilities
 def policy_stat_collection(stats, *args, **kwargs):
     possibilities = dict()

@@ -290,6 +290,9 @@ class ActionReference(PrimitiveGrounding):
                 raise RLangGroundingError(f"Actions cannot be functions of {action.domain.name}")
         super().__init__(codomain=Domain.ACTION, value=action, name=name)
 
+    def __hash__(self):
+        return self._name.__hash__()
+
     def __repr__(self):
         return f"<ActionReference \"{self.name}\" = {self()}>"
 
@@ -521,6 +524,10 @@ class Policy(ProbabilisticFunction):
 
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE, probability: float = 1.0):
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name, probability=probability)
+
+    @classmethod
+    def from_action_reference(cls, action: ActionReference):
+        return cls(function=lambda *args, **kwargs: {action: 1.0}, domain=Domain.ANY)
 
     def __call__(self, *args, **kwargs):
         if isinstance(self._function, types.GeneratorType):

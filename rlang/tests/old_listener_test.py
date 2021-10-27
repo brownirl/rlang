@@ -135,6 +135,7 @@ def test_Policy():
     # test2 = knowledge['test2']
 
     print(test1(state=s))
+    print(test1(state=s))
 
 #     # TODO: Need more tests, derive policy from factor and feature
 

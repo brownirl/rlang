@@ -30,6 +30,7 @@ NL: ('\r'? '\n' ' '*) | ('\r'? '\n' '\t'*);
  * lexer rules
  */
 
+IMPORT: 'import';
 PREDICATE: 'Predicate';
 FEATURE: 'Feature';
 FACTOR: 'Factor';
@@ -42,7 +43,7 @@ POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
-IMPORT: 'import';
+NEVER: 'Never';
 
 S_PRIME: S PRIME;
 S: 'S';

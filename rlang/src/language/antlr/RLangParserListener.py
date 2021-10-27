@@ -143,21 +143,30 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#non_negative_policy_statement_collection.
+    def enterNon_negative_policy_statement_collection(self, ctx:RLangParser.Non_negative_policy_statement_collectionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#non_negative_policy_statement_collection.
+    def exitNon_negative_policy_statement_collection(self, ctx:RLangParser.Non_negative_policy_statement_collectionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#never_policy_statement.
+    def enterNever_policy_statement(self, ctx:RLangParser.Never_policy_statementContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#never_policy_statement.
+    def exitNever_policy_statement(self, ctx:RLangParser.Never_policy_statementContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#policy_statement_execute.
     def enterPolicy_statement_execute(self, ctx:RLangParser.Policy_statement_executeContext):
         pass
 
     # Exit a parse tree produced by RLangParser#policy_statement_execute.
     def exitPolicy_statement_execute(self, ctx:RLangParser.Policy_statement_executeContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#policy_statement_probabilistic.
-    def enterPolicy_statement_probabilistic(self, ctx:RLangParser.Policy_statement_probabilisticContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#policy_statement_probabilistic.
-    def exitPolicy_statement_probabilistic(self, ctx:RLangParser.Policy_statement_probabilisticContext):
         pass
 
 
@@ -170,21 +179,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy_nosugar.
-    def enterProbabilistic_subpolicy_nosugar(self, ctx:RLangParser.Probabilistic_subpolicy_nosugarContext):
+    # Enter a parse tree produced by RLangParser#policy_statement_probabilistic.
+    def enterPolicy_statement_probabilistic(self, ctx:RLangParser.Policy_statement_probabilisticContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy_nosugar.
-    def exitProbabilistic_subpolicy_nosugar(self, ctx:RLangParser.Probabilistic_subpolicy_nosugarContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy_sugar.
-    def enterProbabilistic_subpolicy_sugar(self, ctx:RLangParser.Probabilistic_subpolicy_sugarContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy_sugar.
-    def exitProbabilistic_subpolicy_sugar(self, ctx:RLangParser.Probabilistic_subpolicy_sugarContext):
+    # Exit a parse tree produced by RLangParser#policy_statement_probabilistic.
+    def exitPolicy_statement_probabilistic(self, ctx:RLangParser.Policy_statement_probabilisticContext):
         pass
 
 
@@ -203,6 +203,33 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#conditional_subpolicy.
     def exitConditional_subpolicy(self, ctx:RLangParser.Conditional_subpolicyContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_subpolicy.
+    def enterProbabilistic_subpolicy(self, ctx:RLangParser.Probabilistic_subpolicyContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_subpolicy.
+    def exitProbabilistic_subpolicy(self, ctx:RLangParser.Probabilistic_subpolicyContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_policy_statement_no_sugar.
+    def enterProbabilistic_policy_statement_no_sugar(self, ctx:RLangParser.Probabilistic_policy_statement_no_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_policy_statement_no_sugar.
+    def exitProbabilistic_policy_statement_no_sugar(self, ctx:RLangParser.Probabilistic_policy_statement_no_sugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_policy_statement_sugar.
+    def enterProbabilistic_policy_statement_sugar(self, ctx:RLangParser.Probabilistic_policy_statement_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_policy_statement_sugar.
+    def exitProbabilistic_policy_statement_sugar(self, ctx:RLangParser.Probabilistic_policy_statement_sugarContext):
         pass
 
 

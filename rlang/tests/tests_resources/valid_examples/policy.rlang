@@ -7,15 +7,50 @@ Predicate a := S[0] == 0
 Predicate b := S[0] == 1
 Predicate c := S[0] == 4
 
+
+#Policy prob:
+#    with P(0.5):
+#        Execute up
+#        Execute right
+#
+#    then Execute left with P(0.2):
+#    or with P(0.9):
+#        Execute up
+#        Execute down
+#
+#    then Execute left
+
+Policy test1:
+    with P(0.9):
+        Execute up
+        then Execute right
+
+#Policy test1:
+#    with P(0.9):
+#        Execute up
+#        then Execute right
+#    or with P(0.1):
+#        Execute down
+#    then with P(1.0):
+#        Execute left
+
+#    Execute up with P(0.5)
+#    Execute down with P(0.2)
+#    or Execute right with P(0.8)
+
+#Policy test1:
+#    Execute up
+#    then Execute down
+
 #Policy test0:
 #    Execute up
 
-Policy test1:
-    with P(0.1):
-        Execute down
-        Execute up
-
-    Execute down
+#Policy test1:
+#    with P(0.1):
+#        Execute down
+#        Execute up
+#
+#    Execute down
 #    with P(0.4):
 #        if c:
 #            Execute down
