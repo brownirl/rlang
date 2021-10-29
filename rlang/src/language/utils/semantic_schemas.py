@@ -28,7 +28,7 @@ def default_stat_collection(stats, *args, **kwargs):
 
 def policy_generator_function(statements):
     for stat in statements:
-        yield lambda *args, **kwargs: stat(*args, **kwargs)
+        yield lambda s=stat, *args, **kwargs: s(*args, **kwargs)
 
 
 # def probabilistic_policy_generator_function(policies):

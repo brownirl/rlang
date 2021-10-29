@@ -518,8 +518,6 @@ class Policy(ProbabilisticFunction):
 
     def __copy__(self):
         if isinstance(self._function, _tee):
-            # function, backup = tee(self.backup_function)
-            # self._function = function
             return Policy(function=copy.copy(self.backup_function), name=self.name, domain=self.domain, probability=self.probability,
                           length=self.backup_length)
         else:
@@ -532,7 +530,6 @@ class Policy(ProbabilisticFunction):
             return 0
 
     def __call__(self, *args, **kwargs):
-        # print(type(self._function))
         if isinstance(self._function, (types.GeneratorType, _tee)):
             try:
                 if self.length:
@@ -546,7 +543,7 @@ class Policy(ProbabilisticFunction):
             return self._function(*args, **kwargs)
 
     def __iter__(self):
-        if isinstance(self._function, types.GeneratorType):
+        if isinstance(self._function, (types.GeneratorType, _tee)):
             yield next(self._function)
         else:
             yield self._function
@@ -580,7 +577,6 @@ class Option(Grounding):
         self._policy_is_iterable = False
         if isinstance(policy._function, (types.GeneratorType, _tee)):
             self._policy_is_iterable = True
-            self._backup_policy = self._policy.__copy__()
         super().__init__(name)
 
     def __len__(self):
@@ -594,9 +590,7 @@ class Option(Grounding):
             elif self._termination(*args, **kwargs):
                 return None
             else:
-                # self._policy = self._policy.__copy__()
-                # print(self._backup_policy(*args, **kwargs))
-                self._policy = self._backup_policy
+                self._policy = self._policy.__copy__()
                 return self.__call__(*args, **kwargs)
         elif self._termination(*args, **kwargs):
             return None
