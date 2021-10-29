@@ -22,8 +22,9 @@ Predicate c := S[0] == 3
 
 Option build_bridge:
 	init Any
-		Execute up
-#		then Execute down
+		Execute [0]
+		then Execute [1]
+		then Execute [2]
 	until c
 
 Policy test1:

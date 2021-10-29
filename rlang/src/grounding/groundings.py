@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from itertools import tee
+from itertools import tee, _tee
 import copy
 import warnings
 from typing import Callable, Any, Union
@@ -495,9 +495,17 @@ class Policy(ProbabilisticFunction):
         name (optional): the name of the grounding.
     """
 
-    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE,
+    def __init__(self, function: Union[Callable, types.GeneratorType, _tee], name: str = None, domain: Union[str, Domain] = Domain.STATE,
                  probability: float = 1.0, length: int = None):
         self.length = length
+        self.backup_length = copy.copy(length)
+        self.backup_function = None
+
+        if isinstance(function, types.GeneratorType):
+            function, backup = tee(function)
+            self.backup_function = backup
+        elif isinstance(function, _tee):
+            self.backup_function = copy.copy(function)
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name, probability=probability)
 
     @classmethod
@@ -508,6 +516,15 @@ class Policy(ProbabilisticFunction):
         return cls(function=lambda *args, **kwargs: next(action_generator(*args, **kwargs)), domain=Domain.ANY,
                    length=1)
 
+    def __copy__(self):
+        if isinstance(self._function, _tee):
+            # function, backup = tee(self.backup_function)
+            # self._function = function
+            return Policy(function=copy.copy(self.backup_function), name=self.name, domain=self.domain, probability=self.probability,
+                          length=self.backup_length)
+        else:
+            return copy.deepcopy(self)
+
     def __len__(self):
         if self.length:
             return self.length
@@ -515,7 +532,8 @@ class Policy(ProbabilisticFunction):
             return 0
 
     def __call__(self, *args, **kwargs):
-        if isinstance(self._function, types.GeneratorType):
+        # print(type(self._function))
+        if isinstance(self._function, (types.GeneratorType, _tee)):
             try:
                 if self.length:
                     self.length -= 1
@@ -559,33 +577,28 @@ class Option(Grounding):
         self._initiation = initiation
         self._termination = termination
         self._policy = policy
-        # self._policy_function_backup = None
-        # if isinstance(policy._function, types.GeneratorType):
-        #     policy_function, policy_function_backup = tee(policy._function)
-        #     self._policy_function_backup = policy_function_backup
+        self._policy_is_iterable = False
+        if isinstance(policy._function, (types.GeneratorType, _tee)):
+            self._policy_is_iterable = True
+            self._backup_policy = self._policy.__copy__()
         super().__init__(name)
 
     def __len__(self):
         return len(self._policy)
 
     def __call__(self, *args, **kwargs) -> Union[None, State]:
-        # if self._policy_function_backup is not None:  # The policy might be a generator function
-        #     action = self._policy(*args, **kwargs)
-        #     if action:
-        #         return action
-        #     elif self._termination(*args, **kwargs):
-        #         return None
-        #     else:
-        #         policy_function, policy_function_backup = tee(self._policy_function_backup)
-        #         self._policy._function = policy_function
-        #         self._policy_function_backup = policy_function_backup
-        #         # self._policy = copy.deepcopy(self._saved_policy)
-        #         return self.__call__()
-        # elif self._termination(*args, **kwargs):
-        #     return None
-        # else:
-        #     return self._policy(*args, **kwargs)
-        if self._termination(*args, **kwargs):
+        if self._policy_is_iterable:  # The policy might be a generator function
+            action = self._policy(*args, **kwargs)
+            if action:
+                return action
+            elif self._termination(*args, **kwargs):
+                return None
+            else:
+                # self._policy = self._policy.__copy__()
+                # print(self._backup_policy(*args, **kwargs))
+                self._policy = self._backup_policy
+                return self.__call__(*args, **kwargs)
+        elif self._termination(*args, **kwargs):
             return None
         else:
             return self._policy(*args, **kwargs)

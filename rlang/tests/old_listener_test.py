@@ -138,6 +138,8 @@ def test_Policy():
     print(list(actions.keys())[0](state=s))
     print(list(actions.keys())[0](state=s))
     print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
     actions = test1(state=s)
     print(actions)
     actions = test1(state=s)
