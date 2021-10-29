@@ -122,7 +122,7 @@ class RLangListener(RLangParserListener):
     # ============================= Option =============================
 
     def exitOption(self, ctx: RLangParser.OptionContext):
-        subpolicy = ctx.non_negative_policy_statement_collection().value
+        subpolicy = ctx.policy_statement_collection().value
         new_option = Option(initiation=ctx.init.value, termination=ctx.until.value, policy=subpolicy,
                             name=ctx.IDENTIFIER().getText())
         self.addVariable(new_option.name, new_option)
@@ -136,21 +136,11 @@ class RLangListener(RLangParserListener):
     # ============================= Policy =============================
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
-        new_policy = ctx.policy_statement_collection().value['policy']
+        new_policy = ctx.policy_statement_collection().value
         new_policy.name = ctx.IDENTIFIER().getText()
         self.addVariable(new_policy.name, new_policy)
 
-        # TODO: Implement never statements
-        never_statements = [statement.value for statement in
-                            ctx.policy_statement_collection().value['never_statements']]
-
     def exitPolicy_statement_collection(self, ctx: RLangParser.Policy_statement_collectionContext):
-        ctx.value = {'never_statements': ctx.never_statements,
-                     'policy': ctx.non_negative_policy_statement_collection().value}
-
-    def exitNon_negative_policy_statement_collection(self,
-                                                     ctx: RLangParser.Non_negative_policy_statement_collectionContext):
-        # TODO: This should return a single policy function I think
         policy_statements = [ps.value for ps in ctx.statements]
         length = 0
         for ps in policy_statements:
@@ -160,10 +150,6 @@ class RLangListener(RLangParserListener):
                 length = None
                 break
         ctx.value = Policy(function=policy_generator_function(policy_statements), length=length)
-
-    def exitNever_policy_statement(self, ctx: RLangParser.Never_policy_statementContext):
-        # TODO: Implement policy action constraints
-        ctx.value = Grounding('placeholder')
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
         if isinstance(ctx.execute().value, ActionReference):
@@ -189,23 +175,20 @@ class RLangListener(RLangParserListener):
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
     def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):
-        pass
+        elif_conditions = [s.value for s in ctx.elif_conditions]
+        elif_subpolicies = [s.value for s in ctx.elif_subpolicies]
+        else_subpolicy = ctx.else_subpolicy.value if ctx.else_subpolicy else None
+        ctx.value = Policy(
+            function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value, elif_conditions,
+                                                 elif_subpolicies, else_subpolicy, *args, **kwargs))
 
     def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
-        def subpolicy_dict_func(*args, **kwargs):
-            subpolicy_dict = dict()
-            for sp in ctx.subpolicies:
-                if len(sp.value) == 1:
-                    subpolicy_dict.update({list(sp.value(*args, **kwargs).keys())[0]: sp.value.probability})
-                else:
-                    subpolicy_dict.update({sp.value: sp.value.probability})
-            return subpolicy_dict
-
-        ctx.value = Policy(function=lambda *args, **kwargs: subpolicy_dict_func(*args, **kwargs))
+        subpolicies = [sp.value for sp in ctx.subpolicies]
+        ctx.value = Policy(function=lambda *args, **kwargs: subpolicy_dict_function(subpolicies, *args, **kwargs))
 
     def exitProbabilistic_policy_statement_no_sugar(self,
                                                     ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
-        subpolicy = ctx.non_negative_policy_statement_collection().value
+        subpolicy = ctx.policy_statement_collection().value
         subpolicy.compose_probability(ctx.probabilistic_condition().value)
         ctx.value = subpolicy
 

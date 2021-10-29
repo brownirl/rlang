@@ -31,17 +31,37 @@ def policy_generator_function(statements):
         yield lambda s=stat, *args, **kwargs: s(*args, **kwargs)
 
 
-# def probabilistic_policy_generator_function(policies):
-#     # for policy, probability in policies.items:
-#     print(policies)
-#     def ppgf(*args, **kwargs):
-#         solved_policies = dict()
-#         for policy, probability in policies.items():
-#             # print(policy(*args, **kwargs))
-#             # print(policy(*args, **kwargs))
-#             solved_policies.update({policy(*args, **kwargs): probability})
-#         return solved_policies
-#     yield lambda *args, **kwargs: ppgf(*args, **kwargs)
+def conditional_policy_function(if_condition, if_subpolicy, elif_conditions=None, elif_subpolicies=None, else_subpolicy=None,
+                                *args, **kwargs):
+    if if_condition(*args, **kwargs) == True:
+        if len(if_subpolicy) == 1:
+            return {list(if_subpolicy(*args, **kwargs).keys())[0]: 1.0}
+        else:
+            return {if_subpolicy: 1.0}
+    else:
+        for i in range(len(elif_conditions)):
+            if elif_conditions[i](*args, **kwargs) == True:
+                if len(elif_subpolicies[i]) == 1:
+                    return {list(elif_subpolicies[i](*args, **kwargs).keys())[0]: 1.0}
+                else:
+                    return {elif_subpolicies[i]: 1.0}
+        if else_subpolicy is not None:
+            if len(else_subpolicy) == 1:
+                return {list(else_subpolicy(*args, **kwargs).keys())[0]: 1.0}
+            else:
+                return {else_subpolicy: 1.0}
+        else:
+            return 'no_action'
+
+
+def subpolicy_dict_function(subpolicies, *args, **kwargs):
+    subpolicy_dict = dict()
+    for sp in subpolicies:
+        if len(sp) == 1:
+            subpolicy_dict.update({list(sp(*args, **kwargs).keys())[0]: sp.probability})
+        else:
+            subpolicy_dict.update({sp: sp.probability})
+    return subpolicy_dict
 
 
 # TODO: Augment this function to handle probabilities

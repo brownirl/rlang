@@ -514,7 +514,7 @@ class Policy(ProbabilisticFunction):
             yield {action(*args, **kwargs): 1.0}
 
         return cls(function=lambda *args, **kwargs: next(action_generator(*args, **kwargs)), domain=Domain.ANY,
-                   length=1)
+                   length=1, name=action.name)
 
     def __copy__(self):
         if isinstance(self._function, _tee):
@@ -538,7 +538,7 @@ class Policy(ProbabilisticFunction):
             except StopIteration:
                 if self.length:
                     self.length += 1
-                return None
+                return 'policy_finished'
         else:
             return self._function(*args, **kwargs)
 
@@ -582,18 +582,22 @@ class Option(Grounding):
     def __len__(self):
         return len(self._policy)
 
-    def __call__(self, *args, **kwargs) -> Union[None, State]:
+    def __call__(self, *args, **kwargs) -> Union[None, State, str]:
         if self._policy_is_iterable:  # The policy might be a generator function
             action = self._policy(*args, **kwargs)
             if action:
                 return action
+                # if action == 'policy_finished':
+                #     return self.__call__(*args, **kwargs)
+                # else:
+                #     return action
             elif self._termination(*args, **kwargs):
-                return None
+                return 'option_termination'
             else:
                 self._policy = self._policy.__copy__()
                 return self.__call__(*args, **kwargs)
         elif self._termination(*args, **kwargs):
-            return None
+            return 'option_termination'
         else:
             return self._policy(*args, **kwargs)
 

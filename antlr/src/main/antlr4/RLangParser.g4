@@ -34,13 +34,13 @@ feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
 
-option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT non_negative_policy_statement_collection DEDENT UNTIL until=option_condition NL* DEDENT;
+option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement_collection DEDENT UNTIL until=option_condition NL* DEDENT;
 option_condition: boolean_exp | ANY_CONDITION;
 
 policy: POLICY IDENTIFIER COL INDENT policy_statement_collection DEDENT;
-policy_statement_collection: (never_statements+=never_policy_statement NL+)* non_negative_policy_statement_collection?;
-non_negative_policy_statement_collection: statements+=policy_statement NL* (THEN statements+=policy_statement NL*)*;
-never_policy_statement: NEVER execute;
+//negative_policy_statement_collection: (never_statements+=never_policy_statement NL+)* non_negative_policy_statement_collection?;
+policy_statement_collection: statements+=policy_statement NL* (THEN statements+=policy_statement NL*)*;
+//never_policy_statement: NEVER execute;
 policy_statement
     : execute                    # policy_statement_execute
     | conditional_subpolicy      # policy_statement_conditional
@@ -50,7 +50,7 @@ execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 conditional_subpolicy: IF if_condition=boolean_exp COL INDENT if_subpolicy=policy_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_subpolicies+=policy_statement_collection DEDENT)* (ELSE COL INDENT else_subpolicy=policy_statement_collection DEDENT)?;
 probabilistic_subpolicy: subpolicies+=probabilistic_policy_statement (OR subpolicies+=probabilistic_policy_statement)*;
 probabilistic_policy_statement
-    : probabilistic_condition COL INDENT non_negative_policy_statement_collection DEDENT   # probabilistic_policy_statement_no_sugar
+    : probabilistic_condition COL INDENT policy_statement_collection DEDENT   # probabilistic_policy_statement_no_sugar
     | execute probabilistic_condition NL+                                     # probabilistic_policy_statement_sugar
     ;
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;

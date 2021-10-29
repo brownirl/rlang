@@ -152,24 +152,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#non_negative_policy_statement_collection.
-    def enterNon_negative_policy_statement_collection(self, ctx:RLangParser.Non_negative_policy_statement_collectionContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#non_negative_policy_statement_collection.
-    def exitNon_negative_policy_statement_collection(self, ctx:RLangParser.Non_negative_policy_statement_collectionContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#never_policy_statement.
-    def enterNever_policy_statement(self, ctx:RLangParser.Never_policy_statementContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#never_policy_statement.
-    def exitNever_policy_statement(self, ctx:RLangParser.Never_policy_statementContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#policy_statement_execute.
     def enterPolicy_statement_execute(self, ctx:RLangParser.Policy_statement_executeContext):
         pass

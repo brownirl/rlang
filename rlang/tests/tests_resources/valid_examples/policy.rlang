@@ -20,28 +20,45 @@ Predicate c := S[0] == 3
 #
 #    then Execute left
 
-Option build_bridge:
-	init Any
-		Execute [0]
-		then Execute [1]
-		then Execute [2]
-	until c
+#Policy test1:
+#    if a:
+#        Execute down with P(0.5)
+#        then Execute right with P(0.5)
+#    elif b:
+#        with P(0.2):
+#            Execute up
+#            then Execute up
+#    then Execute left
+#    then Execute up
 
 Policy test1:
-    Execute build_bridge
-    then with P(0.9):
-        Execute [0, 2]
-        then Execute right
-    or with P(0.05):
-        Execute 5 * 3
-    or Execute left with P(0.05)
-    then Execute right with P(0.5)
-    or Execute down with P(0.25)
-    or with P(0.25):
-        Execute right
-        then Execute right
-        then Execute down
+    if a:
+        if b:
+            Execute left
     then Execute up
+
+#Option build_bridge:
+#	init Any
+#		Execute [0]
+#		then Execute [1]
+#		then Execute [2]
+#	until c
+#
+#Policy test1:
+##    Execute build_bridge
+#    with P(0.9):
+#        Execute [0, 2]
+#        then Execute right
+#    or with P(0.05):
+#        Execute 5 * 3
+#    or Execute left with P(0.05)
+#    then Execute right with P(0.5)
+#    or Execute down with P(0.25)
+#    or with P(0.25):
+#        Execute right
+#        then Execute right
+#        then Execute down
+#    then Execute up
 
 #Policy test1:
 #    with P(0.9):
