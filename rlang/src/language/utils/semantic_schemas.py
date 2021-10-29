@@ -31,6 +31,19 @@ def policy_generator_function(statements):
         yield lambda *args, **kwargs: stat(*args, **kwargs)
 
 
+# def probabilistic_policy_generator_function(policies):
+#     # for policy, probability in policies.items:
+#     print(policies)
+#     def ppgf(*args, **kwargs):
+#         solved_policies = dict()
+#         for policy, probability in policies.items():
+#             # print(policy(*args, **kwargs))
+#             # print(policy(*args, **kwargs))
+#             solved_policies.update({policy(*args, **kwargs): probability})
+#         return solved_policies
+#     yield lambda *args, **kwargs: ppgf(*args, **kwargs)
+
+
 # TODO: Augment this function to handle probabilities
 def policy_stat_collection(stats, *args, **kwargs):
     possibilities = dict()

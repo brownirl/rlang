@@ -5,7 +5,7 @@ Action right := -2
 
 Predicate a := S[0] == 0
 Predicate b := S[0] == 1
-Predicate c := S[0] == 4
+Predicate c := S[0] == 3
 
 
 #Policy prob:
@@ -20,10 +20,27 @@ Predicate c := S[0] == 4
 #
 #    then Execute left
 
+Option build_bridge:
+	init Any
+		Execute up
+#		then Execute down
+	until c
+
 Policy test1:
-    with P(0.9):
-        Execute up
+    Execute build_bridge
+    then with P(0.9):
+        Execute [0, 2]
         then Execute right
+    or with P(0.05):
+        Execute 5 * 3
+    or Execute left with P(0.05)
+    then Execute right with P(0.5)
+    or Execute down with P(0.25)
+    or with P(0.25):
+        Execute right
+        then Execute right
+        then Execute down
+    then Execute up
 
 #Policy test1:
 #    with P(0.9):

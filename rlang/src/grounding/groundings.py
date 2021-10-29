@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+from itertools import tee
+import copy
 import warnings
 from typing import Callable, Any, Union
 import types
@@ -431,6 +434,14 @@ class Predicate(GroundingFunction):
                 f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Predicate")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
+    @classmethod
+    def TRUE(cls):
+        return cls(function=lambda *args, **kwargs: True, domain=Domain.ANY)
+
+    @classmethod
+    def FALSE(cls):
+        return cls(function=lambda *args, **kwargs: False, domain=Domain.ANY)
+
     def __and__(self, other) -> Predicate:
         if isinstance(other, Predicate):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs),
@@ -462,45 +473,11 @@ class Predicate(GroundingFunction):
     def __invert__(self) -> Predicate:
         return Predicate(function=lambda *args, **kwargs: bool(not self(*args, **kwargs)), domain=self.domain)
 
+    def __hash__(self):
+        return self._function.__hash__()
+
     def __repr__(self):
         return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
-
-
-class Option(Grounding):
-    """Grounding object for an option.
-
-    Args:
-        initiation: A Predicate capturing the initiation set of the option.
-        policy: A Policy capturing the policy of the option.
-        termination: A Predicate capturing the termination set of the option.
-        name (optional): the name of the grounding.
-    """
-
-    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
-        self._initiation = initiation
-        self._policy = policy
-        self._termination = termination
-        super().__init__(name)
-
-    def __call__(self, *args, **kwargs) -> Union[None, State]:
-        if self._termination(*args, **kwargs):
-            return None
-        else:
-            return self._policy(*args, **kwargs)
-
-    def can_initiate(self, *args, **kwargs) -> bool:
-        """Determines whether the option can be executed in a given state.
-
-        Args:
-            state: A State object.
-
-        Returns:
-            bool: True iff the option can be executed in the given state.
-        """
-        return self._initiation(*args, **kwargs)
-
-    def __repr__(self):
-        return f"<Option \"{self.name}\">"
 
 
 class ValueFunction(GroundingFunction):
@@ -518,22 +495,34 @@ class Policy(ProbabilisticFunction):
         name (optional): the name of the grounding.
     """
 
-    # def s():
-    #     yield lambda *args, **kwargs: kwargs['state'] * 2 if kwargs['state'] == 5 else 0
-    #     yield lambda *args, **kwargs: 'up'
-
-    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE, probability: float = 1.0):
+    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE,
+                 probability: float = 1.0, length: int = None):
+        self.length = length
         super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name, probability=probability)
 
     @classmethod
     def from_action_reference(cls, action: ActionReference):
-        return cls(function=lambda *args, **kwargs: {action: 1.0}, domain=Domain.ANY)
+        def action_generator(*args, **kwargs):
+            yield {action(*args, **kwargs): 1.0}
+
+        return cls(function=lambda *args, **kwargs: next(action_generator(*args, **kwargs)), domain=Domain.ANY,
+                   length=1)
+
+    def __len__(self):
+        if self.length:
+            return self.length
+        else:
+            return 0
 
     def __call__(self, *args, **kwargs):
         if isinstance(self._function, types.GeneratorType):
             try:
+                if self.length:
+                    self.length -= 1
                 return next(self._function)(*args, **kwargs)
             except StopIteration:
+                if self.length:
+                    self.length += 1
                 return None
         else:
             return self._function(*args, **kwargs)
@@ -544,15 +533,87 @@ class Policy(ProbabilisticFunction):
         else:
             yield self._function
 
+    def __hash__(self):
+        return self._function.__hash__()
+
     def __repr__(self):
-        return f"<Policy [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        additional_info = ""
+        if self.name:
+            additional_info += f" \"{self.name}\""
+        if self.length:
+            additional_info += f" of length {self.length}"
+        return f"<Policy [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
+
+
+class Option(Grounding):
+    """Grounding object for an option.
+
+    Args:
+        initiation: A Predicate capturing the initiation set of the option.
+        policy: A Policy capturing the policy of the option.
+        termination: A Predicate capturing the termination set of the option.
+        name (optional): the name of the grounding.
+    """
+
+    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
+        self._initiation = initiation
+        self._termination = termination
+        self._policy = policy
+        # self._policy_function_backup = None
+        # if isinstance(policy._function, types.GeneratorType):
+        #     policy_function, policy_function_backup = tee(policy._function)
+        #     self._policy_function_backup = policy_function_backup
+        super().__init__(name)
+
+    def __len__(self):
+        return len(self._policy)
+
+    def __call__(self, *args, **kwargs) -> Union[None, State]:
+        # if self._policy_function_backup is not None:  # The policy might be a generator function
+        #     action = self._policy(*args, **kwargs)
+        #     if action:
+        #         return action
+        #     elif self._termination(*args, **kwargs):
+        #         return None
+        #     else:
+        #         policy_function, policy_function_backup = tee(self._policy_function_backup)
+        #         self._policy._function = policy_function
+        #         self._policy_function_backup = policy_function_backup
+        #         # self._policy = copy.deepcopy(self._saved_policy)
+        #         return self.__call__()
+        # elif self._termination(*args, **kwargs):
+        #     return None
+        # else:
+        #     return self._policy(*args, **kwargs)
+        if self._termination(*args, **kwargs):
+            return None
+        else:
+            return self._policy(*args, **kwargs)
+
+    def can_initiate(self, *args, **kwargs) -> bool:
+        """Determines whether the option can be executed in a given state.
+
+        Args:
+            state: A State object.
+
+        Returns:
+            bool: True iff the option can be executed in the given state.
+        """
+        return self._initiation(*args, **kwargs)
+
+    def __hash__(self):
+        return hash((self._initiation, self._policy, self._termination))
+
+    def __repr__(self):
+        return f"<Option \"{self.name}\">"
 
 
 # TODO: test
 class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
 
-    def __init__(self, function: Any = lambda *args, **kwargs: None, domain: Domain = Domain.STATE_ACTION, name: str = None, probability: float = 1.0):
+    def __init__(self, function: Any = lambda *args, **kwargs: None, domain: Domain = Domain.STATE_ACTION,
+                 name: str = None, probability: float = 1.0):
         if isinstance(function, GroundingFunction):
             if not function.domain <= Domain.STATE_ACTION:
                 raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
@@ -573,7 +634,8 @@ class TransitionFunction(ProbabilisticFunction):
 class RewardFunction(ProbabilisticFunction):
     """Represents function of expected reward."""
 
-    def __init__(self, reward: Any = 0, name: str = None, domain: Domain = Domain.STATE_ACTION, probability: float = 1.0):
+    def __init__(self, reward: Any = 0, name: str = None, domain: Domain = Domain.STATE_ACTION,
+                 probability: float = 1.0):
         if isinstance(reward, (int, float, np.ndarray)):
             function = lambda *args, **kwargs: np.array(reward)
             domain = Domain.ANY

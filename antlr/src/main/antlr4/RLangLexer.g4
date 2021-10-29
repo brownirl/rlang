@@ -67,6 +67,7 @@ NOT: 'not';
 
 TRUE: 'True';
 FALSE: 'False';
+ANY_CONDITION: 'Any';
 
 BIND: ':=';
 PREDICT: '->';

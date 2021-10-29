@@ -133,9 +133,22 @@ def test_Policy():
     knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
     test1 = knowledge['test1']
     # test2 = knowledge['test2']
-
-    print(test1(state=s))
-    print(test1(state=s))
+    actions = test1(state=s)
+    print(actions)
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    actions = test1(state=s)
+    print(actions)
+    actions = test1(state=s)
+    print(actions)
+    actions = test1(state=s)
+    print(actions)
+    # print(actions.keys())
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(test1(state=s))
 
 #     # TODO: Need more tests, derive policy from factor and feature
 

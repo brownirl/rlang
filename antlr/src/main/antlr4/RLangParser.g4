@@ -34,7 +34,9 @@ feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
 
-option: OPTION IDENTIFIER COL INDENT INIT init=boolean_exp INDENT policy_statement_collection DEDENT UNTIL until=boolean_exp NL* DEDENT;
+option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT non_negative_policy_statement_collection DEDENT UNTIL until=option_condition NL* DEDENT;
+option_condition: boolean_exp | ANY_CONDITION;
+
 policy: POLICY IDENTIFIER COL INDENT policy_statement_collection DEDENT;
 policy_statement_collection: (never_statements+=never_policy_statement NL+)* non_negative_policy_statement_collection?;
 non_negative_policy_statement_collection: statements+=policy_statement NL* (THEN statements+=policy_statement NL*)*;

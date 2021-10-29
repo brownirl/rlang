@@ -125,6 +125,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#option_condition.
+    def enterOption_condition(self, ctx:RLangParser.Option_conditionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#option_condition.
+    def exitOption_condition(self, ctx:RLangParser.Option_conditionContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#policy.
     def enterPolicy(self, ctx:RLangParser.PolicyContext):
         pass
