@@ -4,28 +4,6 @@ from rlang.src.exceptions import RLangGroundingError
 """These functions are used by the listener during the construction of Policy, Option, and Transition-type objects"""
 
 
-def default_stat_collection(stats, *args, **kwargs):
-    possibilities = dict()
-    for stat in stats:
-        stat_val = stat(*args, **kwargs)
-        if stat_val is not None:
-            if isinstance(stat_val, dict):
-                for k, v in stat_val.items():
-                    # Add to dict or update existing entry
-                    if k in possibilities:
-                        possibilities[k] += v * stat.probability
-                    else:
-                        possibilities.update({k: v * stat.probability})
-            else:
-                # Add to dict or update existing entry
-                if stat_val in possibilities:
-                    possibilities[stat_val] = possibilities[stat_val] + stat.probability
-                else:
-                    possibilities.update({stat_val: stat.probability})
-
-    return possibilities
-
-
 def policy_generator_function(statements):
     for stat in statements:
         yield lambda s=stat, *args, **kwargs: s(*args, **kwargs)
@@ -64,32 +42,25 @@ def subpolicy_dict_function(subpolicies, *args, **kwargs):
     return subpolicy_dict
 
 
-# TODO: Augment this function to handle probabilities
-def policy_stat_collection(stats, *args, **kwargs):
+def default_stat_collection(stats, *args, **kwargs):
     possibilities = dict()
     for stat in stats:
-        print(type(stat))
-        probability = 1.0
-        if isinstance(stat, ProbabilisticFunction):
-            # print(stat)
-            probability = stat.probability
         stat_val = stat(*args, **kwargs)
         if stat_val is not None:
             if isinstance(stat_val, dict):
-                # print(stat_val)
                 for k, v in stat_val.items():
-                    # print(v)
                     # Add to dict or update existing entry
                     if k in possibilities:
-                        possibilities[k] = possibilities[k] + v * probability
+                        possibilities[k] += v * stat.probability
                     else:
-                        possibilities.update({k: v * probability})
+                        possibilities.update({k: v * stat.probability})
             else:
-                print("sdfsdf")
+                # Add to dict or update existing entry
                 if stat_val in possibilities:
-                    possibilities[stat_val] = possibilities[stat_val] + probability
+                    possibilities[stat_val] = possibilities[stat_val] + stat.probability
                 else:
-                    possibilities.update({stat_val: probability})
+                    possibilities.update({stat_val: stat.probability})
+
     return possibilities
 
 
@@ -118,8 +89,6 @@ def conditional_statement(if_condition, if_statements, elif_condition=None, elif
 def build_conditional_stat(ctx, filter_object, name_filter=lambda x: True):
     if filter_object == RewardFunction:
         stat_collection = reward_stat_collection
-    elif filter_object == Policy:
-        stat_collection = policy_stat_collection
     else:
         stat_collection = default_stat_collection
 

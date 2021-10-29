@@ -360,6 +360,8 @@ class RLangListener(RLangParserListener):
         ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function),
                      *predictions]
 
+    # ============================= arithmetic expression =============================
+
     def exitArith_paren(self, ctx: RLangParser.Arith_parenContext):
         ctx.value = ctx.arithmetic_exp().value
 
