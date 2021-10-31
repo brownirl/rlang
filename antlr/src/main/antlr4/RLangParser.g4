@@ -38,9 +38,7 @@ option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_st
 option_condition: boolean_exp | ANY_CONDITION;
 
 policy: POLICY IDENTIFIER COL INDENT policy_statement_collection DEDENT;
-//negative_policy_statement_collection: (never_statements+=never_policy_statement NL+)* non_negative_policy_statement_collection?;
 policy_statement_collection: statements+=policy_statement NL* (THEN statements+=policy_statement NL*)*;
-//never_policy_statement: NEVER execute;
 policy_statement
     : execute                    # policy_statement_execute
     | conditional_subpolicy      # policy_statement_conditional
@@ -53,22 +51,28 @@ probabilistic_policy_statement
     : probabilistic_condition COL INDENT policy_statement_collection DEDENT   # probabilistic_policy_statement_no_sugar
     | execute probabilistic_condition NL+                                     # probabilistic_policy_statement_sugar
     ;
-probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 
 
-effect: EFFECT IDENTIFIER? COL INDENT (stats+=effect_stat NL*)+ DEDENT;
-effect_stat
-    : reward                    # effect_stat_reward
-    | prediction                # effect_stat_prediction
-    | effect_reference          # effect_stat_effect_reference
-    | stochastic_effect         # effect_stat_stochastic_effect
-    | conditional_effect_stat   # effect_stat_conditional
+effect: EFFECT IDENTIFIER? COL INDENT effect_statement_collection DEDENT;
+effect_statement_collection: (statements+=effect_statement NL*)+;
+effect_statement
+    : reward                    # effect_statement_reward
+    | prediction                # effect_statement_prediction
+    | effect_reference          # effect_statement_reference
+    | conditional_effect        # effect_statement_conditional
+    | probabilistic_effect      # effect_statement_probabilistic
     ;
 reward: REWARD arithmetic_exp;
 prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
 effect_reference: PREDICT IDENTIFIER;
-stochastic_effect: WITH P L_PAR any_number R_PAR COL INDENT (stats+=effect_stat NL*)+ DEDENT;
-conditional_effect_stat: IF if_condition=boolean_exp COL INDENT (if_statements+=effect_stat NL*)+ DEDENT (ELIF elif_condition=boolean_exp COL INDENT (elif_statements+=effect_stat NL*)+ DEDENT)* (ELSE COL INDENT (else_statements+=effect_stat NL*)+ DEDENT)*;
+conditional_effect: IF if_condition=boolean_exp COL INDENT if_effect=effect_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_effects+=effect_statement_collection DEDENT)* (ELSE COL INDENT else_effect=effect_statement_collection DEDENT)?;
+probabilistic_effect: effects+=probabilistic_effect_statement (OR effects+=probabilistic_effect_statement)*;
+probabilistic_effect_statement
+    : probabilistic_condition COL INDENT effect_statement_collection DEDENT   # probabilistic_effect_statement_no_sugar
+    | (reward | prediction | effect_reference) probabilistic_condition NL+    # probabilistic_effect_statement_sugar
+    ;
+
+probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 
 
 arithmetic_exp

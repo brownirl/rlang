@@ -224,15 +224,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#probabilistic_condition.
-    def enterProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#probabilistic_condition.
-    def exitProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#effect.
     def enterEffect(self, ctx:RLangParser.EffectContext):
         pass
@@ -242,48 +233,57 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#effect_stat_reward.
-    def enterEffect_stat_reward(self, ctx:RLangParser.Effect_stat_rewardContext):
+    # Enter a parse tree produced by RLangParser#effect_statement_collection.
+    def enterEffect_statement_collection(self, ctx:RLangParser.Effect_statement_collectionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#effect_stat_reward.
-    def exitEffect_stat_reward(self, ctx:RLangParser.Effect_stat_rewardContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#effect_stat_prediction.
-    def enterEffect_stat_prediction(self, ctx:RLangParser.Effect_stat_predictionContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#effect_stat_prediction.
-    def exitEffect_stat_prediction(self, ctx:RLangParser.Effect_stat_predictionContext):
+    # Exit a parse tree produced by RLangParser#effect_statement_collection.
+    def exitEffect_statement_collection(self, ctx:RLangParser.Effect_statement_collectionContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#effect_stat_effect_reference.
-    def enterEffect_stat_effect_reference(self, ctx:RLangParser.Effect_stat_effect_referenceContext):
+    # Enter a parse tree produced by RLangParser#effect_statement_reward.
+    def enterEffect_statement_reward(self, ctx:RLangParser.Effect_statement_rewardContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#effect_stat_effect_reference.
-    def exitEffect_stat_effect_reference(self, ctx:RLangParser.Effect_stat_effect_referenceContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#effect_stat_stochastic_effect.
-    def enterEffect_stat_stochastic_effect(self, ctx:RLangParser.Effect_stat_stochastic_effectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#effect_stat_stochastic_effect.
-    def exitEffect_stat_stochastic_effect(self, ctx:RLangParser.Effect_stat_stochastic_effectContext):
+    # Exit a parse tree produced by RLangParser#effect_statement_reward.
+    def exitEffect_statement_reward(self, ctx:RLangParser.Effect_statement_rewardContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#effect_stat_conditional.
-    def enterEffect_stat_conditional(self, ctx:RLangParser.Effect_stat_conditionalContext):
+    # Enter a parse tree produced by RLangParser#effect_statement_prediction.
+    def enterEffect_statement_prediction(self, ctx:RLangParser.Effect_statement_predictionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#effect_stat_conditional.
-    def exitEffect_stat_conditional(self, ctx:RLangParser.Effect_stat_conditionalContext):
+    # Exit a parse tree produced by RLangParser#effect_statement_prediction.
+    def exitEffect_statement_prediction(self, ctx:RLangParser.Effect_statement_predictionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#effect_statement_reference.
+    def enterEffect_statement_reference(self, ctx:RLangParser.Effect_statement_referenceContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect_statement_reference.
+    def exitEffect_statement_reference(self, ctx:RLangParser.Effect_statement_referenceContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#effect_statement_conditional.
+    def enterEffect_statement_conditional(self, ctx:RLangParser.Effect_statement_conditionalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect_statement_conditional.
+    def exitEffect_statement_conditional(self, ctx:RLangParser.Effect_statement_conditionalContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#effect_statement_probabilistic.
+    def enterEffect_statement_probabilistic(self, ctx:RLangParser.Effect_statement_probabilisticContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#effect_statement_probabilistic.
+    def exitEffect_statement_probabilistic(self, ctx:RLangParser.Effect_statement_probabilisticContext):
         pass
 
 
@@ -314,21 +314,48 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#stochastic_effect.
-    def enterStochastic_effect(self, ctx:RLangParser.Stochastic_effectContext):
+    # Enter a parse tree produced by RLangParser#conditional_effect.
+    def enterConditional_effect(self, ctx:RLangParser.Conditional_effectContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#stochastic_effect.
-    def exitStochastic_effect(self, ctx:RLangParser.Stochastic_effectContext):
+    # Exit a parse tree produced by RLangParser#conditional_effect.
+    def exitConditional_effect(self, ctx:RLangParser.Conditional_effectContext):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#conditional_effect_stat.
-    def enterConditional_effect_stat(self, ctx:RLangParser.Conditional_effect_statContext):
+    # Enter a parse tree produced by RLangParser#probabilistic_effect.
+    def enterProbabilistic_effect(self, ctx:RLangParser.Probabilistic_effectContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#conditional_effect_stat.
-    def exitConditional_effect_stat(self, ctx:RLangParser.Conditional_effect_statContext):
+    # Exit a parse tree produced by RLangParser#probabilistic_effect.
+    def exitProbabilistic_effect(self, ctx:RLangParser.Probabilistic_effectContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_effect_statement_no_sugar.
+    def enterProbabilistic_effect_statement_no_sugar(self, ctx:RLangParser.Probabilistic_effect_statement_no_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_effect_statement_no_sugar.
+    def exitProbabilistic_effect_statement_no_sugar(self, ctx:RLangParser.Probabilistic_effect_statement_no_sugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_effect_statement_sugar.
+    def enterProbabilistic_effect_statement_sugar(self, ctx:RLangParser.Probabilistic_effect_statement_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_effect_statement_sugar.
+    def exitProbabilistic_effect_statement_sugar(self, ctx:RLangParser.Probabilistic_effect_statement_sugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_condition.
+    def enterProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_condition.
+    def exitProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
         pass
 
 
