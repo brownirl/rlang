@@ -208,79 +208,79 @@ class RLangListener(RLangParserListener):
 
     # ============================= Effect =============================
 
-    def exitEffect(self, ctx: RLangParser.EffectContext):
-        stats = list(map(lambda x: x.value, ctx.stats))
-        all_stats = list()
-        for s in stats:  # Collect all the effect statements. Some stats will be lists of effect statements.
-            if isinstance(s, list):
-                all_stats.extend(s)
-            elif isinstance(s, Effect):
-                all_stats.extend(s.transition_functions)
-                all_stats.extend(s.reward_functions)
-                all_stats.extend(s.predictions)
-            else:
-                all_stats.append(s)
+    # def exitEffect(self, ctx: RLangParser.EffectContext):
+    #     stats = list(map(lambda x: x.value, ctx.stats))
+    #     all_stats = list()
+    #     for s in stats:  # Collect all the effect statements. Some stats will be lists of effect statements.
+    #         if isinstance(s, list):
+    #             all_stats.extend(s)
+    #         elif isinstance(s, Effect):
+    #             all_stats.extend(s.transition_functions)
+    #             all_stats.extend(s.reward_functions)
+    #             all_stats.extend(s.predictions)
+    #         else:
+    #             all_stats.append(s)
+    #
+    #     reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_stats))
+    #     transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
+    #     prediction_list = list(filter(lambda x: isinstance(x, Prediction), all_stats))
+    #
+    #     if ctx.IDENTIFIER() is not None:
+    #         # This is a named effect which should not merge into the existing transition function
+    #         new_effect = Effect(reward_functions=reward_functions,
+    #                             transition_functions=transition_functions,
+    #                             predictions=prediction_list,
+    #                             name=ctx.IDENTIFIER().getText())
+    #         self.addVariable(new_effect.name, new_effect)
+    #     else:
+    #         reward_functions.append(self.rlang_knowledge.reward_function)
+    #         reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
+    #         domain = Domain.ANY
+    #         for funcs in reward_functions:
+    #             domain += funcs.domain
+    #         self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats, domain=domain)
+    #
+    #         transition_functions.append(self.rlang_knowledge.transition_function)
+    #         transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
+    #         domain = Domain.ANY
+    #         for funcs in transition_functions:
+    #             domain += funcs.domain
+    #         self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats, domain=domain)
+    #
+    #         predictions = dict()
+    #         for p in [*prediction_list, *self.rlang_knowledge.predictions.values()]:
+    #             p_name = p.grounding_predicted.name
+    #             if p_name in predictions:
+    #                 predictions.update({p_name: [*predictions[p_name], p]})
+    #             else:
+    #                 predictions.update({p_name: [p]})
+    #         new_predictions = dict()
+    #         for p_name2, p_value in predictions.items():
+    #             # This is absolutely insane, but please do not remove it. Google 'Python for loop variable capture'
+    #             def lambda_generator(these_stats):
+    #                 return lambda *args, **kwargs: default_stat_collection(these_stats, *args, **kwargs)
+    #
+    #             new_p = Prediction(grounding_function=self.retrieveVariable(p_name2),
+    #                                value=lambda_generator(p_value))
+    #             # new_p.domain
+    #             new_predictions.update({p_name2: new_p})
+    #
+    #         self.rlang_knowledge.predictions = new_predictions
 
-        reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_stats))
-        transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
-        prediction_list = list(filter(lambda x: isinstance(x, Prediction), all_stats))
-
-        if ctx.IDENTIFIER() is not None:
-            # This is a named effect which should not merge into the existing transition function
-            new_effect = Effect(reward_functions=reward_functions,
-                                transition_functions=transition_functions,
-                                predictions=prediction_list,
-                                name=ctx.IDENTIFIER().getText())
-            self.addVariable(new_effect.name, new_effect)
-        else:
-            reward_functions.append(self.rlang_knowledge.reward_function)
-            reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
-            domain = Domain.ANY
-            for funcs in reward_functions:
-                domain += funcs.domain
-            self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats, domain=domain)
-
-            transition_functions.append(self.rlang_knowledge.transition_function)
-            transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
-            domain = Domain.ANY
-            for funcs in transition_functions:
-                domain += funcs.domain
-            self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats, domain=domain)
-
-            predictions = dict()
-            for p in [*prediction_list, *self.rlang_knowledge.predictions.values()]:
-                p_name = p.grounding_predicted.name
-                if p_name in predictions:
-                    predictions.update({p_name: [*predictions[p_name], p]})
-                else:
-                    predictions.update({p_name: [p]})
-            new_predictions = dict()
-            for p_name2, p_value in predictions.items():
-                # This is absolutely insane, but please do not remove it. Google 'Python for loop variable capture'
-                def lambda_generator(these_stats):
-                    return lambda *args, **kwargs: default_stat_collection(these_stats, *args, **kwargs)
-
-                new_p = Prediction(grounding_function=self.retrieveVariable(p_name2),
-                                   value=lambda_generator(p_value))
-                # new_p.domain
-                new_predictions.update({p_name2: new_p})
-
-            self.rlang_knowledge.predictions = new_predictions
-
-    def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
-        ctx.value = ctx.reward().value
-
-    def exitEffect_stat_prediction(self, ctx: RLangParser.Effect_stat_predictionContext):
-        ctx.value = ctx.prediction().value
-
-    def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
-        ctx.value = ctx.effect_reference().value
-
-    def exitEffect_stat_stochastic_effect(self, ctx: RLangParser.Effect_stat_stochastic_effectContext):
-        ctx.value = ctx.stochastic_effect().value
-
-    def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
-        ctx.value = ctx.conditional_effect_stat().value
+    # def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
+    #     ctx.value = ctx.reward().value
+    #
+    # def exitEffect_stat_prediction(self, ctx: RLangParser.Effect_stat_predictionContext):
+    #     ctx.value = ctx.prediction().value
+    #
+    # def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
+    #     ctx.value = ctx.effect_reference().value
+    #
+    # def exitEffect_stat_stochastic_effect(self, ctx: RLangParser.Effect_stat_stochastic_effectContext):
+    #     ctx.value = ctx.stochastic_effect().value
+    #
+    # def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
+    #     ctx.value = ctx.conditional_effect_stat().value
 
     def exitReward(self, ctx: RLangParser.RewardContext):
         if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
@@ -308,57 +308,57 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
         ctx.value = effect.transition_functions + effect.reward_functions + effect.predictions
 
-    def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
-        probability = ctx.any_number().value
-        if probability > 1.0 or probability < 0.0:
-            raise RLangSemanticError("Effect probability must be between 0.0 and 1.0")
-        stats = []
-        for s in ctx.stats:
-            if isinstance(s.value, list):
-                stats.extend(s.value)
-            else:
-                stats.append(s.value)
+    # def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
+    #     probability = ctx.any_number().value
+    #     if probability > 1.0 or probability < 0.0:
+    #         raise RLangSemanticError("Effect probability must be between 0.0 and 1.0")
+    #     stats = []
+    #     for s in ctx.stats:
+    #         if isinstance(s.value, list):
+    #             stats.extend(s.value)
+    #         else:
+    #             stats.append(s.value)
+    #
+    #     for s in stats:
+    #         s.compose_probability(probability)
+    #
+    #     ctx.value = stats
 
-        for s in stats:
-            s.compose_probability(probability)
-
-        ctx.value = stats
-
-    def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
-        # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
-        ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
-        if ifs:
-            ifs = list(reduce(lambda a, b: a + b, ifs))
-        elifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.elif_statements)))
-        if elifs:
-            elifs = list(reduce(lambda a, b: a + b, elifs))
-        elses = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.else_statements)))
-        if elses:
-            elses = list(reduce(lambda a, b: a + b, elses))
-
-        ctx.if_statements = list(
-            filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.if_statements))) + ifs
-        ctx.elif_statements = list(
-            filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.elif_statements))) + elifs
-        ctx.else_statements = list(
-            filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.else_statements))) + elses
-
-        transition_function = build_conditional_stat(ctx, TransitionFunction)
-        reward_function = build_conditional_stat(ctx, RewardFunction)
-
-        prediction_names = list(set(list(map(lambda y: y.grounding_predicted.name,
-                                             filter(lambda x: isinstance(x, Prediction),
-                                                    [*ctx.if_statements, *ctx.elif_statements,
-                                                     *ctx.else_statements])))))
-        predictions = []
-        for p_name in prediction_names:
-            new_p_function = build_conditional_stat(ctx, Prediction,
-                                                    name_filter=lambda x: x.grounding_predicted.name == p_name)
-            new_prediction = Prediction(grounding_function=self.retrieveVariable(p_name),
-                                        value=new_p_function)
-            predictions.append(new_prediction)
-        ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function),
-                     *predictions]
+    # def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
+    #     # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
+    #     ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
+    #     if ifs:
+    #         ifs = list(reduce(lambda a, b: a + b, ifs))
+    #     elifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.elif_statements)))
+    #     if elifs:
+    #         elifs = list(reduce(lambda a, b: a + b, elifs))
+    #     elses = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.else_statements)))
+    #     if elses:
+    #         elses = list(reduce(lambda a, b: a + b, elses))
+    #
+    #     ctx.if_statements = list(
+    #         filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.if_statements))) + ifs
+    #     ctx.elif_statements = list(
+    #         filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.elif_statements))) + elifs
+    #     ctx.else_statements = list(
+    #         filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.else_statements))) + elses
+    #
+    #     transition_function = build_conditional_stat(ctx, TransitionFunction)
+    #     reward_function = build_conditional_stat(ctx, RewardFunction)
+    #
+    #     prediction_names = list(set(list(map(lambda y: y.grounding_predicted.name,
+    #                                          filter(lambda x: isinstance(x, Prediction),
+    #                                                 [*ctx.if_statements, *ctx.elif_statements,
+    #                                                  *ctx.else_statements])))))
+    #     predictions = []
+    #     for p_name in prediction_names:
+    #         new_p_function = build_conditional_stat(ctx, Prediction,
+    #                                                 name_filter=lambda x: x.grounding_predicted.name == p_name)
+    #         new_prediction = Prediction(grounding_function=self.retrieveVariable(p_name),
+    #                                     value=new_p_function)
+    #         predictions.append(new_prediction)
+    #     ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function),
+    #                  *predictions]
 
     # ============================= arithmetic expression =============================
 
