@@ -228,7 +228,8 @@ def test_Effect():
     # jo = knowledge['jo']
     jo2 = knowledge['jo2']
 
-    print(jo2.transition_function(state=s))
+    print(jo2.predictions[0](state=s2))
+    # print(jo2.transition_function(state=s))
     # print(jo2.reward_function(state=s))
     # print(jo2.reward_function(state=s2))
     # r = knowledge.reward_function

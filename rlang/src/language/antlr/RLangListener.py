@@ -290,12 +290,14 @@ class RLangListener(RLangParserListener):
         transition_statements = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
 
         #   -> Predictions
-        # TODO
+        prediction_statements = list(filter(lambda x: isinstance(x, Prediction), all_statements))
 
         # Effects
         effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
         reward_statements.extend([effect.reward_function for effect in effects])
         transition_statements.extend([effect.transition_function for effect in effects])
+        for effect in effects:
+            prediction_statements.extend(effect.predictions)
 
         if reward_statements:
             reward_function = reduce(lambda a, b: a + b, reward_statements)
@@ -309,7 +311,15 @@ class RLangListener(RLangParserListener):
         else:
             transition_function = transition_statements[0]
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
+        predicted_groundings = []
+        for prediction in prediction_statements:
+            if prediction.predicted_grounding in predicted_groundings:
+                raise RLangSemanticError(f"Too many Predictions for {prediction.predicted_grounding.name}'")
+            else:
+                predicted_groundings.append(prediction.predicted_grounding)
+
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
+                            predictions=prediction_statements)
         ctx.value = new_effect
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
@@ -343,7 +353,9 @@ class RLangListener(RLangParserListener):
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
             # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
             #     raise RLangSemanticError("")
-            ctx.value = Prediction(grounding_function=grounding_function, value=ctx.arithmetic_exp().value)
+            ctx.value = Prediction(grounding_function=grounding_function,
+                                   value=lambda *args, **kwargs: {ctx.arithmetic_exp().value(*args, **kwargs): 1.0},
+                                   domain=ctx.arithmetic_exp().value.domain)
         elif ctx.S_PRIME() is not None:
             ctx.value = TransitionFunction(
                 function=lambda *args, **kwargs: {ctx.arithmetic_exp().value(args, **kwargs): 1.0},

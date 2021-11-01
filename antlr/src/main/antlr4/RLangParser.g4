@@ -105,12 +105,10 @@ any_bound_var
     | A			                    # bound_action
     ;
 
-
 trailer
     : int_array_exp     # trailer_array
     | slice_exp         # trailer_slice
     ;
-
 
 any_array
     : compound_array_exp    # any_array_compound
@@ -132,7 +130,6 @@ any_number
     : any_integer   # any_num_int
     | any_decimal   # any_num_dec
     ;
-
 
 any_integer: MINUS? INTEGER;
 any_decimal: MINUS? DECIMAL;

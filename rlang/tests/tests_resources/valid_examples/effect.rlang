@@ -3,9 +3,13 @@ Factor f2 := S[1]
 Action up := 1
 
 Effect jo2:
-    if f1 == 0:
-        S' -> S * 2 with P(0.2)
-        or S' -> S * 3 with P(0.8)
+    f1' -> f1 * 2
+#    f1' -> f1 * 2
+
+#Effect jo2:
+#    if f1 == 0:
+#        S' -> S * 2 with P(0.2)
+#        or S' -> S * 3 with P(0.8)
 
 #Effect jo2:
 #    with P(0.2):
@@ -18,8 +22,7 @@ Effect jo2:
 #Effect:
 #    with P(0.5):
 #        S' -> S
-#    with P(0.25):
-#        S' -> S * 2
+#    or with P(0.25):
 #        S' -> S * 2
 #
 #Effect jo2:
@@ -28,7 +31,7 @@ Effect jo2:
 #    or with P(0.8):
 #        with P(0.1):
 #            S' -> S * 3
-#        or S' -> S * 3 with P(0.9)
+#        or S' -> S * 4 with P(0.9)
 
 
 

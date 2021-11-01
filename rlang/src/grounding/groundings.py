@@ -696,9 +696,10 @@ class Prediction(ProbabilisticFunction):
         value: the predicted value of the GroundingFunction (can also be a GroundingFunction)
     """
 
-    def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None, probability: float = 1.0):
+    def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None,
+                 domain: Domain = Domain.STATE_ACTION, probability: float = 1.0):
         if isinstance(value, (bool, int, float, np.ndarray)):
-            function = lambda *args, **kwargs: np.array(value)
+            function = lambda *args, **kwargs: {np.array(value): 1.0}
             domain = Domain.ANY
             if isinstance(value, bool) or (isinstance(value, np.ndarray) and value.dtype == np.bool):
                 codomain = Domain.BOOLEAN
@@ -707,13 +708,11 @@ class Prediction(ProbabilisticFunction):
         elif isinstance(value, GroundingFunction):
             if value.domain <= Domain.STATE_ACTION:
                 function = value
-                domain = value.domain
                 codomain = value.codomain
             else:
                 raise RLangGroundingError(f"Cannot construct a Prediction based on a {value.domain.name}")
         elif isinstance(value, Callable):
             function = value
-            domain = Domain.STATE_ACTION
             codomain = grounding_function.codomain
         else:
             raise RLangGroundingError(f"Cannot construct a Prediction from value of type {type(value)}")
@@ -730,35 +729,31 @@ class Prediction(ProbabilisticFunction):
         super().__init__(codomain=codomain, function=function, domain=domain, name=name, probability=probability)
 
     @property
-    def grounding_predicted(self):
+    def predicted_grounding(self):
         return self._grounding_function
-
-    @property
-    def probability(self):
-        return self._probability
-
-    @probability.setter
-    def probability(self, probability: float):
-        self._probability = probability
 
     def __repr__(self):
         return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\" with P({self.probability})>"
 
 
-class Effect(ProbabilisticFunction):
+class Effect(Grounding):
     def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
                  predictions: list = None, name: str = None,
                  probability: float = 1.0):
         self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
         self.transition_function = transition_function if transition_function else TransitionFunction(domain=Domain.ANY)
         self.predictions = predictions
-        super().__init__(function=lambda *args, **kwargs: [self.reward_function(*args, **kwargs)], codomain=Domain.ACTION, domain=Domain.ANY, name=name, probability=probability)
+        self.probability = probability
+        super().__init__(name=name)
 
     def compose_probability(self, probability: float):
-        self._probability = self._probability * probability
+        self.probability = self.probability * probability
         self.reward_function.compose_probability(probability)
         self.transition_function.compose_probability(probability)
         # self.predictions
 
     def __repr__(self):
-        return f"<Effect \"{self.name}\" with P({self.probability})>"
+        if self.name:
+            return f"<Effect \"{self.name}\" with P({self.probability})>"
+        else:
+            return f"<Effect with P({self.probability})>"
