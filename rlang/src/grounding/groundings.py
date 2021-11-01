@@ -495,7 +495,8 @@ class Policy(ProbabilisticFunction):
         name (optional): the name of the grounding.
     """
 
-    def __init__(self, function: Union[Callable, types.GeneratorType, _tee], name: str = None, domain: Union[str, Domain] = Domain.STATE,
+    def __init__(self, function: Union[Callable, types.GeneratorType, _tee], name: str = None,
+                 domain: Union[str, Domain] = Domain.STATE,
                  probability: float = 1.0, length: int = None):
         self.length = length
         self.backup_length = copy.copy(length)
@@ -518,7 +519,8 @@ class Policy(ProbabilisticFunction):
 
     def __copy__(self):
         if isinstance(self._function, _tee):
-            return Policy(function=copy.copy(self.backup_function), name=self.name, domain=self.domain, probability=self.probability,
+            return Policy(function=copy.copy(self.backup_function), name=self.name, domain=self.domain,
+                          probability=self.probability,
                           length=self.backup_length)
         else:
             return copy.deepcopy(self)
@@ -667,6 +669,14 @@ class RewardFunction(ProbabilisticFunction):
 
         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
 
+    def __add__(self, other):
+        if isinstance(other, RewardFunction):
+            return RewardFunction(reward=lambda *args, **kwargs: self(*args, **kwargs) * self.probability +
+                                                                 other(*args, **kwargs) * other.probability,
+                                  domain=self.domain + other.domain)
+        else:
+            raise RLangGroundingError(f"Not yet implemented")
+
     def __repr__(self):
         if self.name:
             return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
@@ -736,9 +746,10 @@ class Prediction(ProbabilisticFunction):
 
 
 class Effect(Grounding):
-    def __init__(self, reward_functions: list, transition_functions: list, predictions: list, name: str = None,
+    def __init__(self, reward_function: RewardFunction = None, transition_functions: list = None,
+                 predictions: list = None, name: str = None,
                  probability: float = 1.0):
-        self.reward_functions = reward_functions
+        self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
         self.transition_functions = transition_functions
         self.predictions = predictions
         self._probability = probability
@@ -748,12 +759,12 @@ class Effect(Grounding):
     def probability(self):
         return self._probability
 
-    @probability.setter
-    def probability(self, probability: float):
-        for s in [*self.reward_functions, *self.transition_functions, *self.predictions]:
-            if not isinstance(s, ProbabilisticFunction):
-                raise RLangGroundingError(f"Can't set the probability of a {type(s)} wrapped inside an Effect")
-            s.probability = s.probability * probability
+    # @probability.setter
+    # def probability(self, probability: float):
+    #     for s in [*self.reward_functions, *self.transition_functions, *self.predictions]:
+    #         if not isinstance(s, ProbabilisticFunction):
+    #             raise RLangGroundingError(f"Can't set the probability of a {type(s)} wrapped inside an Effect")
+    #         s.probability = s.probability * probability
 
     def __repr__(self):
         return f"<Effect \"{self.name}\" with P({self.probability})>"

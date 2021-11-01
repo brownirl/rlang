@@ -43,7 +43,7 @@ POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
-NEVER: 'Never';
+DYNAMICS: 'Dynamics';
 
 S_PRIME: S PRIME;
 S: 'S';
@@ -60,6 +60,8 @@ INIT: 'init';
 UNTIL: 'until';
 WITH: 'with';
 THEN: 'then';
+NEVER: 'never';
+MAIN: 'main';
 
 AND: 'and';
 OR: 'or';

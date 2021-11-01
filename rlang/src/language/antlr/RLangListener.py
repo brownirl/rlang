@@ -155,7 +155,8 @@ class RLangListener(RLangParserListener):
         if isinstance(ctx.execute().value, ActionReference):
             ctx.value = Policy.from_action_reference(ctx.execute().value)
         elif isinstance(ctx.execute().value, Option):
-            ctx.value = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0}, length=len(ctx.execute().value))
+            ctx.value = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
+                               length=len(ctx.execute().value))
         else:
             ctx.value = ctx.execute().value
 
@@ -179,8 +180,10 @@ class RLangListener(RLangParserListener):
         elif_subpolicies = [s.value for s in ctx.elif_subpolicies]
         else_subpolicy = ctx.else_subpolicy.value if ctx.else_subpolicy else None
         ctx.value = Policy(
-            function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value, elif_conditions,
-                                                 elif_subpolicies, else_subpolicy, *args, **kwargs))
+            function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value,
+                                                                         elif_conditions,
+                                                                         elif_subpolicies, else_subpolicy, *args,
+                                                                         **kwargs))
 
     def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
         subpolicies = [sp.value for sp in ctx.subpolicies]
@@ -267,20 +270,48 @@ class RLangListener(RLangParserListener):
     #
     #         self.rlang_knowledge.predictions = new_predictions
 
-    # def exitEffect_stat_reward(self, ctx: RLangParser.Effect_stat_rewardContext):
-    #     ctx.value = ctx.reward().value
-    #
-    # def exitEffect_stat_prediction(self, ctx: RLangParser.Effect_stat_predictionContext):
-    #     ctx.value = ctx.prediction().value
-    #
-    # def exitEffect_stat_effect_reference(self, ctx: RLangParser.Effect_stat_effect_referenceContext):
-    #     ctx.value = ctx.effect_reference().value
-    #
-    # def exitEffect_stat_stochastic_effect(self, ctx: RLangParser.Effect_stat_stochastic_effectContext):
-    #     ctx.value = ctx.stochastic_effect().value
-    #
-    # def exitEffect_stat_conditional(self, ctx: RLangParser.Effect_stat_conditionalContext):
-    #     ctx.value = ctx.conditional_effect_stat().value
+    def exitEffect(self, ctx: RLangParser.EffectContext):
+        new_effect = ctx.effect_statement_collection().value
+        if ctx.IDENTIFIER() is not None:
+            new_effect.name = ctx.IDENTIFIER().getText()
+            self.addVariable(new_effect.name, new_effect)
+        else:
+            pass
+            # must sum together reward, transition, and predictions?
+
+    def exitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
+        all_statements = [statement.value for statement in ctx.statements]
+        # print(all_statements)
+
+        # Rewards
+        reward_statements = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
+
+        # Effect References
+        effect_references = list(filter(lambda x: isinstance(x, Effect), all_statements))
+        reward_statements.extend([effect.reward_function for effect in effect_references])
+
+        if reward_statements:
+            reward_function = reduce(lambda a, b: a + b, reward_statements)
+        else:
+            reward_function = None
+
+        new_effect = Effect(reward_function=reward_function)
+        ctx.value = new_effect
+
+    def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
+        ctx.value = ctx.reward().value
+
+    def exitEffect_statement_prediction(self, ctx: RLangParser.Effect_statement_predictionContext):
+        ctx.value = ctx.prediction().value
+
+    def exitEffect_statement_reference(self, ctx: RLangParser.Effect_statement_referenceContext):
+        ctx.value = ctx.effect_reference().value
+
+    def exitEffect_statement_conditional(self, ctx: RLangParser.Effect_statement_conditionalContext):
+        ctx.value = ctx.conditional_effect().value
+
+    def exitEffect_statement_probabilistic(self, ctx: RLangParser.Effect_statement_probabilisticContext):
+        ctx.value = ctx.probabilistic_effect().value
 
     def exitReward(self, ctx: RLangParser.RewardContext):
         if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
@@ -306,7 +337,32 @@ class RLangListener(RLangParserListener):
         effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
         if not isinstance(effect, Effect):
             raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
-        ctx.value = effect.transition_functions + effect.reward_functions + effect.predictions
+        ctx.value = effect
+
+    def exitConditional_effect(self, ctx:RLangParser.Conditional_effectContext):
+        if_condition = ctx.if_condition.value
+        if_effect = ctx.if_effect.value
+        elif_conditions = [s.value for s in ctx.elif_conditions]
+        elif_effects = [s.value for s in ctx.elif_effects]
+        else_effect = ctx.else_effect.value if ctx.else_effect else Effect()
+
+        # Rewards
+
+        if_reward = if_effect.reward_function
+        elif_rewards = [elif_effect.reward_function for elif_effect in elif_effects]
+        else_reward = else_effect.reward_function
+
+        domain = reduce(lambda a, b: a + b.domain, [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])
+
+        reward_function = RewardFunction(
+            reward=lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
+                                                                       elif_rewards, else_reward, *args, **kwargs),
+            domain=domain)
+
+        # TODO: Break up into rewards, transitions, and predictions, and then construct them together into a single Effect
+
+        new_effect = Effect(reward_function=reward_function)
+        ctx.value = new_effect
 
     # def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
     #     probability = ctx.any_number().value

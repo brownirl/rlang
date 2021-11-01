@@ -42,6 +42,19 @@ def subpolicy_dict_function(subpolicies, *args, **kwargs):
     return subpolicy_dict
 
 
+def conditional_reward_function(if_condition, if_reward, elif_conditions=None, elif_rewards=None, else_reward=None,
+                                *args, **kwargs):
+    if if_condition(*args, **kwargs) == True:
+        return if_reward(*args, **kwargs)
+    else:
+        for i in range(len(elif_conditions)):
+            if elif_conditions[i](*args, **kwargs) == True:
+                return elif_rewards[i](*args, **kwargs)
+        if else_reward is not None:
+            return else_reward(*args, **kwargs)
+        else:
+            return None
+
 # def default_stat_collection(stats, *args, **kwargs):
 #     possibilities = dict()
 #     for stat in stats:

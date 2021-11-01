@@ -219,18 +219,23 @@ def test_Policy():
 
 def test_Effect():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-    s = State([1, 1, 2, 3, 4])
+    s = State([0, 1, 2, 3, 4])
     s2 = State([3, 2, 2, 3, 4])
     s3 = State(np.array([[1, 1, 2, 3, 4], [3, 2, 2, 3, 4]]))
     action = Action(1)
 
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
+    jo = knowledge['jo']
+    jon = knowledge['jon']
+
+    print(jon.reward_function(state=s))
+    print(jon.reward_function(state=s2))
     # r = knowledge.reward_function
     # print(r)
     # print(r(state=s, action=action))
-    t = knowledge.transition_function
-    print(t)
-    print(t(state=s, action=action))
+    # t = knowledge.transition_function
+    # print(t)
+    # print(t(state=s, action=action))
 
 #     predictions = knowledge.predictions
 #     print(predictions)
@@ -239,4 +244,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Policy()
+    test_Effect()
