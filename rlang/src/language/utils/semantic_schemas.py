@@ -66,6 +66,20 @@ def conditional_reward_function(if_condition, if_reward, elif_conditions=None, e
         else:
             return None
 
+
+def conditional_transition_function(if_condition, if_transition, elif_conditions=None, elif_transitions=None,
+                                    else_transition=None, *args, **kwargs):
+    if if_condition(*args, **kwargs) == True:
+        return if_transition(*args, **kwargs)
+    else:
+        for i in range(len(elif_conditions)):
+            if elif_conditions[i](*args, **kwargs) == True:
+                return elif_transitions[i](*args, **kwargs)
+        if else_transition is not None:
+            return else_transition(*args, **kwargs)
+        else:
+            return None
+
 # def default_stat_collection(stats, *args, **kwargs):
 #     possibilities = dict()
 #     for stat in stats:

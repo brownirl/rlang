@@ -289,6 +289,9 @@ class RLangListener(RLangParserListener):
         #   -> TransitionFunctions
         transition_statements = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
 
+        #   -> Predictions
+        # TODO
+
         # Effects
         effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
         reward_statements.extend([effect.reward_function for effect in effects])
@@ -372,15 +375,28 @@ class RLangListener(RLangParserListener):
                                                                        elif_rewards, else_reward, *args, **kwargs),
             domain=domain)
 
-        # TODO: Break up into rewards, transitions, and predictions, and then construct them together into a single
-        #  Effect
+        # Predictions
+        #   -> TransitionFunctions
+        if_transition = if_effect.transition_function
+        elif_transitions = [elif_effect.transition_function for elif_effect in elif_effects]
+        else_transition = else_effect.transition_function
 
-        new_effect = Effect(reward_function=reward_function)
+        domain = reduce(lambda a, b: a + b.domain,
+                        [if_condition.domain, if_transition, *elif_conditions, *elif_transitions, else_transition])
+
+        transition_function = TransitionFunction(
+            function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
+                                                                             elif_conditions, elif_transitions,
+                                                                             else_transition, *args, **kwargs),
+            domain=domain)
+
+        #   -> Predictions
+        # TODO
+
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
         ctx.value = new_effect
 
     def exitProbabilistic_effect(self, ctx: RLangParser.Probabilistic_effectContext):
-        # TODO: split into rewards, transitions, and predictions
-
         # Rewards
         reward_statements = [statement.value.reward_function for statement in ctx.effects]
         if reward_statements:
@@ -393,9 +409,13 @@ class RLangListener(RLangParserListener):
         transition_statements = [statement.value.transition_function for statement in ctx.effects]
         domain = reduce(lambda a, b: a + b.domain, [transition_statements[0].domain, *transition_statements[1:]])
         if len(transition_statements) > 0:
-            transition_function = TransitionFunction(lambda *args, **kwargs: effect_transition_dict_function(transition_statements, *args, **kwargs))
+            transition_function = TransitionFunction(
+                lambda *args, **kwargs: effect_transition_dict_function(transition_statements, *args, **kwargs))
         else:
             transition_function = None
+
+        #   -> Predictions
+        # TODO
 
         new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
         ctx.value = new_effect
