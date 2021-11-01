@@ -42,6 +42,17 @@ def subpolicy_dict_function(subpolicies, *args, **kwargs):
     return subpolicy_dict
 
 
+def effect_transition_dict_function(transitions, *args, **kwargs):
+    transition_dict = dict()
+    for sp in transitions:
+        for k, v in sp(*args, **kwargs).items():
+            if k in transition_dict:
+                transition_dict.update({k: transition_dict[k] + v * sp.probability})
+            else:
+                transition_dict.update({k: v * sp.probability})
+    return transition_dict
+
+
 def conditional_reward_function(if_condition, if_reward, elif_conditions=None, elif_rewards=None, else_reward=None,
                                 *args, **kwargs):
     if if_condition(*args, **kwargs) == True:

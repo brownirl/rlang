@@ -281,21 +281,32 @@ class RLangListener(RLangParserListener):
 
     def exitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
         all_statements = [statement.value for statement in ctx.statements]
-        # print(all_statements)
 
         # Rewards
         reward_statements = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
 
-        # Effect References
-        effect_references = list(filter(lambda x: isinstance(x, Effect), all_statements))
-        reward_statements.extend([effect.reward_function for effect in effect_references])
+        # Predictions
+        #   -> TransitionFunctions
+        transition_statements = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
+
+        # Effects
+        effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
+        reward_statements.extend([effect.reward_function for effect in effects])
+        transition_statements.extend([effect.transition_function for effect in effects])
 
         if reward_statements:
             reward_function = reduce(lambda a, b: a + b, reward_statements)
         else:
             reward_function = None
 
-        new_effect = Effect(reward_function=reward_function)
+        if len(transition_statements) > 1:
+            raise RLangSemanticError("Too many Predictions for S'")
+        elif len(transition_statements) == 0:
+            transition_function = None
+        else:
+            transition_function = transition_statements[0]
+
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
         ctx.value = new_effect
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
@@ -331,7 +342,9 @@ class RLangListener(RLangParserListener):
             #     raise RLangSemanticError("")
             ctx.value = Prediction(grounding_function=grounding_function, value=ctx.arithmetic_exp().value)
         elif ctx.S_PRIME() is not None:
-            ctx.value = TransitionFunction(function=ctx.arithmetic_exp().value)
+            ctx.value = TransitionFunction(
+                function=lambda *args, **kwargs: {ctx.arithmetic_exp().value(args, **kwargs): 1.0},
+                domain=ctx.arithmetic_exp().value.domain)
 
     def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
         effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -339,7 +352,7 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
         ctx.value = effect
 
-    def exitConditional_effect(self, ctx:RLangParser.Conditional_effectContext):
+    def exitConditional_effect(self, ctx: RLangParser.Conditional_effectContext):
         if_condition = ctx.if_condition.value
         if_effect = ctx.if_effect.value
         elif_conditions = [s.value for s in ctx.elif_conditions]
@@ -347,74 +360,69 @@ class RLangListener(RLangParserListener):
         else_effect = ctx.else_effect.value if ctx.else_effect else Effect()
 
         # Rewards
-
         if_reward = if_effect.reward_function
         elif_rewards = [elif_effect.reward_function for elif_effect in elif_effects]
         else_reward = else_effect.reward_function
 
-        domain = reduce(lambda a, b: a + b.domain, [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])
+        domain = reduce(lambda a, b: a + b.domain,
+                        [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])
 
         reward_function = RewardFunction(
             reward=lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
                                                                        elif_rewards, else_reward, *args, **kwargs),
             domain=domain)
 
-        # TODO: Break up into rewards, transitions, and predictions, and then construct them together into a single Effect
+        # TODO: Break up into rewards, transitions, and predictions, and then construct them together into a single
+        #  Effect
 
         new_effect = Effect(reward_function=reward_function)
         ctx.value = new_effect
 
-    # def exitStochastic_effect(self, ctx: RLangParser.Stochastic_effectContext):
-    #     probability = ctx.any_number().value
-    #     if probability > 1.0 or probability < 0.0:
-    #         raise RLangSemanticError("Effect probability must be between 0.0 and 1.0")
-    #     stats = []
-    #     for s in ctx.stats:
-    #         if isinstance(s.value, list):
-    #             stats.extend(s.value)
-    #         else:
-    #             stats.append(s.value)
-    #
-    #     for s in stats:
-    #         s.compose_probability(probability)
-    #
-    #     ctx.value = stats
+    def exitProbabilistic_effect(self, ctx: RLangParser.Probabilistic_effectContext):
+        # TODO: split into rewards, transitions, and predictions
 
-    # def exitConditional_effect_stat(self, ctx: RLangParser.Conditional_effect_statContext):
-    #     # A conditional_effect_stat has a value which is a list of other stat types. Add these back to ctx.xx_statements
-    #     ifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.if_statements)))
-    #     if ifs:
-    #         ifs = list(reduce(lambda a, b: a + b, ifs))
-    #     elifs = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.elif_statements)))
-    #     if elifs:
-    #         elifs = list(reduce(lambda a, b: a + b, elifs))
-    #     elses = list(filter(lambda x: isinstance(x, list), map(lambda x: x.value, ctx.else_statements)))
-    #     if elses:
-    #         elses = list(reduce(lambda a, b: a + b, elses))
-    #
-    #     ctx.if_statements = list(
-    #         filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.if_statements))) + ifs
-    #     ctx.elif_statements = list(
-    #         filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.elif_statements))) + elifs
-    #     ctx.else_statements = list(
-    #         filter(lambda x: not isinstance(x, list), map(lambda y: y.value, ctx.else_statements))) + elses
-    #
-    #     transition_function = build_conditional_stat(ctx, TransitionFunction)
-    #     reward_function = build_conditional_stat(ctx, RewardFunction)
-    #
-    #     prediction_names = list(set(list(map(lambda y: y.grounding_predicted.name,
-    #                                          filter(lambda x: isinstance(x, Prediction),
-    #                                                 [*ctx.if_statements, *ctx.elif_statements,
-    #                                                  *ctx.else_statements])))))
-    #     predictions = []
-    #     for p_name in prediction_names:
-    #         new_p_function = build_conditional_stat(ctx, Prediction,
-    #                                                 name_filter=lambda x: x.grounding_predicted.name == p_name)
-    #         new_prediction = Prediction(grounding_function=self.retrieveVariable(p_name),
-    #                                     value=new_p_function)
-    #         predictions.append(new_prediction)
-    #     ctx.value = [TransitionFunction(function=transition_function), RewardFunction(reward=reward_function),
-    #                  *predictions]
+        # Rewards
+        reward_statements = [statement.value.reward_function for statement in ctx.effects]
+        if reward_statements:
+            reward_function = reduce(lambda a, b: a + b, reward_statements)
+        else:
+            reward_function = None
+
+        # Predictions
+        #   -> TransitionFunctions
+        transition_statements = [statement.value.transition_function for statement in ctx.effects]
+        domain = reduce(lambda a, b: a + b.domain, [transition_statements[0].domain, *transition_statements[1:]])
+        if len(transition_statements) > 0:
+            transition_function = TransitionFunction(lambda *args, **kwargs: effect_transition_dict_function(transition_statements, *args, **kwargs))
+        else:
+            transition_function = None
+
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
+        ctx.value = new_effect
+
+    def exitProbabilistic_effect_statement_no_sugar(self,
+                                                    ctx: RLangParser.Probabilistic_effect_statement_no_sugarContext):
+        effect = ctx.effect_statement_collection().value
+        effect.compose_probability(ctx.probabilistic_condition().value)
+        ctx.value = effect
+
+    def exitProbabilistic_effect_statement_sugar(self, ctx: RLangParser.Probabilistic_effect_statement_sugarContext):
+        if ctx.reward() is not None:
+            effect = Effect(reward_function=ctx.reward().value)
+            effect.compose_probability(ctx.probabilistic_condition().value)
+            ctx.value = effect
+        elif ctx.prediction() is not None:
+            if isinstance(ctx.prediction().value, TransitionFunction):
+                effect = Effect(transition_function=ctx.prediction().value)
+                effect.compose_probability(ctx.probabilistic_condition().value)
+                ctx.value = effect
+            else:
+                # TODO: predictions
+                pass
+        else:
+            effect = ctx.effect_reference().value
+            effect.compose_probability(ctx.probabilistic_condition().value)
+            ctx.value = effect
 
     # ============================= arithmetic expression =============================
 

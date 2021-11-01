@@ -225,11 +225,12 @@ def test_Effect():
     action = Action(1)
 
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
-    jo = knowledge['jo']
-    jon = knowledge['jon']
+    # jo = knowledge['jo']
+    jo2 = knowledge['jo2']
 
-    print(jon.reward_function(state=s))
-    print(jon.reward_function(state=s2))
+    print(jo2.transition_function(state=s))
+    # print(jo2.reward_function(state=s))
+    # print(jo2.reward_function(state=s2))
     # r = knowledge.reward_function
     # print(r)
     # print(r(state=s, action=action))

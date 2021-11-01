@@ -633,7 +633,7 @@ class TransitionFunction(ProbabilisticFunction):
             elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
                 # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
                 raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
-        super().__init__(domain=Domain.STATE_ACTION, codomain=Domain.STATE, function=function, name=name,
+        super().__init__(function=function, domain=domain, codomain=Domain.STATE, name=name,
                          probability=probability)
 
     def __repr__(self):
@@ -745,26 +745,20 @@ class Prediction(ProbabilisticFunction):
         return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\" with P({self.probability})>"
 
 
-class Effect(Grounding):
-    def __init__(self, reward_function: RewardFunction = None, transition_functions: list = None,
+class Effect(ProbabilisticFunction):
+    def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
                  predictions: list = None, name: str = None,
                  probability: float = 1.0):
         self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
-        self.transition_functions = transition_functions
+        self.transition_function = transition_function if transition_function else TransitionFunction(domain=Domain.ANY)
         self.predictions = predictions
-        self._probability = probability
-        super().__init__(name)
+        super().__init__(function=lambda *args, **kwargs: [self.reward_function(*args, **kwargs)], codomain=Domain.ACTION, domain=Domain.ANY, name=name, probability=probability)
 
-    @property
-    def probability(self):
-        return self._probability
-
-    # @probability.setter
-    # def probability(self, probability: float):
-    #     for s in [*self.reward_functions, *self.transition_functions, *self.predictions]:
-    #         if not isinstance(s, ProbabilisticFunction):
-    #             raise RLangGroundingError(f"Can't set the probability of a {type(s)} wrapped inside an Effect")
-    #         s.probability = s.probability * probability
+    def compose_probability(self, probability: float):
+        self._probability = self._probability * probability
+        self.reward_function.compose_probability(probability)
+        self.transition_function.compose_probability(probability)
+        # self.predictions
 
     def __repr__(self):
         return f"<Effect \"{self.name}\" with P({self.probability})>"
