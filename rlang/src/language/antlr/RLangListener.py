@@ -354,7 +354,9 @@ class RLangListener(RLangParserListener):
             # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
             #     raise RLangSemanticError("")
             ctx.value = Prediction(grounding_function=grounding_function,
-                                   value=lambda *args, **kwargs: {ctx.arithmetic_exp().value(*args, **kwargs): 1.0},
+                                   value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
+                                                                                     value=ctx.arithmetic_exp().value(
+                                                                                         *args, **kwargs)): 1.0},
                                    domain=ctx.arithmetic_exp().value.domain)
         elif ctx.S_PRIME() is not None:
             ctx.value = TransitionFunction(
@@ -479,12 +481,25 @@ class RLangListener(RLangParserListener):
             transition_function = None
 
         #   -> Predictions
-        prediction_statements = [statement.value.predictions for statement in ctx.effects]
-        # all_predicted_groundings = list(set([pred.predicted_grounding for pred in prediction_statements]))
+        prediction_statements = list()
+        for statement in ctx.effects:
+            prediction_statements.extend(statement.value.predictions)
+
+        all_predicted_groundings = list(set([pred.predicted_grounding for pred in prediction_statements]))
+
+        new_predictions = list()
+        for predicted_grounding in all_predicted_groundings:
+            shared_predictions = list(
+                filter(lambda x: x.predicted_grounding.equals(predicted_grounding), prediction_statements))
+            new_prediction = Prediction(grounding_function=predicted_grounding,
+                                        value=lambda *args, **kwargs: effect_transition_dict_function(
+                                            shared_predictions, *args, **kwargs))
+            new_predictions.append(new_prediction)
+
         # TODO: complete this
         # TODO: Add domain to this
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function, predictions=new_predictions)
         ctx.value = new_effect
 
     def exitProbabilistic_effect_statement_no_sugar(self,

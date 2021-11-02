@@ -155,26 +155,6 @@ class GroundingFunction(Grounding):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
 
-    def __lt__(self, other):
-        if isinstance(other, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs),
-                             domain=self.domain + other.domain)
-        if isinstance(other, Callable):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs))
-        if isinstance(other, (np.ndarray, int, float)):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other, domain=self.domain)
-        raise RLangGroundingError(message=f"Cannot '<' a {type(self)} and a {type(other)}")
-
-    def __le__(self, other):
-        if isinstance(other, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs),
-                             domain=self.domain + other.domain)
-        if isinstance(other, Callable):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs))
-        if isinstance(other, (np.ndarray, int, float)):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
-        raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
-
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
             return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
@@ -276,6 +256,9 @@ class GroundingFunction(Grounding):
     def __radd__(self, other):
         return self.__add__(other)
 
+    def __hash__(self):
+        return hash(str(self))
+
 
 class ProbabilisticFunction(GroundingFunction):
     """Represents a function which provides stochastic output."""
@@ -308,7 +291,10 @@ class PrimitiveGrounding(GroundingFunction):
                          function=lambda *args, **kwargs: self._value, name=name)
 
     def __repr__(self):
-        return f"<PrimitiveGrounding \"{self.name}\" = {self()}>"
+        if self.name:
+            return f"<PrimitiveGrounding \"{self.name}\": {self()}>"
+        else:
+            return f"<PrimitiveGrounding: {self()}>"
 
 
 class ConstantGrounding(PrimitiveGrounding):
@@ -749,12 +735,12 @@ class Prediction(ProbabilisticFunction):
     def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None,
                  domain: Domain = Domain.STATE_ACTION, probability: float = 1.0):
         if isinstance(value, (bool, int, float, np.ndarray)):
-            function = lambda *args, **kwargs: {np.array(value): 1.0}
             domain = Domain.ANY
             if isinstance(value, bool) or (isinstance(value, np.ndarray) and value.dtype == np.bool):
                 codomain = Domain.BOOLEAN
             else:
                 codomain = Domain.REAL_VALUE
+            function = lambda *args, **kwargs: {PrimitiveGrounding(codomain=codomain, value=np.array(value)): 1.0}
         elif isinstance(value, GroundingFunction):
             if value.domain <= Domain.STATE_ACTION:
                 function = value
@@ -800,7 +786,8 @@ class Effect(Grounding):
         self.probability = self.probability * probability
         self.reward_function.compose_probability(probability)
         self.transition_function.compose_probability(probability)
-        # self.predictions
+        for prediction in self.predictions:
+            prediction.compose_probability(probability)
 
     def __repr__(self):
         if self.name:

@@ -4,7 +4,9 @@ Action up := 1
 
 Effect jo2:
     with P(0.5):
-        f2' -> f2 * 2
+        f2' -> 2
+    or with P(0.25):
+        f2' -> 3
 
 
 #Effect jo2:
