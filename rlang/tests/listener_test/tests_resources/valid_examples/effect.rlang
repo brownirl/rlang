@@ -61,10 +61,12 @@ Effect jo2:
 #        -> jo
 
 
+
 #Effect:
 #    if f1 == [5]:
 #        Reward 10
 #
+
 #Effect jo:
 #    Reward 10
 #    Reward 20
