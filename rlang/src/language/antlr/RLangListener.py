@@ -445,6 +445,7 @@ class RLangListener(RLangParserListener):
             else:
                 else_pred = else_preds[0]
 
+            # TODO: Add domain to this
             new_prediction = Prediction(grounding_function=predicted_grounding,
                                         value=lambda *args, **kwargs: conditional_prediction_function(if_condition,
                                                                                                       if_pred,
@@ -472,12 +473,16 @@ class RLangListener(RLangParserListener):
         domain = reduce(lambda a, b: a + b.domain, [transition_statements[0].domain, *transition_statements[1:]])
         if len(transition_statements) > 0:
             transition_function = TransitionFunction(
-                lambda *args, **kwargs: effect_transition_dict_function(transition_statements, *args, **kwargs))
+                lambda *args, **kwargs: effect_transition_dict_function(transition_statements, *args, **kwargs),
+                domain=domain)
         else:
             transition_function = None
 
         #   -> Predictions
-        # TODO
+        prediction_statements = [statement.value.predictions for statement in ctx.effects]
+        # all_predicted_groundings = list(set([pred.predicted_grounding for pred in prediction_statements]))
+        # TODO: complete this
+        # TODO: Add domain to this
 
         new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
         ctx.value = new_effect
