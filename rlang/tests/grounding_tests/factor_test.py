@@ -58,6 +58,30 @@ class FactorTest(unittest.TestCase):
         self.assertTrue(eq3(state=state2))
         self.assertFalse(eq4(state=state2))
         self.assertTrue(eq5(state=state2))
+
+    def test_comparison(self):
+        state1 = State(np.array([2, 3]))
+        state2 = State(np.array([2, 2]))
+        
+        x = Factor(0, "x")
+        y = Factor(1, "y")
+
+        self.assertTrue(x(state=state1) < y(state=state1))
+        self.assertFalse(y(state=state1) < x(state=state1))
+        self.assertTrue(y(state=state1) > x(state=state1))
+        self.assertFalse(x(state=state1) > y(state=state1))
+
+        a = Factor(slice(0, 2), "a")
+        b = Factor(slice(0, 2), "b")
+
+        assert (a(state=state1) > b(state=state2)) == [[False, True]]
+        assert (b(state=state2) < a(state=state1)) == [[False, True]]
+        assert (a(state=state1) >= b(state=state2)) == [[True, True]]
+        assert (b(state=state2) <= a(state=state1)) == [[True, True]]
+
+        assert (x(state=state1) < a(state=state1)) == [[False, True]]
+        assert (a(state=state1) > x(state=state1)) == [[False, True]]
+
         
     def test_contains(self):
         x = Factor([0], "x")
@@ -68,11 +92,10 @@ class FactorTest(unittest.TestCase):
         pred1 = y.contains(x)
         pred2 = z.contains(y)
 
-        #TODO: test different data types
-        
-        # print(x(state=s1))
-        # print(y(state=s1))
-        # print(pred1(state=s1))
+        #TODO: unexpected behavior
+        print(x(state=s1))
+        print(y(state=s1))
+        print(pred1(state=s1))
         
 
     def test_getitem(self):
@@ -81,12 +104,11 @@ class FactorTest(unittest.TestCase):
         s1 = State([4, 5, 6, 7])
         item = pos[1]
         item1 = pos[-1]
-        print("item 2")
+        # print("item 2")
         item2 = factor[1:3]
         # self.assertEqual(item1(state=s1), 5)
         # self.assertEqual(item(state=s1), 5)
-        print(item2(state=s1))
-        #TODO: test batched state - check if indexing is same as batch primitive
+        # print(item2(state=s1))
         # self.assertEqual(item2(state=s1), [4, 5, 6, 7])
 
 

@@ -1,3 +1,0 @@
-Feature test := S + 4 == S'
-Feature test2 := test3 / test4[1[2]
-

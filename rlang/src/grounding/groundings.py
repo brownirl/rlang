@@ -7,6 +7,7 @@ from typing import Callable, Any, Union
 import types
 
 import numpy as np
+from numpy.lib.arraysetops import isin
 from rlang.src.grounding.internals import Domain, State, Action, BatchedPrimitive
 from rlang.src.exceptions import RLangGroundingError
 
@@ -133,6 +134,26 @@ class GroundingFunction(Grounding):
         return self._function(*args, **kwargs)
 
     # TODO: write leq/geq
+
+    def __lt__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs),
+                             domain=self.domain + other.domain)
+        if isinstance(other, Callable):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs))
+        if isinstance(other, (np.ndarray, int, float)):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other, domain=self.domain)
+        raise RLangGroundingError(message=f"Cannot '<' a {type(self)} and a {type(other)}")
+
+    def __le__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs),
+                             domain=self.domain + other.domain)
+        if isinstance(other, Callable):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs))
+        if isinstance(other, (np.ndarray, int, float)):
+            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
+        raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
 
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
