@@ -80,6 +80,26 @@ def conditional_transition_function(if_condition, if_transition, elif_conditions
         else:
             return None
 
+
+def conditional_prediction_function(if_condition, if_prediction, elif_conditions=None, elif_predictions=None,
+                                    else_prediction=None, *args, **kwargs):
+    if if_condition(*args, **kwargs) == True:
+        if if_prediction:
+            return if_prediction(*args, **kwargs)
+        else:
+            return None
+    else:
+        for i in range(len(elif_conditions)):
+            if elif_conditions[i](*args, **kwargs) == True:
+                if elif_predictions[i]:
+                    return elif_predictions[i](*args, **kwargs)
+                else:
+                    return None
+        if else_prediction:
+            return else_prediction(*args, **kwargs)
+        else:
+            return None
+
 # def default_stat_collection(stats, *args, **kwargs):
 #     possibilities = dict()
 #     for stat in stats:

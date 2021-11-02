@@ -311,12 +311,12 @@ class RLangListener(RLangParserListener):
         else:
             transition_function = transition_statements[0]
 
-        predicted_groundings = []
+        predicted_groundings = list()
         for prediction in prediction_statements:
-            if prediction.predicted_grounding in predicted_groundings:
+            if prediction.predicted_grounding.name in predicted_groundings:
                 raise RLangSemanticError(f"Too many Predictions for {prediction.predicted_grounding.name}'")
             else:
-                predicted_groundings.append(prediction.predicted_grounding)
+                predicted_groundings.append(prediction.predicted_grounding.name)
 
         new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
                             predictions=prediction_statements)
@@ -403,9 +403,60 @@ class RLangListener(RLangParserListener):
             domain=domain)
 
         #   -> Predictions
-        # TODO
+        if_predictions = if_effect.predictions
+        elif_predictions = [elif_effect.predictions for elif_effect in elif_effects]
+        else_predictions = else_effect.predictions
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function)
+        all_predictions = list()
+        all_predictions.extend(if_predictions)
+        for preds in elif_predictions:
+            all_predictions.extend(preds)
+        all_predictions.extend(else_predictions)
+
+        all_predicted_groundings = list(set([pred.predicted_grounding for pred in all_predictions]))
+
+        new_predictions = list()
+
+        for predicted_grounding in all_predicted_groundings:
+            if_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), if_predictions))
+            if len(if_preds) > 1:
+                raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
+            elif len(if_preds) == 0:
+                if_pred = None
+            else:
+                if_pred = if_preds[0]
+
+            elif_preds = list()
+            for preds in elif_predictions:
+                e_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), preds))
+                if len(e_preds) > 1:
+                    raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
+                elif len(e_preds) == 0:
+                    elif_pred = None
+                else:
+                    elif_pred = e_preds[0]
+                elif_preds.append(elif_pred)
+
+            else_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), else_predictions))
+            if len(else_preds) > 1:
+                raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
+            elif len(else_preds) == 0:
+                else_pred = None
+            else:
+                else_pred = else_preds[0]
+
+            new_prediction = Prediction(grounding_function=predicted_grounding,
+                                        value=lambda *args, **kwargs: conditional_prediction_function(if_condition,
+                                                                                                      if_pred,
+                                                                                                      elif_conditions,
+                                                                                                      elif_preds,
+                                                                                                      else_pred,
+                                                                                                      *args, **kwargs))
+            new_predictions.append(new_prediction)
+
+        # print(new_predictions)
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
+                            predictions=new_predictions)
         ctx.value = new_effect
 
     def exitProbabilistic_effect(self, ctx: RLangParser.Probabilistic_effectContext):

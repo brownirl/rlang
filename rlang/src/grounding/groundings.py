@@ -25,6 +25,9 @@ class Grounding(object):
     def name(self, name: str):
         self._name = name
 
+    def equals(self, other):
+        return self.name == other.name
+
     def __hash__(self):
         return self._name.__hash__()
 
@@ -368,6 +371,9 @@ class Factor(GroundingFunction):
                 new_indexer = self._state_indexer[item]
                 return Factor(state_indexer=new_indexer, domain=self.domain)
 
+    def __hash__(self):
+        return self.name.__hash__()
+
     def __repr__(self):
         return f"<Factor [{self.domain.name}]->[{self.codomain.name}]: S[{str(self._state_indexer)[1:-1] if isinstance(self._state_indexer, list) else str(self._state_indexer)}]>"
 
@@ -389,6 +395,9 @@ class Feature(GroundingFunction):
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
+
+    def __hash__(self):
+        return self.name.__hash__()
 
     def __repr__(self):
         return f"<Feature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
@@ -738,7 +747,7 @@ class Prediction(ProbabilisticFunction):
 
 class Effect(Grounding):
     def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
-                 predictions: list = None, name: str = None,
+                 predictions: list = [], name: str = None,
                  probability: float = 1.0):
         self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
         self.transition_function = transition_function if transition_function else TransitionFunction(domain=Domain.ANY)
