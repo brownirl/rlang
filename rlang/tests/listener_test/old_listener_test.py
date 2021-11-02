@@ -126,15 +126,59 @@ def test_Action():
     # TODO: Need more tests for Action
 
 
-# def test_Policy():
-#     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-#     s = State([4, 1, 2, 3, 4])
 
-#     knowledge = rlang.parse_file("tests_resources/listener_tests/policy.rlang", metadata)
-#     test1 = knowledge['test1']
-#     test2 = knowledge['test2']
+def test_Policy():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([0, 1, 2, 3, 4])
 
-#     print(test1(state=s))
+    knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
+    test1 = knowledge['test1']
+    # test2 = knowledge['test2']
+    actions = test1(state=s)
+    print(actions)
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    actions = test1(state=s)
+    print(actions)
+    actions = test1(state=s)
+    print(actions)
+    # actions2 = list(actions.keys())[0](state=s)
+    # print(actions2)
+    # print(list(actions2.keys())[0](state=s))
+    # print(list(actions2.keys())[0](state=s))
+    # print(list(actions2.keys())[0](state=s))
+    # print(list(actions2.keys())[0](state=s))
+    # actions = test1(state=s)
+    # print(actions)
+    # actions = test1(state=s)
+    # print(actions)
+    # actions = test1(state=s)
+    # print(actions)
+    # actions = test1(state=s)
+    # print(actions)
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # actions = test1(state=s)
+    # print(actions)
+    # actions = test1(state=s)
+    # print(actions)
+    # actions = test1(state=s)
+    # print(actions)
+    # print(actions.keys())
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(test1(state=s))
 
 #     # TODO: Need more tests, derive policy from factor and feature
 
@@ -174,17 +218,28 @@ def test_Action():
 #     print(f5(state=s, next_state=s2))
 
 
-# def test_Effect():
-#     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-#     s = State([1, 1, 2, 3, 4])
-#     s2 = State([3, 2, 2, 3, 4])
-#     action = Action(1)
+def test_Effect():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([0, 1, 2, 3, 4])
+    s2 = State([3, 2, 2, 3, 4])
+    s3 = State(np.array([[1, 1, 2, 3, 4], [3, 2, 2, 3, 4]]))
+    action = Action(1)
 
-#     knowledge = rlang.parse_file("tests_resources/listener_tests/effect.rlang", metadata)
-#     r = knowledge.reward_function
-#     print(r(state=s, action=action))
-#     t = knowledge.transition_function
-#     print(t(state=s, action=action))
+    knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
+    # jo = knowledge['jo']
+    jo2 = knowledge['jo2']
+
+    print(jo2.predictions)
+    print(jo2.predictions[0](state=s))
+    # print(jo2.transition_function(state=s))
+    # print(jo2.reward_function(state=s))
+    # print(jo2.reward_function(state=s2))
+    # r = knowledge.reward_function
+    # print(r)
+    # print(r(state=s, action=action))
+    # t = knowledge.transition_function
+    # print(t)
+    # print(t(state=s, action=action))
 
 #     predictions = knowledge.predictions
 #     print(predictions)
@@ -193,3 +248,4 @@ def test_Action():
 
 
 if __name__ == "__main__":
+    test_Effect()

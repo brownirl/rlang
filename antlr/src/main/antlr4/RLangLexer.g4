@@ -30,6 +30,7 @@ NL: ('\r'? '\n' ' '*) | ('\r'? '\n' '\t'*);
  * lexer rules
  */
 
+IMPORT: 'import';
 PREDICATE: 'Predicate';
 FEATURE: 'Feature';
 FACTOR: 'Factor';
@@ -42,7 +43,7 @@ POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
-IMPORT: 'import';
+DYNAMICS: 'Dynamics';
 
 S_PRIME: S PRIME;
 S: 'S';
@@ -57,6 +58,10 @@ ELIF: 'elif';
 IN: 'in';
 INIT: 'init';
 UNTIL: 'until';
+WITH: 'with';
+THEN: 'then';
+NEVER: 'never';
+MAIN: 'main';
 
 AND: 'and';
 OR: 'or';
@@ -64,6 +69,7 @@ NOT: 'not';
 
 TRUE: 'True';
 FALSE: 'False';
+ANY_CONDITION: 'Any';
 
 BIND: ':=';
 PREDICT: '->';

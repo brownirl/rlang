@@ -124,6 +124,14 @@ class BatchedPrimitive(np.ndarray):
         obj.primitive_size = obj.shape[1]
         return obj
 
+    def as_tuple(self):
+        s = self.view(np.ndarray)
+        s_tuple = tuple(map(tuple, s))
+        if s.shape[0] == 1:
+            return s_tuple[0]
+        else:
+            return s_tuple
+
     def __getitem__(self, item):
         # This should abstract away batched variables
         if type(item) != tuple:
@@ -151,6 +159,9 @@ class BatchedPrimitive(np.ndarray):
             return np.all(super().__eq__(other))
         else:
             return False
+
+    def __hash__(self):
+        return hash(str(self))
 
     def __ne__(self, other):
         return np.bitwise_not(self.__eq__(other))

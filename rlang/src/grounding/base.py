@@ -4,7 +4,8 @@ from collections.abc import MutableMapping
 
 from rlang.src.exceptions import RLangGroundingError
 from rlang.src.grounding.internals import State, Domain, MDPMetadata
-from rlang.src.grounding.groundings import Grounding, GroundingFunction, Factor, RewardFunction, TransitionFunction
+from rlang.src.grounding.groundings import Grounding, GroundingFunction, Factor, RewardFunction, TransitionFunction, \
+    Feature, Predicate, ProbabilisticFunction, MarkovFeature
 
 
 class RLangKnowledge(MutableMapping):
@@ -81,6 +82,7 @@ class RLangKnowledge(MutableMapping):
         Returns:
             dict: A dictionary containing all GroundingFunctions which can be predicted for the next state
         """
+        # TODO: This breaks after migrating to probabilistic functions. Fix this somehow.
         next_state = self._transition_function(*args, **kwargs)
         if next_state is not None:
             domain = Domain.NEXT_STATE
@@ -90,7 +92,9 @@ class RLangKnowledge(MutableMapping):
                 domain += Domain.ACTION
 
             # Collect the variables with the proper domain
-            vars = list(filter(lambda x: isinstance(x, GroundingFunction) and x.domain <= domain, list(self.values())))
+            vars = list(filter(lambda x: isinstance(x, (
+            Factor, Feature, MarkovFeature, Predicate, ProbabilisticFunction)) and x.domain <= domain,
+                               list(self.values())))
             # Augment the function for each GroundingFunction to automatically take next_state
             for v in vars:
                 def lambda_generator(function):
