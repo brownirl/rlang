@@ -92,10 +92,10 @@ class FactorTest(unittest.TestCase):
         pred1 = y.contains(x)
         pred2 = z.contains(y)
 
-        
-        # print(x(state=s1))
-        # print(y(state=s1))
-        # print(pred1(state=s1))
+        #TODO: unexpected behavior
+        print(x(state=s1))
+        print(y(state=s1))
+        print(pred1(state=s1))
         
 
     def test_getitem(self):
@@ -104,11 +104,11 @@ class FactorTest(unittest.TestCase):
         s1 = State([4, 5, 6, 7])
         item = pos[1]
         item1 = pos[-1]
-        print("item 2")
+        # print("item 2")
         item2 = factor[1:3]
         # self.assertEqual(item1(state=s1), 5)
         # self.assertEqual(item(state=s1), 5)
-        print(item2(state=s1))
+        # print(item2(state=s1))
         # self.assertEqual(item2(state=s1), [4, 5, 6, 7])
 
 
