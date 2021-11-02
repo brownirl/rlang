@@ -454,7 +454,6 @@ class RLangListener(RLangParserListener):
                                                                                                       *args, **kwargs))
             new_predictions.append(new_prediction)
 
-        # print(new_predictions)
         new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
                             predictions=new_predictions)
         ctx.value = new_effect
