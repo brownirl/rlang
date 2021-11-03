@@ -7,14 +7,24 @@ Predicate a := S[0] == 0
 Predicate b := S[0] == 1
 Predicate c := S[0] == 3
 
+Policy cc:
+    Execute right
+    then Execute down
+#
 Policy node:
     Execute up
     then Execute right
     then Execute down
-
+    then Execute cc
+#
 Policy cone:
+#    Execute cc
+#    then Execute cc
     Execute node
     then Execute node
+
+#Policy cone:
+#    Execute cc
 
 #Policy prob:
 #    Execute up

@@ -4,27 +4,12 @@ from grounding import PolicyComplete
 
 def policy_generator_function(statements):
     for stat in statements:
-        # print(stat)
         if len(stat) > 1:
-            # TODO: This may need to change
-            # for s in stat:
-            #     print("dd")
-            #     yield lambda *args, **kwargs: s(*args, **kwargs)
+            # This may need to change
             yield stat
-            # def unwrap_policy_generator(policy, *args, **kwargs):
-            #     to_yield = policy(*args, **kwargs)
-            #     while not isinstance(to_yield, PolicyComplete):
-            #         yield to_yield
-            #         to_yield = policy(*args, **kwargs)
-            # yield lambda s=stat, *args, **kwargs: unwrap_policy_generator(s, *args, **kwargs)
-            # try
-            # print(stat)
-            # to_yield = lambda s=stat, *args, **kwargs: s(*args, **kwargs)
-            # print(to_yield)
-            # while not isinstance(to_yield, PolicyComplete):
-            #     to_yield
         else:
             yield lambda s=stat, *args, **kwargs: s(*args, **kwargs)
+            # yield lambda s=stat, *args, **kwargs: s(*args, **kwargs)
 
 
 def conditional_policy_function(if_condition, if_subpolicy, elif_conditions=None, elif_subpolicies=None, else_subpolicy=None,

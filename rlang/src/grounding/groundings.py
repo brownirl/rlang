@@ -552,11 +552,12 @@ class Policy(ProbabilisticFunction):
 
     @classmethod
     def from_action_reference(cls, action: ActionReference):
-        def action_generator(*args, **kwargs):
-            yield {action(*args, **kwargs): 1.0}
-
-        return cls(function=lambda *args, **kwargs: next(action_generator(*args, **kwargs)), domain=Domain.ANY,
-                   length=1, name=action.name)
+        # def action_generator(*args, **kwargs):
+        #     yield {action(*args, **kwargs): 1.0}
+        #
+        # return cls(function=lambda *args, **kwargs: next(action_generator(*args, **kwargs)), domain=Domain.ANY,
+        #            length=1, name=action.name)
+        return cls(function=lambda *args, **kwargs: {action: 1.0}, domain=Domain.ANY, length=1, name=action.name)
 
     def __copy__(self):
         if isinstance(self._function, _tee):
@@ -578,13 +579,10 @@ class Policy(ProbabilisticFunction):
                 if self.length:
                     self.length -= 1
                 next_func = next(self._function)
-                # TODO: This is broken, might need to make all policies into generators
                 if isinstance(next_func, Policy):
-                    while len(next_func) > 1:
-                        return next_func(*args, **kwargs)
+                    return {next_func: 1.0}
                 else:
                     return next_func(*args, **kwargs)
-                # return next(self._function)(*args, **kwargs)
             except StopIteration:
                 if self.length:
                     self.length += 1
@@ -593,6 +591,7 @@ class Policy(ProbabilisticFunction):
             return self._function(*args, **kwargs)
 
     def __iter__(self):
+        # I don't think this actually works
         if isinstance(self._function, (types.GeneratorType, _tee)):
             yield self.__call__()
             # yield next(self._function)

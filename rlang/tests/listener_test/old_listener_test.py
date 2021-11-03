@@ -132,25 +132,39 @@ def test_Policy():
     s = State([0, 1, 2, 3, 4])
 
     knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
+    # test2 = knowledge['cc']
+    # print(test2)
+    # print(test2(state=s))
+    # print(test2(state=s))
+    # test2 = knowledge['node']
+    # print(test2(state=s))
+
     test1 = knowledge['cone']
-    print(test1)
-    # test2 = knowledge['test2']
+
+    # # print(test1)
+    # actions = test1(state=s)
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # actions = test1(state=s)
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # # print(test1(state=s))
+    # # print(test1(state=s))
+
     actions = test1(state=s)
-    # actions = test1(state=s)
-    # actions = test1(state=s)
-    print(actions)
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(list(actions.keys())[0](state=s).keys())[0](state=s))
     actions = test1(state=s)
     print(actions)
-    # actions = test1(state=s)
-    # print(actions)
-    # actions = test1(state=s)
-    # print(actions)
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(actions.keys())[0](state=s))
+    print(list(list(actions.keys())[0](state=s).keys())[0](state=s))
+
+
     # print(list(actions.keys())[0](state=s))
-    # print(list(actions.keys())[0](state=s))
-    # print(list(actions.keys())[0](state=s))
-    # print(list(actions.keys())[0](state=s))
-    # actions = test1(state=s)
-    # print(actions)
     # actions = test1(state=s)
     # print(actions)
     # actions2 = list(actions.keys())[0](state=s)

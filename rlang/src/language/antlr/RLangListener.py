@@ -158,6 +158,7 @@ class RLangListener(RLangParserListener):
             ctx.value = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
                                length=len(ctx.execute().value))
         else:
+            print("This is happening")
             ctx.value = ctx.execute().value.__copy__()
 
     def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
