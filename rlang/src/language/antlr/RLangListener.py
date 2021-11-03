@@ -417,9 +417,12 @@ class RLangListener(RLangParserListener):
 
         all_predicted_groundings = list(set([pred.predicted_grounding for pred in all_predictions]))
 
+        domain = reduce(lambda a, b: a + b.domain,
+                        [if_condition.domain, *elif_conditions])
         new_predictions = list()
 
         for predicted_grounding in all_predicted_groundings:
+            new_domain = copy.deepcopy(domain)
             if_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), if_predictions))
             if len(if_preds) > 1:
                 raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
@@ -427,6 +430,7 @@ class RLangListener(RLangParserListener):
                 if_pred = None
             else:
                 if_pred = if_preds[0]
+                new_domain = new_domain + if_pred.domain
 
             elif_preds = list()
             for preds in elif_predictions:
@@ -437,6 +441,7 @@ class RLangListener(RLangParserListener):
                     elif_pred = None
                 else:
                     elif_pred = e_preds[0]
+                    new_domain = new_domain + elif_pred.domain
                 elif_preds.append(elif_pred)
 
             else_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), else_predictions))
@@ -446,6 +451,7 @@ class RLangListener(RLangParserListener):
                 else_pred = None
             else:
                 else_pred = else_preds[0]
+                new_domain = new_domain + else_pred.domain
 
             # TODO: Add domain to this
             new_prediction = Prediction(grounding_function=predicted_grounding,
@@ -454,7 +460,8 @@ class RLangListener(RLangParserListener):
                                                                                                       elif_conditions,
                                                                                                       elif_preds,
                                                                                                       else_pred,
-                                                                                                      *args, **kwargs))
+                                                                                                      *args, **kwargs),
+                                        domain=new_domain)
             new_predictions.append(new_prediction)
 
         new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
@@ -491,13 +498,12 @@ class RLangListener(RLangParserListener):
         for predicted_grounding in all_predicted_groundings:
             shared_predictions = list(
                 filter(lambda x: x.predicted_grounding.equals(predicted_grounding), prediction_statements))
+            domain = reduce(lambda a, b: a + b.domain, [shared_predictions[0].domain, *shared_predictions[1:]])
             new_prediction = Prediction(grounding_function=predicted_grounding,
                                         value=lambda *args, **kwargs: effect_transition_dict_function(
-                                            shared_predictions, *args, **kwargs))
+                                            shared_predictions, *args, **kwargs),
+                                        domain=domain)
             new_predictions.append(new_prediction)
-
-        # TODO: complete this
-        # TODO: Add domain to this
 
         new_effect = Effect(reward_function=reward_function, transition_function=transition_function, predictions=new_predictions)
         ctx.value = new_effect
@@ -519,8 +525,9 @@ class RLangListener(RLangParserListener):
                 effect.compose_probability(ctx.probabilistic_condition().value)
                 ctx.value = effect
             else:
-                # TODO: predictions
-                pass
+                effect = Effect(predictions=[ctx.prediction().value])
+                effect.compose_probability(ctx.probabilistic_condition().value)
+                ctx.value = effect
         else:
             effect = ctx.effect_reference().value
             effect.compose_probability(ctx.probabilistic_condition().value)

@@ -2,21 +2,20 @@ Factor f1 := S[0]
 Factor f2 := S[1]
 Action up := 1
 
-Effect jo2:
-    with P(0.5):
-        f2' -> 2
-    or with P(0.25):
-        f2' -> 3
-
-
 #Effect jo2:
-#    if False:
-#        f1' -> f1 * 2
-#    elif False:
-#        f1' -> f1 * 2
-#    else:
-#        f2' -> f2 * 2
-#    f1' -> f1 * 2
+#    with P(0.5):
+#        f2' -> 2
+#    or with P(0.25):
+#        f2' -> 3 with P(0.1)
+
+
+Effect jo2:
+    if False:
+        f1' -> f1 * 2
+    elif False:
+        f1' -> f1 * 2
+    else:
+        f2' -> f2 * 2
 
 #Effect jo2:
 #    if f1 == 0:

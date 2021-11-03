@@ -8,7 +8,16 @@ Predicate b := S[0] == 1
 Predicate c := S[0] == 3
 
 
-#Policy prob:
+Policy prob:
+    Execute up
+    then Execute down
+    then with P(0.2):
+        Execute left
+    or with P(0.3):
+        with P(0.5):
+            Execute right
+        or Execute up with P(0.5)
+
 #    with P(0.5):
 #        Execute up
 #        Execute right
