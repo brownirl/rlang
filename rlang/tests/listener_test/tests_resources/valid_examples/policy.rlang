@@ -7,16 +7,24 @@ Predicate a := S[0] == 0
 Predicate b := S[0] == 1
 Predicate c := S[0] == 3
 
-
-Policy prob:
+Policy node:
     Execute up
+    then Execute right
     then Execute down
-    then with P(0.2):
-        Execute left
-    or with P(0.3):
-        with P(0.5):
-            Execute right
-        or Execute up with P(0.5)
+
+Policy cone:
+    Execute node
+    then Execute node
+
+#Policy prob:
+#    Execute up
+#    then Execute down
+#    then with P(0.2):
+#        Execute left
+#    or with P(0.3):
+#        with P(0.5):
+#            Execute right
+#        or Execute up with P(0.5)
 
 #    with P(0.5):
 #        Execute up
@@ -40,11 +48,11 @@ Policy prob:
 #    then Execute left
 #    then Execute up
 
-Policy test1:
-    if a:
-        if b:
-            Execute left
-    then Execute up
+#Policy test1:
+#    if a:
+#        if b:
+#            Execute left
+#    then Execute up
 
 #Option build_bridge:
 #	init Any

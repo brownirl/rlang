@@ -523,6 +523,11 @@ class ValueFunction(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
 
 
+class PolicyComplete:
+    def __repr__(self):
+        return "Policy finished execution"
+
+
 class Policy(ProbabilisticFunction):
     """Represents a policy function
 
@@ -572,17 +577,25 @@ class Policy(ProbabilisticFunction):
             try:
                 if self.length:
                     self.length -= 1
-                return next(self._function)(*args, **kwargs)
+                next_func = next(self._function)
+                # TODO: This is broken, might need to make all policies into generators
+                if isinstance(next_func, Policy):
+                    while len(next_func) > 1:
+                        return next_func(*args, **kwargs)
+                else:
+                    return next_func(*args, **kwargs)
+                # return next(self._function)(*args, **kwargs)
             except StopIteration:
                 if self.length:
                     self.length += 1
-                return 'policy_finished'
+                return PolicyComplete()
         else:
             return self._function(*args, **kwargs)
 
     def __iter__(self):
         if isinstance(self._function, (types.GeneratorType, _tee)):
-            yield next(self._function)
+            yield self.__call__()
+            # yield next(self._function)
         else:
             yield self._function
 
