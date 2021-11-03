@@ -211,65 +211,6 @@ class RLangListener(RLangParserListener):
 
     # ============================= Effect =============================
 
-    # def exitEffect(self, ctx: RLangParser.EffectContext):
-    #     stats = list(map(lambda x: x.value, ctx.stats))
-    #     all_stats = list()
-    #     for s in stats:  # Collect all the effect statements. Some stats will be lists of effect statements.
-    #         if isinstance(s, list):
-    #             all_stats.extend(s)
-    #         elif isinstance(s, Effect):
-    #             all_stats.extend(s.transition_functions)
-    #             all_stats.extend(s.reward_functions)
-    #             all_stats.extend(s.predictions)
-    #         else:
-    #             all_stats.append(s)
-    #
-    #     reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_stats))
-    #     transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
-    #     prediction_list = list(filter(lambda x: isinstance(x, Prediction), all_stats))
-    #
-    #     if ctx.IDENTIFIER() is not None:
-    #         # This is a named effect which should not merge into the existing transition function
-    #         new_effect = Effect(reward_functions=reward_functions,
-    #                             transition_functions=transition_functions,
-    #                             predictions=prediction_list,
-    #                             name=ctx.IDENTIFIER().getText())
-    #         self.addVariable(new_effect.name, new_effect)
-    #     else:
-    #         reward_functions.append(self.rlang_knowledge.reward_function)
-    #         reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
-    #         domain = Domain.ANY
-    #         for funcs in reward_functions:
-    #             domain += funcs.domain
-    #         self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats, domain=domain)
-    #
-    #         transition_functions.append(self.rlang_knowledge.transition_function)
-    #         transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
-    #         domain = Domain.ANY
-    #         for funcs in transition_functions:
-    #             domain += funcs.domain
-    #         self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats, domain=domain)
-    #
-    #         predictions = dict()
-    #         for p in [*prediction_list, *self.rlang_knowledge.predictions.values()]:
-    #             p_name = p.grounding_predicted.name
-    #             if p_name in predictions:
-    #                 predictions.update({p_name: [*predictions[p_name], p]})
-    #             else:
-    #                 predictions.update({p_name: [p]})
-    #         new_predictions = dict()
-    #         for p_name2, p_value in predictions.items():
-    #             # This is absolutely insane, but please do not remove it. Google 'Python for loop variable capture'
-    #             def lambda_generator(these_stats):
-    #                 return lambda *args, **kwargs: default_stat_collection(these_stats, *args, **kwargs)
-    #
-    #             new_p = Prediction(grounding_function=self.retrieveVariable(p_name2),
-    #                                value=lambda_generator(p_value))
-    #             # new_p.domain
-    #             new_predictions.update({p_name2: new_p})
-    #
-    #         self.rlang_knowledge.predictions = new_predictions
-
     def exitEffect(self, ctx: RLangParser.EffectContext):
         new_effect = ctx.effect_statement_collection().value
         if ctx.IDENTIFIER() is not None:
