@@ -1,0 +1,29 @@
+Action up := 1
+Action down := -1
+Action left := 2
+Action right := -2
+
+Policy up_down_up:
+    Execute up * 2
+    then Execute down
+    then Execute up
+
+Policy left_once:
+    Execute left
+
+Policy left_right_split:
+    Execute left with P(0.25)
+    or with P(0.65):
+        Execute right
+    or Execute right with P(0.1)
+
+Policy sequential_prob:
+    Execute left
+    then Execute up with P(0.3)
+    or Execute down with P(0.7)
+
+Policy conditional:
+    if S[0] == 0:
+        Execute right
+    else:
+        Execute left

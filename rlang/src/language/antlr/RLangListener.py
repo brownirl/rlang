@@ -174,6 +174,8 @@ class RLangListener(RLangParserListener):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
         else:
+            # print(ctx.arithmetic_exp().value.domain)
+            # action = ctx.arithmetic_exp().value
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
     def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):

@@ -39,9 +39,16 @@ def subpolicy_dict_function(subpolicies, *args, **kwargs):
     subpolicy_dict = dict()
     for sp in subpolicies:
         if len(sp) == 1:
-            subpolicy_dict.update({list(sp(*args, **kwargs).keys())[0]: sp.probability})
+            k = list(sp(*args, **kwargs).keys())[0]
+            if k in subpolicy_dict:
+                subpolicy_dict.update({k: subpolicy_dict[k] + sp.probability})
+            else:
+                subpolicy_dict.update({k: sp.probability})
         else:
-            subpolicy_dict.update({sp: sp.probability})
+            if sp in subpolicy_dict:
+                subpolicy_dict.update({sp: subpolicy_dict[sp] + sp.probability})
+            else:
+                subpolicy_dict.update({sp: sp.probability})
     return subpolicy_dict
 
 
