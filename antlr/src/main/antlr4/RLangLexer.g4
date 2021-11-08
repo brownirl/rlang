@@ -61,7 +61,7 @@ UNTIL: 'until';
 WITH: 'with';
 THEN: 'then';
 NEVER: 'never';
-MAIN: 'main';
+//MAIN: 'main';
 
 AND: 'and';
 OR: 'or';
