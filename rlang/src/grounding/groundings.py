@@ -306,11 +306,6 @@ class ConstantGrounding(PrimitiveGrounding):
         return f"<Constant \"{self.name}\" = {self()}>"
 
 
-class ActionExecution(GroundingFunction):
-    def __init__(self, function: GroundingFunction):
-        pass
-
-
 class ActionReference(PrimitiveGrounding):
     """Represents a reference to a specified action.
 
@@ -539,6 +534,11 @@ class PolicyComplete:
         return "Policy finished execution"
 
 
+class ActionExecution(GroundingFunction):
+    def __init__(self, function: GroundingFunction):
+        pass
+
+
 class ActionDistribution(MutableMapping):
     """Represents a distribution of possible next actions, options, or policies
 
@@ -553,8 +553,19 @@ class ActionDistribution(MutableMapping):
             if v < 0.0 or v > 1.0:
                 raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
+        self.domain = Domain.ANY
         self.distribution = distribution
         self.rng = default_rng()
+        self.calculate_domain()
+
+    @classmethod
+    def single(cls, k):
+        return cls({k: 1.0})
+
+    def calculate_domain(self):
+        self.domain = Domain.ANY
+        for k, v in self.distribution.items():
+            self.domain += k.domain
 
     def sample(self):
         random_variable = self.rng.uniform()
@@ -570,15 +581,18 @@ class ActionDistribution(MutableMapping):
                 self.distribution[k] = self.distribution[k] + v
             else:
                 self.distribution[k] = v
+                self.domain += k.domain
 
     def __getitem__(self, key: str):
         return self.distribution[key]
 
     def __setitem__(self, key: str, value: Grounding):
         self.distribution[key] = value
+        self.calculate_domain()
 
     def __delitem__(self, key: str):
         del self.distribution[key]
+        self.calculate_domain()
 
     def __iter__(self):
         return iter(self.distribution)
@@ -588,6 +602,60 @@ class ActionDistribution(MutableMapping):
 
     def __repr__(self):
         return str(self.distribution)
+
+
+class PolicyFunction(Policy):
+    """Represents a closed-loop policy function
+
+    Args:
+        function: a function from states to action distributions.
+    """
+    def __init__(self, function: Callable, *args, **kwargs):
+        super().__init__(function=function, *args, **kwargs)
+
+
+class Plan(ProbabilisticFunction):
+    """Represents an open-loop policy
+
+    Args:
+        distribution_list: a list of ActionDistributions
+    """
+    def __init__(self, distribution_list: [ActionDistribution]):
+        self.i = 0
+        self.plan = distribution_list
+        # domain = reduce(lambda a, b: a + b, map(lambda x: x.domain, distribution_list))
+        domain = sum([x.domain for x in distribution_list])
+        super().__init__(function=lambda *args, **kwargs: self.__next__(), domain=domain)
+
+    def append(self, distribution):
+        if not isinstance(distribution, ActionDistribution):
+            raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(distribution)}")
+        self.plan.append(distribution)
+        self.domain += distribution.domain
+
+    def extend(self, distribution_list):
+        domain = Domain.ANY
+        for d in distribution_list:
+            if not isinstance(d, ActionDistribution):
+                raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(d)}")
+            domain += d.domain
+        self.plan.extend(distribution_list)
+        self.domain += domain
+
+    def reset(self):
+        self.i = 0
+
+    def __iter__(self):
+        self.i = 0
+        return self
+
+    def __next__(self):
+        if self.i >= len(self.plan):
+            raise StopIteration
+        else:
+            i = self.i
+            self.i += 1
+            return self.plan[i]
 
 
 class PolicyOld(ProbabilisticFunction):
