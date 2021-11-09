@@ -190,7 +190,7 @@ class OptQLearning(QLearning):
         Returns:
             (str): action.
         '''
-        # Policy: Epsilon of the time explore, otherwise, greedyQ.
+        # PolicyOld: Epsilon of the time explore, otherwise, greedyQ.
         if np.random.random() > self.epsilon:
             # Exploit.
             action = self.get_max_q_action(state)

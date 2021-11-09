@@ -1,4 +1,4 @@
-"""These functions are used by the listener during the construction of Policy, Option, and Effect objects"""
+"""These functions are used by the listener during the construction of PolicyOld, Option, and Effect objects"""
 from grounding import PolicyComplete
 
 

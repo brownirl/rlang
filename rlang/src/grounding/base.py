@@ -93,7 +93,7 @@ class RLangKnowledge(MutableMapping):
 
             # Collect the variables with the proper domain
             vars = list(filter(lambda x: isinstance(x, (
-            Factor, Feature, MarkovFeature, Predicate, ProbabilisticFunction)) and x.domain <= domain,
+                Factor, Feature, MarkovFeature, Predicate, ProbabilisticFunction)) and x.domain <= domain,
                                list(self.values())))
             # Augment the function for each GroundingFunction to automatically take next_state
             for v in vars:

@@ -39,7 +39,7 @@ CONSTANT: 'Constant';
 ACTION: 'Action';
 EFFECT: 'Effect';
 REWARD: 'Reward';
-POLICY: 'Policy';
+POLICY: 'PolicyOld';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';

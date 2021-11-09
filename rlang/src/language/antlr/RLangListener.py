@@ -133,7 +133,7 @@ class RLangListener(RLangParserListener):
         else:
             ctx.value = Predicate.TRUE()
 
-    # ============================= Policy =============================
+    # ============================= PolicyOld =============================
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
         new_policy = ctx.policy_statement_collection().value
@@ -149,14 +149,14 @@ class RLangListener(RLangParserListener):
             else:
                 length = None
                 break
-        ctx.value = Policy(function=policy_generator_function(policy_statements), length=length)
+        ctx.value = PolicyOld(function=policy_generator_function(policy_statements), length=length)
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
         if isinstance(ctx.execute().value, ActionReference):
-            ctx.value = Policy.from_action_reference(ctx.execute().value)
+            ctx.value = PolicyOld.from_action_reference(ctx.execute().value)
         elif isinstance(ctx.execute().value, Option):
-            ctx.value = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
-                               length=len(ctx.execute().value))
+            ctx.value = PolicyOld(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
+                                  length=len(ctx.execute().value))
         else:
             print("This is happening")
             ctx.value = ctx.execute().value.__copy__()
@@ -170,7 +170,7 @@ class RLangListener(RLangParserListener):
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (Option, Policy, ActionReference)):
+            if not isinstance(variable, (Option, PolicyOld, ActionReference)):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
         else:
@@ -182,7 +182,7 @@ class RLangListener(RLangParserListener):
         elif_conditions = [s.value for s in ctx.elif_conditions]
         elif_subpolicies = [s.value for s in ctx.elif_subpolicies]
         else_subpolicy = ctx.else_subpolicy.value if ctx.else_subpolicy else None
-        ctx.value = Policy(
+        ctx.value = PolicyOld(
             function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value,
                                                                          elif_conditions,
                                                                          elif_subpolicies, else_subpolicy, *args,
@@ -190,7 +190,7 @@ class RLangListener(RLangParserListener):
 
     def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
         subpolicies = [sp.value for sp in ctx.subpolicies]
-        ctx.value = Policy(function=lambda *args, **kwargs: subpolicy_dict_function(subpolicies, *args, **kwargs))
+        ctx.value = PolicyOld(function=lambda *args, **kwargs: subpolicy_dict_function(subpolicies, *args, **kwargs))
 
     def exitProbabilistic_policy_statement_no_sugar(self,
                                                     ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
@@ -200,10 +200,10 @@ class RLangListener(RLangParserListener):
 
     def exitProbabilistic_policy_statement_sugar(self, ctx: RLangParser.Probabilistic_policy_statement_sugarContext):
         if isinstance(ctx.execute().value, ActionReference):
-            subpolicy = Policy.from_action_reference(ctx.execute().value)
+            subpolicy = PolicyOld.from_action_reference(ctx.execute().value)
         elif isinstance(ctx.execute().value, Option):
-            subpolicy = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
-                               length=len(ctx.execute().value))
+            subpolicy = PolicyOld(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
+                                  length=len(ctx.execute().value))
         else:
             subpolicy = ctx.execute().value.__copy__()
 
@@ -571,7 +571,7 @@ class RLangListener(RLangParserListener):
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
-                          (IdentityGrounding, ConstantGrounding, Factor, Feature, Policy, ActionReference)):
+                          (IdentityGrounding, ConstantGrounding, Factor, Feature, PolicyOld, ActionReference)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 

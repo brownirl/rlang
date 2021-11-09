@@ -297,7 +297,7 @@ class RLangLexer(Lexer):
 
     literalNames = [ "<INVALID>",
             "'import'", "'Predicate'", "'Feature'", "'Factor'", "'Goal'", 
-            "'Constant'", "'Action'", "'Effect'", "'Reward'", "'Policy'", 
+            "'Constant'", "'Action'", "'Effect'", "'Reward'", "'PolicyOld'",
             "'Execute'", "'Option'", "'MarkovFeature'", "'Dynamics'", "'S'", 
             "'A'", "'P'", "'''", "'if'", "'else'", "'elif'", "'in'", "'init'", 
             "'until'", "'with'", "'then'", "'never'", "'and'", "'or'", "'not'", 

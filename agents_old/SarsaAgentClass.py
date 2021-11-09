@@ -118,7 +118,7 @@ class SarsaAgent(Agent):
         Returns:
             (str): action.
         '''
-        # Policy: Epsilon of the time explore, otherwise, greedyQ.
+        # PolicyOld: Epsilon of the time explore, otherwise, greedyQ.
         if numpy.random.random() > self.epsilon:
             # Exploit.
             action = self.get_max_q_action(state)

@@ -299,7 +299,7 @@ class RLangParser ( Parser ):
     literalNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                      "'import'", "'Predicate'", "'Feature'", "'Factor'", 
                      "'Goal'", "'Constant'", "'Action'", "'Effect'", "'Reward'", 
-                     "'Policy'", "'Execute'", "'Option'", "'MarkovFeature'", 
+                     "'PolicyOld'", "'Execute'", "'Option'", "'MarkovFeature'",
                      "'Dynamics'", "<INVALID>", "'S'", "'A'", "'P'", "'''", 
                      "'if'", "'else'", "'elif'", "'in'", "'init'", "'until'", 
                      "'with'", "'then'", "'never'", "'and'", "'or'", "'not'", 

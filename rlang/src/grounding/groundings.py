@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import MutableMapping
 from itertools import tee, _tee
 import copy
 import warnings
@@ -7,6 +8,7 @@ from typing import Callable, Any, Union
 import types
 
 import numpy as np
+from numpy.random import default_rng
 from numpy.lib.arraysetops import isin
 from rlang.src.grounding.internals import Domain, State, Action, BatchedPrimitive
 from rlang.src.exceptions import RLangGroundingError
@@ -304,6 +306,11 @@ class ConstantGrounding(PrimitiveGrounding):
         return f"<Constant \"{self.name}\" = {self()}>"
 
 
+class ActionExecution(GroundingFunction):
+    def __init__(self, function: GroundingFunction):
+        pass
+
+
 class ActionReference(PrimitiveGrounding):
     """Represents a reference to a specified action.
 
@@ -523,12 +530,67 @@ class ValueFunction(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
 
 
+class Policy(ProbabilisticFunction):
+    """Represents a policy"""
+
+
 class PolicyComplete:
     def __repr__(self):
         return "Policy finished execution"
 
 
-class Policy(ProbabilisticFunction):
+class ActionDistribution(MutableMapping):
+    """Represents a distribution of possible next actions, options, or policies
+
+    Args:
+        distribution: a dictionary of the form {Action/Option/Policy: probability,}
+    """
+
+    def __init__(self, distribution):
+        for k, v in distribution.items():
+            if not isinstance(k, (Action, ActionExecution, Option, Policy)):
+                raise RLangGroundingError(f"Policies cannot return {type(k)} objects, got {k}")
+            if v < 0.0 or v > 1.0:
+                raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
+
+        self.distribution = distribution
+        self.rng = default_rng()
+
+    def sample(self):
+        random_variable = self.rng.uniform()
+        offset = 0.0
+        for k, v in self.distribution:
+            offset += v
+            if random_variable < offset:
+                return k
+
+    def join(self, new_distribution):
+        for k, v in new_distribution.items():
+            if k in self.distribution:
+                self.distribution[k] = self.distribution[k] + v
+            else:
+                self.distribution[k] = v
+
+    def __getitem__(self, key: str):
+        return self.distribution[key]
+
+    def __setitem__(self, key: str, value: Grounding):
+        self.distribution[key] = value
+
+    def __delitem__(self, key: str):
+        del self.distribution[key]
+
+    def __iter__(self):
+        return iter(self.distribution)
+
+    def __len__(self):
+        return len(self.distribution)
+
+    def __repr__(self):
+        return str(self.distribution)
+
+
+class PolicyOld(ProbabilisticFunction):
     """Represents a policy function
 
     Args:
@@ -561,9 +623,9 @@ class Policy(ProbabilisticFunction):
 
     def __copy__(self):
         if isinstance(self._function, _tee):
-            return Policy(function=copy.copy(self.backup_function), name=self.name, domain=self.domain,
-                          probability=self.probability,
-                          length=self.backup_length)
+            return PolicyOld(function=copy.copy(self.backup_function), name=self.name, domain=self.domain,
+                             probability=self.probability,
+                             length=self.backup_length)
         else:
             return copy.deepcopy(self)
 
@@ -579,7 +641,7 @@ class Policy(ProbabilisticFunction):
                 if self.length:
                     self.length -= 1
                 next_func = next(self._function)
-                if isinstance(next_func, Policy):
+                if isinstance(next_func, PolicyOld):
                     return {next_func: 1.0}
                 else:
                     return next_func(*args, **kwargs)
@@ -607,7 +669,7 @@ class Policy(ProbabilisticFunction):
             additional_info += f" \"{self.name}\""
         if self.length:
             additional_info += f" of length {self.length}"
-        return f"<Policy [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
+        return f"<PolicyOld [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
 
 
 class Option(Grounding):
@@ -615,12 +677,12 @@ class Option(Grounding):
 
     Args:
         initiation: A Predicate capturing the initiation set of the option.
-        policy: A Policy capturing the policy of the option.
+        policy: A PolicyOld capturing the policy of the option.
         termination: A Predicate capturing the termination set of the option.
         name (optional): the name of the grounding.
     """
 
-    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
+    def __init__(self, initiation: Predicate, policy: PolicyOld, termination: Predicate, name: str = None):
         self._initiation = initiation
         self._termination = termination
         self._policy = policy
