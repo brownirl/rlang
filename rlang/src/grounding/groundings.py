@@ -527,6 +527,8 @@ class ValueFunction(GroundingFunction):
 
 class Policy(ProbabilisticFunction):
     """Represents a policy"""
+    def __init__(self, domain=Domain.STATE, *args, **kwargs):
+        super().__init__(domain=domain, *args, **kwargs)
 
 
 class PolicyComplete:
@@ -548,24 +550,42 @@ class ActionDistribution(MutableMapping):
 
     def __init__(self, distribution):
         for k, v in distribution.items():
-            if not isinstance(k, (Action, ActionExecution, Option, Policy)):
+            if not isinstance(k, (Action, ActionExecution, Option, Policy, Plan)):
                 raise RLangGroundingError(f"Policies cannot return {type(k)} objects, got {k}")
             if v < 0.0 or v > 1.0:
                 raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
+        self.length = None
         self.domain = Domain.ANY
         self.distribution = distribution
         self.rng = default_rng()
-        self.calculate_domain()
+        self.update_metadata()
 
     @classmethod
-    def single(cls, k):
+    def from_single(cls, k):
         return cls({k: 1.0})
+
+    def update_metadata(self):
+        self.calculate_domain()
+        self.calculate_length()
 
     def calculate_domain(self):
         self.domain = Domain.ANY
         for k, v in self.distribution.items():
             self.domain += k.domain
+
+    def calculate_length(self):
+        self.length = None
+        for k, v in self.distribution.items():
+            if self.length:
+                if len(k) == 0:
+                    self.length = 0
+                    return
+                elif self.length != len(k):
+                    self.length = 0
+                    return
+            else:
+                self.length = len(k)
 
     def sample(self):
         random_variable = self.rng.uniform()
@@ -582,17 +602,26 @@ class ActionDistribution(MutableMapping):
             else:
                 self.distribution[k] = v
                 self.domain += k.domain
+                if self.length != 0:
+                    if len(k) == 0:
+                        self.length = 0
+                    elif self.length != len(k):
+                        self.length = 0
+
+
+    def __call__(self, *args, **kwargs):
+        return self.distribution
 
     def __getitem__(self, key: str):
         return self.distribution[key]
 
     def __setitem__(self, key: str, value: Grounding):
         self.distribution[key] = value
-        self.calculate_domain()
+        self.update_metadata()
 
     def __delitem__(self, key: str):
         del self.distribution[key]
-        self.calculate_domain()
+        self.update_metadata()
 
     def __iter__(self):
         return iter(self.distribution)
@@ -613,6 +642,12 @@ class PolicyFunction(Policy):
     def __init__(self, function: Callable, *args, **kwargs):
         super().__init__(function=function, *args, **kwargs)
 
+    @classmethod
+    def from_single(cls, k):
+        if not isinstance(k, ActionDistribution):
+            k = ActionDistribution.from_single(k)
+        return cls(function=k.__call__, domain=k.domain)
+
 
 class Plan(ProbabilisticFunction):
     """Represents an open-loop policy
@@ -621,17 +656,31 @@ class Plan(ProbabilisticFunction):
         distribution_list: a list of ActionDistributions
     """
     def __init__(self, distribution_list: [ActionDistribution]):
+        domain = Domain.ANY
+        length = None
+        for d in distribution_list:
+            domain += d.domain
+            if length:
+                if len(d) != length:
+                    length = 0
+                    break
+            else:
+                length = len(d)
+
         self.i = 0
         self.plan = distribution_list
-        # domain = reduce(lambda a, b: a + b, map(lambda x: x.domain, distribution_list))
-        domain = sum([x.domain for x in distribution_list])
-        super().__init__(function=lambda *args, **kwargs: self.__next__(), domain=domain)
+        self.length = length
+        super().__init__(function=lambda *args, **kwargs: self, domain=domain)
 
     def append(self, distribution):
         if not isinstance(distribution, ActionDistribution):
             raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(distribution)}")
         self.plan.append(distribution)
         self.domain += distribution.domain
+        if self.length != 0 and len(distribution) != 0:
+            self.length += len(distribution)
+        else:
+            self.length = 0
 
     def extend(self, distribution_list):
         domain = Domain.ANY
@@ -639,6 +688,10 @@ class Plan(ProbabilisticFunction):
             if not isinstance(d, ActionDistribution):
                 raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(d)}")
             domain += d.domain
+            if self.length != 0 and len(d) != 0:
+                self.length += len(d)
+            else:
+                self.length = 0
         self.plan.extend(distribution_list)
         self.domain += domain
 
