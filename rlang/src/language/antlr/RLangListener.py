@@ -133,27 +133,29 @@ class RLangListener(RLangParserListener):
         else:
             ctx.value = Predicate.TRUE()
 
-    # ============================= PolicyOld =============================
+    # ============================= Policy =============================
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
-        new_policy = ctx.policy_statement_collection().value
+        new_policy = ctx.policy_statement().value
         new_policy.name = ctx.IDENTIFIER().getText()
         self.addVariable(new_policy.name, new_policy)
 
-    def exitPolicy_statement_collection(self, ctx: RLangParser.Policy_statement_collectionContext):
-        policy_statements = [ps.value for ps in ctx.statements]
-        length = 0
-        for ps in policy_statements:
-            if len(ps) > 0:
-                length += len(ps)
-            else:
-                length = None
-                break
-        ctx.value = PolicyOld(function=policy_generator_function(policy_statements), length=length)
+    # def exitPolicy_statement_collection(self, ctx: RLangParser.Policy_statement_collectionContext):
+    #     policy_statements = [ps.value for ps in ctx.statements]
+    #     length = 0
+    #     for ps in policy_statements:
+    #         if len(ps) > 0:
+    #             length += len(ps)
+    #         else:
+    #             length = None
+    #             break
+    #     ctx.value = PolicyOld(function=policy_generator_function(policy_statements), length=length)
+    #     # TODO: Change to non-generator function
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
         if isinstance(ctx.execute().value, ActionReference):
             ctx.value = PolicyOld.from_action_reference(ctx.execute().value)
+        # TODO: Policies can no longer execute Options
         elif isinstance(ctx.execute().value, Option):
             ctx.value = PolicyOld(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
                                   length=len(ctx.execute().value))
@@ -170,7 +172,7 @@ class RLangListener(RLangParserListener):
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (Option, PolicyOld, ActionReference)):
+            if not isinstance(variable, (PolicyOld, ActionReference)):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
         else:
@@ -190,7 +192,14 @@ class RLangListener(RLangParserListener):
 
     def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
         subpolicies = [sp.value for sp in ctx.subpolicies]
-        ctx.value = PolicyOld(function=lambda *args, **kwargs: subpolicy_dict_function(subpolicies, *args, **kwargs))
+        # subpolicy_dict = dict()
+        # for subpolicy in subpolicies:
+        #     subpolicy_dict
+        # print(type(subpolicies[0]))
+        # print(subpolicies)
+        # ctx.value = subpolicies
+        ctx.value = Policy(function=lambda *args, **kwargs: subpolicy_dict_function(subpolicies, *args, **kwargs))
+        # ctx.value = ActionDistribution
 
     def exitProbabilistic_policy_statement_no_sugar(self,
                                                     ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
@@ -200,12 +209,11 @@ class RLangListener(RLangParserListener):
 
     def exitProbabilistic_policy_statement_sugar(self, ctx: RLangParser.Probabilistic_policy_statement_sugarContext):
         if isinstance(ctx.execute().value, ActionReference):
-            subpolicy = PolicyOld.from_action_reference(ctx.execute().value)
-        elif isinstance(ctx.execute().value, Option):
-            subpolicy = PolicyOld(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
-                                  length=len(ctx.execute().value))
+            subpolicy = Policy.from_single(ctx.execute().value)
+            # subpolicy = PolicyOld.from_action_reference(ctx.execute().value)
         else:
-            subpolicy = ctx.execute().value.__copy__()
+            # subpolicy = ctx.execute().value.__copy__()
+            subpolicy = ctx.execute().value
 
         subpolicy.compose_probability(ctx.probabilistic_condition().value)
         ctx.value = subpolicy

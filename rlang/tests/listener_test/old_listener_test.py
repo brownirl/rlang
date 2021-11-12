@@ -125,13 +125,20 @@ def test_Action():
 
     # TODO: Need more tests for Action
 
-
-
 def test_Policy():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     s = State([0, 1, 2, 3, 4])
 
+    # f= open("tests_resources/valid_examples/policy.rlang", 'r')
+    # print(f.read())
     knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
+    print(knowledge)
+    print(knowledge['up'])
+    print(knowledge['cone'])
+
+    cone = knowledge['cone']
+
+    print(cone(state=s))
     # test2 = knowledge['cc']
     # print(test2)
     # print(test2(state=s))
@@ -139,7 +146,8 @@ def test_Policy():
     # test2 = knowledge['node']
     # print(test2(state=s))
 
-    test1 = knowledge['cone']
+    # test1 = knowledge['cone']
+    # print(test1)
 
     # # print(test1)
     # actions = test1(state=s)
@@ -151,17 +159,17 @@ def test_Policy():
     # # print(test1(state=s))
     # # print(test1(state=s))
 
-    actions = test1(state=s)
-    print(list(actions.keys())[0](state=s))
-    print(list(actions.keys())[0](state=s))
-    print(list(actions.keys())[0](state=s))
-    print(list(list(actions.keys())[0](state=s).keys())[0](state=s))
-    actions = test1(state=s)
-    print(actions)
-    print(list(actions.keys())[0](state=s))
-    print(list(actions.keys())[0](state=s))
-    print(list(actions.keys())[0](state=s))
-    print(list(list(actions.keys())[0](state=s).keys())[0](state=s))
+    # actions = test1(state=s)
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(list(actions.keys())[0](state=s).keys())[0](state=s))
+    # actions = test1(state=s)
+    # print(actions)
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(actions.keys())[0](state=s))
+    # print(list(list(actions.keys())[0](state=s).keys())[0](state=s))
 
 
     # print(list(actions.keys())[0](state=s))

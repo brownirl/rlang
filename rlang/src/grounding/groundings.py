@@ -262,25 +262,6 @@ class GroundingFunction(Grounding):
         return hash(str(self))
 
 
-class ProbabilisticFunction(GroundingFunction):
-    """Represents a function which provides stochastic output."""
-
-    def __init__(self, probability: float = 1.0, *args, **kwargs):
-        self._probability = probability
-        super().__init__(*args, **kwargs)
-
-    @property
-    def probability(self):
-        return self._probability
-
-    @probability.setter
-    def probability(self, probability: float):
-        self._probability = probability
-
-    def compose_probability(self, probability: float):
-        self._probability = self._probability * probability
-
-
 class PrimitiveGrounding(GroundingFunction):
     """Represents a GroundingFunction with domain Domain.ANY."""
 
@@ -525,10 +506,23 @@ class ValueFunction(GroundingFunction):
         super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
 
 
-class Policy(ProbabilisticFunction):
-    """Represents a policy"""
-    def __init__(self, domain=Domain.STATE, *args, **kwargs):
-        super().__init__(domain=domain, *args, **kwargs)
+class ProbabilisticFunction(GroundingFunction):
+    """Represents a function which provides stochastic output."""
+
+    def __init__(self, probability: float = 1.0, *args, **kwargs):
+        self._probability = probability
+        super().__init__(*args, **kwargs)
+
+    @property
+    def probability(self):
+        return self._probability
+
+    @probability.setter
+    def probability(self, probability: float):
+        self._probability = probability
+
+    def compose_probability(self, probability: float):
+        self._probability = self._probability * probability
 
 
 class PolicyComplete:
@@ -550,8 +544,8 @@ class ActionDistribution(MutableMapping):
 
     def __init__(self, distribution):
         for k, v in distribution.items():
-            if not isinstance(k, (Action, ActionExecution, Option, Policy, Plan)):
-                raise RLangGroundingError(f"Policies cannot return {type(k)} objects, got {k}")
+            if not isinstance(k, (Action, ActionReference, Option, Policy, Plan)):
+                raise RLangGroundingError(f"Policies cannot return {type(k)} objects, got {type(k)}")
             if v < 0.0 or v > 1.0:
                 raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
@@ -566,8 +560,9 @@ class ActionDistribution(MutableMapping):
         return cls({k: 1.0})
 
     def update_metadata(self):
-        self.calculate_domain()
-        self.calculate_length()
+        # self.calculate_domain()
+        # self.calculate_length()
+        pass
 
     def calculate_domain(self):
         self.domain = Domain.ANY
@@ -608,7 +603,6 @@ class ActionDistribution(MutableMapping):
                     elif self.length != len(k):
                         self.length = 0
 
-
     def __call__(self, *args, **kwargs):
         return self.distribution
 
@@ -633,20 +627,29 @@ class ActionDistribution(MutableMapping):
         return str(self.distribution)
 
 
-class PolicyFunction(Policy):
+class Policy(ProbabilisticFunction):
     """Represents a closed-loop policy function
 
     Args:
         function: a function from states to action distributions.
     """
-    def __init__(self, function: Callable, *args, **kwargs):
-        super().__init__(function=function, *args, **kwargs)
+    def __init__(self, function: Callable, domain=Domain.STATE, *args, **kwargs):
+        super().__init__(function=function, domain=domain, codomain=Domain.ACTION, *args, **kwargs)
 
     @classmethod
     def from_single(cls, k):
         if not isinstance(k, ActionDistribution):
             k = ActionDistribution.from_single(k)
         return cls(function=k.__call__, domain=k.domain)
+
+    @classmethod
+    def from_action_distribution(cls, k):
+        if not isinstance(k, ActionDistribution):
+            raise RLangGroundingError(f"Expecting an ActionDistribution, got {type(k)}")
+        return cls(function=k.__call__, domain=k.domain)
+
+    def __repr__(self):
+        return "<Policy>"
 
 
 class Plan(ProbabilisticFunction):

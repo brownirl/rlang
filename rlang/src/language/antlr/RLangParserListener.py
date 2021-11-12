@@ -143,15 +143,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#policy_statement_collection.
-    def enterPolicy_statement_collection(self, ctx:RLangParser.Policy_statement_collectionContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#policy_statement_collection.
-    def exitPolicy_statement_collection(self, ctx:RLangParser.Policy_statement_collectionContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#policy_statement_execute.
     def enterPolicy_statement_execute(self, ctx:RLangParser.Policy_statement_executeContext):
         pass
