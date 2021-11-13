@@ -34,7 +34,7 @@ feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
 
-option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement DEDENT UNTIL until=option_condition NL* DEDENT;
+option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement NL* DEDENT UNTIL until=option_condition NL* DEDENT;
 option_condition: boolean_exp | ANY_CONDITION;
 
 policy: POLICY IDENTIFIER COL INDENT policy_statement NL* DEDENT;
@@ -43,14 +43,13 @@ policy_statement
     | conditional_subpolicy      # policy_statement_conditional
     | probabilistic_subpolicy    # policy_statement_probabilistic
     ;
-execute: EXECUTE (IDENTIFIER | arithmetic_exp);
-conditional_subpolicy: IF if_condition=boolean_exp COL INDENT if_subpolicy=policy_statement DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_subpolicies+=policy_statement DEDENT)* (ELSE COL INDENT else_subpolicy=policy_statement DEDENT)?;
+conditional_subpolicy: IF if_condition=boolean_exp COL INDENT if_subpolicy=policy_statement NL* DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_subpolicies+=policy_statement NL* DEDENT)* (ELSE COL INDENT else_subpolicy=policy_statement NL* DEDENT)?;
 probabilistic_subpolicy: subpolicies+=probabilistic_policy_statement (OR subpolicies+=probabilistic_policy_statement)*;
 probabilistic_policy_statement
     : probabilistic_condition COL INDENT policy_statement NL* DEDENT    # probabilistic_policy_statement_no_sugar
     | execute probabilistic_condition NL+                               # probabilistic_policy_statement_sugar
     ;
-
+execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 
 effect: EFFECT IDENTIFIER? COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;

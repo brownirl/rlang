@@ -170,15 +170,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#execute.
-    def enterExecute(self, ctx:RLangParser.ExecuteContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#execute.
-    def exitExecute(self, ctx:RLangParser.ExecuteContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#conditional_subpolicy.
     def enterConditional_subpolicy(self, ctx:RLangParser.Conditional_subpolicyContext):
         pass
@@ -212,6 +203,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#probabilistic_policy_statement_sugar.
     def exitProbabilistic_policy_statement_sugar(self, ctx:RLangParser.Probabilistic_policy_statement_sugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#execute.
+    def enterExecute(self, ctx:RLangParser.ExecuteContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#execute.
+    def exitExecute(self, ctx:RLangParser.ExecuteContext):
         pass
 
 

@@ -1,9 +1,20 @@
 Action up := 2
 Action down := 3
 
+Policy b:
+    Execute 5 with P(0.1)
+    or Execute 3 with P(0.9)
+
+#Policy cone:
+#    with P(0.5):
+#        Execute up with P(0.5)
+#        or Execute down with P(0.5)
+#    or with P(0.5):
+#        Execute b
+
 Policy cone:
-    with P(0.5):
-        Execute up with P(0.5)
-        or Execute down with P(0.5)
-    or with P(0.5):
-        Execute 5
+    if S[0] == 0:
+        Execute up with P(0.2)
+        or with P(0.8):
+            Execute down with P(0.5)
+            or Execute -5 with P(0.5)

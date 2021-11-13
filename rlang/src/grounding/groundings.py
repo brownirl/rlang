@@ -587,7 +587,8 @@ class ActionDistribution(MutableMapping):
         self.update_metadata()
         self.arg_store = list()
         self.kwarg_store = dict()
-        self.true_distribution = list()
+        self.true_distribution = dict()
+        self.calculated = False
 
     @classmethod
     def from_single(cls, k):
@@ -604,10 +605,10 @@ class ActionDistribution(MutableMapping):
     def sample(self):
         random_variable = self.rng.uniform()
         offset = 0.0
-        for k, v in self.distribution.items():
+        for k, v in self.true_distribution.items():
             offset += v
             if random_variable < offset:
-                return k(*self.arg_store, **self.kwarg_store)
+                return k
 
     def join(self, new_distribution):
         for k, v in new_distribution.items():
@@ -618,14 +619,28 @@ class ActionDistribution(MutableMapping):
                 self.domain += k.domain
 
     def calculate_true_distribution(self):
+        # TODO: This is a mess, we need to consolidate Actions and ActionReferences
+        def update_dictionary(k_, v_):
+            if isinstance(k_, (dict, ActionDistribution)):
+                for k__, v__ in k_.items():
+                    if isinstance(k__, Action):
+                        update_dictionary(k__, v_*v__)
+                    else:
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+            elif k_ is not None:
+                if isinstance(k_, Action):
+                    a = k_
+                else:
+                    a = Action(k_)
+                if a in true_distribution:
+                    true_distribution[a] += v_
+                else:
+                    true_distribution[a] = v_
+
         true_distribution = dict()
-        for k, v in self.distribution.items():
-            action = Action(k(*self.arg_store, **self.kwarg_store))
-            if action in true_distribution:
-                true_distribution[action] += v
-            else:
-                true_distribution[action] = v
+        update_dictionary(self.distribution, 1.0)
         self.true_distribution = true_distribution
+        self.calculated = True
 
     def compose_probabilities(self, probability):
         for k, v in self.distribution.items():
@@ -638,7 +653,10 @@ class ActionDistribution(MutableMapping):
         return self
 
     def __getitem__(self, key: Grounding):
-        return self.distribution[key]
+        if self.calculated:
+            return self.true_distribution[key]
+        else:
+            return self.distribution[key]
 
     def __setitem__(self, key: Grounding, value: int):
         self.distribution[key] = value
@@ -649,16 +667,22 @@ class ActionDistribution(MutableMapping):
         self.update_metadata()
 
     def __iter__(self):
-        return iter(self.distribution)
+        if self.calculated:
+            return iter(self.true_distribution)
+        else:
+            return iter(self.distribution)
 
     def __repr__(self):
-        if self.true_distribution:
+        if self.calculated:
             return str(self.true_distribution)
         else:
             return str(self.distribution)
 
     def __len__(self):
-        return len(self.distribution)
+        if self.calculated:
+            return len(self.true_distribution)
+        else:
+            return len(self.distribution)
 
 
 class Policy(ProbabilisticFunction):
@@ -745,88 +769,6 @@ class Plan(ProbabilisticFunction):
             return self.plan[i]
 
 
-class PolicyOld(ProbabilisticFunction):
-    """Represents a policy function
-
-    Args:
-        function: the policy function from states to actions.
-        name (optional): the name of the grounding.
-    """
-
-    def __init__(self, function: Union[Callable, types.GeneratorType, _tee], name: str = None,
-                 domain: Union[str, Domain] = Domain.STATE,
-                 probability: float = 1.0, length: int = None):
-        self.length = length
-        self.backup_length = copy.copy(length)
-        self.backup_function = None
-
-        if isinstance(function, types.GeneratorType):
-            function, backup = tee(function)
-            self.backup_function = backup
-        elif isinstance(function, _tee):
-            self.backup_function = copy.copy(function)
-        super().__init__(function=function, codomain=Domain.ACTION, domain=domain, name=name, probability=probability)
-
-    @classmethod
-    def from_action_reference(cls, action: ActionReference):
-        # def action_generator(*args, **kwargs):
-        #     yield {action(*args, **kwargs): 1.0}
-        #
-        # return cls(function=lambda *args, **kwargs: next(action_generator(*args, **kwargs)), domain=Domain.ANY,
-        #            length=1, name=action.name)
-        return cls(function=lambda *args, **kwargs: {action: 1.0}, domain=Domain.ANY, length=1, name=action.name)
-
-    def __copy__(self):
-        if isinstance(self._function, _tee):
-            return PolicyOld(function=copy.copy(self.backup_function), name=self.name, domain=self.domain,
-                             probability=self.probability,
-                             length=self.backup_length)
-        else:
-            return copy.deepcopy(self)
-
-    def __len__(self):
-        if self.length:
-            return self.length
-        else:
-            return 0
-
-    def __call__(self, *args, **kwargs):
-        if isinstance(self._function, (types.GeneratorType, _tee)):
-            try:
-                if self.length:
-                    self.length -= 1
-                next_func = next(self._function)
-                if isinstance(next_func, PolicyOld):
-                    return {next_func: 1.0}
-                else:
-                    return next_func(*args, **kwargs)
-            except StopIteration:
-                if self.length:
-                    self.length += 1
-                return PolicyComplete()
-        else:
-            return self._function(*args, **kwargs)
-
-    def __iter__(self):
-        # I don't think this actually works
-        if isinstance(self._function, (types.GeneratorType, _tee)):
-            yield self.__call__()
-            # yield next(self._function)
-        else:
-            yield self._function
-
-    def __hash__(self):
-        return self._function.__hash__()
-
-    def __repr__(self):
-        additional_info = ""
-        if self.name:
-            additional_info += f" \"{self.name}\""
-        if self.length:
-            additional_info += f" of length {self.length}"
-        return f"<PolicyOld [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
-
-
 class Option(Grounding):
     """Grounding object for an option.
 
@@ -837,33 +779,20 @@ class Option(Grounding):
         name (optional): the name of the grounding.
     """
 
-    def __init__(self, initiation: Predicate, policy: PolicyOld, termination: Predicate, name: str = None):
+    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
         self._initiation = initiation
         self._termination = termination
         self._policy = policy
         self._policy_is_iterable = False
-        if isinstance(policy._function, (types.GeneratorType, _tee)):
+        if isinstance(policy.function, (types.GeneratorType, _tee)):
             self._policy_is_iterable = True
         super().__init__(name)
 
     def __len__(self):
         return len(self._policy)
 
-    def __call__(self, *args, **kwargs) -> Union[None, State, str]:
-        if self._policy_is_iterable:  # The policy might be a generator function
-            action = self._policy(*args, **kwargs)
-            if action:
-                return action
-                # if action == 'policy_finished':
-                #     return self.__call__(*args, **kwargs)
-                # else:
-                #     return action
-            elif self._termination(*args, **kwargs):
-                return 'option_termination'
-            else:
-                self._policy = self._policy.__copy__()
-                return self.__call__(*args, **kwargs)
-        elif self._termination(*args, **kwargs):
+    def __call__(self, *args, **kwargs):
+        if self._termination(*args, **kwargs):
             return 'option_termination'
         else:
             return self._policy(*args, **kwargs)

@@ -122,7 +122,7 @@ class RLangListener(RLangParserListener):
     # ============================= Option =============================
 
     def exitOption(self, ctx: RLangParser.OptionContext):
-        subpolicy = ctx.policy_statement_collection().value
+        subpolicy = Policy.from_action_distribution(ctx.policy_statement().value)
         new_option = Option(initiation=ctx.init.value, termination=ctx.until.value, policy=subpolicy,
                             name=ctx.IDENTIFIER().getText())
         self.addVariable(new_option.name, new_option)
@@ -141,11 +141,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_policy.name, new_policy)
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
-        if isinstance(ctx.execute().value, ActionReference):
-            ctx.value = ActionDistribution.from_single(ctx.execute().value)
-        else:
-            print("This is happening")
-            ctx.value = ctx.execute().value.__copy__()
+        ctx.value = ActionDistribution.from_single(ctx.execute().value)
 
     def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
         ctx.value = ctx.conditional_subpolicy().value
@@ -153,24 +149,15 @@ class RLangListener(RLangParserListener):
     def exitPolicy_statement_probabilistic(self, ctx: RLangParser.Policy_statement_probabilisticContext):
         ctx.value = ctx.probabilistic_subpolicy().value
 
-    def exitExecute(self, ctx: RLangParser.ExecuteContext):
-        if ctx.IDENTIFIER() is not None:
-            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (PolicyOld, ActionReference)):
-                raise RLangSemanticError(f"Cannot execute a {type(variable)}")
-            ctx.value = variable
-        else:
-            ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
-
     def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):
         elif_conditions = [s.value for s in ctx.elif_conditions]
         elif_subpolicies = [s.value for s in ctx.elif_subpolicies]
         else_subpolicy = ctx.else_subpolicy.value if ctx.else_subpolicy else None
-        ctx.value = PolicyOld(
+        ctx.value = ActionDistribution.from_single(Policy(
             function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value,
                                                                          elif_conditions,
                                                                          elif_subpolicies, else_subpolicy, *args,
-                                                                         **kwargs))
+                                                                         **kwargs)))
 
     def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
         action_distribution = ActionDistribution()
@@ -179,15 +166,20 @@ class RLangListener(RLangParserListener):
 
     def exitProbabilistic_policy_statement_no_sugar(self,
                                                     ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
-        if isinstance(ctx.policy_statement().value, ActionDistribution):
-            distribution = ctx.policy_statement().value
-            distribution.compose_probabilities(ctx.probabilistic_condition().value)
-            ctx.value = distribution
-        else:
-            ctx.value = ActionDistribution({ctx.policy_statement().value: ctx.probabilistic_condition().value})
+        ctx.value = ctx.policy_statement().value
+        ctx.value.compose_probabilities(ctx.probabilistic_condition().value)
 
     def exitProbabilistic_policy_statement_sugar(self, ctx: RLangParser.Probabilistic_policy_statement_sugarContext):
         ctx.value = ActionDistribution({ctx.execute().value: ctx.probabilistic_condition().value})
+
+    def exitExecute(self, ctx: RLangParser.ExecuteContext):
+        if ctx.IDENTIFIER() is not None:
+            variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
+            if not isinstance(variable, (Policy, ActionReference)):
+                raise RLangSemanticError(f"Cannot execute a {type(variable)}")
+            ctx.value = variable
+        else:
+            ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
     def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
         if ctx.any_number():
@@ -550,7 +542,7 @@ class RLangListener(RLangParserListener):
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
-                          (IdentityGrounding, ConstantGrounding, Factor, Feature, PolicyOld, ActionReference)):
+                          (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 

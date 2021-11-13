@@ -128,6 +128,7 @@ def test_Action():
 def test_Policy():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     s = State([0, 1, 2, 3, 4])
+    s2 = State([2, 1, 2, 3, 4])
 
     # f= open("tests_resources/valid_examples/policy.rlang", 'r')
     # print(f.read())
@@ -138,8 +139,13 @@ def test_Policy():
 
     cone = knowledge['cone']
 
+    # action = cone(state=s)
+    # print(action)
+    # print(action.sample())
     action = cone(state=s)
     print(action)
+    # print(list(action.keys())[0](state=s2))
+
     # test2 = knowledge['cc']
     # print(test2)
     # print(test2(state=s))

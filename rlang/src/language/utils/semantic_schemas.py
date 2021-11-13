@@ -15,24 +15,13 @@ def policy_generator_function(statements):
 def conditional_policy_function(if_condition, if_subpolicy, elif_conditions=None, elif_subpolicies=None, else_subpolicy=None,
                                 *args, **kwargs):
     if if_condition(*args, **kwargs) == True:
-        if len(if_subpolicy) == 1:
-            return {list(if_subpolicy(*args, **kwargs).keys())[0]: 1.0}
-        else:
-            return {if_subpolicy: 1.0}
+        return if_subpolicy(*args, **kwargs)
     else:
         for i in range(len(elif_conditions)):
             if elif_conditions[i](*args, **kwargs) == True:
-                if len(elif_subpolicies[i]) == 1:
-                    return {list(elif_subpolicies[i](*args, **kwargs).keys())[0]: 1.0}
-                else:
-                    return {elif_subpolicies[i]: 1.0}
+                return elif_subpolicies[i](*args, **kwargs)
         if else_subpolicy is not None:
-            if len(else_subpolicy) == 1:
-                return {list(else_subpolicy(*args, **kwargs).keys())[0]: 1.0}
-            else:
-                return {else_subpolicy: 1.0}
-        else:
-            return 'no_action'
+            return else_subpolicy(*args, **kwargs)
 
 
 def subpolicy_dict_function(subpolicies, *args, **kwargs):
