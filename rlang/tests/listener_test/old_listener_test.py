@@ -132,13 +132,14 @@ def test_Policy():
     # f= open("tests_resources/valid_examples/policy.rlang", 'r')
     # print(f.read())
     knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
-    print(knowledge)
-    print(knowledge['up'])
+    # print(knowledge)
+    # print(knowledge['up'])
     print(knowledge['cone'])
 
     cone = knowledge['cone']
 
-    print(cone(state=s))
+    action = cone(state=s)
+    print(action)
     # test2 = knowledge['cc']
     # print(test2)
     # print(test2(state=s))

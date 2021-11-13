@@ -287,7 +287,7 @@ class ConstantGrounding(PrimitiveGrounding):
         return f"<Constant \"{self.name}\" = {self()}>"
 
 
-class ActionReference(PrimitiveGrounding):
+class ActionReferenceOld(PrimitiveGrounding):
     """Represents a reference to a specified action.
 
     Args:
@@ -296,7 +296,6 @@ class ActionReference(PrimitiveGrounding):
     """
 
     def __init__(self, action: Any, name: str = None):
-        # TODO: Integrate Action object into this constructor
         if isinstance(action, (int, float, list)):
             action = Action(np.array(action))
         elif isinstance(action, GroundingFunction):
@@ -311,6 +310,37 @@ class ActionReference(PrimitiveGrounding):
 
     def __repr__(self):
         return f"<ActionReference \"{self.name}\" = {self()}>"
+
+
+class ActionReference(GroundingFunction):
+    """Represents a reference to a specified action.
+
+    Args:
+        action: the action.
+        name (optional): name of the action.
+    """
+
+    def __init__(self, action: Any, *args, **kwargs):
+        if isinstance(action, (int, float, list)):
+            function = lambda *sargs, **skwargs: Action(np.array(action))
+            domain = Domain.ANY
+        elif isinstance(action, GroundingFunction):
+            function = action.__call__
+            domain = action.domain
+            # if action.domain == Domain.ANY:
+            #     action = Action(np.array(action()))
+        else:
+            raise RLangGroundingError(f"Actions cannot be of type {type(action)}")
+        super().__init__(domain=domain, codomain=Domain.ACTION, function=function, *args, **kwargs)
+
+    def __hash__(self):
+        return hash(self.function)
+
+    def __repr__(self):
+        if self.name:
+            return f"<ActionReference \"{self.name}\">"
+        else:
+            return f"<ActionReference>"
 
 
 class IdentityGrounding(GroundingFunction):
@@ -542,89 +572,93 @@ class ActionDistribution(MutableMapping):
         distribution: a dictionary of the form {Action/Option/Policy: probability,}
     """
 
-    def __init__(self, distribution):
+    def __init__(self, distribution=None):
+        if distribution is None:
+            distribution = dict()
         for k, v in distribution.items():
-            if not isinstance(k, (Action, ActionReference, Option, Policy, Plan)):
-                raise RLangGroundingError(f"Policies cannot return {type(k)} objects, got {type(k)}")
+            if not isinstance(k, (Action, ActionReference, Policy)):
+                raise RLangGroundingError(f"Policies cannot return {type(k)} objects")
             if v < 0.0 or v > 1.0:
                 raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
-        self.length = None
         self.domain = Domain.ANY
         self.distribution = distribution
         self.rng = default_rng()
         self.update_metadata()
+        self.arg_store = list()
+        self.kwarg_store = dict()
+        self.true_distribution = list()
 
     @classmethod
     def from_single(cls, k):
         return cls({k: 1.0})
 
     def update_metadata(self):
-        # self.calculate_domain()
-        # self.calculate_length()
-        pass
+        self.calculate_domain()
 
     def calculate_domain(self):
         self.domain = Domain.ANY
         for k, v in self.distribution.items():
             self.domain += k.domain
 
-    def calculate_length(self):
-        self.length = None
-        for k, v in self.distribution.items():
-            if self.length:
-                if len(k) == 0:
-                    self.length = 0
-                    return
-                elif self.length != len(k):
-                    self.length = 0
-                    return
-            else:
-                self.length = len(k)
-
     def sample(self):
         random_variable = self.rng.uniform()
         offset = 0.0
-        for k, v in self.distribution:
+        for k, v in self.distribution.items():
             offset += v
             if random_variable < offset:
-                return k
+                return k(*self.arg_store, **self.kwarg_store)
 
     def join(self, new_distribution):
         for k, v in new_distribution.items():
             if k in self.distribution:
-                self.distribution[k] = self.distribution[k] + v
+                self.distribution[k] += v
             else:
                 self.distribution[k] = v
                 self.domain += k.domain
-                if self.length != 0:
-                    if len(k) == 0:
-                        self.length = 0
-                    elif self.length != len(k):
-                        self.length = 0
+
+    def calculate_true_distribution(self):
+        true_distribution = dict()
+        for k, v in self.distribution.items():
+            action = Action(k(*self.arg_store, **self.kwarg_store))
+            if action in true_distribution:
+                true_distribution[action] += v
+            else:
+                true_distribution[action] = v
+        self.true_distribution = true_distribution
+
+    def compose_probabilities(self, probability):
+        for k, v in self.distribution.items():
+            self.distribution[k] = v * probability
 
     def __call__(self, *args, **kwargs):
-        return self.distribution
+        self.arg_store = args
+        self.kwarg_store = kwargs
+        self.calculate_true_distribution()
+        return self
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: Grounding):
         return self.distribution[key]
 
-    def __setitem__(self, key: str, value: Grounding):
+    def __setitem__(self, key: Grounding, value: int):
         self.distribution[key] = value
         self.update_metadata()
 
-    def __delitem__(self, key: str):
+    def __delitem__(self, key: Grounding):
         del self.distribution[key]
         self.update_metadata()
 
     def __iter__(self):
         return iter(self.distribution)
 
+    def __repr__(self):
+        if self.true_distribution:
+            return str(self.true_distribution)
+        else:
+            return str(self.distribution)
+
     def __len__(self):
         return len(self.distribution)
-
-    def __repr__(self):
-        return str(self.distribution)
 
 
 class Policy(ProbabilisticFunction):
@@ -637,19 +671,16 @@ class Policy(ProbabilisticFunction):
         super().__init__(function=function, domain=domain, codomain=Domain.ACTION, *args, **kwargs)
 
     @classmethod
-    def from_single(cls, k):
-        if not isinstance(k, ActionDistribution):
-            k = ActionDistribution.from_single(k)
-        return cls(function=k.__call__, domain=k.domain)
-
-    @classmethod
     def from_action_distribution(cls, k):
         if not isinstance(k, ActionDistribution):
             raise RLangGroundingError(f"Expecting an ActionDistribution, got {type(k)}")
         return cls(function=k.__call__, domain=k.domain)
 
     def __repr__(self):
-        return "<Policy>"
+        additional_info = ""
+        if self.name:
+            additional_info += f" \"{self.name}\""
+        return f"<Policy [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
 
 
 class Plan(ProbabilisticFunction):

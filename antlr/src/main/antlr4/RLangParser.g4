@@ -47,7 +47,7 @@ execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 conditional_subpolicy: IF if_condition=boolean_exp COL INDENT if_subpolicy=policy_statement DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_subpolicies+=policy_statement DEDENT)* (ELSE COL INDENT else_subpolicy=policy_statement DEDENT)?;
 probabilistic_subpolicy: subpolicies+=probabilistic_policy_statement (OR subpolicies+=probabilistic_policy_statement)*;
 probabilistic_policy_statement
-    : probabilistic_condition COL INDENT policy_statement NL+ DEDENT    # probabilistic_policy_statement_no_sugar
+    : probabilistic_condition COL INDENT policy_statement NL* DEDENT    # probabilistic_policy_statement_no_sugar
     | execute probabilistic_condition NL+                               # probabilistic_policy_statement_sugar
     ;
 

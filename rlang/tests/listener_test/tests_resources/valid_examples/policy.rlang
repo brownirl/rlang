@@ -1,4 +1,9 @@
 Action up := 2
+Action down := 3
 
 Policy cone:
-    Execute up with P(0.2)
+    with P(0.5):
+        Execute up with P(0.5)
+        or Execute down with P(0.5)
+    or with P(0.5):
+        Execute 5
