@@ -528,19 +528,11 @@ class ProbabilisticFunction(GroundingFunction):
         self._probability = self._probability * probability
 
 
-class ActionDistribution(MutableMapping):
-    """Represents a distribution of possible next actions, options, or policies
-
-    Args:
-        distribution: a dictionary of the form {Action/Option/Policy: probability,}
-    """
-
+class ProbabilityDistribution(MutableMapping):
     def __init__(self, distribution=None):
         if distribution is None:
             distribution = dict()
         for k, v in distribution.items():
-            if not isinstance(k, (Action, ActionReference, Policy)):
-                raise RLangGroundingError(f"Policies cannot return {type(k)} objects")
             if v < 0.0 or v > 1.0:
                 raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
@@ -552,6 +544,9 @@ class ActionDistribution(MutableMapping):
         self.kwarg_store = dict()
         self.true_distribution = dict()
         self.calculated = False
+
+    def calculate_true_distribution(self):
+        pass
 
     @classmethod
     def from_single(cls, k):
@@ -580,30 +575,6 @@ class ActionDistribution(MutableMapping):
             else:
                 self.distribution[k] = v
                 self.domain += k.domain
-
-    def calculate_true_distribution(self):
-        # TODO: This is a mess, we need to consolidate Actions and ActionReferences
-        def update_dictionary(k_, v_):
-            if isinstance(k_, (dict, ActionDistribution)):
-                for k__, v__ in k_.items():
-                    if isinstance(k__, Action):
-                        update_dictionary(k__, v_*v__)
-                    else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
-            elif k_ is not None:
-                if isinstance(k_, Action):
-                    a = k_
-                else:
-                    a = Action(k_)
-                if a in true_distribution:
-                    true_distribution[a] += v_
-                else:
-                    true_distribution[a] = v_
-
-        true_distribution = dict()
-        update_dictionary(self.distribution, 1.0)
-        self.true_distribution = true_distribution
-        self.calculated = True
 
     def compose_probabilities(self, probability):
         for k, v in self.distribution.items():
@@ -646,6 +617,69 @@ class ActionDistribution(MutableMapping):
             return len(self.true_distribution)
         else:
             return len(self.distribution)
+
+
+class ActionDistribution(ProbabilityDistribution):
+    """Represents a distribution of possible next actions, options, or policies
+
+    Args:
+        distribution: a dictionary of the form {Action/Option/Policy: probability,}
+    """
+
+    def calculate_true_distribution(self):
+        # TODO: Might be able to change all isinstance(k__, Action) calls to isinstance(k__, PrimitiveGrounding)
+        def update_dictionary(k_, v_):
+            if isinstance(k_, (dict, ProbabilityDistribution)):
+                for k__, v__ in k_.items():
+                    if isinstance(k__, Action):
+                        update_dictionary(k__, v_*v__)
+                    else:
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+            elif k_ is not None:
+                if isinstance(k_, Action):
+                    a = k_
+                else:
+                    a = Action(k_)
+                if a in true_distribution:
+                    true_distribution[a] += v_
+                else:
+                    true_distribution[a] = v_
+
+        true_distribution = dict()
+        update_dictionary(self.distribution, 1.0)
+        self.true_distribution = true_distribution
+        self.calculated = True
+
+
+class StateDistribution(ProbabilityDistribution):
+    def __init__(self, distribution=None):
+        if distribution:
+            pass
+            # ensure that everything is a State or function of state or something
+        super().__init__(distribution=distribution)
+
+    def calculate_true_distribution(self):
+        def update_dictionary(k_, v_):
+            if isinstance(k_, (dict, ProbabilityDistribution)):
+                for k__, v__ in k_.items():
+                    if isinstance(k__, State):
+                        update_dictionary(k__, v_*v__)
+                    else:
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+            elif k_ is not None:
+                if isinstance(k_, State):
+                    a = k_
+                else:
+                    a = State(k_)
+                if a in true_distribution:
+                    true_distribution[a] += v_
+                else:
+                    true_distribution[a] = v_
+
+        true_distribution = dict()
+        update_dictionary(self.distribution, 1.0)
+        self.true_distribution = true_distribution
+        self.calculated = True
 
 
 class Policy(ProbabilisticFunction):
