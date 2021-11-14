@@ -186,50 +186,51 @@ class ListenerTests(unittest.TestCase):
         # down_parsed = rlang.parse("Action down := ", metadata)['down']
         # print(down_parsed(state=state2))
 
-    def policy_unwrap(self, policy, s, expected_actions):
-        action = policy(state=s)
-        i = 0
-        while not isinstance(action, PolicyComplete):
-            for k, v in action.items():
-                a = k()
-                if i >= len(expected_actions):
-                    return False
-                if a not in expected_actions[i]:
-                    return False
-                elif expected_actions[i][a] != v:
-                    return False
-            action = policy(state=s)
-            i += 1
-        if len(expected_actions) != i:
-            return False
-        else:
-            return True
-
     def test_Policy(self):
         metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         s = State([0, 1, 2, 3, 4])
         s2 = State([1, 1, 2, 3, 4])
 
         # Simple 1-layer tests
-        knowledge = rlang.parse_file("tests_resources/valid_examples/policy_1_layer.rlang", metadata)
-        up_down_up = knowledge['up_down_up']
-        assert (self.policy_unwrap(up_down_up, s, [{Action(2): 1.0}, {Action(-1): 1.0}, {Action(1): 1.0}]))
-        # assert (self.policy_unwrap(up_down_up, s, [{Action(2): 1.0}, {Action(-1): 1.0}, {Action(1): 1.0}]))
-        # TODO: Need to fix policies first
+        knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
 
-        left_once = knowledge['left_once']
-        assert (self.policy_unwrap(left_once, s, [{Action(2): 1.0}]))
+        simple = knowledge['simple']
+        assert simple(state=s) == {Action(2): 1.0}
+        assert simple(state=s) == {Action(2): 1.0}  # Ensure that policies can be executed more than once
 
-        left_right_split = knowledge['left_right_split']
-        assert (self.policy_unwrap(left_right_split, s, [{Action(2): 0.25, Action(-2): 0.75}]))
+        prob_split = knowledge['prob_split']
+        assert prob_split(state=s) == {Action(5): 0.1, Action(3): 0.9}
 
-        sequential_prob = knowledge['sequential_prob']
-        assert (self.policy_unwrap(sequential_prob, s, [{Action(2): 1.0}, {Action(1): 0.3, Action(-1): 0.7}]))
+        prob_split_less_than_1 = knowledge['prob_split_less_than_1']
+        assert prob_split_less_than_1(state=s) == {Action(2): 0.1, Action(6): 0.5}
 
-        conditional = knowledge['conditional']
-        # assert(self.policy_unwrap(conditional, s, [{Action(-2): 1.0}]))
-        # print(conditional(state=s2))
-        # assert(self.policy_unwrap(conditional, s2, [{Action(2): 1.0}]))
+        prob_split_frac = knowledge['prob_split_frac']
+        assert prob_split_frac(state=s) == {Action(1): 1.0/3, Action(2): 2.0/3}
+
+        prob_nest = knowledge['prob_nest']
+        assert prob_nest(state=s) == {Action(3): 0.025}
+
+        prob_rejoin = knowledge['prob_rejoin']
+        assert prob_rejoin(state=s) == {Action(2): 1.0}
+
+        one_layer_deep = knowledge['one_layer_deep']
+        assert one_layer_deep(state=s) == {Action(5): 0.05, Action(3): 0.95}
+
+        two_layers_deep = knowledge['two_layers_deep']
+        assert two_layers_deep(state=s) == {Action(5): 0.05, Action(3): 0.95}
+
+        two_layers_deep_rejoin = knowledge['two_layers_deep_rejoin']
+        assert two_layers_deep_rejoin(state=s) == {Action(5): 0.05, Action(3): 0.95}
+
+        simple_conditional = knowledge['simple_conditional']
+        assert simple_conditional(state=s) == {Action(2): 1.0}
+
+        factor_conditional = knowledge['factor_conditional']
+        assert factor_conditional(state=s) == {Action(2): 1.0}
+        assert factor_conditional(state=s2) == {Action(2): 0.8, Action(3): 0.2}
+
+        missing_conditional = knowledge['missing_conditional']
+        assert missing_conditional(state=s) == {}
 
 
 if __name__ == '__main__':

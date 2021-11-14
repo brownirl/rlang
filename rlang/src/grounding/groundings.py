@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import MutableMapping
+from collections.abc import MutableMapping
 from itertools import tee, _tee
 import copy
 import warnings
@@ -320,7 +320,7 @@ class ActionReference(GroundingFunction):
         name (optional): name of the action.
     """
 
-    def __init__(self, action: Any, *args, **kwargs):
+    def __init__(self, action: Any, name=None, *args, **kwargs):
         if isinstance(action, (int, float, list)):
             function = lambda *sargs, **skwargs: Action(np.array(action))
             domain = Domain.ANY
@@ -331,7 +331,7 @@ class ActionReference(GroundingFunction):
             #     action = Action(np.array(action()))
         else:
             raise RLangGroundingError(f"Actions cannot be of type {type(action)}")
-        super().__init__(domain=domain, codomain=Domain.ACTION, function=function, *args, **kwargs)
+        super().__init__(domain=domain, codomain=Domain.ACTION, function=function, name=name, *args, **kwargs)
 
     def __hash__(self):
         return hash(self.function)

@@ -1,20 +1,57 @@
 Action up := 2
 Action down := 3
 
-Policy b:
+Policy simple:
+    Execute up
+
+Policy prob_split:
     Execute 5 with P(0.1)
     or Execute 3 with P(0.9)
 
-#Policy cone:
-#    with P(0.5):
-#        Execute up with P(0.5)
-#        or Execute down with P(0.5)
-#    or with P(0.5):
-#        Execute b
+Policy prob_split_less_than_1:
+    Execute 2 with P(0.1)
+    or Execute 6 with P(0.5)
 
-Policy cone:
+Policy prob_split_frac:
+    Execute 1 with P(1/3)
+    or Execute 2 with P(2/3)
+
+Policy prob_nest:
+    with P(0.5):
+        with P(0.5):
+            with P(0.1):
+                Execute down
+
+Policy prob_rejoin:
+    Execute 1 * 2 + 0 with P(1/2)
+    or with P(1/2):
+        Execute up
+
+Policy one_layer_deep:
+    Execute prob_split with P(0.5)
+    or Execute down with P(0.5)
+
+Policy two_layers_deep:
+    Execute one_layer_deep
+
+Policy two_layers_deep_rejoin:
+    Execute one_layer_deep with P(1/3)
+    or Execute one_layer_deep with P(2/3)
+
+Policy simple_conditional:
+    if True:
+        Execute up
+    else:
+        Execute down
+
+Policy factor_conditional:
     if S[0] == 0:
-        Execute up with P(0.2)
-        or with P(0.8):
-            Execute down with P(0.5)
-            or Execute -5 with P(0.5)
+        Execute up
+    else:
+        with P(0.2):
+            Execute down
+        or Execute up with P(0.8)
+
+Policy missing_conditional:
+    if S[0] == -1:
+        Execute up
