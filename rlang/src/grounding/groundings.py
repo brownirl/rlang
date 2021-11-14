@@ -287,31 +287,6 @@ class ConstantGrounding(PrimitiveGrounding):
         return f"<Constant \"{self.name}\" = {self()}>"
 
 
-class ActionReferenceOld(PrimitiveGrounding):
-    """Represents a reference to a specified action.
-
-    Args:
-        action: the action.
-        name (optional): name of the action.
-    """
-
-    def __init__(self, action: Any, name: str = None):
-        if isinstance(action, (int, float, list)):
-            action = Action(np.array(action))
-        elif isinstance(action, GroundingFunction):
-            if action.domain == Domain.ANY:
-                action = Action(np.array(action()))
-            else:
-                raise RLangGroundingError(f"Actions cannot be functions of {action.domain.name}")
-        super().__init__(codomain=Domain.ACTION, value=action, name=name)
-
-    def __hash__(self):
-        return self._name.__hash__()
-
-    def __repr__(self):
-        return f"<ActionReference \"{self.name}\" = {self()}>"
-
-
 class ActionReference(GroundingFunction):
     """Represents a reference to a specified action.
 
@@ -319,7 +294,7 @@ class ActionReference(GroundingFunction):
         action: the action.
         name (optional): name of the action.
     """
-
+    # TODO: Clean this up. This object represents functions to Actions
     def __init__(self, action: Any, name=None, *args, **kwargs):
         if isinstance(action, (int, float, list)):
             function = lambda *sargs, **skwargs: Action(np.array(action))
@@ -327,8 +302,6 @@ class ActionReference(GroundingFunction):
         elif isinstance(action, GroundingFunction):
             function = action.__call__
             domain = action.domain
-            # if action.domain == Domain.ANY:
-            #     action = Action(np.array(action()))
         else:
             raise RLangGroundingError(f"Actions cannot be of type {type(action)}")
         super().__init__(domain=domain, codomain=Domain.ACTION, function=function, name=name, *args, **kwargs)
@@ -555,16 +528,6 @@ class ProbabilisticFunction(GroundingFunction):
         self._probability = self._probability * probability
 
 
-class PolicyComplete:
-    def __repr__(self):
-        return "Policy finished execution"
-
-
-class ActionExecution(GroundingFunction):
-    def __init__(self, function: GroundingFunction):
-        pass
-
-
 class ActionDistribution(MutableMapping):
     """Represents a distribution of possible next actions, options, or policies
 
@@ -780,22 +743,22 @@ class Option(Grounding):
     """
 
     def __init__(self, initiation: Proposition, policy: Policy, termination: Proposition, name: str = None):
-        self._initiation = initiation
-        self._termination = termination
-        self._policy = policy
-        self._policy_is_iterable = False
+        self.initiation = initiation
+        self.termination = termination
+        self.policy = policy
+        self._policy_is_iterable = False    # TODO: Fix this
         if isinstance(policy.function, (types.GeneratorType, _tee)):
             self._policy_is_iterable = True
         super().__init__(name)
 
     def __len__(self):
-        return len(self._policy)
+        return 0    # TODO: Get rid of this
 
     def __call__(self, *args, **kwargs):
-        if self._termination(*args, **kwargs):
+        if self.termination(*args, **kwargs):
             return 'option_termination'
         else:
-            return self._policy(*args, **kwargs)
+            return self.policy(*args, **kwargs)
 
     def can_initiate(self, *args, **kwargs) -> bool:
         """Determines whether the option can be executed in a given state.
@@ -806,10 +769,10 @@ class Option(Grounding):
         Returns:
             bool: True iff the option can be executed in the given state.
         """
-        return self._initiation(*args, **kwargs)
+        return self.initiation(*args, **kwargs)
 
     def __hash__(self):
-        return hash((self._initiation, self._policy, self._termination))
+        return hash((self.initiation, self.policy, self.termination))
 
     def __repr__(self):
         return f"<Option \"{self.name}\">"
@@ -919,15 +882,15 @@ class Prediction(ProbabilisticFunction):
             raise RLangGroundingError(
                 f"Prediction value type ({codomain.name}) does not match grounding function type ({grounding_function.codomain.name})")
 
-        self._grounding_function = grounding_function
+        self.grounding_function = grounding_function
         super().__init__(codomain=codomain, function=function, domain=domain, name=name, probability=probability)
 
     @property
     def predicted_grounding(self):
-        return self._grounding_function
+        return self.grounding_function
 
     def __repr__(self):
-        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self._grounding_function.name}\" with P({self.probability})>"
+        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self.grounding_function.name}\" with P({self.probability})>"
 
 
 class Effect(Grounding):

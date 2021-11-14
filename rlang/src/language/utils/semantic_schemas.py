@@ -1,5 +1,4 @@
 """These functions are used by the listener during the construction of PolicyOld, Option, and Effect objects"""
-from grounding import PolicyComplete
 
 
 def policy_generator_function(statements):
@@ -22,28 +21,6 @@ def conditional_policy_function(if_condition, if_subpolicy, elif_conditions=None
                 return elif_subpolicies[i](*args, **kwargs)
         if else_subpolicy is not None:
             return else_subpolicy(*args, **kwargs)
-
-
-def subpolicy_dict_function(subpolicies, *args, **kwargs):
-    subpolicy_dict = dict()
-    for sp in subpolicies:
-        k = sp(*args, **kwargs)
-        if k in subpolicy_dict:
-            subpolicy_dict.update({k: subpolicy_dict[k] + k.probability})
-        else:
-            subpolicy_dict.update({k: k.probability})
-        # if len(sp) == 1:
-        #     k = list(sp(*args, **kwargs).keys())[0]
-        #     if k in subpolicy_dict:
-        #         subpolicy_dict.update({k: subpolicy_dict[k] + sp.probability})
-        #     else:
-        #         subpolicy_dict.update({k: sp.probability})
-        # else:
-        #     if sp in subpolicy_dict:
-        #         subpolicy_dict.update({sp: subpolicy_dict[sp] + sp.probability})
-        #     else:
-        #         subpolicy_dict.update({sp: sp.probability})
-    return subpolicy_dict
 
 
 def effect_transition_dict_function(transitions, *args, **kwargs):

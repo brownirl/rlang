@@ -231,6 +231,9 @@ class ListenerTests(unittest.TestCase):
         missing_conditional = knowledge['missing_conditional']
         assert missing_conditional(state=s) == {}
 
+    def test_Effect(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()
