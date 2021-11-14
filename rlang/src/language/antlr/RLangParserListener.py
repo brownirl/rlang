@@ -80,12 +80,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#predicate.
-    def enterPredicate(self, ctx:RLangParser.PredicateContext):
+    # Enter a parse tree produced by RLangParser#proposition.
+    def enterProposition(self, ctx:RLangParser.PropositionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#predicate.
-    def exitPredicate(self, ctx:RLangParser.PredicateContext):
+    # Exit a parse tree produced by RLangParser#proposition.
+    def exitProposition(self, ctx:RLangParser.PropositionContext):
         pass
 
 

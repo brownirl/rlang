@@ -117,55 +117,55 @@ class ListenerTests(unittest.TestCase):
                 'y']
         assert (x_parsed(state=state)) == 5 / 4
 
-    def test_Predicate(self):
+    def test_Proposition(self):
         metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         state = State(np.array([4, 5, 6, 7, 8]))
 
         hi_parsed = \
             rlang.parse(
-                "Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False",
+                "Factor position := S[0, 1]\nFeature x := position[0]\nProposition hi := x == 1 and True or False",
                 metadata)['hi']
         position = Factor([0, 1], "position")
         x = Feature(position[0])
-        hi = Predicate(x == 1 & True | False)
+        hi = Proposition(x == 1 & True | False)
         assert hi(state=state) == hi_parsed(state=state)
 
-        hi_parsed = rlang.parse("Predicate hi := True or False and True == True and 14 == 14", metadata)['hi']
+        hi_parsed = rlang.parse("Proposition hi := True or False and True == True and 14 == 14", metadata)['hi']
         assert hi_parsed(state=state) == True
 
-        hi_parsed = rlang.parse("Predicate hi := True or False and False or True", metadata)['hi']
+        hi_parsed = rlang.parse("Proposition hi := True or False and False or True", metadata)['hi']
         assert hi_parsed(state=state) == True
 
-        x_parsed = rlang.parse("Predicate x := [0] in [[2], [1], [2, 3]]", metadata)['x']
+        x_parsed = rlang.parse("Proposition x := [0] in [[2], [1], [2, 3]]", metadata)['x']
         assert x_parsed(state=state) == [[False]]
 
-        x_parsed = rlang.parse("Predicate x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
+        x_parsed = rlang.parse("Proposition x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
         assert x_parsed(state=state) == [[True]]
 
         state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Factor h := S[0, 1]\nPredicate x := h in [[0, 1], [2, 3]]", metadata)['x']
+        x_parsed = rlang.parse("Factor h := S[0, 1]\nProposition x := h in [[0, 1], [2, 3]]", metadata)['x']
 
         # TODO: fix this
         # QUESTION: why is this true because isn't [5, 6] not in the array
         assert x_parsed(state=state2) == [[True]]
 
         state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Predicate x := S[0] == [[0], [5]]", metadata)['x']
+        x_parsed = rlang.parse("Proposition x := S[0] == [[0], [5]]", metadata)['x']
         assert ((x_parsed(state=state2)) == [[True], [True]]).all()
 
-        test_parsed = rlang.parse("Feature f := S[0, 1] * 3\nPredicate test := f == [3, 6]", metadata)["test"]
+        test_parsed = rlang.parse("Feature f := S[0, 1] * 3\nProposition test := f == [3, 6]", metadata)["test"]
         state3 = State(np.array([[1, 2], [1, 1]]))
         assert ((test_parsed(state=state3)) == [[True], [False]]).all()
 
         state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Predicate x := S[0] == [[0], [1]]", metadata)['x']
+        x_parsed = rlang.parse("Proposition x := S[0] == [[0], [1]]", metadata)['x']
         assert ((x_parsed(state=state2)) == [[True], [False]]).all()
 
         # QUESTION: just to confirm, we cannot compare between instances of PrimitiveGroundings
         # x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nFeature y := position[0]\nPredicate test3 := x < y", metadata)['x']
         # print(x_parsed(state=state2))
 
-        up_parsed = rlang.parse("Action up := -1.3\nPredicate x := up == A", metadata)['x']
+        up_parsed = rlang.parse("Action up := -1.3\nProposition x := up == A", metadata)['x']
         up = ActionReference(-1.3, "up")
         assert up_parsed(state=state2, action=up) == [[True]]
         assert up_parsed(state=state2, action=Action(-1.3)) == [[True]]
@@ -191,7 +191,6 @@ class ListenerTests(unittest.TestCase):
         s = State([0, 1, 2, 3, 4])
         s2 = State([1, 1, 2, 3, 4])
 
-        # Simple 1-layer tests
         knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
 
         simple = knowledge['simple']

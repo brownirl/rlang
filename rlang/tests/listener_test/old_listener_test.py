@@ -80,36 +80,36 @@ def test_Predicate():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     state = State(np.array([4, 5, 6, 7, 8]))
 
-    hi_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nPredicate hi := x == 1 and True or False", metadata)['hi']
+    hi_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nProposition hi := x == 1 and True or False", metadata)['hi']
     position = Factor([0, 1], "position")
     x = Feature(position[0])
-    hi = Predicate(x == 1 & True | False)
+    hi = Proposition(x == 1 & True | False)
     assert hi(state=state) == hi_parsed(state=state)
 
-    hi_parsed = rlang.parse("Predicate hi := True or False and True == True and 14 == 14", metadata)['hi']
+    hi_parsed = rlang.parse("Proposition hi := True or False and True == True and 14 == 14", metadata)['hi']
     print(hi_parsed(state=state))
     assert hi_parsed(state=state) == True
 
-    hi_parsed = rlang.parse("Predicate hi := True or False and False or True", metadata)['hi']
+    hi_parsed = rlang.parse("Proposition hi := True or False and False or True", metadata)['hi']
     print(hi_parsed(state=state))
 
-    x_parsed = rlang.parse("Predicate x := [0] in [[2], [1], [2, 3]]", metadata)['x']
+    x_parsed = rlang.parse("Proposition x := [0] in [[2], [1], [2, 3]]", metadata)['x']
     print(x_parsed(state=state))
 
-    x_parsed = rlang.parse("Predicate x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
+    x_parsed = rlang.parse("Proposition x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
     print(x_parsed(state=state))
 
     print("Down here")
 
     state2 = State(np.array([[0, 1], [5, 6]]))
-    x_parsed = rlang.parse("Factor h := S[0, 1]\nPredicate x := h in [[0, 1], [2, 3]]", metadata)['x']
+    x_parsed = rlang.parse("Factor h := S[0, 1]\nProposition x := h in [[0, 1], [2, 3]]", metadata)['x']
     print(x_parsed(state=state2))
 
     state2 = State(np.array([[0, 1], [5, 6]]))
-    x_parsed = rlang.parse("Predicate x := S[:2] == [0,1]", metadata)['x']
+    x_parsed = rlang.parse("Proposition x := S[:2] == [0,1]", metadata)['x']
     print(x_parsed(state=state2))
 
-    # TODO: Need more tests for Predicate
+    # TODO: Need more tests for Proposition
 
 
 def test_Action():

@@ -92,10 +92,10 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot construct Factor with object type {type(ctx.any_bound_var().value)}")
         self.addVariable(new_factor.name, new_factor)
 
-    def exitPredicate(self, ctx: RLangParser.PredicateContext):
-        new_predicate = ctx.boolean_exp().value
-        new_predicate.name = ctx.IDENTIFIER().getText()
-        self.addVariable(new_predicate.name, new_predicate)
+    def exitProposition(self, ctx: RLangParser.PropositionContext):
+        new_proposition = ctx.boolean_exp().value
+        new_proposition.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_proposition.name, new_proposition)
 
     def exitGoal(self, ctx: RLangParser.GoalContext):
         pass
@@ -131,7 +131,7 @@ class RLangListener(RLangParserListener):
         if ctx.boolean_exp():
             ctx.value = ctx.boolean_exp().value
         else:
-            ctx.value = Predicate.TRUE()
+            ctx.value = Proposition.TRUE()
 
     # ============================= Policy =============================
 
@@ -585,18 +585,18 @@ class RLangListener(RLangParserListener):
         ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (Predicate, PrimitiveGrounding)):
+        if not isinstance(ctx.any_bound_var().value, (Proposition, PrimitiveGrounding)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
-            ctx.value = Predicate.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
+            ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
         else:
             ctx.value = ctx.any_bound_var().value
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
         if ctx.TRUE() is not None:
-            ctx.value = Predicate(function=lambda *args, **kwargs: True, domain=Domain.ANY)
+            ctx.value = Proposition(function=lambda *args, **kwargs: True, domain=Domain.ANY)
         elif ctx.FALSE() is not None:
-            ctx.value = Predicate(function=lambda *args, **kwargs: False, domain=Domain.ANY)
+            ctx.value = Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())

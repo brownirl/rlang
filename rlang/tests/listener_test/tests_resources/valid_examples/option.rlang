@@ -3,9 +3,9 @@ Action down := -1
 Action left := 2
 Action right := -2
 
-Predicate a := S[0] == 0
-Predicate b := S[0] == 1
-Predicate c := S[0] == 2
+Proposition a := S[0] == 0
+Proposition b := S[0] == 1
+Proposition c := S[0] == 2
 
 Policy test2:
 	if False:

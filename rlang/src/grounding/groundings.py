@@ -109,18 +109,18 @@ class GroundingFunction(Grounding):
         unbatch_cast = lambda x, j: np.asarray(x)[j] if isinstance(x, BatchedPrimitive) else x
         unbatch_size = lambda x: len(x) if isinstance(x, BatchedPrimitive) else 1
         if isinstance(item, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: [
+            return Proposition(function=lambda *args, **kwargs: [
                 [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
                 range(unbatch_size(item))],
-                             domain=self.domain + item.domain)
+                               domain=self.domain + item.domain)
         elif isinstance(item, BatchedPrimitive):
-            return Predicate(function=lambda *args, **kwargs: [
+            return Proposition(function=lambda *args, **kwargs: [
                 [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
                 range(unbatch_size(item))],
-                             domain=self.domain)
+                               domain=self.domain)
         if isinstance(item, (int, float, np.ndarray)):
-            return Predicate(function=lambda *args, **kwargs: [list_cast(item) in list_cast(self(*args, **kwargs))],
-                             domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: [list_cast(item) in list_cast(self(*args, **kwargs))],
+                               domain=self.domain)
         raise RLangGroundingError(message=f"Object of type {type(item)} cannot be in a GroundingFunction")
 
     def __call__(self, *args, **kwargs):
@@ -139,44 +139,44 @@ class GroundingFunction(Grounding):
 
     def __lt__(self, other):
         if isinstance(other, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs),
-                             domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs),
+                               domain=self.domain + other.domain)
         if isinstance(other, Callable):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) < other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) < other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '<' a {type(self)} and a {type(other)}")
 
     def __le__(self, other):
         if isinstance(other, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs),
-                             domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs),
+                               domain=self.domain + other.domain)
         if isinstance(other, Callable):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
 
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
-                             domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
+                               domain=self.domain + other.domain)
         if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
 
     def __ne__(self, other):
         if isinstance(other, GroundingFunction):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs),
-                             domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs),
+                               domain=self.domain + other.domain)
         if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) != other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '!=' a {type(self)} and a {type(other)}")
 
     def __mul__(self, other):
@@ -462,15 +462,15 @@ class MarkovFeature(GroundingFunction):
         return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class Predicate(GroundingFunction):
+class Proposition(GroundingFunction):
     """Represents a function which has a truth value.
 
-    A Predicate is a feature with a codomain restricted to True or False.
+    A Proposition is a feature with a codomain restricted to True or False.
 
     Args:
         function: a function of state that evaluates to a bool.
         name (optional): the name of the grounding.
-        domain (optional [str]): the domain of the Predicate.
+        domain (optional [str]): the domain of the Proposition.
     """
 
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
@@ -480,7 +480,7 @@ class Predicate(GroundingFunction):
     def from_PrimitiveGrounding(cls, primitive_grounding: PrimitiveGrounding):
         if primitive_grounding.codomain != Domain.BOOLEAN:
             raise RLangGroundingError(
-                f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Predicate")
+                f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
     @classmethod
@@ -491,42 +491,42 @@ class Predicate(GroundingFunction):
     def FALSE(cls):
         return cls(function=lambda *args, **kwargs: False, domain=Domain.ANY)
 
-    def __and__(self, other) -> Predicate:
-        if isinstance(other, Predicate):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs),
-                             domain=self.domain + other.domain)
+    def __and__(self, other) -> Proposition:
+        if isinstance(other, Proposition):
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs),
+                               domain=self.domain + other.domain)
         if isinstance(other, Callable):
             # TODO: We must know the domain of Callable to properly track the domain
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs))
         if isinstance(other, bool):
-            return self if other else Predicate(function=lambda *args, **kwargs: False, domain=Domain.ANY)
-        raise RLangGroundingError(message=f"Cannot & a Predicate with a {type(other)}")
+            return self if other else Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
+        raise RLangGroundingError(message=f"Cannot & a Proposition with a {type(other)}")
 
     def __rand__(self, other):
         return self.__and__(other)
 
-    def __or__(self, other) -> Predicate:
-        if isinstance(other, Predicate):
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs),
-                             domain=self.domain + other.domain)
-        if isinstance(other, (Predicate, Callable)):
+    def __or__(self, other) -> Proposition:
+        if isinstance(other, Proposition):
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs),
+                               domain=self.domain + other.domain)
+        if isinstance(other, (Proposition, Callable)):
             # TODO: We must know the domain of Callable to properly track the domain
-            return Predicate(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs))
         if isinstance(other, bool):
-            return self if not other else Predicate(function=lambda *args, **kwargs: True, domain=Domain.ANY)
-        raise RLangGroundingError(message=f"Cannot | a Predicate with a {type(other)}")
+            return self if not other else Proposition(function=lambda *args, **kwargs: True, domain=Domain.ANY)
+        raise RLangGroundingError(message=f"Cannot | a Proposition with a {type(other)}")
 
     def __ror__(self, other):
         return self.__or__(other)
 
-    def __invert__(self) -> Predicate:
-        return Predicate(function=lambda *args, **kwargs: bool(not self(*args, **kwargs)), domain=self.domain)
+    def __invert__(self) -> Proposition:
+        return Proposition(function=lambda *args, **kwargs: bool(not self(*args, **kwargs)), domain=self.domain)
 
     def __hash__(self):
         return self._function.__hash__()
 
     def __repr__(self):
-        return f"<Predicate [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        return f"<Proposition [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
 class ValueFunction(GroundingFunction):
@@ -773,13 +773,13 @@ class Option(Grounding):
     """Grounding object for an option.
 
     Args:
-        initiation: A Predicate capturing the initiation set of the option.
+        initiation: A Proposition capturing the initiation set of the option.
         policy: A PolicyOld capturing the policy of the option.
-        termination: A Predicate capturing the termination set of the option.
+        termination: A Proposition capturing the termination set of the option.
         name (optional): the name of the grounding.
     """
 
-    def __init__(self, initiation: Predicate, policy: Policy, termination: Predicate, name: str = None):
+    def __init__(self, initiation: Proposition, policy: Policy, termination: Proposition, name: str = None):
         self._initiation = initiation
         self._termination = termination
         self._policy = policy

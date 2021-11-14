@@ -31,7 +31,7 @@ NL: ('\r'? '\n' ' '*) | ('\r'? '\n' '\t'*);
  */
 
 IMPORT: 'import';
-PREDICATE: 'Predicate';
+PROPOSITION: 'Proposition';
 FEATURE: 'Feature';
 FACTOR: 'Factor';
 GOAL: 'Goal';

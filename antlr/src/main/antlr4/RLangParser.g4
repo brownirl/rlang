@@ -15,7 +15,7 @@ dec
     : constant NL+
     | action NL+
     | factor NL+
-    | predicate NL+
+    | proposition NL+
     | goal NL+
     | feature NL+
     | markov_feature NL+
@@ -28,7 +28,7 @@ dec
 constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
 action: ACTION IDENTIFIER BIND (any_number | any_num_array_exp);
 factor: FACTOR IDENTIFIER BIND any_bound_var;
-predicate: PREDICATE IDENTIFIER BIND boolean_exp;
+proposition: PROPOSITION IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
