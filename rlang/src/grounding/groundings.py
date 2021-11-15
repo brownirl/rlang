@@ -981,57 +981,6 @@ class Prediction(ProbabilisticFunction):
             additional_info += f" \"{self.name}\""
         return f"<Prediction [{self.domain.name}]->[{self.codomain.name}]{additional_info} for Grounding: {self.grounding.name}>"
 
-# # TODO: test
-# class Prediction(ProbabilisticFunction):
-#     """GroundingFunction for a prediction for the value of a GroundingFunction.
-#
-#     This should be used for Factors, Features, and Predicates
-#     which are limited to functions of (state) or (state, action).
-#
-#     Args:
-#         grounding_function: a GroundingFunction
-#         value: the predicted value of the GroundingFunction (can also be a GroundingFunction)
-#     """
-#
-#     def __init__(self, grounding_function: GroundingFunction, value: Any, name: str = None,
-#                  domain: Domain = Domain.STATE_ACTION, probability: float = 1.0):
-#         if isinstance(value, (bool, int, float, np.ndarray)):
-#             domain = Domain.ANY
-#             if isinstance(value, bool) or (isinstance(value, np.ndarray) and value.dtype == np.bool):
-#                 codomain = Domain.BOOLEAN
-#             else:
-#                 codomain = Domain.REAL_VALUE
-#             function = lambda *args, **kwargs: {PrimitiveGrounding(codomain=codomain, value=np.array(value)): 1.0}
-#         elif isinstance(value, GroundingFunction):
-#             if value.domain <= Domain.STATE_ACTION:
-#                 function = value
-#                 codomain = value.codomain
-#             else:
-#                 raise RLangGroundingError(f"Cannot construct a Prediction based on a {value.domain.name}")
-#         elif isinstance(value, Callable):
-#             function = value
-#             codomain = grounding_function.codomain
-#         else:
-#             raise RLangGroundingError(f"Cannot construct a Prediction from value of type {type(value)}")
-#
-#         if grounding_function.domain > Domain.STATE_ACTION:
-#             raise RLangGroundingError(
-#                 f"Cannot predict the value of a GroundingFunction with domain {grounding_function.domain.name}")
-#
-#         if grounding_function.codomain != codomain:
-#             raise RLangGroundingError(
-#                 f"Prediction value type ({codomain.name}) does not match grounding function type ({grounding_function.codomain.name})")
-#
-#         self.grounding_function = grounding_function
-#         super().__init__(codomain=codomain, function=function, domain=domain, name=name, probability=probability)
-#
-#     @property
-#     def predicted_grounding(self):
-#         return self.grounding_function
-#
-#     def __repr__(self):
-#         return f"<Prediction [{self.domain.name}]->[{self.codomain.name}] for \"{self.grounding_function.name}\" with P({self.probability})>"
-
 
 class Effect(Grounding):
     def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
@@ -1039,9 +988,8 @@ class Effect(Grounding):
                  probability: float = 1.0):
         if predictions is None:
             predictions = list()
-        self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
-        self.transition_function = transition_function if transition_function else TransitionFunction.from_state_distribution(
-            StateDistribution())
+        self.reward_function = reward_function
+        self.transition_function = transition_function
         self.predictions = predictions
         self.probability = probability
         super().__init__(name=name)

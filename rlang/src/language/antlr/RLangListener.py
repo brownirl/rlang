@@ -255,8 +255,23 @@ class RLangListener(RLangParserListener):
     def exitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
         all_statements = [statement.value for statement in ctx.statements]
 
+        # Effect references
+        effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
+        effect_transitions = list()
+        effect_rewards = list()
+        effect_predictions = list()
+
+        for e in effects:
+            if e.transition_function is not None:
+                effect_transitions.append(e.transition_function)
+            if e.predictions:
+                effect_predictions.extend(e.predictions)
+            if e.reward_function is not None:
+                effect_rewards.append(e.reward_function)
+
         # TransitionFunctions
         transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
+        transition_functions.extend(effect_transitions)
         state_distributions = list(filter(lambda x: isinstance(x, StateDistribution), all_statements))
 
         combined_sd = StateDistribution()
@@ -268,6 +283,7 @@ class RLangListener(RLangParserListener):
 
         # Rewards
         reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
+        reward_functions.extend(effect_rewards)
         reward_distributions = list(filter(lambda x: isinstance(x, RewardDistribution), all_statements))
 
         combined_rd = RewardDistribution()
@@ -278,6 +294,7 @@ class RLangListener(RLangParserListener):
 
         # Predictions
         predictions = list(filter(lambda x: isinstance(x, Prediction), all_statements))
+        predictions.extend(effect_predictions)
         grounding_distributions = list(filter(lambda x: isinstance(x, GroundingDistribution), all_statements))
 
         predicted_groundings = list(
@@ -496,13 +513,6 @@ class RLangListener(RLangParserListener):
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
-            #     raise RLangSemanticError("")
-            # ctx.value = Prediction(grounding_function=grounding_function,
-            #                        value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
-            #                                                                          value=ctx.arithmetic_exp().value(
-            #                                                                              *args, **kwargs)): 1.0},
-            #                        domain=ctx.arithmetic_exp().value.domain)
             ctx.value = GroundingDistribution.from_single(ctx.arithmetic_exp().value, grounding_function)
         elif ctx.S_PRIME() is not None:
             ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
@@ -510,7 +520,7 @@ class RLangListener(RLangParserListener):
     def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
         effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
         if not isinstance(effect, Effect):
-            raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
+            raise RLangSemanticError(f"Can only use this syntax to reference Effects")
         ctx.value = effect
 
     def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
