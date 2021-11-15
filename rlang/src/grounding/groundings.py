@@ -953,7 +953,8 @@ class Effect(Grounding):
         if predictions is None:
             predictions = list()
         self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
-        self.transition_function = transition_function if transition_function else TransitionFunction(domain=Domain.ANY)
+        self.transition_function = transition_function if transition_function else TransitionFunction.from_state_distribution(
+            StateDistribution())
         self.predictions = predictions
         self.probability = probability
         super().__init__(name=name)
