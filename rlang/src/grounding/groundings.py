@@ -774,7 +774,7 @@ class GroundingDistribution(ProbabilityDistribution):
 
     @classmethod
     def from_single(cls, k, *args, **kwargs):
-        return cls(args[0], {k: 1.0})
+        return cls(kwargs['g'], {k: 1.0})
 
     @classmethod
     def from_list_eq(cls, ks, *args, **kwargs):

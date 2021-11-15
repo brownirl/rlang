@@ -239,11 +239,11 @@ class RLangListener(RLangParserListener):
 
         new_predictions = list()
         for grounding in predicted_groundings:
-            predictions_g = list(filter(lambda x: x.grounding.name == grounding.name, predictions))
+            predictions_g = list(filter(lambda x: x.grounding.equals(grounding), predictions))
 
             combined_gd = GroundingDistribution(grounding)
             [combined_gd.join(gd) for gd in
-             list(filter(lambda x: x.grounding.name == grounding.name, grounding_distributions))]
+             list(filter(lambda x: x.grounding.equals(grounding), grounding_distributions))]
 
             predictions_g.append(Prediction.from_grounding_distribution(grounding, combined_gd))
 
@@ -285,29 +285,35 @@ class RLangListener(RLangParserListener):
         else_reward = else_effect.reward_function
 
         domain = reduce(lambda a, b: a + b.domain,
-                        [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])
-
-        reward_function = RewardFunction(
-            reward=lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
-                                                                       elif_rewards, else_reward, *args, **kwargs),
+                        list(filter(lambda x: x is not None,
+                                    [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])))
+        reward_feature = RewardFunction(
+            lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
+                                                                elif_rewards, else_reward, *args, **kwargs),
             domain=domain)
+        # TODO: I'm not sure this is necessary
+        reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_single(reward_feature))
 
-        # Predictions
-        #   -> TransitionFunctions
+        # TransitionFunctions
         if_transition = if_effect.transition_function
         elif_transitions = [elif_effect.transition_function for elif_effect in elif_effects]
         else_transition = else_effect.transition_function
 
         domain = reduce(lambda a, b: a + b.domain,
-                        [if_condition.domain, if_transition, *elif_conditions, *elif_transitions, else_transition])
+                        list(filter(lambda x: x is not None,
+                                    [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
+                                     else_transition])))
 
         transition_function = TransitionFunction(
             function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
                                                                              elif_conditions, elif_transitions,
                                                                              else_transition, *args, **kwargs),
             domain=domain)
+        # TODO: I'm not sure this is necessary
+        transition_function = TransitionFunction.from_state_distribution(
+            StateDistribution.from_single(transition_function))
 
-        #   -> Predictions
+        # Predictions
         if_predictions = if_effect.predictions
         elif_predictions = [elif_effect.predictions for elif_effect in elif_effects]
         else_predictions = else_effect.predictions
@@ -318,65 +324,63 @@ class RLangListener(RLangParserListener):
             all_predictions.extend(preds)
         all_predictions.extend(else_predictions)
 
-        all_predicted_groundings = list(set([pred.predicted_grounding for pred in all_predictions]))
+        predicted_groundings = list({pred.grounding for pred in all_predictions})
 
         domain = reduce(lambda a, b: a + b.domain,
                         [if_condition.domain, *elif_conditions])
+
         new_predictions = list()
 
-        for predicted_grounding in all_predicted_groundings:
-            new_domain = copy.deepcopy(domain)
-            if_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), if_predictions))
-            if len(if_preds) > 1:
-                raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
-            elif len(if_preds) == 0:
-                if_pred = None
+        for grounding in predicted_groundings:
+            new_domain = Domain.ANY + domain
+            if_preds = list(filter(lambda x: x.grounding.equals(grounding), if_predictions))
+            if len(if_preds) > 0:
+                if_preds = GroundingDistribution.from_list_eq(if_preds, grounding)
+                new_domain += if_preds.domain
             else:
-                if_pred = if_preds[0]
-                new_domain = new_domain + if_pred.domain
+                if_preds = None
 
             elif_preds = list()
             for preds in elif_predictions:
-                e_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), preds))
-                if len(e_preds) > 1:
-                    raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
-                elif len(e_preds) == 0:
-                    elif_pred = None
+                e_preds = list(filter(lambda x: x.grounding.equals(grounding), preds))
+                if len(e_preds) > 0:
+                    e_preds = GroundingDistribution.from_list_eq(e_preds, grounding)
+                    new_domain += e_preds.domain
                 else:
-                    elif_pred = e_preds[0]
-                    new_domain = new_domain + elif_pred.domain
-                elif_preds.append(elif_pred)
+                    e_preds = None
+                elif_preds.append(e_preds)
 
-            else_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), else_predictions))
-            if len(else_preds) > 1:
-                raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
-            elif len(else_preds) == 0:
-                else_pred = None
+            else_preds = list(filter(lambda x: x.grounding.equals(grounding), else_predictions))
+            if len(else_preds) > 0:
+                else_preds = GroundingDistribution.from_list_eq(else_preds, grounding)
+                new_domain += else_preds.domain
             else:
-                else_pred = else_preds[0]
-                new_domain = new_domain + else_pred.domain
+                else_preds = None
 
-            # TODO: Add domain to this
-            new_prediction = Prediction(grounding_function=predicted_grounding,
-                                        value=lambda *args, **kwargs: conditional_prediction_function(if_condition,
-                                                                                                      if_pred,
-                                                                                                      elif_conditions,
-                                                                                                      elif_preds,
-                                                                                                      else_pred,
-                                                                                                      *args, **kwargs),
+            new_prediction = Prediction(grounding, lambda *args, **kwargs: conditional_prediction_function(if_condition,
+                                                                                                           if_preds,
+                                                                                                           elif_conditions,
+                                                                                                           elif_preds,
+                                                                                                           else_preds,
+                                                                                                           *args,
+                                                                                                           **kwargs),
                                         domain=new_domain)
+            # TODO: I'm not sure this is necessary
+            new_prediction = Prediction.from_grounding_distribution(grounding,
+                                                                    GroundingDistribution.from_single(new_prediction,
+                                                                                                      g=grounding))
             new_predictions.append(new_prediction)
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
-                            predictions=new_predictions)
-        ctx.value = new_effect
+        ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
+                           predictions=new_predictions)
 
     def exitProbabilistic_effect(self, ctx: RLangParser.Probabilistic_effectContext):
         # Rewards
         reward_statements = [statement.value.reward_function for statement in ctx.effects]
         reward_statements = list(filter(lambda x: x, reward_statements))
         if reward_statements:
-            reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_statements))
+            reward_function = RewardFunction.from_reward_distribution(
+                RewardDistribution.from_list_eq(reward_statements))
         else:
             reward_function = None
 
@@ -384,7 +388,8 @@ class RLangListener(RLangParserListener):
         transition_statements = [statement.value.transition_function for statement in ctx.effects]
         transition_statements = list(filter(lambda x: x, transition_statements))
         if transition_statements:
-            transition_function = TransitionFunction.from_state_distribution(StateDistribution.from_list_eq(transition_statements))
+            transition_function = TransitionFunction.from_state_distribution(
+                StateDistribution.from_list_eq(transition_statements))
         else:
             transition_function = None
 
@@ -397,25 +402,14 @@ class RLangListener(RLangParserListener):
         new_predictions = list()
 
         for grounding in predicted_groundings:
-            predictions_g = list(filter(lambda x: x.grounding.name == grounding.name, prediction_statements))
-            prediction = Prediction.from_grounding_distribution(grounding, GroundingDistribution.from_list_eq(predictions_g, grounding))
+            predictions_g = list(filter(lambda x: x.grounding.equals(grounding), prediction_statements))
+            prediction = Prediction.from_grounding_distribution(grounding,
+                                                                GroundingDistribution.from_list_eq(predictions_g,
+                                                                                                   grounding))
             new_predictions.append(prediction)
 
-        # all_predicted_groundings = list(set([pred.predicted_grounding for pred in prediction_statements]))
-        #
-        # new_predictions = list()
-        # for predicted_grounding in all_predicted_groundings:
-        #     shared_predictions = list(
-        #         filter(lambda x: x.predicted_grounding.equals(predicted_grounding), prediction_statements))
-        #     domain = reduce(lambda a, b: a + b.domain, [shared_predictions[0].domain, *shared_predictions[1:]])
-        #     new_prediction = Prediction(grounding_function=predicted_grounding,
-        #                                 value=lambda *args, **kwargs: effect_transition_dict_function(
-        #                                     shared_predictions, *args, **kwargs),
-        #                                 domain=domain)
-        #     new_predictions.append(new_prediction)
-
         ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
-                            predictions=new_predictions)
+                           predictions=new_predictions)
 
     def exitProbabilistic_effect_statement_no_sugar(self,
                                                     ctx: RLangParser.Probabilistic_effect_statement_no_sugarContext):
@@ -427,8 +421,12 @@ class RLangListener(RLangParserListener):
             reward_function = ctx.reward().value
             ctx.value = Effect(reward_function=reward_function)
         elif ctx.prediction() is not None:
-            predictions = [ctx.prediction().value]
-            ctx.value = Effect(predictions=predictions)
+            if isinstance(ctx.prediction().value, StateDistribution):
+                ctx.value = Effect(
+                    transition_function=TransitionFunction.from_state_distribution(ctx.prediction().value))
+            elif isinstance(ctx.prediction().value, GroundingDistribution):
+                ctx.value = Effect(predictions=[
+                    Prediction.from_grounding_distribution(ctx.prediction().value.grounding, ctx.prediction().value)])
         else:
             ctx.value = ctx.effect_reference().value
         ctx.value.compose_probabilities(ctx.probabilistic_condition().value)
@@ -447,7 +445,7 @@ class RLangListener(RLangParserListener):
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            ctx.value = GroundingDistribution.from_single(ctx.arithmetic_exp().value, grounding_function)
+            ctx.value = GroundingDistribution.from_single(ctx.arithmetic_exp().value, g=grounding_function)
         elif ctx.S_PRIME() is not None:
             ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
 
