@@ -29,7 +29,7 @@ class RLangKnowledge(MutableMapping):
 
     def __init__(self):
         self.store = dict()
-        self._reward_function = RewardFunction(reward=0)
+        self._reward_function = RewardFunction()
         self._transition_function = TransitionFunction()
         self._predictions = dict()
         self._mdp_metadata = None

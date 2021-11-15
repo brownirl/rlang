@@ -280,7 +280,7 @@ class PrimitiveGrounding(GroundingFunction):
             return f"<PrimitiveGrounding: {self()}>"
 
     def __hash__(self):
-        return hash((str(self), self.value))
+        return hash((str(self), str(self.value)))
 
 
 class ConstantGrounding(PrimitiveGrounding):
@@ -695,6 +695,45 @@ class StateDistribution(ProbabilityDistribution):
         self.calculated = True
 
 
+class RewardDistribution(ProbabilityDistribution):
+    def __init__(self, distribution=None):
+        if distribution:
+            pass
+            # ensure that everything is a Reward or something
+        super().__init__(distribution=distribution)
+
+    def calculate_true_distribution(self):
+        def update_dictionary(k_, v_):
+            if isinstance(k_, (dict, ProbabilityDistribution)):
+                for k__, v__ in k_.items():
+                    if isinstance(k__, BatchedPrimitive):
+                        update_dictionary(k__, v_*v__)
+                    else:
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+            elif k_ is not None:
+                if isinstance(k_, BatchedPrimitive):
+                    a = k_
+                else:
+                    a = BatchedPrimitive(k_)
+                if a in true_distribution:
+                    true_distribution[a] += v_
+                else:
+                    true_distribution[a] = v_
+
+        true_distribution = dict()
+        update_dictionary(self.distribution, 1.0)
+
+        self.true_distribution = true_distribution
+        self.calculated = True
+
+    def expected(self):
+        expected_reward = 0
+        for k, v in self.true_distribution.items():
+            expected_reward += k * v
+
+        return expected_reward
+
+
 class Policy(ProbabilisticFunction):
     """Represents a closed-loop policy function
 
@@ -846,67 +885,65 @@ class TransitionFunction(ProbabilisticFunction):
         return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
 
 
-# TODO: test
-# class TransitionFunction(ProbabilisticFunction):
-#     """Represents a transition function."""
-#
-#     def __init__(self, function: Any = lambda *args, **kwargs: None, domain: Domain = Domain.STATE_ACTION,
-#                  name: str = None, probability: float = 1.0):
-#         if isinstance(function, GroundingFunction):
-#             if not function.domain <= Domain.STATE_ACTION:
-#                 raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
-#             elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
-#                 # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
-#                 raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
-#         super().__init__(function=function, domain=domain, codomain=Domain.STATE, name=name,
-#                          probability=probability)
-#
-#     def __repr__(self):
-#         if self.name:
-#             return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
-#         else:
-#             return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]>"
-
-
-# TODO: test
 class RewardFunction(ProbabilisticFunction):
     """Represents function of expected reward."""
 
-    def __init__(self, reward: Any = 0, name: str = None, domain: Domain = Domain.STATE_ACTION,
-                 probability: float = 1.0):
-        if isinstance(reward, (int, float, np.ndarray)):
-            function = lambda *args, **kwargs: np.array(reward)
-            domain = Domain.ANY
-            if isinstance(reward, np.ndarray) and reward.dtype == np.bool:
-                raise RLangGroundingError(f"Rewards must be real-valued, not {reward.dtype}")
-        elif isinstance(reward, GroundingFunction):
-            if reward.domain <= Domain.STATE_ACTION:
-                function = reward
-                domain = reward.domain
-            else:
-                raise RLangGroundingError(f"Rewards cannot be functions of {reward.domain.name}")
-            if reward.codomain != Domain.REAL_VALUE:
-                raise RLangGroundingError(f"Rewards must return real values, not values of type {reward.codomain.name}")
-        elif isinstance(reward, Callable):
-            function = reward
-        else:
-            raise RLangGroundingError(f"Cannot construct a Reward from a {type(reward)}")
+    def __init__(self, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+        if function is None:
+            function = RewardDistribution().__call__
+        super().__init__(function=function, domain=domain, codomain=Domain.REWARD, *args, **kwargs)
 
-        super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
-
-    def __add__(self, other):
-        if isinstance(other, RewardFunction):
-            return RewardFunction(reward=lambda *args, **kwargs: self(*args, **kwargs) * self.probability +
-                                                                 other(*args, **kwargs) * other.probability,
-                                  domain=self.domain + other.domain)
-        else:
-            raise RLangGroundingError(f"Not yet implemented")
+    @classmethod
+    def from_reward_distribution(cls, k):
+        if not isinstance(k, RewardDistribution):
+            raise RLangGroundingError(f"Expecting a RewardDistribution, got {type(k)}")
+        return cls(function=k.__call__, domain=k.domain)
 
     def __repr__(self):
+        additional_info = ""
         if self.name:
-            return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
-        else:
-            return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}]>"
+            additional_info += f" \"{self.name}\""
+        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
+
+# TODO: test
+# class RewardFunction(ProbabilisticFunction):
+#     """Represents function of expected reward."""
+#
+#     def __init__(self, reward: Any = 0, name: str = None, domain: Domain = Domain.STATE_ACTION,
+#                  probability: float = 1.0):
+#         if isinstance(reward, (int, float, np.ndarray)):
+#             function = lambda *args, **kwargs: np.array(reward)
+#             domain = Domain.ANY
+#             if isinstance(reward, np.ndarray) and reward.dtype == np.bool:
+#                 raise RLangGroundingError(f"Rewards must be real-valued, not {reward.dtype}")
+#         elif isinstance(reward, GroundingFunction):
+#             if reward.domain <= Domain.STATE_ACTION:
+#                 function = reward
+#                 domain = reward.domain
+#             else:
+#                 raise RLangGroundingError(f"Rewards cannot be functions of {reward.domain.name}")
+#             if reward.codomain != Domain.REAL_VALUE:
+#                 raise RLangGroundingError(f"Rewards must return real values, not values of type {reward.codomain.name}")
+#         elif isinstance(reward, Callable):
+#             function = reward
+#         else:
+#             raise RLangGroundingError(f"Cannot construct a Reward from a {type(reward)}")
+#
+#         super().__init__(domain=domain, codomain=Domain.REWARD, function=function, name=name, probability=probability)
+#
+#     def __add__(self, other):
+#         if isinstance(other, RewardFunction):
+#             return RewardFunction(reward=lambda *args, **kwargs: self(*args, **kwargs) * self.probability +
+#                                                                  other(*args, **kwargs) * other.probability,
+#                                   domain=self.domain + other.domain)
+#         else:
+#             raise RLangGroundingError(f"Not yet implemented")
+#
+#     def __repr__(self):
+#         if self.name:
+#             return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+#         else:
+#             return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}]>"
 
 
 # TODO: test

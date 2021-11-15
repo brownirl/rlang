@@ -266,7 +266,17 @@ class RLangListener(RLangParserListener):
         transition_function = TransitionFunction.from_state_distribution(
             StateDistribution.from_list_eq(transition_functions))
 
-        new_effect = Effect(transition_function=transition_function)
+        # Rewards
+        reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
+        reward_distributions = list(filter(lambda x: isinstance(x, RewardDistribution), all_statements))
+
+        combined_rd = RewardDistribution()
+        [combined_rd.join(rd) for rd in reward_distributions]
+        reward_functions.append(RewardFunction.from_reward_distribution(combined_rd))
+
+        reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_functions))
+
+        new_effect = Effect(transition_function=transition_function, reward_function=reward_function)
         ctx.value = new_effect
 
     def OLDexitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
@@ -498,7 +508,7 @@ class RLangListener(RLangParserListener):
         elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
-        ctx.value = RewardFunction(reward=ctx.arithmetic_exp().value)
+        ctx.value = RewardDistribution.from_single(ctx.arithmetic_exp().value)
 
     def exitPrediction(self, ctx: RLangParser.PredictionContext):
         if ctx.IDENTIFIER() is not None:

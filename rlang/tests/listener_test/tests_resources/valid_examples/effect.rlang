@@ -11,6 +11,8 @@ Action up := 1
 Effect jo:
     S' -> S * 2
     S' -> S * 4
+    Reward 10
+    Reward 10
 
 #Effect jo2:
 #    if False:
