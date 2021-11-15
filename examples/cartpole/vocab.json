@@ -1,0 +1,13 @@
+{
+    "domain": "mountain_car",
+    "mdp_metadata": {
+      "state_space": {
+        "size": 2,
+        "dtype": "float"
+      },
+      "action_space": {
+        "shape": 1,
+        "dtype": "int"
+      }
+    }
+  }
