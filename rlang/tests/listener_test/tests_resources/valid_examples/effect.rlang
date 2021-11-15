@@ -13,6 +13,9 @@ Effect jo:
     S' -> S * 4
     Reward 10
     Reward 10
+    f2' -> 2
+    f2' -> 2 * f2 + 3
+    f1' -> f2
 
 #Effect jo2:
 #    if False:

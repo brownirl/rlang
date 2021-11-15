@@ -276,50 +276,30 @@ class RLangListener(RLangParserListener):
 
         reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_functions))
 
-        new_effect = Effect(transition_function=transition_function, reward_function=reward_function)
-        ctx.value = new_effect
-
-    def OLDexitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
-        all_statements = [statement.value for statement in ctx.statements]
-
-        # Rewards
-        reward_statements = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
-
         # Predictions
-        #   -> TransitionFunctions
-        transition_statements = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
+        predictions = list(filter(lambda x: isinstance(x, Prediction), all_statements))
+        grounding_distributions = list(filter(lambda x: isinstance(x, GroundingDistribution), all_statements))
 
-        #   -> Predictions
-        prediction_statements = list(filter(lambda x: isinstance(x, Prediction), all_statements))
+        predicted_groundings = list(
+            {*[p.grounding for p in predictions], *[gd.grounding for gd in grounding_distributions]})
 
-        # Effects
-        effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
-        reward_statements.extend([effect.reward_function for effect in effects])
-        transition_statements.extend([effect.transition_function for effect in effects])
-        for effect in effects:
-            prediction_statements.extend(effect.predictions)
+        new_predictions = list()
+        for grounding in predicted_groundings:
+            predictions_g = list(filter(lambda x: x.grounding.name == grounding.name, predictions))
 
-        if reward_statements:
-            reward_function = reduce(lambda a, b: a + b, reward_statements)
-        else:
-            reward_function = None
+            combined_gd = GroundingDistribution(grounding)
+            [combined_gd.join(gd) for gd in
+             list(filter(lambda x: x.grounding.name == grounding.name, grounding_distributions))]
 
-        if len(transition_statements) > 1:
-            raise RLangSemanticError("Too many Predictions for S'")
-        elif len(transition_statements) == 0:
-            transition_function = None
-        else:
-            transition_function = transition_statements[0]
+            predictions_g.append(Prediction.from_grounding_distribution(grounding, combined_gd))
 
-        predicted_groundings = list()
-        for prediction in prediction_statements:
-            if prediction.predicted_grounding.name in predicted_groundings:
-                raise RLangSemanticError(f"Too many Predictions for {prediction.predicted_grounding.name}'")
-            else:
-                predicted_groundings.append(prediction.predicted_grounding.name)
+            prediction = Prediction.from_grounding_distribution(grounding,
+                                                                GroundingDistribution.from_list_eq(predictions_g,
+                                                                                                   grounding))
+            new_predictions.append(prediction)
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
-                            predictions=prediction_statements)
+        new_effect = Effect(transition_function=transition_function, reward_function=reward_function,
+                            predictions=new_predictions)
         ctx.value = new_effect
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
@@ -473,7 +453,8 @@ class RLangListener(RLangParserListener):
                                         domain=domain)
             new_predictions.append(new_prediction)
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function, predictions=new_predictions)
+        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
+                            predictions=new_predictions)
         ctx.value = new_effect
 
     def exitProbabilistic_effect_statement_no_sugar(self,
@@ -517,15 +498,13 @@ class RLangListener(RLangParserListener):
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
             # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
             #     raise RLangSemanticError("")
-            ctx.value = Prediction(grounding_function=grounding_function,
-                                   value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
-                                                                                     value=ctx.arithmetic_exp().value(
-                                                                                         *args, **kwargs)): 1.0},
-                                   domain=ctx.arithmetic_exp().value.domain)
+            # ctx.value = Prediction(grounding_function=grounding_function,
+            #                        value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
+            #                                                                          value=ctx.arithmetic_exp().value(
+            #                                                                              *args, **kwargs)): 1.0},
+            #                        domain=ctx.arithmetic_exp().value.domain)
+            ctx.value = GroundingDistribution.from_single(ctx.arithmetic_exp().value, grounding_function)
         elif ctx.S_PRIME() is not None:
-            # ctx.value = TransitionFunction(
-            #     function=lambda *args, **kwargs: {ctx.arithmetic_exp().value(args, **kwargs): 1.0},
-            #     domain=ctx.arithmetic_exp().value.domain)
             ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
 
     def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
