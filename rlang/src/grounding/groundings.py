@@ -600,7 +600,7 @@ class ProbabilityDistribution(MutableMapping):
         else:
             return self.distribution[key]
 
-    def __setitem__(self, key: Grounding, value: int):
+    def __setitem__(self, key: Grounding, value: float):
         self.distribution[key] = value
         self.update_metadata()
 
@@ -868,6 +868,9 @@ class Plan(ProbabilisticFunction):
 class OptionTermination:
     def __repr__(self):
         return "<OptionTermination>"
+
+    def __eq__(self, other):
+        return isinstance(other, OptionTermination)
 
 
 class Option(Grounding):

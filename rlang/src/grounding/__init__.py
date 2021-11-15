@@ -5,4 +5,4 @@ __all__ = ["Grounding", "GroundingFunction", "RLangKnowledge", "Domain", "State"
            "MDPMetadata", "Factor", "Feature", "Proposition", "RewardFunction", "TransitionFunction",
            "MarkovFeature", "Action", "ActionReference", "RewardFunction", "Prediction", "Option", "ConstantGrounding",
            "ProbabilisticFunction", "Effect", "Policy", "ActionDistribution", "StateDistribution", "RewardDistribution",
-           "GroundingDistribution"]
+           "GroundingDistribution", "OptionTermination"]

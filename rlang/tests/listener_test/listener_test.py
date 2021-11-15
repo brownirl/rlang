@@ -231,6 +231,36 @@ class ListenerTests(unittest.TestCase):
         missing_conditional = knowledge['missing_conditional']
         assert missing_conditional(state=s) == {}
 
+    def test_Option(self):
+        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+        s = State([0, 1, 2, 3, 4])
+        s2 = State([1, 2, 2, 3, 4])
+        s3 = State([2, 1, 2, 3, 4])
+        s4 = State([2, 3, 2, 3, 4])
+        s5 = State([0, 0, 2, 3, 4])
+
+        knowledge = rlang.parse_file("tests_resources/valid_examples/option.rlang", metadata)
+
+        simple_option = knowledge['simple_option']
+        assert simple_option.can_initiate(state=s)
+        assert not simple_option.can_initiate(state=s2)
+        assert simple_option(state=s) == {Action(2): 1.0}
+        assert simple_option(state=s3) == OptionTermination()
+
+        complex_option = knowledge['complex_option']
+        assert complex_option.can_initiate(state=s)
+        assert not complex_option.can_initiate(state=s2)
+        assert complex_option(state=s3) == {Action(2): 0.8, Action(3): 0.2}
+        assert complex_option(state=s) == {Action(2): 1.0}
+        assert complex_option(state=s2) == OptionTermination()
+
+        all_in_one = knowledge['all_in_one']
+        assert all_in_one.can_initiate(state=s3)
+        assert all_in_one(state=s) == {Action(3): 0.2, Action(2): 0.08000000000000002}
+        assert all_in_one(state=s4) == {Action(2): 1.0}
+        assert all_in_one(state=s5) == {Action(3): 1.0}
+        assert all_in_one(state=s2) == OptionTermination()
+
     def test_Effect(self):
         pass
 
