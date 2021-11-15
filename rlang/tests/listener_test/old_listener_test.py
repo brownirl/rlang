@@ -266,7 +266,7 @@ def test_Effect():
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
     jo = knowledge['jo']
 
-    # print(jo(state=s))
+    print(jo.transition_function(state=s))
     # jo2 = knowledge['jo2']
 
     # print(jo2.predictions)

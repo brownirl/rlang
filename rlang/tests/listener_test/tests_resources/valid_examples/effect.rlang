@@ -10,6 +10,7 @@ Action up := 1
 
 Effect jo:
     S' -> S * 2
+    S' -> S * 4
 
 #Effect jo2:
 #    if False:

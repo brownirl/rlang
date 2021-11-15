@@ -255,6 +255,23 @@ class RLangListener(RLangParserListener):
     def exitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
         all_statements = [statement.value for statement in ctx.statements]
 
+        # TransitionFunctions
+        transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
+        state_distributions = list(filter(lambda x: isinstance(x, StateDistribution), all_statements))
+
+        combined_sd = StateDistribution()
+        [combined_sd.join(sd) for sd in state_distributions]
+        transition_functions.append(TransitionFunction.from_state_distribution(combined_sd))
+
+        transition_function = TransitionFunction.from_state_distribution(
+            StateDistribution.from_list_eq(transition_functions))
+
+        new_effect = Effect(transition_function=transition_function)
+        ctx.value = new_effect
+
+    def OLDexitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
+        all_statements = [statement.value for statement in ctx.statements]
+
         # Rewards
         reward_statements = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
 

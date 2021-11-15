@@ -259,7 +259,7 @@ class GroundingFunction(Grounding):
         return self.__add__(other)
 
     def __hash__(self):
-        return hash(str(self))
+        return hash((str(self), self.function, self.domain, self.codomain))
 
 
 class PrimitiveGrounding(GroundingFunction):
@@ -269,15 +269,18 @@ class PrimitiveGrounding(GroundingFunction):
         # TODO: What about lists? Should lists be cast? Only non-jagged ones?
         if isinstance(value, (int, float)):
             value = np.array(value)
-        self._value = value
+        self.value = value
         super().__init__(domain=Domain.ANY, codomain=codomain,
-                         function=lambda *args, **kwargs: self._value, name=name)
+                         function=lambda *args, **kwargs: self.value, name=name)
 
     def __repr__(self):
         if self.name:
             return f"<PrimitiveGrounding \"{self.name}\": {self()}>"
         else:
             return f"<PrimitiveGrounding: {self()}>"
+
+    def __hash__(self):
+        return hash((str(self), self.value))
 
 
 class ConstantGrounding(PrimitiveGrounding):
@@ -356,39 +359,39 @@ class Factor(GroundingFunction):
 
         elif isinstance(state_indexer, int):
             state_indexer = [state_indexer]
-        self._state_indexer = state_indexer
-        super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self._state_indexer),
+        self.state_indexer = state_indexer
+        super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),
                          codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
     @property
     def indexer(self):
-        return self._state_indexer
+        return self.state_indexer
 
     @indexer.setter
     def indexer(self, new_indexer):
-        self._state_indexer = new_indexer
+        self.state_indexer = new_indexer
 
     def __getitem__(self, item):
-        if isinstance(self._state_indexer, slice):
-            if self._state_indexer.stop is None:
+        if isinstance(self.state_indexer, slice):
+            if self.state_indexer.stop is None:
                 raise RLangGroundingError("We don't know enough about the state space")
             else:
-                new_indexer = list(range(*self._state_indexer.indices(self._state_indexer.stop)))
+                new_indexer = list(range(*self.state_indexer.indices(self.state_indexer.stop)))
                 return Factor(state_indexer=new_indexer, domain=self.domain)
-        if isinstance(self._state_indexer, list):
+        if isinstance(self.state_indexer, list):
             if isinstance(item, int):
                 item = [item]
             if isinstance(item, list):
-                return Factor([self._state_indexer[i] for i in item], domain=self.domain)
+                return Factor([self.state_indexer[i] for i in item], domain=self.domain)
             elif isinstance(item, slice):
-                new_indexer = self._state_indexer[item]
+                new_indexer = self.state_indexer[item]
                 return Factor(state_indexer=new_indexer, domain=self.domain)
 
     def __hash__(self):
-        return self.name.__hash__()
+        return hash((str(self), self.state_indexer))
 
     def __repr__(self):
-        return f"<Factor [{self.domain.name}]->[{self.codomain.name}]: S[{str(self._state_indexer)[1:-1] if isinstance(self._state_indexer, list) else str(self._state_indexer)}]>"
+        return f"<Factor [{self.domain.name}]->[{self.codomain.name}]: S[{str(self.state_indexer)[1:-1] if isinstance(self.state_indexer, list) else str(self.state_indexer)}]>"
 
 
 class Feature(GroundingFunction):
@@ -410,7 +413,7 @@ class Feature(GroundingFunction):
         return cls(function=factor.__call__, name=name, domain=factor.domain)
 
     def __hash__(self):
-        return self.name.__hash__()
+        return hash((str(self), self.function, self.domain, self.codomain))
 
     def __repr__(self):
         return f"<Feature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
@@ -496,7 +499,7 @@ class Proposition(GroundingFunction):
         return Proposition(function=lambda *args, **kwargs: bool(not self(*args, **kwargs)), domain=self.domain)
 
     def __hash__(self):
-        return self._function.__hash__()
+        return hash((str(self), self.function))
 
     def __repr__(self):
         return f"<Proposition [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
@@ -551,6 +554,13 @@ class ProbabilityDistribution(MutableMapping):
     @classmethod
     def from_single(cls, k):
         return cls({k: 1.0})
+
+    @classmethod
+    def from_list_eq(cls, ks):
+        sd_dict = dict()
+        for k in ks:
+            sd_dict[k] = 1.0
+        return cls(sd_dict)
 
     def update_metadata(self):
         self.calculate_domain()
@@ -617,6 +627,9 @@ class ProbabilityDistribution(MutableMapping):
             return len(self.true_distribution)
         else:
             return len(self.distribution)
+
+    def __hash__(self):
+        return hash(frozenset(self))
 
 
 class ActionDistribution(ProbabilityDistribution):
@@ -815,7 +828,9 @@ class Option(Grounding):
 class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
 
-    def __init__(self, function: Callable, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+    def __init__(self, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+        if function is None:
+            function = StateDistribution().__call__
         super().__init__(function=function, domain=domain, codomain=Domain.STATE, *args, **kwargs)
 
     @classmethod
