@@ -55,3 +55,6 @@ Policy factor_conditional:
 Policy missing_conditional:
     if S[0] == -1:
         Execute up
+
+Policy main:
+    Execute factor_conditional

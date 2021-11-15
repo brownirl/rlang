@@ -133,17 +133,23 @@ def test_Policy():
     # f= open("tests_resources/valid_examples/policy.rlang", 'r')
     # print(f.read())
     knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
+
+    p = knowledge.policy
+    print(p(state=s))
+
+    # o = knowledge['factor_conditional']
+    # print(o(state=s))
     # print(knowledge)
     # print(knowledge['up'])
-    print(knowledge['cone'])
-
-    cone = knowledge['cone']
-
+    # print(knowledge['cone'])
+    #
+    # cone = knowledge['cone']
+    #
+    # # action = cone(state=s)
+    # # print(action)
+    # # print(action.sample())
     # action = cone(state=s)
     # print(action)
-    # print(action.sample())
-    action = cone(state=s)
-    print(action)
     # print(list(action.keys())[0](state=s2))
 
     # test2 = knowledge['cc']
@@ -266,6 +272,9 @@ def test_Effect():
 
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
     jo = knowledge['jo']
+    print(knowledge.predictions(state=s))
+    print(knowledge.factors())
+
 
     # print(jo.transition_function(state=s))
     # print(jo.reward_function(state=s2))

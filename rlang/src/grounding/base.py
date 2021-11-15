@@ -4,8 +4,7 @@ from collections.abc import MutableMapping
 
 from rlang.src.exceptions import RLangGroundingError
 from rlang.src.grounding.internals import State, Domain, MDPMetadata
-from rlang.src.grounding.groundings import Grounding, GroundingFunction, Factor, RewardFunction, TransitionFunction, \
-    Feature, Proposition, ProbabilisticFunction, MarkovFeature
+from rlang.src.grounding.groundings import *
 
 
 class RLangKnowledge(MutableMapping):
@@ -29,42 +28,13 @@ class RLangKnowledge(MutableMapping):
 
     def __init__(self):
         self.rlang_variables = dict()
-        # self.reward_function = None
-        # self.transition_function = None
-        # self.predictions = dict()
+        self.policy = None
+        self.reward_function = None
+        self.transition_function = None
+        self.proto_predictions = list()
         self.mdp_metadata = None
 
-    # def parse(self, rlang: str):
-    #     self = parse(rlang, prior_knowledge=self)
-    #
-    # def parse_file(self, rlang_fname: str):
-    #     self = parse_file(rlang_fname, prior_knowledge=self)
-
-    @property
-    def reward_function(self):
-        return self.reward_function
-
-    @reward_function.setter
-    def reward_function(self, function: RewardFunction):
-        self.reward_function = function
-
-    @property
-    def transition_function(self):
-        return self.transition_function
-
-    @transition_function.setter
-    def transition_function(self, function: TransitionFunction):
-        self.transition_function = function
-
-    @property
-    def predictions(self):
-        return self.predictions
-
-    @predictions.setter
-    def predictions(self, new_predictions: dict):
-        self.predictions = new_predictions
-
-    def full_predictions(self, *args, **kwargs):
+    def predictions(self, *args, **kwargs):
         """
 
         Args:
@@ -75,36 +45,33 @@ class RLangKnowledge(MutableMapping):
             dict: A dictionary containing all GroundingFunctions which can be predicted for the next state
         """
         # TODO: This breaks after migrating to probabilistic functions. Fix this somehow.
-        next_state = self.transition_function(*args, **kwargs)
-        if next_state is not None:
-            domain = Domain.NEXT_STATE
-            if 'state' in kwargs.keys():
-                domain += Domain.STATE
-            if 'action' in kwargs.keys():
-                domain += Domain.ACTION
 
-            # Collect the variables with the proper domain
-            vars = list(filter(lambda x: isinstance(x, (
-                Factor, Feature, MarkovFeature, Proposition, ProbabilisticFunction)) and x.domain <= domain,
-                               list(self.values())))
-            # Augment the function for each GroundingFunction to automatically take next_state
-            for v in vars:
-                def lambda_generator(function):
-                    def the_lambda(*args, **kwargs):
-                        if 'next_state' in kwargs:
-                            if not kwargs['next_state'].unbatched_eq(next_state):
-                                raise RLangGroundingError("Transition function conflict")
-                            return function(*args, **kwargs)
-                        else:
-                            return function(*args, **kwargs, next_state=next_state)
-                    return the_lambda
-                v.function = lambda_generator(v.function)
-            # Construct a dictionary and return it
-            var_names = list(map(lambda x: x.name, vars))
-            available_variables = dict(zip(var_names, vars))
-            return available_variables
+        domain = Domain.ANY
+        if 'state' in kwargs.keys():
+            domain += Domain.STATE
+        if 'action' in kwargs.keys():
+            domain += Domain.ACTION
+        if 'next_state' in kwargs.keys():
+            domain += Domain.NEXT_STATE
         else:
-            return self.predictions
+            next_state = self.next_state(*args, **kwargs)
+            if next_state:
+                domain += Domain.NEXT_STATE
+                kwargs['next_state'] = next_state
+
+        predictables = list(filter(lambda x: x.domain <= domain, self.proto_predictions))
+
+        predictions = dict()
+        for p in predictables:
+            predictions[p.grounding] = p(*args, **kwargs)
+
+        return predictions
+
+    def next_state(self, *args, **kwargs):
+        if self.transition_function:
+            return self.transition_function(*args, **kwargs)
+        else:
+            return dict()
 
     def __getitem__(self, key: str):
         return self.rlang_variables[key]
@@ -121,6 +88,20 @@ class RLangKnowledge(MutableMapping):
     def __len__(self):
         return len(self.rlang_variables)
 
+    def rlang_variables_of_type(self, grounding_type):
+        return {k: v for (k, v) in self.rlang_variables.items() if isinstance(v, grounding_type)}
+
     def factors(self):
-        # TODO: I don't understand why this doesn't work
-        return dict(tuple(filter(lambda a: isinstance(a[1], Factor), self.__iter__())))
+        return self.rlang_variables_of_type(Factor)
+
+    def features(self):
+        return self.rlang_variables_of_type(Feature)
+
+    def propositions(self):
+        return self.rlang_variables_of_type(Proposition)
+
+    def policies(self):
+        return self.rlang_variables_of_type(Policy)
+
+    def effects(self):
+        return self.rlang_variables_of_type(Effect)

@@ -45,12 +45,22 @@ class RLangListener(RLangParserListener):
             raise UnknownVariableError(variable_name)
 
     def addVariable(self, variable_name, variable):
+        if variable_name == 'main_policy' and not isinstance(variable, Policy):
+            raise RLangSemanticError("'main_policy' is a reserved RLang variable name")
+        if variable_name == 'main_effect' and not isinstance(variable, Effect):
+            raise RLangSemanticError("'main_effect' is a reserved RLang variable name")
+
         if variable_name in self.rlang_knowledge.keys() or variable_name in self.grounded_vars.keys():
             raise AlreadyBoundError(variable_name)
         self.rlang_knowledge.update({variable_name: variable})
 
-    # def exitProgram(self, ctx:RLangParser.ProgramContext):
-    #     print(list(self.rlang_knowledge.values()))
+        if variable_name == 'main_policy':
+            self.rlang_knowledge.policy = variable
+
+        if variable_name == 'main_effect':
+            self.rlang_knowledge.reward_function = variable.reward_function
+            self.rlang_knowledge.transition_function = variable.transition_function
+            self.rlang_knowledge.proto_predictions = variable.predictions
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -137,7 +147,12 @@ class RLangListener(RLangParserListener):
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
         new_policy = Policy.from_action_distribution(ctx.policy_statement().value)
-        new_policy.name = ctx.IDENTIFIER().getText()
+        if ctx.IDENTIFIER():
+            new_policy.name = ctx.IDENTIFIER().getText()
+            if new_policy.name == 'main_policy':
+                raise RLangSemanticError("'main_policy' is a reserved RLang variable name")
+        elif ctx.MAIN():
+            new_policy.name = 'main_policy'
         self.addVariable(new_policy.name, new_policy)
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
@@ -185,7 +200,12 @@ class RLangListener(RLangParserListener):
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
         new_effect = ctx.effect_statement_collection().value
-        new_effect.name = ctx.IDENTIFIER().getText()
+        if ctx.IDENTIFIER():
+            new_effect.name = ctx.IDENTIFIER().getText()
+            if new_effect.name == 'main_effect':
+                raise RLangSemanticError("'main_effect' is a reserved RLang variable name")
+        elif ctx.MAIN():
+            new_effect.name = 'main_effect'
         self.addVariable(new_effect.name, new_effect)
 
     def exitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):

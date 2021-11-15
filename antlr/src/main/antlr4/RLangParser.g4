@@ -37,7 +37,7 @@ markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement NL* DEDENT UNTIL until=option_condition NL* DEDENT;
 option_condition: boolean_exp | ANY_CONDITION;
 
-policy: POLICY IDENTIFIER COL INDENT policy_statement NL* DEDENT;
+policy: POLICY (IDENTIFIER| MAIN) COL INDENT policy_statement NL* DEDENT;
 policy_statement
     : execute                    # policy_statement_execute
     | conditional_subpolicy      # policy_statement_conditional
@@ -51,7 +51,7 @@ probabilistic_policy_statement
     ;
 execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 
-effect: EFFECT IDENTIFIER COL INDENT effect_statement_collection DEDENT;
+effect: EFFECT (IDENTIFIER| MAIN) COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;
 effect_statement
     : reward                    # effect_statement_reward
