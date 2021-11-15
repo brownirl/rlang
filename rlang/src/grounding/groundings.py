@@ -1,15 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import MutableMapping
-from itertools import tee, _tee
-import copy
-import warnings
 from typing import Callable, Any, Union
-import types
 
 import numpy as np
 from numpy.random import default_rng
-from numpy.lib.arraysetops import isin
 from rlang.src.grounding.internals import Domain, State, Action, BatchedPrimitive
 from rlang.src.exceptions import RLangGroundingError
 
@@ -807,7 +802,9 @@ class Policy(ProbabilisticFunction):
 
 
 class Plan(ProbabilisticFunction):
-    """Represents an open-loop policy
+    """THIS DOES NOT WORK YET
+
+    Represents an open-loop policy
 
     Args:
         distribution_list: a list of ActionDistributions
@@ -868,6 +865,11 @@ class Plan(ProbabilisticFunction):
             return self.plan[i]
 
 
+class OptionTermination:
+    def __repr__(self):
+        return "<OptionTermination>"
+
+
 class Option(Grounding):
     """Grounding object for an option.
 
@@ -882,17 +884,11 @@ class Option(Grounding):
         self.initiation = initiation
         self.termination = termination
         self.policy = policy
-        self._policy_is_iterable = False    # TODO: Fix this
-        if isinstance(policy.function, (types.GeneratorType, _tee)):
-            self._policy_is_iterable = True
         super().__init__(name)
-
-    def __len__(self):
-        return 0    # TODO: Get rid of this
 
     def __call__(self, *args, **kwargs):
         if self.termination(*args, **kwargs):
-            return 'option_termination'
+            return OptionTermination()
         else:
             return self.policy(*args, **kwargs)
 

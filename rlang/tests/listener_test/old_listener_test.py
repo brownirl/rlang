@@ -221,15 +221,16 @@ def test_Policy():
 #     # TODO: Need more tests, derive policy from factor and feature
 
 
-# def test_Option():
-#     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
-#     s = State([3, 1, 2, 3, 4])
+def test_Option():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([2, 1, 2, 3, 4])
 
-#     knowledge = rlang.parse_file("tests_resources/listener_tests/option.rlang", metadata)
-#     build_bridge = knowledge['build_bridge']
+    knowledge = rlang.parse_file("tests_resources/valid_examples/option.rlang", metadata)
+    build_bridge = knowledge['build_bridge']
 #     do = knowledge['do_something']
 
-#     print(build_bridge.can_execute(state=s))
+    print(build_bridge.can_initiate(state=s))
+    print(build_bridge(state=s))
 #     print(build_bridge(state=s))
 #     print(do(state=s))
 
@@ -290,4 +291,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Effect()
+    test_Option()

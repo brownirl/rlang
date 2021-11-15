@@ -7,37 +7,33 @@ Proposition a := S[0] == 0
 Proposition b := S[0] == 1
 Proposition c := S[0] == 2
 
-Policy test2:
-	if False:
-		Execute up
-	elif True:
-		Execute left
-	else:
-		Execute down
+Policy prob_split:
+    Execute 5 with P(0.1)
+    or Execute 3 with P(0.9)
 
 Option build_bridge:
-	init a or b
-		Execute test2
+	init a
+		Execute prob_split
 	until c
 
-Policy do_something:
-	Execute build_bridge
-
-
-Option go_to_workshop_2:
-    init(True)
-        Find
-    until at_workshop2
-
-Option build_bridge:
-    init(wood >= 1 and iron >=1 and at_workshop2)
-        Execute use
-    until delta_bridge > 0
-
-Option sit_down:
-    init 1 == 1
-        if has_iron:
-            if has_bench:
-                Execute sit
-    until at_workshop2
+#Policy do_something:
+#	Execute build_bridge
+#
+#
+#Option go_to_workshop_2:
+#    init(True)
+#        Find
+#    until at_workshop2
+#
+#Option build_bridge:
+#    init(wood >= 1 and iron >=1 and at_workshop2)
+#        Execute use
+#    until delta_bridge > 0
+#
+#Option sit_down:
+#    init 1 == 1
+#        if has_iron:
+#            if has_bench:
+#                Execute sit
+#    until at_workshop2
 
