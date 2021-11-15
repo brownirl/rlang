@@ -736,6 +736,10 @@ class RewardDistribution(ProbabilityDistribution):
 
         return expected_reward
 
+    def __call__(self, *args, **kwargs):
+        super().__call__(*args, **kwargs)
+        return self.expected()
+
 
 class GroundingDistribution(ProbabilityDistribution):
     def __init__(self, grounding: Grounding, distribution=None):
@@ -994,12 +998,19 @@ class Effect(Grounding):
         self.probability = probability
         super().__init__(name=name)
 
-    def compose_probability(self, probability: float):
+    def compose_probabilities(self, probability: float):
         self.probability = self.probability * probability
-        self.reward_function.compose_probability(probability)
-        self.transition_function.compose_probability(probability)
-        for prediction in self.predictions:
-            prediction.compose_probability(probability)
+        if self.reward_function:
+            self.reward_function = RewardFunction.from_reward_distribution(
+                RewardDistribution({self.reward_function: probability}))
+        if self.transition_function:
+            self.transition_function = TransitionFunction.from_state_distribution(
+                StateDistribution({self.transition_function: probability}))
+        new_predictions = list()
+        for p in self.predictions:
+            new_predictions.append(
+                Prediction.from_grounding_distribution(p.grounding, GroundingDistribution(p.grounding, {p: probability})))
+        self.predictions = new_predictions
 
     def __repr__(self):
         if self.name:

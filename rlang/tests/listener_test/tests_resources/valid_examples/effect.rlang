@@ -3,19 +3,32 @@ Factor f2 := S[1]
 Action up := 1
 
 Effect jo2:
-    S' -> S * 5
-    Reward 20
-    f1' -> f2 + 7
+    f1' -> 99
 
 Effect jo:
-    S' -> S * 2
-    S' -> S * 4
-    Reward 10
-    Reward 10
-    f2' -> 2
-    f2' -> 2 * f2 + 3
-    f1' -> f2
-    -> jo2
+    Reward 10 with P(0.5)
+    with P(0.3):
+        S' -> S * 3
+        Reward 10
+        f1' -> 3
+    or with P(0.7):
+        -> jo2 with P(0.2)
+
+
+#Effect jo2:
+#    S' -> S * 5
+#    Reward 20
+#    f1' -> f2 + 7
+#
+#Effect jo:
+#    S' -> S * 2
+#    S' -> S * 4
+#    Reward 10
+#    Reward 10
+#    f2' -> 2
+#    f2' -> 2 * f2 + 3
+#    f1' -> f2
+#    -> jo2
 
 #Effect jo2:
 #    if False:

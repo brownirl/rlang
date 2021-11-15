@@ -51,7 +51,7 @@ probabilistic_policy_statement
     ;
 execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 
-effect: EFFECT IDENTIFIER? COL INDENT effect_statement_collection DEDENT;
+effect: EFFECT IDENTIFIER COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;
 effect_statement
     : reward                    # effect_statement_reward
