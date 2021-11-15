@@ -264,11 +264,13 @@ def test_Effect():
     action = Action(1)
 
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
-    # jo = knowledge['jo']
-    jo2 = knowledge['jo2']
+    jo = knowledge['jo']
 
-    print(jo2.predictions)
-    print(jo2.predictions[0](state=s))
+    # print(jo(state=s))
+    # jo2 = knowledge['jo2']
+
+    # print(jo2.predictions)
+    # print(jo2.predictions[0](state=s))
     # print(jo2.transition_function(state=s))
     # print(jo2.reward_function(state=s))
     # print(jo2.reward_function(state=s2))

@@ -181,15 +181,6 @@ class RLangListener(RLangParserListener):
         else:
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
-    def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
-        if ctx.any_number():
-            probability = ctx.any_number().value
-        else:
-            probability = ctx.integer_fraction().value
-        if probability > 1.0 or probability < 0.0:
-            raise RLangSemanticError("Probability must be between 0 and 1")
-        ctx.value = probability
-
     # ============================= Effect =============================
 
     # def exitEffect(self, ctx: RLangParser.EffectContext):
@@ -318,38 +309,6 @@ class RLangListener(RLangParserListener):
 
     def exitEffect_statement_probabilistic(self, ctx: RLangParser.Effect_statement_probabilisticContext):
         ctx.value = ctx.probabilistic_effect().value
-
-    def exitReward(self, ctx: RLangParser.RewardContext):
-        if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
-            raise RLangSemanticError(
-                f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
-        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
-            raise RLangSemanticError(
-                f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
-        ctx.value = RewardFunction(reward=ctx.arithmetic_exp().value)
-
-    def exitPrediction(self, ctx: RLangParser.PredictionContext):
-        if ctx.IDENTIFIER() is not None:
-            grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
-                raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
-            #     raise RLangSemanticError("")
-            ctx.value = Prediction(grounding_function=grounding_function,
-                                   value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
-                                                                                     value=ctx.arithmetic_exp().value(
-                                                                                         *args, **kwargs)): 1.0},
-                                   domain=ctx.arithmetic_exp().value.domain)
-        elif ctx.S_PRIME() is not None:
-            ctx.value = TransitionFunction(
-                function=lambda *args, **kwargs: {ctx.arithmetic_exp().value(args, **kwargs): 1.0},
-                domain=ctx.arithmetic_exp().value.domain)
-
-    def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
-        effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not isinstance(effect, Effect):
-            raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
-        ctx.value = effect
 
     def exitConditional_effect(self, ctx: RLangParser.Conditional_effectContext):
         if_condition = ctx.if_condition.value
@@ -514,6 +473,48 @@ class RLangListener(RLangParserListener):
             effect = ctx.effect_reference().value
             effect.compose_probability(ctx.probabilistic_condition().value)
             ctx.value = effect
+
+    def exitReward(self, ctx: RLangParser.RewardContext):
+        if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
+            raise RLangSemanticError(
+                f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
+        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
+            raise RLangSemanticError(
+                f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
+        ctx.value = RewardFunction(reward=ctx.arithmetic_exp().value)
+
+    def exitPrediction(self, ctx: RLangParser.PredictionContext):
+        if ctx.IDENTIFIER() is not None:
+            grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
+            if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
+                raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
+            # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
+            #     raise RLangSemanticError("")
+            ctx.value = Prediction(grounding_function=grounding_function,
+                                   value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
+                                                                                     value=ctx.arithmetic_exp().value(
+                                                                                         *args, **kwargs)): 1.0},
+                                   domain=ctx.arithmetic_exp().value.domain)
+        elif ctx.S_PRIME() is not None:
+            # ctx.value = TransitionFunction(
+            #     function=lambda *args, **kwargs: {ctx.arithmetic_exp().value(args, **kwargs): 1.0},
+            #     domain=ctx.arithmetic_exp().value.domain)
+            ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
+
+    def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
+        effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if not isinstance(effect, Effect):
+            raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
+        ctx.value = effect
+
+    def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
+        if ctx.any_number():
+            probability = ctx.any_number().value
+        else:
+            probability = ctx.integer_fraction().value
+        if probability > 1.0 or probability < 0.0:
+            raise RLangSemanticError("Probability must be between 0 and 1")
+        ctx.value = probability
 
     # ============================= arithmetic expression =============================
 

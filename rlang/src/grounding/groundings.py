@@ -688,7 +688,7 @@ class Policy(ProbabilisticFunction):
     Args:
         function: a function from states to action distributions.
     """
-    def __init__(self, function: Callable, domain=Domain.STATE, *args, **kwargs):
+    def __init__(self, function: Callable, domain: Domain = Domain.STATE, *args, **kwargs):
         super().__init__(function=function, domain=domain, codomain=Domain.ACTION, *args, **kwargs)
 
     @classmethod
@@ -812,26 +812,45 @@ class Option(Grounding):
         return f"<Option \"{self.name}\">"
 
 
-# TODO: test
 class TransitionFunction(ProbabilisticFunction):
     """Represents a transition function."""
 
-    def __init__(self, function: Any = lambda *args, **kwargs: None, domain: Domain = Domain.STATE_ACTION,
-                 name: str = None, probability: float = 1.0):
-        if isinstance(function, GroundingFunction):
-            if not function.domain <= Domain.STATE_ACTION:
-                raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
-            elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
-                # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
-                raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
-        super().__init__(function=function, domain=domain, codomain=Domain.STATE, name=name,
-                         probability=probability)
+    def __init__(self, function: Callable, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+        super().__init__(function=function, domain=domain, codomain=Domain.STATE, *args, **kwargs)
+
+    @classmethod
+    def from_state_distribution(cls, k):
+        if not isinstance(k, StateDistribution):
+            raise RLangGroundingError(f"Expecting a StateDistribution, got {type(k)}")
+        return cls(function=k.__call__, domain=k.domain)
 
     def __repr__(self):
+        additional_info = ""
         if self.name:
-            return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
-        else:
-            return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]>"
+            additional_info += f" \"{self.name}\""
+        return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
+
+
+# TODO: test
+# class TransitionFunction(ProbabilisticFunction):
+#     """Represents a transition function."""
+#
+#     def __init__(self, function: Any = lambda *args, **kwargs: None, domain: Domain = Domain.STATE_ACTION,
+#                  name: str = None, probability: float = 1.0):
+#         if isinstance(function, GroundingFunction):
+#             if not function.domain <= Domain.STATE_ACTION:
+#                 raise RLangGroundingError(f"TransitionFunction must not be a function of {function.domain.name}")
+#             elif function.codomain != Domain.STATE and function.codomain != Domain.REAL_VALUE:
+#                 # TODO: Need to check the dimension of the output in case its a REAL_VALUE domain
+#                 raise RLangGroundingError(f"TransitionFunction must return a state, not a {function.codomain.name}")
+#         super().__init__(function=function, domain=domain, codomain=Domain.STATE, name=name,
+#                          probability=probability)
+#
+#     def __repr__(self):
+#         if self.name:
+#             return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+#         else:
+#             return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]>"
 
 
 # TODO: test
@@ -929,8 +948,10 @@ class Prediction(ProbabilisticFunction):
 
 class Effect(Grounding):
     def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
-                 predictions: list = [], name: str = None,
+                 predictions: list = None, name: str = None,
                  probability: float = 1.0):
+        if predictions is None:
+            predictions = list()
         self.reward_function = reward_function if reward_function else RewardFunction(reward=0, domain=Domain.ANY)
         self.transition_function = transition_function if transition_function else TransitionFunction(domain=Domain.ANY)
         self.predictions = predictions

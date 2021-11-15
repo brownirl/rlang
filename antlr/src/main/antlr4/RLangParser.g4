@@ -60,15 +60,15 @@ effect_statement
     | conditional_effect        # effect_statement_conditional
     | probabilistic_effect      # effect_statement_probabilistic
     ;
-reward: REWARD arithmetic_exp;
-prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
-effect_reference: PREDICT IDENTIFIER;
 conditional_effect: IF if_condition=boolean_exp COL INDENT if_effect=effect_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_effects+=effect_statement_collection DEDENT)* (ELSE COL INDENT else_effect=effect_statement_collection DEDENT)?;
 probabilistic_effect: effects+=probabilistic_effect_statement (OR effects+=probabilistic_effect_statement)*;
 probabilistic_effect_statement
     : probabilistic_condition COL INDENT effect_statement_collection DEDENT   # probabilistic_effect_statement_no_sugar
     | (reward | prediction | effect_reference) probabilistic_condition NL+    # probabilistic_effect_statement_sugar
     ;
+reward: REWARD arithmetic_exp;
+prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
+effect_reference: PREDICT IDENTIFIER;
 
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 

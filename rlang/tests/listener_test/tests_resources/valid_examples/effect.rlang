@@ -8,14 +8,16 @@ Action up := 1
 #    or with P(0.25):
 #        f2' -> 3 with P(0.1)
 
+Effect jo:
+    S' -> S * 2
 
-Effect jo2:
-    if False:
-        f1' -> f1 * 2
-    elif False:
-        f1' -> f1 * 2
-    else:
-        f2' -> f2 * 2
+#Effect jo2:
+#    if False:
+#        f1' -> f1 * 2
+#    elif False:
+#        f1' -> f1 * 2
+#    else:
+#        f2' -> f2 * 2
 
 #Effect jo2:
 #    if f1 == 0:
