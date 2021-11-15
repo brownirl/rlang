@@ -229,8 +229,8 @@ def test_Option():
     build_bridge = knowledge['build_bridge']
 #     do = knowledge['do_something']
 
-    print(build_bridge.can_initiate(state=s))
-    print(build_bridge(state=s))
+    # print(build_bridge.can_initiate(state=s))
+    # print(build_bridge(state=s))
 #     print(build_bridge(state=s))
 #     print(do(state=s))
 
@@ -267,12 +267,12 @@ def test_Effect():
     knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
     jo = knowledge['jo']
 
-    print(jo.transition_function(state=s))
-    print(jo.reward_function(state=s2))
-    # jo2 = knowledge['jo2']
-
-    # print(jo.predictions)
-    print(jo.predictions[0](state=s2))
+    # print(jo.transition_function(state=s))
+    # print(jo.reward_function(state=s2))
+    # # jo2 = knowledge['jo2']
+    #
+    # # print(jo.predictions)
+    # print(jo.predictions[0](state=s2))
     # print(jo.predictions[1](state=s))
     # print(jo2.transition_function(state=s))
     # print(jo2.reward_function(state=s))
@@ -291,4 +291,4 @@ def test_Effect():
 
 
 if __name__ == "__main__":
-    test_Option()
+    test_Effect()

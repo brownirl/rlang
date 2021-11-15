@@ -1,10 +1,6 @@
-import copy
 from functools import reduce
-from typing import Callable
 import json
-import numpy as np
 
-from grounding import BatchedPrimitive
 from rlang.src.grounding import *
 from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding, ConstantGrounding, IdentityGrounding
 
@@ -52,6 +48,9 @@ class RLangListener(RLangParserListener):
         if variable_name in self.rlang_knowledge.keys() or variable_name in self.grounded_vars.keys():
             raise AlreadyBoundError(variable_name)
         self.rlang_knowledge.update({variable_name: variable})
+
+    # def exitProgram(self, ctx:RLangParser.ProgramContext):
+    #     print(list(self.rlang_knowledge.values()))
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())

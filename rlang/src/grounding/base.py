@@ -28,11 +28,11 @@ class RLangKnowledge(MutableMapping):
     """
 
     def __init__(self):
-        self.store = dict()
-        self._reward_function = RewardFunction()
-        self._transition_function = TransitionFunction()
-        self._predictions = dict()
-        self._mdp_metadata = None
+        self.rlang_variables = dict()
+        # self.reward_function = None
+        # self.transition_function = None
+        # self.predictions = dict()
+        self.mdp_metadata = None
 
     # def parse(self, rlang: str):
     #     self = parse(rlang, prior_knowledge=self)
@@ -42,35 +42,27 @@ class RLangKnowledge(MutableMapping):
 
     @property
     def reward_function(self):
-        return self._reward_function
+        return self.reward_function
 
     @reward_function.setter
     def reward_function(self, function: RewardFunction):
-        self._reward_function = function
+        self.reward_function = function
 
     @property
     def transition_function(self):
-        return self._transition_function
+        return self.transition_function
 
     @transition_function.setter
     def transition_function(self, function: TransitionFunction):
-        self._transition_function = function
+        self.transition_function = function
 
     @property
     def predictions(self):
-        return self._predictions
+        return self.predictions
 
     @predictions.setter
     def predictions(self, new_predictions: dict):
-        self._predictions = new_predictions
-
-    @property
-    def mdp_metadata(self):
-        return self._mdp_metadata
-
-    @mdp_metadata.setter
-    def mdp_metadata(self, mdp_metadata: MDPMetadata):
-        self._mdp_metadata = mdp_metadata
+        self.predictions = new_predictions
 
     def full_predictions(self, *args, **kwargs):
         """
@@ -83,7 +75,7 @@ class RLangKnowledge(MutableMapping):
             dict: A dictionary containing all GroundingFunctions which can be predicted for the next state
         """
         # TODO: This breaks after migrating to probabilistic functions. Fix this somehow.
-        next_state = self._transition_function(*args, **kwargs)
+        next_state = self.transition_function(*args, **kwargs)
         if next_state is not None:
             domain = Domain.NEXT_STATE
             if 'state' in kwargs.keys():
@@ -112,22 +104,22 @@ class RLangKnowledge(MutableMapping):
             available_variables = dict(zip(var_names, vars))
             return available_variables
         else:
-            return self._predictions
+            return self.predictions
 
     def __getitem__(self, key: str):
-        return self.store[key]
+        return self.rlang_variables[key]
 
     def __setitem__(self, key: str, value: Grounding):
-        self.store[key] = value
+        self.rlang_variables[key] = value
 
     def __delitem__(self, key: str):
-        del self.store[key]
+        del self.rlang_variables[key]
 
     def __iter__(self):
-        return iter(self.store)
+        return iter(self.rlang_variables)
 
     def __len__(self):
-        return len(self.store)
+        return len(self.rlang_variables)
 
     def factors(self):
         # TODO: I don't understand why this doesn't work
