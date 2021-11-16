@@ -42,7 +42,7 @@ def conditional_reward_function(if_condition, if_reward, elif_conditions=None, e
         for i in range(len(elif_conditions)):
             if elif_conditions[i](*args, **kwargs) == True:
                 return elif_rewards[i](*args, **kwargs) if elif_rewards[i] is not None else None
-        else_reward(*args, **kwargs) if else_reward is not None else None
+        return else_reward(*args, **kwargs) if else_reward is not None else None
 
 
 def conditional_transition_function(if_condition, if_transition, elif_conditions=None, elif_transitions=None,
@@ -53,10 +53,7 @@ def conditional_transition_function(if_condition, if_transition, elif_conditions
         for i in range(len(elif_conditions)):
             if elif_conditions[i](*args, **kwargs) == True:
                 return elif_transitions[i](*args, **kwargs) if elif_transitions[i] is not None else None
-        if else_transition is not None:
-            return else_transition(*args, **kwargs) if else_transition is not None else None
-        else:
-            return None
+        return else_transition(*args, **kwargs) if else_transition is not None else None
 
 
 def conditional_prediction_function(if_condition, if_prediction, elif_conditions=None, elif_predictions=None,

@@ -262,7 +262,42 @@ class ListenerTests(unittest.TestCase):
         assert all_in_one(state=s2) == OptionTermination()
 
     def test_Effect(self):
-        pass
+        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+        s = State([0, 1, 2, 3, 4])
+        s2 = State([3, 2, 2, 3, 4])
+        s3 = State([5, 2, 2, 3, 4])
+
+        knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
+
+        single_reward = knowledge['single_reward']
+        assert single_reward.reward_function(state=s) == 10
+
+        probabilistic_reward = knowledge['probabilistic_reward']
+        assert probabilistic_reward.reward_function(state=s) == 2.8
+
+        multiple_rewards = knowledge['multiple_rewards']
+        assert multiple_rewards.reward_function(state=s) == 10.8
+
+        conditional_reward = knowledge['conditional_reward']
+        assert conditional_reward.reward_function(state=s) == 15
+        assert conditional_reward.reward_function(state=s2) == 5
+        assert conditional_reward.reward_function(state=s3) == 20
+
+        single_transition = knowledge['single_transition']
+        assert single_transition.transition_function(state=s) == {s * 2: 1.0}
+        assert single_transition.transition_function(state=s2) == {s2 * 2: 1.0}
+
+        probabilistic_transition = knowledge['probabilistic_transition']
+        assert probabilistic_transition.transition_function(state=s) == {s * 3: 0.5, s * 2: 0.5}
+
+        conditional_transition = knowledge['conditional_transition']
+        assert conditional_transition.transition_function(state=s) == {s * 3: 1.0}
+        assert conditional_transition.transition_function(state=s2) == {s2 * 2: 1.0}
+        assert conditional_transition.transition_function(state=s3) == {s3: 0.5, s3 * 5: 0.3}
+
+        # single_predictions = knowledge['single_predictions']
+        # print(single_predictions.predictions)
+
 
 
 if __name__ == '__main__':
