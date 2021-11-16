@@ -24,7 +24,18 @@ class RLangQLearningAgent(QLearningAgent):
         def weighted_reward(r_func, state_dict):
             reward = 0
             for k, v in state_dict.items():
-                reward += r_func(state=State(k), action=None) * v
+                reward += r_func(state=State(k)) * v
+            return reward
+
+        def weighted_value(q_func, state_dict):
+            reward = 0
+            for k, v in state_dict.items():
+                maxx = q_func[k][actions[0]]
+                for a in actions:
+                    val = q_func[k][a]
+                    if val > maxx:
+                        maxx = val
+                reward += maxx * v
             return reward
 
         q_func = defaultdict(lambda: defaultdict(lambda: default_q))
@@ -44,28 +55,9 @@ class RLangQLearningAgent(QLearningAgent):
                     a = actions[i]
                     s_primei = transition_function(state=State(s), action=i)
                     if s_primei:
-                        # TD Update
+                        # Q learning Update
                         r_prime = weighted_reward(reward_function, s_primei)
-                        # print(reward_function.domain)
-                        # print(r_prime)
-                        q_func[s][a] += alpha * ()
-
-        #             if s_primei is not None:
-        #                 # We may know enough to do a TD update
-        #                 s_prime = s_primei.as_tuple()
-        #                 if q_func[s_prime]:
-        #                     q_func[s][a] = (1 - alpha) * q_func[s][a] + alpha * \
-        #                                    (knowledge.reward_function(state=State(s), action=i, next_state=s_primei) +
-        #                                     gamma * max(q_func[s_prime].values()))
-
-        # for w in range(width):
-        #     for h in range(height):
-        #         for a, ai in {'up': 1, 'down': 2, 'left': 3, 'right': 4}.items():
-        #             s = (w, h)
-        #             si = State([w, h])
-        #             predictions = knowledge.full_predictions(state=si, action=ai)
-        #             print(predictions)
-        #             for p in predictions.values():
-        #                 print(p, p(state=si, action=ai))
+                        v_s_prime = weighted_value(q_func, s_primei)
+                        q_func[s][a] += alpha * (r_prime + gamma * v_s_prime)
 
         super().__init__(actions, name, alpha, gamma, epsilon, explore, anneal, q_func, default_q)
