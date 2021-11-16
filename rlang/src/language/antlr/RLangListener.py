@@ -241,12 +241,14 @@ class RLangListener(RLangParserListener):
         reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
         reward_functions.extend(effect_rewards)
         reward_distributions = list(filter(lambda x: isinstance(x, RewardDistribution), all_statements))
+        reward_function = None
 
-        combined_rd = RewardDistribution()
-        [combined_rd.join(rd) for rd in reward_distributions]
-        reward_functions.append(RewardFunction.from_reward_distribution(combined_rd))
-
-        reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_functions))
+        if len(reward_distributions) > 0:
+            combined_rd = RewardDistribution()
+            [combined_rd.join(rd) for rd in reward_distributions]
+            reward_functions.append(RewardFunction.from_reward_distribution(combined_rd))
+        if len(reward_functions) > 0:
+            reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_functions))
 
         # Predictions
         predictions = list(filter(lambda x: isinstance(x, Prediction), all_statements))
@@ -271,9 +273,8 @@ class RLangListener(RLangParserListener):
                                                                                                    grounding))
             new_predictions.append(prediction)
 
-        new_effect = Effect(transition_function=transition_function, reward_function=reward_function,
-                            predictions=new_predictions)
-        ctx.value = new_effect
+        ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
+                           predictions=new_predictions)
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
         ctx.value = ctx.reward().value
@@ -291,7 +292,6 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.probabilistic_effect().value
 
     def exitConditional_effect(self, ctx: RLangParser.Conditional_effectContext):
-        # TODO: This needs to be re-written
         if_condition = ctx.if_condition.value
         if_effect = ctx.if_effect.value
         elif_conditions = [s.value for s in ctx.elif_conditions]
@@ -303,34 +303,42 @@ class RLangListener(RLangParserListener):
         elif_rewards = [elif_effect.reward_function for elif_effect in elif_effects]
         else_reward = else_effect.reward_function
 
-        domain = reduce(lambda a, b: a + b.domain,
-                        list(filter(lambda x: x is not None,
-                                    [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])))
-        reward_feature = RewardFunction(
-            lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
-                                                                elif_rewards, else_reward, *args, **kwargs),
-            domain=domain)
-        # TODO: I'm not sure this is necessary
-        reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_single(reward_feature))
+        reward_function = None
+        rstats = [x for x in [if_reward, *elif_rewards, else_reward] if x]
+
+        if len(rstats) > 0:
+            domain = reduce(lambda a, b: a + b.domain, list(filter(lambda x: x is not None,
+                                        [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])))
+
+            reward_func = RewardFunction(
+                lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
+                                                                    elif_rewards, else_reward, *args, **kwargs),
+                domain=domain)
+            # TODO: I'm not sure this is necessary
+            reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_single(reward_func))
 
         # TransitionFunctions
         if_transition = if_effect.transition_function
         elif_transitions = [elif_effect.transition_function for elif_effect in elif_effects]
         else_transition = else_effect.transition_function
 
-        domain = reduce(lambda a, b: a + b.domain,
-                        list(filter(lambda x: x is not None,
-                                    [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
-                                     else_transition])))
+        transition_function = None
+        tstats = [x for x in [if_transition, *elif_transitions, else_transition] if x]
 
-        transition_function = TransitionFunction(
-            function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
-                                                                             elif_conditions, elif_transitions,
-                                                                             else_transition, *args, **kwargs),
-            domain=domain)
-        # TODO: I'm not sure this is necessary
-        transition_function = TransitionFunction.from_state_distribution(
-            StateDistribution.from_single(transition_function))
+        if len(tstats) > 0:
+            domain2 = reduce(lambda a, b: a + b.domain,
+                            list(filter(lambda x: x is not None,
+                                        [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
+                                         else_transition])))
+
+            transition_function = TransitionFunction(
+                function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
+                                                                                 elif_conditions, elif_transitions,
+                                                                                 else_transition, *args, **kwargs),
+                domain=domain2)
+            # TODO: I'm not sure this is necessary
+            transition_function = TransitionFunction.from_state_distribution(
+                StateDistribution.from_single(transition_function))
 
         # Predictions
         if_predictions = if_effect.predictions
@@ -345,13 +353,13 @@ class RLangListener(RLangParserListener):
 
         predicted_groundings = list({pred.grounding for pred in all_predictions})
 
-        domain = reduce(lambda a, b: a + b.domain,
+        domain3 = reduce(lambda a, b: a + b.domain,
                         [if_condition.domain, *elif_conditions])
 
         new_predictions = list()
 
         for grounding in predicted_groundings:
-            new_domain = Domain.ANY + domain
+            new_domain = Domain.ANY + domain3
             if_preds = list(filter(lambda x: x.grounding.equals(grounding), if_predictions))
             if len(if_preds) > 0:
                 if_preds = GroundingDistribution.from_list_eq(if_preds, grounding)
@@ -397,7 +405,7 @@ class RLangListener(RLangParserListener):
         # Rewards
         reward_statements = [statement.value.reward_function for statement in ctx.effects]
         reward_statements = list(filter(lambda x: x, reward_statements))
-        if reward_statements:
+        if len(reward_statements) > 0:
             reward_function = RewardFunction.from_reward_distribution(
                 RewardDistribution.from_list_eq(reward_statements))
         else:
@@ -406,7 +414,7 @@ class RLangListener(RLangParserListener):
         # TransitionFunctions
         transition_statements = [statement.value.transition_function for statement in ctx.effects]
         transition_statements = list(filter(lambda x: x, transition_statements))
-        if transition_statements:
+        if len(transition_statements) > 0:
             transition_function = TransitionFunction.from_state_distribution(
                 StateDistribution.from_list_eq(transition_statements))
         else:

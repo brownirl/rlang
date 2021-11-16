@@ -123,7 +123,7 @@ class GroundingFunction(Grounding):
             if not isinstance(kwargs['state'], State):
                 kwargs.update({'state': State(kwargs['state'])})
         if 'action' in kwargs.keys():
-            if not isinstance(kwargs['action'], State):
+            if not isinstance(kwargs['action'], Action):
                 kwargs.update({'action': Action(kwargs['action'])})
         if 'next_state' in kwargs.keys():
             if not isinstance(kwargs['next_state'], State):
@@ -937,7 +937,7 @@ class TransitionFunction(ProbabilisticFunction):
 class RewardFunction(ProbabilisticFunction):
     """Represents function of expected reward."""
 
-    def __init__(self, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+    def __init__(self, function: Callable = None, domain: Domain = Domain.ANY, *args, **kwargs):
         if function is None:
             function = RewardDistribution().__call__
         super().__init__(function=function, domain=domain, codomain=Domain.REWARD, *args, **kwargs)

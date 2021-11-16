@@ -299,6 +299,5 @@ class ListenerTests(unittest.TestCase):
         # print(single_predictions.predictions)
 
 
-
 if __name__ == '__main__':
     unittest.main()

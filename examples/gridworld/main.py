@@ -36,16 +36,20 @@ def rlang_experiment():
     mdp = create_mdp()
     knowledge = parse_file("gridworld.rlang")
 
+    # print(knowledge['action_effect'].reward_function)
+    # print(knowledge['action_effect'].transition_function)
+    # print(knowledge['action_effect'].reward_function)
+
     states = list()
     for w in range(mdp.width):
         for h in range(mdp.height):
             states.append((w, h))
 
-    agent = QLearningAgent(mdp.get_actions())
-    RLang_agent = RLangQLearningAgent(mdp.get_actions(), states, knowledge)
+    # agent = QLearningAgent(mdp.get_actions())
+    # RLang_agent = RLangQLearningAgent(mdp.get_actions(), states, knowledge)
     RLang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name="RLang-Q-learning-transition",
                                         use_transition=True)
-    run_agents_on_mdp([agent, RLang_agent, RLang_agent_2], mdp)
+    # run_agents_on_mdp([agent, RLang_agent, RLang_agent_2], mdp)
 
 
 if __name__ == '__main__':

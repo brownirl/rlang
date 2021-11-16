@@ -11,9 +11,9 @@ Action right := 3
 Factor x := position[0]
 Factor y := position[1]
 
-Predicate reached_goal := x == 5 and y == 1
-Predicate reached_wall := x == 3 and y == 1
-Predicate in_lava := position in lava_locs
+Proposition reached_goal := x == 5 and y == 1
+Proposition reached_wall := x == 3 and y == 1
+Proposition in_lava := position in lava_locs
 
 Effect action_effect:
     if A == up:
@@ -29,7 +29,7 @@ Effect action_effect:
         position' -> position + [1, 0]
         S' -> S + [1, 0]
 
-Effect:
+Effect main:
     if in_lava:
         Reward -1
     if reached_goal:
