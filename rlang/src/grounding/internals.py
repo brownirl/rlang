@@ -2,8 +2,11 @@ from __future__ import annotations
 from typing import Any
 from enum import Enum
 from functools import total_ordering
+
+import gym.spaces
 import numpy as np
 from rlang.src.exceptions import RLangGroundingError
+from gym.spaces import Space
 
 
 @total_ordering
@@ -78,35 +81,16 @@ class Domain(Enum):
             raise RLangGroundingError(f"Can't compare a Domain enum to a {type(other)}")
 
 
-class ActionSpace:
-    def __init__(self, dtype: np.dtype, shape: tuple):
-        self.dtype = dtype
-        self.shape = shape
-
-    @classmethod
-    def from_action(cls, action: np.ndarray):
-        return cls(dtype=action.dtype, shape=action.shape)
-
-
-class StateSpace:
-    def __init__(self, dtype: np.dtype, shape: tuple):
-        self.dtype = dtype
-        self.shape = shape
-
-    @classmethod
-    def from_state(cls, state: np.ndarray):
-        return cls(dtype=state.dtype, shape=state.shape)
-
-
 class MDPMetadata:
     """Represents important parameters of the MDP like the state space and action space."""
-    def __init__(self, state_space: StateSpace, action_space: ActionSpace):
+    def __init__(self, state_space: Space, action_space: Space):
         self.state_space = state_space
         self.action_space = action_space
 
     @classmethod
     def from_state_action(cls, state: np.ndarray, action: np.ndarray):
-        return cls(state_space=StateSpace.from_state(state), action_space=ActionSpace.from_action(action))
+        return cls(state_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=state.shape),
+                   action_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=action.shape))
 
 
 class Primitive(np.ndarray):
@@ -151,9 +135,6 @@ class Primitive(np.ndarray):
 class State(Primitive):
     """Represents a State object.
 
-    RLang expects MDP states to always be of a single dimension. This class makes
-    it easy to batch single-dimensional states together.
-
     Args:
         input_array: a numpy array or list representing a state or set of states.
 
@@ -161,13 +142,9 @@ class State(Primitive):
         .. code-block:: python
 
             s1 = State(3)
-            >> State([[3]])
+            >> State([3])
             s2 = State([3, 4])
-            >> State([[3, 4]]})
-            s3 = State([[3, 4], [5, 6]])
-            Factor([0])(state=s3)
-            >> State([[3], [5]])
-
+            >> State([3, 4])
     """
     pass
 
