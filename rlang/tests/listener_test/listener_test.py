@@ -191,7 +191,7 @@ class ListenerTests(unittest.TestCase):
         s = State([0, 1, 2, 3, 4])
         s2 = State([1, 1, 2, 3, 4])
 
-        knowledge = rlang.parse_file("tests_resources/valid_examples/policy.rlang", metadata)
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/policy.rlang", metadata)
 
         simple = knowledge['simple']
         assert simple(state=s) == {Action(2): 1.0}
@@ -239,7 +239,7 @@ class ListenerTests(unittest.TestCase):
         s4 = State([2, 3, 2, 3, 4])
         s5 = State([0, 0, 2, 3, 4])
 
-        knowledge = rlang.parse_file("tests_resources/valid_examples/option.rlang", metadata)
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/option.rlang", metadata)
 
         simple_option = knowledge['simple_option']
         assert simple_option.can_initiate(state=s)
@@ -267,7 +267,7 @@ class ListenerTests(unittest.TestCase):
         s2 = State([3, 2, 2, 3, 4])
         s3 = State([5, 2, 2, 3, 4])
 
-        knowledge = rlang.parse_file("tests_resources/valid_examples/effect.rlang", metadata)
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/effect.rlang", metadata)
 
         single_reward = knowledge['single_reward']
         assert single_reward.reward_function(state=s) == 10

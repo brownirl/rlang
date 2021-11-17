@@ -31,9 +31,9 @@ class StateTest(unittest.TestCase):
         s4 = State([[1, 1, 1], [1, 1, 1]])
 
         # QUESTION: is this allowed?
-        batched = State([s1, s2, s3])
-        batched1 = State([s2, s1, s3])
-        print(batched == batched1)
+        # batched = State([s1, s2, s3])
+        # batched1 = State([s2, s1, s3])
+        # print(batched == batched1)
 
         
 
