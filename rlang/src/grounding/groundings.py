@@ -5,7 +5,7 @@ from typing import Callable, Any, Union
 
 import numpy as np
 from numpy.random import default_rng
-from rlang.src.grounding.internals import Domain, State, Action, BatchedPrimitive
+from rlang.src.grounding.internals import Domain, State, Action, Primitive
 from rlang.src.exceptions import RLangGroundingError
 
 
@@ -101,14 +101,14 @@ class GroundingFunction(Grounding):
         # Cannot override __contains__ and return a non-boolean
         list_cast = lambda x: x.tolist() if isinstance(x, np.ndarray) else x
         # TODO: Fix this! 'in' only works for singleton batch items!
-        unbatch_cast = lambda x, j: np.asarray(x)[j] if isinstance(x, BatchedPrimitive) else x
-        unbatch_size = lambda x: len(x) if isinstance(x, BatchedPrimitive) else 1
+        unbatch_cast = lambda x, j: np.asarray(x)[j] if isinstance(x, Primitive) else x
+        unbatch_size = lambda x: len(x) if isinstance(x, Primitive) else 1
         if isinstance(item, GroundingFunction):
             return Proposition(function=lambda *args, **kwargs: [
                 [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
                 range(unbatch_size(item))],
                                domain=self.domain + item.domain)
-        elif isinstance(item, BatchedPrimitive):
+        elif isinstance(item, Primitive):
             return Proposition(function=lambda *args, **kwargs: [
                 [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
                 range(unbatch_size(item))],
@@ -704,15 +704,15 @@ class RewardDistribution(ProbabilityDistribution):
         def update_dictionary(k_, v_):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
-                    if isinstance(k__, BatchedPrimitive):
+                    if isinstance(k__, Primitive):
                         update_dictionary(k__, v_*v__)
                     else:
                         update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
             elif k_ is not None:
-                if isinstance(k_, BatchedPrimitive):
+                if isinstance(k_, Primitive):
                     a = k_
                 else:
-                    a = BatchedPrimitive(k_)
+                    a = Primitive(k_)
                 if a in true_distribution:
                     true_distribution[a] += v_
                 else:
@@ -748,12 +748,12 @@ class GroundingDistribution(ProbabilityDistribution):
         def update_dictionary(k_, v_):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
-                    if isinstance(k__, BatchedPrimitive):
+                    if isinstance(k__, Primitive):
                         update_dictionary(k__, v_*v__)
                     else:
                         update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
             elif k_ is not None:
-                if isinstance(k_, BatchedPrimitive):
+                if isinstance(k_, Primitive):
                     a = k_
                 else:
                     a = State(k_)

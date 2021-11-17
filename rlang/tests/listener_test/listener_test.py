@@ -14,7 +14,7 @@ class ListenerTests(unittest.TestCase):
         position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
         position = Factor(0, "position")
         assert position(state=state) == position_parsed(state=state)
-        # assert position_parsed(state=state) == BatchedPrimitive(4)
+        # assert position_parsed(state=state) == Primitive(4)
 
         position_parsed = rlang.parse("Factor position := S[0:3]\nFactor p2 := position[0]", metadata)['position']
         position = Factor([0, 1, 2], "position")
@@ -118,6 +118,7 @@ class ListenerTests(unittest.TestCase):
         assert (x_parsed(state=state)) == 5 / 4
 
     def test_Proposition(self):
+        # TODO: Re-write these using new Primitive
         metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         state = State(np.array([4, 5, 6, 7, 8]))
 
