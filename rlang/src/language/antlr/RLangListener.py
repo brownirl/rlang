@@ -108,7 +108,10 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_proposition.name, new_proposition)
 
     def exitGoal(self, ctx: RLangParser.GoalContext):
-        pass
+        new_goal = ctx.boolean_exp().value
+        new_goal.__class__ = Goal
+        new_goal.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_goal.name, new_goal)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value

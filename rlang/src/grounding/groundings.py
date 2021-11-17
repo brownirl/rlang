@@ -503,6 +503,11 @@ class Proposition(GroundingFunction):
         return f"<Proposition [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
+class Goal(Proposition):
+    def __repr__(self):
+        return f"<Goal [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+
+
 class ValueFunction(GroundingFunction):
     """Represents a value function."""
 
