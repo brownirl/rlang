@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from control_sharing import ControlSharingPolicy
+from examples.control_sharing import ControlSharingPolicy
 from run_rlang_agent import train_agent_eval_agent
 
 from pfrl.policies import SoftmaxCategoricalHead
@@ -134,10 +134,10 @@ class RLangPolicy(nn.Module):
                 actions_prob += self.eps
         return torch.log(actions_prob).unsqueeze(0)
 
-def make_rlang_agent_model(model, rlang_policy, n_actions, annealing_factor=0.99, beta=0.75):
+def make_rlang_agent_model(model, rlang_policy, n_actions, annealing_factor=0.99998, beta=0.99):
     advice_policy = RLangPolicy(rlang_policy, n_actions=n_actions)
-    # return ControlSharingPolicy(model, advice_policy, beta_scheduler(annealing_factor=annealing_factor))
-    return ControlSharingPolicy(model, advice_policy, lambda: beta)     
+    return ControlSharingPolicy(model, advice_policy, beta_scheduler(annealing_factor=annealing_factor))
+    # return ControlSharingPolicy(model, advice_policy, lambda: beta)     
 
 def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=200):
     model = nn.Sequential(
@@ -157,12 +157,14 @@ def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=200):
 def rlang_experiment():
     knowledge = parse_file("examples/cartpole/policy.rlang") 
     beta = 0.5
-    for seed in (0, 11, 13, 2000, 10000):
-        _, model = make_uninformed_agent_model()
-        rlang_policy_model = make_rlang_agent_model(model, cartpole_policy_1, n_actions=2, beta=beta)
-        train_agent_eval_agent(rlang_policy_model, beta=beta, name="rlang-informed-" + str(beta) + '-seed-' + str(seed), seed=seed) # RLang-informed agent
+    lr = 1e-3
+    _output_dir = 'beta_annealing'
+    for seed in (0,):#, 11, 13, 2000, 10000):
+        # _, model = make_uninformed_agent_model()
+        # rlang_policy_model = make_rlang_agent_model(model, cartpole_policy_1, n_actions=2, beta=beta, annealing_factor=0.999)
+        # train_agent_eval_agent(rlang_policy_model, beta=beta, name="rlang-informed-" + str(beta) + '-seed-' + str(seed), seed=seed, output_dir=_output_dir, lr=lr, steps=1e5) # RLang-informed agent
         agent_policy_model, model = make_uninformed_agent_model()
-        train_agent_eval_agent(agent_policy_model, name=f"uninformed-{seed}", seed=seed, beta=0) # Uninformed agent
+        train_agent_eval_agent(agent_policy_model, name=f"uninformed-{seed}", seed=seed, beta=0.75, output_dir=_output_dir, lr=lr/0.25) # Uninformed agent
 
 if __name__ == '__main__':
     rlang_experiment()
