@@ -18,6 +18,9 @@ import logging
 def parse_args(beta=0.75, name="", seed=0, output_dir='policy_pg_1', env="CartPole-v0", lr=3e-4, steps=10**5, render=False, demo=False):
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--lr", type=int, default=lr, help="Learning rate"
+    )
+    parser.add_argument(
         "--gpu", type=int, default=-1, help="GPU to use, set to -1 if no GPU."
     )
     parser.add_argument(
@@ -169,16 +172,16 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
         nn.init.orthogonal_(layer.weight, gain=gain)
         nn.init.zeros_(layer.bias)
 
-    # ortho_init(policy[0], gain=1)
-    # ortho_init(policy[2], gain=1)
-    # ortho_init(policy[4], gain=1e-2)
+    ortho_init(policy[0], gain=1)
+    ortho_init(policy[2], gain=1)
+    ortho_init(policy[4], gain=1e-2)
     ortho_init(vf[0], gain=1)
     ortho_init(vf[2], gain=1)
     ortho_init(vf[4], gain=1)
 
     # Combine a policy and a value function into a single model
     model = pfrl.nn.Branched(policy, vf)
-    opt = torch.optim.Adam(model.parameters(), lr=lr, eps=1e-5)
+    opt = torch.optim.Adam(model.parameters(), lr=args.lr, eps=1e-5)
 
     agent = PPO(
         model,
@@ -241,4 +244,3 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
                 save_best_so_far_agent=False,
                 use_tensorboard=True
             )
-        print(eval_stats)
