@@ -18,7 +18,7 @@ import logging
 def parse_args(beta=0.75, name="", seed=0, output_dir='policy_pg_1', env="CartPole-v0", lr=3e-4, steps=10**5, render=False, demo=False):
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--lr", type=int, default=lr, help="Learning rate"
+        "--lr", type=float, default=lr, help="Learning rate"
     )
     parser.add_argument(
         "--gpu", type=int, default=-1, help="GPU to use, set to -1 if no GPU."
