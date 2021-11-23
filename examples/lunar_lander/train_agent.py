@@ -172,9 +172,9 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
         nn.init.orthogonal_(layer.weight, gain=gain)
         nn.init.zeros_(layer.bias)
 
-    ortho_init(policy[0], gain=1)
-    ortho_init(policy[2], gain=1)
-    ortho_init(policy[4], gain=1e-2)
+    # ortho_init(policy[0], gain=1)
+    # ortho_init(policy[2], gain=1)
+    # ortho_init(policy[4], gain=1e-2)
     ortho_init(vf[0], gain=1)
     ortho_init(vf[2], gain=1)
     ortho_init(vf[4], gain=1)
@@ -183,7 +183,7 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
     model = pfrl.nn.Branched(policy, vf)
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, eps=1e-5)
 
-    agent = PPO(
+    agent = annealedPPO(
         model,
         opt,
         obs_normalizer=obs_normalizer,
@@ -244,3 +244,8 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
                 save_best_so_far_agent=False,
                 use_tensorboard=True
             )
+
+class annealedPPO(PPO):
+    def _update(self, dataset):
+        super()._update(dataset)
+        self.model.child_modules[0].anneal()

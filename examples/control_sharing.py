@@ -61,12 +61,15 @@ class ControlSharingPolicy(nn.Module):
     def train(self, mode):
         self.policy_model.train(mode)
         nn.Module.train(self, mode)
+    
+    def anneal(self):
+        self._beta = self.beta()
 
     def forward(self, state):
         logits_1 = self.advice_policy(state)
         logits_2 = self.policy_model(state)
-        if self.training:
-            self._beta = self.beta()
+        # if self.training:
+        #     self._beta = self.beta()
         return ControlSharingActionDistribution(self._beta, logits_1=logits_1, logits_2=logits_2)
 
 if __name__=="__main__":

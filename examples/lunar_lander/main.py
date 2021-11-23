@@ -13,7 +13,7 @@ import torch
 from torch import nn
 
 from examples.control_sharing import ControlSharingPolicy
-from run_rlang_agent import train_agent_eval_agent, train_agent_ppo
+from train_agent import train_agent_ppo
 
 from pfrl.policies import SoftmaxCategoricalHead
 
@@ -153,7 +153,7 @@ class beta_scheduler:
         self.current_beta = init_beta
         self.annealing_factor=annealing_factor
         self._t = 0
-        self._freq = 1
+        self._freq = 2
 
     def __call__(self):
         if self._t % self._freq == 0:   
@@ -223,30 +223,15 @@ def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=64):
 
 def rlang_experiment():
     knowledge = parse_file("examples/cartpole/policy.rlang") 
-    beta = 0.99
-    lr=3e-4
     env = "LunarLander-v2"
-    for seed in (0,): #11, 13, 2000, 10000):
-        _, model = make_uninformed_agent_model(action_space=4, obs_size=8)
-        rlang_policy_model = make_rlang_agent_model(model, fall_in_place, n_actions=4, beta=beta)
-        
-        train_agent_ppo(rlang_policy_model, 
-                                beta=beta, 
-                                name="rlang-informed-" + str(beta) + '-seed-' + str(seed), 
-                                seed=seed, 
-                                lr=lr,
-                                env=env,
-                                output_dir='lunar_lander_results',
-                                steps=5*10**5,
-                                render=False) # RLang-informed agent
-        # agent_policy_model, model = make_uninformed_agent_model(action_space=4, obs_size=8)
-        # train_agent_ppo(agent_policy_model, 
-        #                         name=f"uninformed-{seed}", 
-        #                         seed=seed, 
-        #                         beta=0, 
-        #                         env=env, 
-        #                         steps= 5 * 10 ** 5,
-        #                         output_dir='lunar_lander_results') # Uninformed agent
+    _, model = make_uninformed_agent_model(action_space=4, obs_size=8)
+    rlang_policy_model = make_rlang_agent_model(model, fall_in_place, n_actions=4, beta=0.7, annealing_factor=0.98)
+    train_agent_ppo(rlang_policy_model, env="LunarLander-v2", steps=5e5, demo=True) # evaluate at 0.
+    train_agent_ppo(rlang_policy_model, 
+                            name="rlang-informed",
+                            env=env,
+                            output_dir='lunar_lander_results',
+                            render=False) # RLang-informed agent
 
 if __name__ == '__main__':
     rlang_experiment()
