@@ -11,10 +11,9 @@ from pfrl import experiments, utils
 from pfrl.policies import GaussianHeadWithFixedCovariance, SoftmaxCategoricalHead
 
 import numpy as np
+import logging
 
-def train_agent_eval_agent(model, beta=0.75, name="", seed=0, output_dir='policy_pg_1', lr=1e-3, steps=10 ** 5):
-    import logging
-
+def parse_args(seed, output_dir, steps, lr):
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str, default="CartPole-v0")
     parser.add_argument("--seed", type=int, default=seed, help="Random seed [0, 2 ** 32)")
@@ -41,6 +40,11 @@ def train_agent_eval_agent(model, beta=0.75, name="", seed=0, output_dir='policy
     parser.add_argument("--log-level", type=int, default=logging.INFO)
     parser.add_argument("--monitor", action="store_true")
     args = parser.parse_args()
+    return args
+
+def train_reinforce(model, beta=0.75, name="", seed=0, output_dir='policy_pg_1', lr=1e-3, steps=10 ** 5):
+
+    args = parse_args(seed, output_dir, steps, lr)
 
     logging.basicConfig(level=args.log_level)
 
@@ -69,23 +73,10 @@ def train_agent_eval_agent(model, beta=0.75, name="", seed=0, output_dir='policy
     train_env = make_env(test=False)
     timestep_limit = train_env.spec.max_episode_steps
     obs_space = train_env.observation_space
-    action_space = train_env.action_space
-
-    obs_size = obs_space.low.size
-    hidden_size = 200
-    
-    # model = nn.Sequential(
-    #     nn.Linear(obs_size, hidden_size),
-    #     nn.LeakyReLU(0.2),
-    #     nn.Linear(hidden_size, hidden_size),
-    #     nn.LeakyReLU(0.2),
-    #     nn.Linear(hidden_size, action_space.n),
-    #     SoftmaxCategoricalHead(),
-    # )
 
     opt = torch.optim.Adam(model.parameters(), lr=args.lr)
-
-    agent = pfrl.agents.REINFORCE(
+    agent_type = pfrl.agents.REINFORCE
+    agent = agent_type(
         model,
         opt,
         gpu=args.gpu,
