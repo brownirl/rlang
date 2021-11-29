@@ -8,18 +8,22 @@ import gym
 from rlang import parse_file, parse
 from rlang.src.grounding import State, Action
 
-import numpy as np
 import torch
 from torch import nn
 
 from examples.control_sharing import ControlSharingPolicy
 from train_agent import train_agent_ppo
 
+import pfrl
 from pfrl.policies import SoftmaxCategoricalHead
 
-import random
+import random, os
 
+from supervised_init import supervised_init, evaluate_policy
 from product_policy import ProductPolicy
+
+
+import argparse
 
 def no_op_policy(state):
     DO_NOTHING = 0
@@ -166,6 +170,21 @@ class beta_scheduler:
         self._t = 0
 
 
+class linear_scheduler:
+    def __init__(self, n_steps=1e5, init=1., end=0.):
+        self._init = init
+        self._end = end
+        self._steps = n_steps
+        self._t = 0
+
+    def __call__(self):
+        beta = self._init - self._t * (self._init-self._end)/self._steps
+        self._t += 0
+        return beta
+
+    def reset(self):
+        self._t = 0
+
 class RLangPolicy(nn.Module):
     def __init__(self, rlang_policy, epsilon=1e-8, n_actions=2):
         self.rlang_policy = rlang_policy
@@ -200,10 +219,10 @@ class RLangPolicy(nn.Module):
             return torch.cat(acts, dim=0)
                 
 
-def make_rlang_agent_model(model, rlang_policy, n_actions, annealing_factor=0.9995, beta=1.):
+def make_advice_policy(rlang_policy, n_actions):
     advice_policy = RLangPolicy(rlang_policy, n_actions=n_actions)
-    return ControlSharingPolicy(model, advice_policy, beta_scheduler(init_beta=beta, annealing_factor=annealing_factor))
-    # return ControlSharingPolicy(model, advice_policy, lambda: beta)
+    return advice_policy
+
 
 def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=64):
     model = nn.Sequential(
@@ -218,16 +237,163 @@ def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=64):
         model, 
         SoftmaxCategoricalHead()
     )
-    return agent_model, model
+
+    value_network = torch.nn.Sequential(
+        nn.Linear(8, 64),
+        nn.Tanh(),
+        nn.Linear(64, 64),
+        nn.Tanh(),
+        nn.Linear(64, 1),
+    )
+    return agent_model, model, value_network
+
+
+def supervised_initialization(model, learning_policy, advice_policy, value_network):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--sup-advice-policy", type=str, default='./lunar_lander_policy', help="Saved Advice Policy path"
+    )
+    parser.add_argument(
+        "--sup-lr", type=float, default=1e-5, help="Supervised init learning rate"
+    )
+    parser.add_argument(
+        "--sup-batchsize", type=int, default=32, help="Supervised init batchsize"
+    )
+
+    parser.add_argument(
+        "--sup-n-trajectories", type=int, default=1000, help="Supervised init Number of trajectories"
+    )
+
+    parser.add_argument(
+        "--sup-epochs", type=int, default=100, help="Supervised init Number of Epochs to initialize Value function"
+    )
+
+    parser.add_argument(
+        "--sup-iters", type=int, default=40000, help="Supervised init Number of iterations to initialize Policy function"
+    )
+    
+    env = "LunarLander-v2"
+    args, _ = parser.parse_known_args()
+    policy_path = args.sup_advice_policy
+
+    if not os.path.exists(policy_path):
+        supervised_init(model, advice_policy, gym.make(env).observation_space, batchsize=args.sup_batchsize, iters=args.sup_iters, lr=args.sup_lr)
+        torch.save(learning_policy.state_dict(), policy_path)
+    else:
+        learning_policy.load_state_dict(torch.load(policy_path))
+
+    evaluate_policy(learning_policy, value_network, gym.make(env), epochs=args.sup_epochs, n_trajectories=args.sup_n_trajectories)
+
+    return learning_policy, value_network
+
+def policy_mixing(policy_model, advice_policy):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--mix-beta", type=float, default=0.8, help="initial mixing parameter"
+    )
+    parser.add_argument(
+        "--mix-scheduler", type=str, default="exponential", help="exponential, linear or constant"
+    )
+
+    parser.add_argument(
+        "--mix-decay-rate", type=float, default=0.9999, help="annealing factor"
+    )
+
+    parser.add_argument(
+        "--steps", type=int, default=5e5, help="annealing factor"
+    )
+
+    args, _ = parser.parse_known_args()
+    scheduler_type = args.mix_scheduler.strip().lower()
+    if scheduler_type == "exponential":
+        scheduler = beta_scheduler(args.mix_beta, args.mix_decay_rate)
+    elif scheduler_type == "linear":
+        scheduler = linear_scheduler(init=args.mix_beta, n_steps=args.steps)
+    elif scheduler_type == "constant":
+        scheduler = lambda: args.mix_beta
+    else:
+        raise ValueError(f"No scheduler of type {scheduler_type}")
+    
+    return ControlSharingPolicy(policy_model, advice_policy, scheduler)
+    
+def product_policy(model, advice_policy):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--product-eps", type=float, default=0.1, help="epsilon-greedy exploration"
+    )
+    args, _ = parser.parse_known_args()
+
+    return ProductPolicy(model, advice_policy)
+
+def oracle_policy(policy, vf):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--oracle", type=str, default="", help="path to oracle policy"
+    )
+    args, _ = parser.parse_known_args()
+    
+    model = pfrl.nn.Branched(policy, vf)
+    opt = torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5)
+    obs_normalizer = pfrl.nn.EmpiricalNormalization(
+        8, clip_threshold=5
+    )
+    agent = pfrl.agents.PPO(
+        model,
+        opt,
+        obs_normalizer=obs_normalizer,
+        gpu=-1,
+        update_interval=1,
+        minibatch_size=1,
+        epochs=1,
+        clip_eps_vf=None,
+        entropy_coef=0,
+        standardize_advantages=True,
+        gamma=0.995,
+        lambd=0.97,
+    )
+
+    agent.load(args.oracle)
+    
+
+    return policy, vf, obs_normalizer
 
 
 def rlang_experiment():
-    knowledge = parse_file("examples/cartpole/policy.rlang") 
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--experiment", type=str, default="supervised", help="supervised, product policy or policy mixing"
+    )
+    args, _ = parser.parse_known_args()
+    
     env = "LunarLander-v2"
-    _, model = make_uninformed_agent_model(action_space=4, obs_size=8)
-    rlang_policy_model = make_rlang_agent_model(model, fall_in_place, n_actions=4, beta=0.7, annealing_factor=0.98)
-    train_agent_ppo(rlang_policy_model, env="LunarLander-v2", steps=5e5, demo=True) # evaluate at 0.
-    train_agent_ppo(rlang_policy_model, 
+    learning_policy, model, value_network = make_uninformed_agent_model(action_space=4, obs_size=8)
+    advice_policy = make_advice_policy(fall_in_place, n_actions=4)
+    obs_normalizer = None
+    anneal = False
+    experiment = args.experiment.lower().strip() 
+    if experiment == "supervised":
+        print("Supervised initialization experiment")
+        learning_policy, value_network = supervised_initialization(model, learning_policy, advice_policy, value_network)
+    elif experiment == "policy-mixing":
+        print("Policy Mixing experiment")
+        learning_policy = policy_mixing(model, advice_policy)
+        anneal = True
+    elif experiment == "product-policy":
+        print("Product policy experiment")
+        learning_policy = product_policy(learning_policy, advice_policy)
+    elif experiment == "oracle":
+        print("Oracle experiment")
+        advice_model = model
+        advice_policy, value_network, obs_normalizer = oracle_policy(learning_policy, value_network)
+        learning_policy, learning_model, _ = make_uninformed_agent_model(action_space=4, obs_size=8)
+        model.requires_grad_ = False
+        learning_policy = policy_mixing(learning_model, advice_model)
+        anneal = True
+        
+
+
+    train_agent_ppo(value_network, learning_policy, anneal=anneal, obs_normalizer=obs_normalizer, env="LunarLander-v2", steps=5e5, demo=True) # evaluate at 0.
+    train_agent_ppo(value_network, learning_policy, anneal=anneal, obs_normalizer=obs_normalizer, 
                             name="rlang-informed",
                             env=env,
                             output_dir='lunar_lander_results',

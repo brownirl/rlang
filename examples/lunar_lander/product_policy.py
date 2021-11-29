@@ -12,5 +12,5 @@ class ProductPolicy(nn.Module):
         
 
     def forward(self, state):
-        logits = nn.functional.softmax(self.model_1(state), dim=-1) + nn.functional.softmax(self.model_2(state) + 0.1, dim=-1)
+        logits = torch.log(nn.functional.softmax(self.model_1(state), dim=-1) * nn.functional.softmax(self.model_2(state), dim=-1))
         return torch.distributions.Categorical(logits=logits)

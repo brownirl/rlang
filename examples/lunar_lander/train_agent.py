@@ -98,11 +98,11 @@ def parse_args(beta=0.75, name="", seed=0, output_dir='policy_pg_1', env="CartPo
 
     parser.add_argument("--exp_id", type=str, default="", help="Experiment tag")
 
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()
 
     return args
 
-def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='policy_pg_1', env="CartPole-v0", lr=3e-4, steps=10**5, render=False, demo=False):
+def train_agent_ppo(vf, policy, anneal=False, obs_normalizer=None, args=None, beta=0.75, name="", seed=0, output_dir='policy_pg_1', env="CartPole-v0", lr=3e-4, steps=10**5, render=False, demo=False):
     args = parse_args(beta, name, seed, output_dir, env, lr, steps, render, demo) if args is None else args
 
     logging.basicConfig(level=args.log_level)
@@ -153,18 +153,18 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
     # Normalize observations based on their empirical mean and variance
     obs_normalizer = pfrl.nn.EmpiricalNormalization(
         obs_space.low.size, clip_threshold=5
-    )
+    ) if obs_normalizer is None else obs_normalizer
 
     obs_size = obs_space.low.size
     action_size = action_space.n
 
-    vf = torch.nn.Sequential(
-        nn.Linear(obs_size, 64),
-        nn.Tanh(),
-        nn.Linear(64, 64),
-        nn.Tanh(),
-        nn.Linear(64, 1),
-    )
+    # vf = torch.nn.Sequential(
+    #     nn.Linear(obs_size, 64),
+    #     nn.Tanh(),
+    #     nn.Linear(64, 64),
+    #     nn.Tanh(),
+    #     nn.Linear(64, 1),
+    # )
 
     # While the original paper initialized weights by normal distribution,
     # we use orthogonal initialization as the latest openai/baselines does.
@@ -175,15 +175,17 @@ def train_agent_ppo(policy, args=None, beta=0.75, name="", seed=0, output_dir='p
     # ortho_init(policy[0], gain=1)
     # ortho_init(policy[2], gain=1)
     # ortho_init(policy[4], gain=1e-2)
-    ortho_init(vf[0], gain=1)
-    ortho_init(vf[2], gain=1)
-    ortho_init(vf[4], gain=1)
+    #ortho_init(vf[0], gain=1)
+    # ortho_init(vf[2], gain=1)
+    # ortho_init(vf[4], gain=1)
 
     # Combine a policy and a value function into a single model
     model = pfrl.nn.Branched(policy, vf)
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, eps=1e-5)
 
-    agent = annealedPPO(
+    agent_type = annealedPPO if anneal else PPO
+
+    agent = agent_type(
         model,
         opt,
         obs_normalizer=obs_normalizer,
@@ -249,3 +251,8 @@ class annealedPPO(PPO):
     def _update(self, dataset):
         super()._update(dataset)
         self.model.child_modules[0].anneal()
+
+    def get_statistics(self):
+        stats = super().get_statistics()
+        stats.append(("beta param", self.model.child_modules[0]._beta))
+        return stats
