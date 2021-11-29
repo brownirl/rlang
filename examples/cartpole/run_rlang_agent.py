@@ -39,6 +39,7 @@ def parse_args(seed, output_dir, steps, lr):
     parser.add_argument("--load", type=str, default="")
     parser.add_argument("--log-level", type=int, default=logging.INFO)
     parser.add_argument("--monitor", action="store_true")
+    parser.add_argument("--exp-id", type=str, default='')
     args = parser.parse_args()
     return args
 
@@ -110,7 +111,7 @@ def train_reinforce(model, beta=0.75, name="", seed=0, output_dir='policy_pg_1',
             agent=agent,
             env=train_env,
             eval_env=eval_env,
-            outdir=f"{args.outdir}/{name}",
+            outdir=f"{args.outdir}/{args.exp_id}",
             steps=args.steps,
             eval_n_steps=None,
             eval_n_episodes=args.eval_n_runs,
