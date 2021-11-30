@@ -153,6 +153,10 @@ def fall_in_place(state):
             
 
 def gym_policy(state):
+
+    '''
+        Adapted from https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
+    '''
     DO_NOTHING = 0
     LEFT = 1
     CENTER = 2
@@ -162,31 +166,27 @@ def gym_policy(state):
     velocity = state[2:4]
     angle = state[4]
     angle_velocity = state[5]
-    leg_leg_touch = state[6]
+    left_leg_touch = state[6]
     right_leg_torch = state[7]
-    goal = np.zeros((2,))
-
-    s = state
-    
 
     action_dist = {DO_NOTHING: 0., LEFT: 0., CENTER: 0., RIGHT: 0.}
 
-    angle_targ = s[0] * 0.5 + s[2] * 1.0  # angle should point towards center
+    angle_targ = position[0] * 0.5 + velocity[0] * 1.0  # angle should point towards center
     if angle_targ > 0.4:
         angle_targ = 0.4  # more than 0.4 radians (22 degrees) is bad
     if angle_targ < -0.4:
         angle_targ = -0.4
     hover_targ = 0.55 * np.abs(
-        s[0]
+        position[0]
     )  # target y should be proportional to horizontal offset
 
-    angle_todo = (angle_targ - s[4]) * 0.5 - (s[5]) * 1.0
-    hover_todo = (hover_targ - s[1]) * 0.5 - (s[3]) * 0.5
+    angle_todo = (angle_targ - angle) * 0.5 - (angle_velocity) * 1.0
+    hover_todo = (hover_targ - position[1]) * 0.5 - (velocity[1]) * 0.5
 
-    if s[6] or s[7]:  # legs have contact
+    if left_leg_touch or right_leg_torch:  # legs have contact
         angle_todo = 0
         hover_todo = (
-            -(s[3]) * 0.5
+            -(velocity[1]) * 0.5
         )  # override to reduce fall speed, that's all we need after contact
 
     a = DO_NOTHING
@@ -237,10 +237,11 @@ class linear_scheduler:
         self._t = 0
 
 class RLangPolicy(nn.Module):
-    def __init__(self, rlang_policy, epsilon=1e-8, n_actions=2):
+    def __init__(self, rlang_policy, epsilon=1e-8, n_actions=2, obs_normalizer=None):
         self.rlang_policy = rlang_policy
         self.eps = epsilon
         self.n_actions = n_actions
+        self.obs_normalizer = obs_normalizer
         super().__init__()
 
 
@@ -262,6 +263,7 @@ class RLangPolicy(nn.Module):
         return torch.log(actions_prob).unsqueeze(0)
 
     def forward(self, state):
+        state = self.obs_normalizer.inverse(state) if self.obs_normalizer is not None else state
         batch = state.size()[0]
         if batch == 1:
             return self._dict_to_tensor(state[0])
@@ -269,6 +271,8 @@ class RLangPolicy(nn.Module):
             acts = [self._dict_to_tensor(state[i]) for i in range(batch)]
             return torch.cat(acts, dim=0)
                 
+    def set_obs_normalizer(self, obs_normalizer):
+        self.obs_normalizer = obs_normalizer
 
 def make_advice_policy(rlang_policy, n_actions):
     advice_policy = RLangPolicy(rlang_policy, n_actions=n_actions)
@@ -337,7 +341,7 @@ def supervised_initialization(model, learning_policy, advice_policy, value_netwo
 
     return learning_policy, value_network
 
-def policy_mixing(policy_model, advice_policy):
+def policy_mixing(policy_model, advice_policy, obs_normalizer=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--mix-beta", type=float, default=0.8, help="initial mixing parameter"
@@ -364,7 +368,7 @@ def policy_mixing(policy_model, advice_policy):
         scheduler = lambda: args.mix_beta
     else:
         raise ValueError(f"No scheduler of type {scheduler_type}")
-    
+    advice_policy.set_obs_normalizer(obs_normalizer)
     return ControlSharingPolicy(policy_model, advice_policy, scheduler)
     
 def product_policy(model, advice_policy):
@@ -414,11 +418,22 @@ def rlang_experiment():
     parser.add_argument(
         "--experiment", type=str, default="policy-mixing", help="supervised, product policy or policy mixing"
     )
+    
+    parser.add_argument(
+        "--policy", type=str, default="heuristic", help="heuristic or suboptimal"
+    )
+
     args, _ = parser.parse_known_args()
     
     env = "LunarLander-v2"
     learning_policy, model, value_network = make_uninformed_agent_model(action_space=4, obs_size=8)
-    advice_policy = make_advice_policy(fall_in_place, n_actions=4)
+
+    policy = gym_policy if args.policy == 'heuristic' else fall_in_place
+
+    advice_policy = make_advice_policy(policy, n_actions=4)
+    obs_normalizer = pfrl.nn.EmpiricalNormalization(
+        8, clip_threshold=5
+    )
     obs_normalizer = None
     anneal = False
     experiment = args.experiment.lower().strip() 
@@ -427,7 +442,7 @@ def rlang_experiment():
         learning_policy, value_network = supervised_initialization(model, learning_policy, advice_policy, value_network)
     elif experiment == "policy-mixing":
         print("Policy Mixing experiment")
-        learning_policy = policy_mixing(model, advice_policy)
+        learning_policy = policy_mixing(model, advice_policy, obs_normalizer=obs_normalizer)
         anneal = True
     elif experiment == "product-policy":
         print("Product policy experiment")
@@ -440,8 +455,6 @@ def rlang_experiment():
         model.requires_grad_ = False
         learning_policy = policy_mixing(learning_model, advice_model)
         anneal = True
-        
-
 
     train_agent_ppo(value_network, learning_policy, anneal=anneal, obs_normalizer=obs_normalizer, env="LunarLander-v2", steps=5e5, demo=True) # evaluate at 0.
     train_agent_ppo(value_network, learning_policy, anneal=anneal, obs_normalizer=obs_normalizer, 
