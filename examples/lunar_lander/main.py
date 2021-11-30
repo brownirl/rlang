@@ -151,6 +151,57 @@ def fall_in_place(state):
     
     return action_dist
             
+
+def gym_policy(state):
+    DO_NOTHING = 0
+    LEFT = 1
+    CENTER = 2
+    RIGHT = 3
+
+    position = state[0:2]
+    velocity = state[2:4]
+    angle = state[4]
+    angle_velocity = state[5]
+    leg_leg_touch = state[6]
+    right_leg_torch = state[7]
+    goal = np.zeros((2,))
+
+    s = state
+    
+
+    action_dist = {DO_NOTHING: 0., LEFT: 0., CENTER: 0., RIGHT: 0.}
+
+    angle_targ = s[0] * 0.5 + s[2] * 1.0  # angle should point towards center
+    if angle_targ > 0.4:
+        angle_targ = 0.4  # more than 0.4 radians (22 degrees) is bad
+    if angle_targ < -0.4:
+        angle_targ = -0.4
+    hover_targ = 0.55 * np.abs(
+        s[0]
+    )  # target y should be proportional to horizontal offset
+
+    angle_todo = (angle_targ - s[4]) * 0.5 - (s[5]) * 1.0
+    hover_todo = (hover_targ - s[1]) * 0.5 - (s[3]) * 0.5
+
+    if s[6] or s[7]:  # legs have contact
+        angle_todo = 0
+        hover_todo = (
+            -(s[3]) * 0.5
+        )  # override to reduce fall speed, that's all we need after contact
+
+    a = DO_NOTHING
+    if hover_todo > np.abs(angle_todo) and hover_todo > 0.05:
+        a = CENTER
+    elif angle_todo < -0.05:
+        a = RIGHT
+    elif angle_todo > +0.05:
+        a = LEFT
+
+    action_dist[a] = 1.
+    return action_dist
+
+
+
 class beta_scheduler:
     def __init__(self, init_beta=0.99, annealing_factor=0.75):
         self.init_beta = 1
@@ -308,7 +359,7 @@ def policy_mixing(policy_model, advice_policy):
     if scheduler_type == "exponential":
         scheduler = beta_scheduler(args.mix_beta, args.mix_decay_rate)
     elif scheduler_type == "linear":
-        scheduler = linear_scheduler(init=args.mix_beta, n_steps=args.steps)
+        scheduler = linear_scheduler(init=args.mix_beta, n_steps=args.steps/1000)
     elif scheduler_type == "constant":
         scheduler = lambda: args.mix_beta
     else:
@@ -361,7 +412,7 @@ def oracle_policy(policy, vf):
 def rlang_experiment():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--experiment", type=str, default="supervised", help="supervised, product policy or policy mixing"
+        "--experiment", type=str, default="policy-mixing", help="supervised, product policy or policy mixing"
     )
     args, _ = parser.parse_known_args()
     
@@ -384,8 +435,8 @@ def rlang_experiment():
     elif experiment == "oracle":
         print("Oracle experiment")
         advice_model = model
-        advice_policy, value_network, obs_normalizer = oracle_policy(learning_policy, value_network)
-        learning_policy, learning_model, _ = make_uninformed_agent_model(action_space=4, obs_size=8)
+        advice_policy, _, obs_normalizer = oracle_policy(learning_policy, value_network)
+        learning_policy, learning_model, value_network = make_uninformed_agent_model(action_space=4, obs_size=8)
         model.requires_grad_ = False
         learning_policy = policy_mixing(learning_model, advice_model)
         anneal = True

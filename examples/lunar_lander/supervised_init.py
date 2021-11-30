@@ -1,6 +1,9 @@
 import numpy as np
 import torch
+from collections import deque
 from tqdm import tqdm
+
+
 
 def supervised_init(model, rlang_policy, state_space, batchsize=32, iters=40000, lr=1e-5, beta=0.8, n_actions=4):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -32,9 +35,9 @@ def evaluate_policy(policy, value_network, env, epochs=100, n_trajectories=5000,
         next_obss = []
         dones = []
         rewards = []
-
+        prev_loss = deque([], maxlen=5)
         while not done:
-            action = policy(torch.from_numpy(obs)).sample()
+            action = policy(torch.from_numpy(obs).unsqueeze(0)).sample()
             next_obs, reward, done, _ = env.step(action.item())
             obss.append(obs)
             actions.append(action)
@@ -66,13 +69,19 @@ def evaluate_policy(policy, value_network, env, epochs=100, n_trajectories=5000,
     optimizer = torch.optim.Adam(value_network.parameters(), lr=1e-5)
     for e in range(epochs):
         loss = 0.
+        losses = []
         for i in tqdm(range(0, n_data, batchsize)):
             values = value_network(_ins[i:i + batchsize])
             target = _returns[i:i + batchsize]
             loss = ((values - target) ** 2).mean()
             loss.backward()
             optimizer.step()
-        print(f"Epoch {e}: Loss {loss}")
+            losses.append(loss)
+        _loss = sum(losses)/len(losses)
+        print(f"Epoch {e}: Loss {_loss}")
+        prev_loss.append(_loss)
+        if prev_loss[-1] - prev_loss[0] > 0:
+            break
 
 
 
