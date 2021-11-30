@@ -151,9 +151,7 @@ def train_agent_ppo(vf, policy, anneal=False, obs_normalizer=None, args=None, be
     # assert isinstance(action_space, gym.spaces.Box)
 
     # Normalize observations based on their empirical mean and variance
-    # obs_normalizer = pfrl.nn.EmpiricalNormalization(
-    #     obs_space.low.size, clip_threshold=5
-    # ) if obs_normalizer is None else obs_normalizer
+    
 
     obs_size = obs_space.low.size
     action_size = action_space.n
