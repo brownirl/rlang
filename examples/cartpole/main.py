@@ -1,9 +1,10 @@
-import copy
+import copy, argparse
 from collections import defaultdict
 
 import numpy as np
 
 import gym
+
 
 from rlang import parse_file, parse
 from rlang.src.grounding import State, Action
@@ -13,9 +14,11 @@ import torch
 from torch import nn
 
 from examples.control_sharing import ControlSharingPolicy
-from run_rlang_agent import train_agent_eval_agent
+from run_rlang_agent import train_reinforce
 
 from pfrl.policies import SoftmaxCategoricalHead
+
+
 
 def create_mdp():
     # MDP parameters
@@ -74,14 +77,13 @@ def cartpole_policy_pirl(state):
     return RIGHT
 
 
-
 class beta_scheduler:
-    def __init__(self, init_beta=1., annealing_factor=0.75):
+    def __init__(self, init_beta=0.99, annealing_factor=0.75):
         self.init_beta = 1
         self.current_beta = init_beta
         self.annealing_factor=annealing_factor
         self._t = 0
-        self._freq = 200
+        self._freq = 1
 
     def __call__(self):
         if self._t % self._freq == 0:   
@@ -134,10 +136,43 @@ class RLangPolicy(nn.Module):
                 actions_prob += self.eps
         return torch.log(actions_prob).unsqueeze(0)
 
-def make_rlang_agent_model(model, rlang_policy, n_actions, annealing_factor=0.99998, beta=0.99):
+
+
+def policy_mixing(policy_model, advice_policy):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--mix-beta", type=float, default=0.8, help="initial mixing parameter"
+    )
+    parser.add_argument(
+        "--mix-scheduler", type=str, default="exponential", help="exponential, linear or constant"
+    )
+
+    parser.add_argument(
+        "--mix-decay-rate", type=float, default=0.9999, help="annealing factor"
+    )
+
+    parser.add_argument(
+        "--steps", type=int, default=5e5, help="annealing factor"
+    )
+
+    args, _ = parser.parse_known_args()
+    scheduler_type = args.mix_scheduler.strip().lower()
+    if scheduler_type == "exponential":
+        scheduler = beta_scheduler(args.mix_beta, args.mix_decay_rate)
+    elif scheduler_type == "linear":
+        scheduler = linear_scheduler(init=args.mix_beta, n_steps=args.steps/1000)
+    elif scheduler_type == "constant":
+        scheduler = lambda: args.mix_beta
+    else:
+        raise ValueError(f"No scheduler of type {scheduler_type}")
+    
+    return ControlSharingPolicy(policy_model, advice_policy, scheduler)
+
+
+
+def make_rlang_agent_model(model, rlang_policy, n_actions):
     advice_policy = RLangPolicy(rlang_policy, n_actions=n_actions)
-    return ControlSharingPolicy(model, advice_policy, beta_scheduler(annealing_factor=annealing_factor))
-    # return ControlSharingPolicy(model, advice_policy, lambda: beta)     
+    return advice_policy
 
 def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=200):
     model = nn.Sequential(
@@ -155,16 +190,12 @@ def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=200):
     return agent_model, model
 
 def rlang_experiment():
-    knowledge = parse_file("examples/cartpole/policy.rlang") 
-    beta = 0.5
-    lr = 1e-3
-    _output_dir = 'beta_annealing'
-    for seed in (0,):#, 11, 13, 2000, 10000):
-        # _, model = make_uninformed_agent_model()
-        # rlang_policy_model = make_rlang_agent_model(model, cartpole_policy_1, n_actions=2, beta=beta, annealing_factor=0.999)
-        # train_agent_eval_agent(rlang_policy_model, beta=beta, name="rlang-informed-" + str(beta) + '-seed-' + str(seed), seed=seed, output_dir=_output_dir, lr=lr, steps=1e5) # RLang-informed agent
-        agent_policy_model, model = make_uninformed_agent_model()
-        train_agent_eval_agent(agent_policy_model, name=f"uninformed-{seed}", seed=seed, beta=0.75, output_dir=_output_dir, lr=lr/0.25) # Uninformed agent
+    _, model = make_uninformed_agent_model()
+    rlang_advice_policy = make_rlang_agent_model(model, cartpole_policy_1, n_actions=2)
+    learning_policy = policy_mixing(model, rlang_advice_policy)
+
+    train_reinforce(learning_policy, anneal=True, demo=True) # evaluate at zero
+    train_reinforce(learning_policy, anneal=True) # RLang-informed agent
 
 if __name__ == '__main__':
     rlang_experiment()

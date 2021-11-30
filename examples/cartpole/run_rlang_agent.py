@@ -13,7 +13,7 @@ from pfrl.policies import GaussianHeadWithFixedCovariance, SoftmaxCategoricalHea
 import numpy as np
 import logging
 
-def parse_args(seed, output_dir, steps, lr):
+def parse_args(seed, output_dir, steps, lr, demo):
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str, default="CartPole-v0")
     parser.add_argument("--seed", type=int, default=seed, help="Random seed [0, 2 ** 32)")
@@ -35,17 +35,17 @@ def parse_args(seed, output_dir, steps, lr):
     parser.add_argument("--reward-scale-factor", type=float, default=1e-2)
     parser.add_argument("--render", action="store_true", default=False)
     parser.add_argument("--lr", type=float, default=lr)
-    parser.add_argument("--demo", action="store_true", default=False)
+    parser.add_argument("--demo", action="store_true", default=demo)
     parser.add_argument("--load", type=str, default="")
     parser.add_argument("--log-level", type=int, default=logging.INFO)
     parser.add_argument("--monitor", action="store_true")
     parser.add_argument("--exp-id", type=str, default='')
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()
     return args
 
-def train_reinforce(model, beta=0.75, name="", seed=0, output_dir='policy_pg_1', lr=1e-3, steps=10 ** 5):
+def train_reinforce(model, anneal=False, beta=0.75, name="", seed=0, output_dir='policy_pg_1', lr=1e-3, steps=10 ** 5, demo=False):
 
-    args = parse_args(seed, output_dir, steps, lr)
+    args = parse_args(seed, output_dir, steps, lr, demo)
 
     logging.basicConfig(level=args.log_level)
 
@@ -76,7 +76,7 @@ def train_reinforce(model, beta=0.75, name="", seed=0, output_dir='policy_pg_1',
     obs_space = train_env.observation_space
 
     opt = torch.optim.Adam(model.parameters(), lr=args.lr)
-    agent_type = pfrl.agents.REINFORCE
+    agent_type = pfrl.agents.REINFORCE if not anneal else betaREINFORCE
     agent = agent_type(
         model,
         opt,
@@ -89,7 +89,8 @@ def train_reinforce(model, beta=0.75, name="", seed=0, output_dir='policy_pg_1',
         agent.load(args.load)
 
     eval_env = make_env(test=True)
-
+    if demo:
+        args.outdir += "/init_eval"
     if args.demo:
         eval_stats = experiments.eval_performance(
             env=eval_env,
@@ -125,50 +126,45 @@ class betaREINFORCE(pfrl.agents.REINFORCE):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._beta = 1.
-        self._beta_seq = [[]]
 
 
     def _act_train(self, obs):
         ret = super()._act_train(obs)
         self._beta = self.model._beta
-        self._beta_seq[-1].append(1/(1-self._beta))
         return ret
-
-    def _observe_train(self, obs, reward, done, reset):
-        if done or reset:
-            if not done:
-                self._beta_seq[-1] = []
-            elif done:
-                if not self.backward_separately:
-                    if len(self.reward_sequences) != self.batchsize:
-                        # Prepare for the next episode
-                        self._beta_seq.append([])
-        super()._observe_train(obs, reward, done, reset)
-
 
     def accumulate_grad(self):
         if self.n_backward == 0:
             self.optimizer.zero_grad()
         # Compute losses
         losses = []
-        for r_seq, log_prob_seq, ent_seq, betas in zip(
-            self.reward_sequences, self.log_prob_sequences, self.entropy_sequences, self._beta_seq
+        for r_seq, log_prob_seq, ent_seq in zip(
+            self.reward_sequences, self.log_prob_sequences, self.entropy_sequences
         ):
             assert len(r_seq) - 1 == len(log_prob_seq) == len(ent_seq)
             # Convert rewards into returns (=sum of future rewards)
             R_seq = np.cumsum(list(reversed(r_seq[1:])))[::-1]
-            for R, log_prob, entropy, _beta in zip(R_seq, log_prob_seq, ent_seq, betas):
-                loss = -R * _beta * log_prob - self.beta * entropy
+            for R, log_prob, entropy in zip(R_seq, log_prob_seq, ent_seq):
+                loss = -R * log_prob - self.beta * entropy
                 losses.append(loss)
         total_loss = torch.stack(losses).sum() / self.batchsize
         total_loss.backward()
         self.reward_sequences = [[]]
         self.log_prob_sequences = [[]]
         self.entropy_sequences = [[]]
-        self._beta_seq = [[]]
         self.n_backward += 1
+
+        self.model.anneal()
+
+    def batch_update(self):
+        super().batch_update()
+        self.model.anneal()
+
+    def update_with_accumulated_grad(self):
+        super().update_with_accumulated_grad()
+        self.model.anneal()
 
     def get_statistics(self):
         ret = super().get_statistics()
-        ret.append(("last_beta", self._beta))
+        ret.append(("last_beta", self.model._beta))
         return ret
