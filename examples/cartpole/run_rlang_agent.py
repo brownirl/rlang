@@ -11,7 +11,7 @@ from pfrl import experiments, utils
 from pfrl.policies import GaussianHeadWithFixedCovariance, SoftmaxCategoricalHead
 
 import numpy as np
-import logging
+import logging, os, json
 
 def parse_args(seed, output_dir, steps, lr, demo):
     parser = argparse.ArgumentParser()
@@ -52,7 +52,7 @@ def train_reinforce(model, anneal=False, beta=0.75, name="", seed=0, output_dir=
     # Set a random seed used in PFRL.
     utils.set_random_seed(args.seed)
 
-    args.outdir = experiments.prepare_output_dir(args, args.outdir)
+    args.outdir = experiments.prepare_output_dir(args, args.outdir, exp_id=args.exp_id)
 
     def make_env(test):
         env = gym.make(args.env)
@@ -107,6 +107,10 @@ def train_reinforce(model, anneal=False, beta=0.75, name="", seed=0, output_dir=
                 eval_stats["stdev"],
             )
         )
+        demo_outdir = args.outdir + "/random_init_performance"
+        os.makedirs(demo_outdir, exist_ok=True)
+        with open(os.path.join(demo_outdir, "demo_scores.json"), "w") as f:
+            json.dump(eval_stats, f)
     else:
         experiments.train_agent_with_evaluation(
             agent=agent,
