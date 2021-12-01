@@ -173,9 +173,9 @@ def train_agent_ppo(vf, policy, anneal=False, obs_normalizer=None, args=None, be
     # ortho_init(policy[0], gain=1)
     # ortho_init(policy[2], gain=1)
     # ortho_init(policy[4], gain=1e-2)
-    #ortho_init(vf[0], gain=1)
-    # ortho_init(vf[2], gain=1)
-    # ortho_init(vf[4], gain=1)
+    ortho_init(vf[0], gain=1)
+    ortho_init(vf[2], gain=1)
+    ortho_init(vf[4], gain=1)
 
     # Combine a policy and a value function into a single model
     model = pfrl.nn.Branched(policy, vf)
