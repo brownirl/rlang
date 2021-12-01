@@ -9,7 +9,7 @@ class ControlSharingActionDistribution(Categorical, nn.Module):
 
     def __init__(self, beta, logits_1, logits_2):
         nn.Module.__init__(self)
-        Categorical.__init__(self, logits=logits_2)
+        Categorical.__init__(self, logits=logits_1)
         
         self.beta = torch.Tensor([beta])
         self.logits_1 = torch.log(torch.nn.functional.softmax(logits_1, dim=-1))
