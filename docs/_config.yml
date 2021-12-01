@@ -1,5 +1,5 @@
 remote_theme: pages-themes/minimal@v0.2.0
 plugins:
 - jekyll-remote-theme
-title: RLang - An Imperative DSL for RL Tasks and Agents
+title: RLang
 description: This is the project page for RLang currently under submission to ICML.
