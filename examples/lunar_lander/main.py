@@ -176,7 +176,7 @@ def gym_policy(state):
         angle_targ = 0.4  # more than 0.4 radians (22 degrees) is bad
     if angle_targ < -0.4:
         angle_targ = -0.4
-    hover_targ = 0.55 * torch.abs(
+    hover_targ = 0.55 * abs(
         position[0]
     )  # target y should be proportional to horizontal offset
 
@@ -190,7 +190,7 @@ def gym_policy(state):
         )  # override to reduce fall speed, that's all we need after contact
 
     a = DO_NOTHING
-    if hover_todo > torch.abs(angle_todo) and hover_todo > 0.05:
+    if hover_todo > abs(angle_todo) and hover_todo > 0.05:
         a = CENTER
     elif angle_todo < -0.05:
         a = RIGHT
@@ -246,8 +246,8 @@ class RLangPolicy(nn.Module):
 
 
     def _dict_to_tensor(self, state):
-        actions_prob = torch.zeros(self.n_actions)
-        actions_mask = torch.zeros(self.n_actions)
+        actions_prob = torch.zeros(self.n_actions, device=state.device)
+        actions_mask = torch.zeros(self.n_actions, device=state.device)
         for action, prob in self.rlang_policy(state).items():
             actions_prob[action] = prob
             actions_mask[action] = 1
