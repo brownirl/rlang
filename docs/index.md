@@ -4,8 +4,13 @@ If you're an RL agent, please go back into your cage, but tell your humans that 
 Let's do a simple RLang example.
 Here's some RLang:
 ```RLang
-Effect:
-  S' -> S * 2
+Effect probabilistic_reward:
+    with P(0.2):
+        Reward 10
+        S' -> S
+    or with P(0.8):
+        Reward 1
+        S' -> S + [0, 1]
 ```
 
 ```python3
