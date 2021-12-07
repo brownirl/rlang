@@ -52,7 +52,7 @@ def dqn(
         update_frequency (int): Number of timesteps per training update.
         target_update_frequency (int): Number of timesteps between updates the target network.
         replay_start_size (int): Number of experiences in replay buffer when training begins.
-        replay_buffer_size (int): Maximum number of experiences to store in the replay buffer.
+        replay_buffer_size (int): Maximum number of experiences to rlang_variables in the replay buffer.
         initial_exploration (int): Initial probability of choosing a random action,
             decayed until final_exploration_frame.
         final_exploration (int): Final probability of choosing a random action.

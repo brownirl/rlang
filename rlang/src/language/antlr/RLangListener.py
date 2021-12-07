@@ -1,8 +1,5 @@
-import copy
 from functools import reduce
-from typing import Callable
 import json
-import numpy as np
 
 from rlang.src.grounding import *
 from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding, ConstantGrounding, IdentityGrounding
@@ -48,9 +45,22 @@ class RLangListener(RLangParserListener):
             raise UnknownVariableError(variable_name)
 
     def addVariable(self, variable_name, variable):
+        if variable_name == 'main_policy' and not isinstance(variable, Policy):
+            raise RLangSemanticError("'main_policy' is a reserved RLang variable name")
+        if variable_name == 'main_effect' and not isinstance(variable, Effect):
+            raise RLangSemanticError("'main_effect' is a reserved RLang variable name")
+
         if variable_name in self.rlang_knowledge.keys() or variable_name in self.grounded_vars.keys():
             raise AlreadyBoundError(variable_name)
         self.rlang_knowledge.update({variable_name: variable})
+
+        if variable_name == 'main_policy':
+            self.rlang_knowledge.policy = variable
+
+        if variable_name == 'main_effect':
+            self.rlang_knowledge.reward_function = variable.reward_function
+            self.rlang_knowledge.transition_function = variable.transition_function
+            self.rlang_knowledge.proto_predictions = variable.predictions
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -92,13 +102,16 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot construct Factor with object type {type(ctx.any_bound_var().value)}")
         self.addVariable(new_factor.name, new_factor)
 
-    def exitPredicate(self, ctx: RLangParser.PredicateContext):
-        new_predicate = ctx.boolean_exp().value
-        new_predicate.name = ctx.IDENTIFIER().getText()
-        self.addVariable(new_predicate.name, new_predicate)
+    def exitProposition(self, ctx: RLangParser.PropositionContext):
+        new_proposition = ctx.boolean_exp().value
+        new_proposition.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_proposition.name, new_proposition)
 
     def exitGoal(self, ctx: RLangParser.GoalContext):
-        pass
+        new_goal = ctx.boolean_exp().value
+        new_goal.__class__ = Goal
+        new_goal.name = ctx.IDENTIFIER().getText()
+        self.addVariable(new_goal.name, new_goal)
 
     def exitFeature(self, ctx: RLangParser.FeatureContext):
         arith_exp = ctx.arithmetic_exp().value
@@ -122,7 +135,7 @@ class RLangListener(RLangParserListener):
     # ============================= Option =============================
 
     def exitOption(self, ctx: RLangParser.OptionContext):
-        subpolicy = ctx.policy_statement_collection().value
+        subpolicy = Policy.from_action_distribution(ctx.policy_statement().value)
         new_option = Option(initiation=ctx.init.value, termination=ctx.until.value, policy=subpolicy,
                             name=ctx.IDENTIFIER().getText())
         self.addVariable(new_option.name, new_option)
@@ -131,35 +144,22 @@ class RLangListener(RLangParserListener):
         if ctx.boolean_exp():
             ctx.value = ctx.boolean_exp().value
         else:
-            ctx.value = Predicate.TRUE()
+            ctx.value = Proposition.TRUE()
 
     # ============================= Policy =============================
 
     def exitPolicy(self, ctx: RLangParser.PolicyContext):
-        new_policy = ctx.policy_statement_collection().value
-        new_policy.name = ctx.IDENTIFIER().getText()
+        new_policy = Policy.from_action_distribution(ctx.policy_statement().value)
+        if ctx.IDENTIFIER():
+            new_policy.name = ctx.IDENTIFIER().getText()
+            if new_policy.name == 'main_policy':
+                raise RLangSemanticError("'main_policy' is a reserved RLang variable name")
+        elif ctx.MAIN():
+            new_policy.name = 'main_policy'
         self.addVariable(new_policy.name, new_policy)
 
-    def exitPolicy_statement_collection(self, ctx: RLangParser.Policy_statement_collectionContext):
-        policy_statements = [ps.value for ps in ctx.statements]
-        length = 0
-        for ps in policy_statements:
-            if len(ps) > 0:
-                length += len(ps)
-            else:
-                length = None
-                break
-        ctx.value = Policy(function=policy_generator_function(policy_statements), length=length)
-
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
-        if isinstance(ctx.execute().value, ActionReference):
-            ctx.value = Policy.from_action_reference(ctx.execute().value)
-        elif isinstance(ctx.execute().value, Option):
-            ctx.value = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
-                               length=len(ctx.execute().value))
-        else:
-            print("This is happening")
-            ctx.value = ctx.execute().value.__copy__()
+        ctx.value = ActionDistribution.from_single(ctx.execute().value)
 
     def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
         ctx.value = ctx.conditional_subpolicy().value
@@ -167,169 +167,117 @@ class RLangListener(RLangParserListener):
     def exitPolicy_statement_probabilistic(self, ctx: RLangParser.Policy_statement_probabilisticContext):
         ctx.value = ctx.probabilistic_subpolicy().value
 
+    def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):
+        elif_conditions = [s.value for s in ctx.elif_conditions]
+        elif_subpolicies = [s.value for s in ctx.elif_subpolicies]
+        else_subpolicy = ctx.else_subpolicy.value if ctx.else_subpolicy else None
+        ctx.value = ActionDistribution.from_single(Policy(
+            function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value,
+                                                                         elif_conditions,
+                                                                         elif_subpolicies, else_subpolicy, *args,
+                                                                         **kwargs)))
+
+    def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
+        action_distribution = ActionDistribution()
+        [action_distribution.join(sp.value) for sp in ctx.subpolicies]
+        ctx.value = action_distribution
+
+    def exitProbabilistic_policy_statement_no_sugar(self,
+                                                    ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
+        ctx.value = ctx.policy_statement().value
+        ctx.value.compose_probabilities(ctx.probabilistic_condition().value)
+
+    def exitProbabilistic_policy_statement_sugar(self, ctx: RLangParser.Probabilistic_policy_statement_sugarContext):
+        ctx.value = ActionDistribution({ctx.execute().value: ctx.probabilistic_condition().value})
+
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (Option, Policy, ActionReference)):
+            if not isinstance(variable, (Policy, ActionReference)):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
         else:
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
 
-    def exitConditional_subpolicy(self, ctx: RLangParser.Conditional_subpolicyContext):
-        elif_conditions = [s.value for s in ctx.elif_conditions]
-        elif_subpolicies = [s.value for s in ctx.elif_subpolicies]
-        else_subpolicy = ctx.else_subpolicy.value if ctx.else_subpolicy else None
-        ctx.value = Policy(
-            function=lambda *args, **kwargs: conditional_policy_function(ctx.if_condition.value, ctx.if_subpolicy.value,
-                                                                         elif_conditions,
-                                                                         elif_subpolicies, else_subpolicy, *args,
-                                                                         **kwargs))
-
-    def exitProbabilistic_subpolicy(self, ctx: RLangParser.Probabilistic_subpolicyContext):
-        subpolicies = [sp.value for sp in ctx.subpolicies]
-        ctx.value = Policy(function=lambda *args, **kwargs: subpolicy_dict_function(subpolicies, *args, **kwargs))
-
-    def exitProbabilistic_policy_statement_no_sugar(self,
-                                                    ctx: RLangParser.Probabilistic_policy_statement_no_sugarContext):
-        subpolicy = ctx.policy_statement_collection().value
-        subpolicy.compose_probability(ctx.probabilistic_condition().value)
-        ctx.value = subpolicy
-
-    def exitProbabilistic_policy_statement_sugar(self, ctx: RLangParser.Probabilistic_policy_statement_sugarContext):
-        if isinstance(ctx.execute().value, ActionReference):
-            subpolicy = Policy.from_action_reference(ctx.execute().value)
-        elif isinstance(ctx.execute().value, Option):
-            subpolicy = Policy(function=lambda *args, **kwargs: {ctx.execute().value: 1.0},
-                               length=len(ctx.execute().value))
-        else:
-            subpolicy = ctx.execute().value.__copy__()
-
-        subpolicy.compose_probability(ctx.probabilistic_condition().value)
-        ctx.value = subpolicy
-
-    def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
-        if ctx.any_number():
-            probability = ctx.any_number().value
-        else:
-            probability = ctx.integer_fraction().value
-        if probability > 1.0 or probability < 0.0:
-            raise RLangSemanticError("Probability must be between 0 and 1")
-        ctx.value = probability
-
     # ============================= Effect =============================
-
-    # def exitEffect(self, ctx: RLangParser.EffectContext):
-    #     stats = list(map(lambda x: x.value, ctx.stats))
-    #     all_stats = list()
-    #     for s in stats:  # Collect all the effect statements. Some stats will be lists of effect statements.
-    #         if isinstance(s, list):
-    #             all_stats.extend(s)
-    #         elif isinstance(s, Effect):
-    #             all_stats.extend(s.transition_functions)
-    #             all_stats.extend(s.reward_functions)
-    #             all_stats.extend(s.predictions)
-    #         else:
-    #             all_stats.append(s)
-    #
-    #     reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_stats))
-    #     transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_stats))
-    #     prediction_list = list(filter(lambda x: isinstance(x, Prediction), all_stats))
-    #
-    #     if ctx.IDENTIFIER() is not None:
-    #         # This is a named effect which should not merge into the existing transition function
-    #         new_effect = Effect(reward_functions=reward_functions,
-    #                             transition_functions=transition_functions,
-    #                             predictions=prediction_list,
-    #                             name=ctx.IDENTIFIER().getText())
-    #         self.addVariable(new_effect.name, new_effect)
-    #     else:
-    #         reward_functions.append(self.rlang_knowledge.reward_function)
-    #         reward_stats = lambda *args, **kwargs: reward_stat_collection(reward_functions, *args, **kwargs)
-    #         domain = Domain.ANY
-    #         for funcs in reward_functions:
-    #             domain += funcs.domain
-    #         self.rlang_knowledge.reward_function = RewardFunction(reward=reward_stats, domain=domain)
-    #
-    #         transition_functions.append(self.rlang_knowledge.transition_function)
-    #         transition_stats = lambda *args, **kwargs: default_stat_collection(transition_functions, *args, **kwargs)
-    #         domain = Domain.ANY
-    #         for funcs in transition_functions:
-    #             domain += funcs.domain
-    #         self.rlang_knowledge.transition_function = TransitionFunction(function=transition_stats, domain=domain)
-    #
-    #         predictions = dict()
-    #         for p in [*prediction_list, *self.rlang_knowledge.predictions.values()]:
-    #             p_name = p.grounding_predicted.name
-    #             if p_name in predictions:
-    #                 predictions.update({p_name: [*predictions[p_name], p]})
-    #             else:
-    #                 predictions.update({p_name: [p]})
-    #         new_predictions = dict()
-    #         for p_name2, p_value in predictions.items():
-    #             # This is absolutely insane, but please do not remove it. Google 'Python for loop variable capture'
-    #             def lambda_generator(these_stats):
-    #                 return lambda *args, **kwargs: default_stat_collection(these_stats, *args, **kwargs)
-    #
-    #             new_p = Prediction(grounding_function=self.retrieveVariable(p_name2),
-    #                                value=lambda_generator(p_value))
-    #             # new_p.domain
-    #             new_predictions.update({p_name2: new_p})
-    #
-    #         self.rlang_knowledge.predictions = new_predictions
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
         new_effect = ctx.effect_statement_collection().value
-        if ctx.IDENTIFIER() is not None:
+        if ctx.IDENTIFIER():
             new_effect.name = ctx.IDENTIFIER().getText()
-            self.addVariable(new_effect.name, new_effect)
-        else:
-            pass
-            # must sum together reward, transition, and predictions?
-            # TODO
+            if new_effect.name == 'main_effect':
+                raise RLangSemanticError("'main_effect' is a reserved RLang variable name")
+        elif ctx.MAIN():
+            new_effect.name = 'main_effect'
+        self.addVariable(new_effect.name, new_effect)
 
     def exitEffect_statement_collection(self, ctx: RLangParser.Effect_statement_collectionContext):
         all_statements = [statement.value for statement in ctx.statements]
 
+        # Effect references
+        effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
+        effect_transitions = list()
+        effect_rewards = list()
+        effect_predictions = list()
+
+        for e in effects:
+            if e.transition_function is not None:
+                effect_transitions.append(e.transition_function)
+            if e.predictions:
+                effect_predictions.extend(e.predictions)
+            if e.reward_function is not None:
+                effect_rewards.append(e.reward_function)
+
+        # TransitionFunctions
+        transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
+        transition_functions.extend(effect_transitions)
+        state_distributions = list(filter(lambda x: isinstance(x, StateDistribution), all_statements))
+
+        combined_sd = StateDistribution()
+        [combined_sd.join(sd) for sd in state_distributions]
+        transition_functions.append(TransitionFunction.from_state_distribution(combined_sd))
+
+        transition_function = TransitionFunction.from_state_distribution(
+            StateDistribution.from_list_eq(transition_functions))
+
         # Rewards
-        reward_statements = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
+        reward_functions = list(filter(lambda x: isinstance(x, RewardFunction), all_statements))
+        reward_functions.extend(effect_rewards)
+        reward_distributions = list(filter(lambda x: isinstance(x, RewardDistribution), all_statements))
+        reward_function = None
+
+        if len(reward_distributions) > 0:
+            combined_rd = RewardDistribution()
+            [combined_rd.join(rd) for rd in reward_distributions]
+            reward_functions.append(RewardFunction.from_reward_distribution(combined_rd))
+        if len(reward_functions) > 0:
+            reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_functions))
 
         # Predictions
-        #   -> TransitionFunctions
-        transition_statements = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
+        predictions = list(filter(lambda x: isinstance(x, Prediction), all_statements))
+        predictions.extend(effect_predictions)
+        grounding_distributions = list(filter(lambda x: isinstance(x, GroundingDistribution), all_statements))
 
-        #   -> Predictions
-        prediction_statements = list(filter(lambda x: isinstance(x, Prediction), all_statements))
+        predicted_groundings = list(
+            {*[p.grounding for p in predictions], *[gd.grounding for gd in grounding_distributions]})
 
-        # Effects
-        effects = list(filter(lambda x: isinstance(x, Effect), all_statements))
-        reward_statements.extend([effect.reward_function for effect in effects])
-        transition_statements.extend([effect.transition_function for effect in effects])
-        for effect in effects:
-            prediction_statements.extend(effect.predictions)
+        new_predictions = list()
+        for grounding in predicted_groundings:
+            predictions_g = list(filter(lambda x: x.grounding.equals(grounding), predictions))
 
-        if reward_statements:
-            reward_function = reduce(lambda a, b: a + b, reward_statements)
-        else:
-            reward_function = None
+            combined_gd = GroundingDistribution(grounding)
+            [combined_gd.join(gd) for gd in
+             list(filter(lambda x: x.grounding.equals(grounding), grounding_distributions))]
 
-        if len(transition_statements) > 1:
-            raise RLangSemanticError("Too many Predictions for S'")
-        elif len(transition_statements) == 0:
-            transition_function = None
-        else:
-            transition_function = transition_statements[0]
+            predictions_g.append(Prediction.from_grounding_distribution(grounding, combined_gd))
 
-        predicted_groundings = list()
-        for prediction in prediction_statements:
-            if prediction.predicted_grounding.name in predicted_groundings:
-                raise RLangSemanticError(f"Too many Predictions for {prediction.predicted_grounding.name}'")
-            else:
-                predicted_groundings.append(prediction.predicted_grounding.name)
+            prediction = Prediction.from_grounding_distribution(grounding,
+                                                                GroundingDistribution.from_list_eq(predictions_g,
+                                                                                                   grounding))
+            new_predictions.append(prediction)
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
-                            predictions=prediction_statements)
-        ctx.value = new_effect
+        ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
+                           predictions=new_predictions)
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
         ctx.value = ctx.reward().value
@@ -346,38 +294,6 @@ class RLangListener(RLangParserListener):
     def exitEffect_statement_probabilistic(self, ctx: RLangParser.Effect_statement_probabilisticContext):
         ctx.value = ctx.probabilistic_effect().value
 
-    def exitReward(self, ctx: RLangParser.RewardContext):
-        if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
-            raise RLangSemanticError(
-                f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
-        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
-            raise RLangSemanticError(
-                f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
-        ctx.value = RewardFunction(reward=ctx.arithmetic_exp().value)
-
-    def exitPrediction(self, ctx: RLangParser.PredictionContext):
-        if ctx.IDENTIFIER() is not None:
-            grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
-                raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            # if isinstance(grounding_function, MarkovFeature) and ctx.PRIME() is not None:
-            #     raise RLangSemanticError("")
-            ctx.value = Prediction(grounding_function=grounding_function,
-                                   value=lambda *args, **kwargs: {PrimitiveGrounding(codomain=Domain.REAL_VALUE,
-                                                                                     value=ctx.arithmetic_exp().value(
-                                                                                         *args, **kwargs)): 1.0},
-                                   domain=ctx.arithmetic_exp().value.domain)
-        elif ctx.S_PRIME() is not None:
-            ctx.value = TransitionFunction(
-                function=lambda *args, **kwargs: {ctx.arithmetic_exp().value(args, **kwargs): 1.0},
-                domain=ctx.arithmetic_exp().value.domain)
-
-    def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
-        effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        if not isinstance(effect, Effect):
-            raise RLangSemanticError(f"Cannot predict a {type(effect)} in an Effect statement")
-        ctx.value = effect
-
     def exitConditional_effect(self, ctx: RLangParser.Conditional_effectContext):
         if_condition = ctx.if_condition.value
         if_effect = ctx.if_effect.value
@@ -390,30 +306,44 @@ class RLangListener(RLangParserListener):
         elif_rewards = [elif_effect.reward_function for elif_effect in elif_effects]
         else_reward = else_effect.reward_function
 
-        domain = reduce(lambda a, b: a + b.domain,
-                        [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])
+        reward_function = None
+        rstats = [x for x in [if_reward, *elif_rewards, else_reward] if x]
 
-        reward_function = RewardFunction(
-            reward=lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
-                                                                       elif_rewards, else_reward, *args, **kwargs),
-            domain=domain)
+        if len(rstats) > 0:
+            domain = reduce(lambda a, b: a + b.domain, list(filter(lambda x: x is not None,
+                                        [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])))
 
-        # Predictions
-        #   -> TransitionFunctions
+            reward_func = RewardFunction(
+                lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
+                                                                    elif_rewards, else_reward, *args, **kwargs),
+                domain=domain)
+            # TODO: I'm not sure this is necessary
+            reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_single(reward_func))
+
+        # TransitionFunctions
         if_transition = if_effect.transition_function
         elif_transitions = [elif_effect.transition_function for elif_effect in elif_effects]
         else_transition = else_effect.transition_function
 
-        domain = reduce(lambda a, b: a + b.domain,
-                        [if_condition.domain, if_transition, *elif_conditions, *elif_transitions, else_transition])
+        transition_function = None
+        tstats = [x for x in [if_transition, *elif_transitions, else_transition] if x]
 
-        transition_function = TransitionFunction(
-            function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
-                                                                             elif_conditions, elif_transitions,
-                                                                             else_transition, *args, **kwargs),
-            domain=domain)
+        if len(tstats) > 0:
+            domain2 = reduce(lambda a, b: a + b.domain,
+                            list(filter(lambda x: x is not None,
+                                        [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
+                                         else_transition])))
 
-        #   -> Predictions
+            transition_function = TransitionFunction(
+                function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
+                                                                                 elif_conditions, elif_transitions,
+                                                                                 else_transition, *args, **kwargs),
+                domain=domain2)
+            # TODO: I'm not sure this is necessary
+            transition_function = TransitionFunction.from_state_distribution(
+                StateDistribution.from_single(transition_function))
+
+        # Predictions
         if_predictions = if_effect.predictions
         elif_predictions = [elif_effect.predictions for elif_effect in elif_effects]
         else_predictions = else_effect.predictions
@@ -424,123 +354,145 @@ class RLangListener(RLangParserListener):
             all_predictions.extend(preds)
         all_predictions.extend(else_predictions)
 
-        all_predicted_groundings = list(set([pred.predicted_grounding for pred in all_predictions]))
+        predicted_groundings = list({pred.grounding for pred in all_predictions})
 
-        domain = reduce(lambda a, b: a + b.domain,
+        domain3 = reduce(lambda a, b: a + b.domain,
                         [if_condition.domain, *elif_conditions])
+
         new_predictions = list()
 
-        for predicted_grounding in all_predicted_groundings:
-            new_domain = copy.deepcopy(domain)
-            if_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), if_predictions))
-            if len(if_preds) > 1:
-                raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
-            elif len(if_preds) == 0:
-                if_pred = None
+        for grounding in predicted_groundings:
+            new_domain = Domain.ANY + domain3
+            if_preds = list(filter(lambda x: x.grounding.equals(grounding), if_predictions))
+            if len(if_preds) > 0:
+                if_preds = GroundingDistribution.from_list_eq(if_preds, grounding)
+                new_domain += if_preds.domain
             else:
-                if_pred = if_preds[0]
-                new_domain = new_domain + if_pred.domain
+                if_preds = None
 
             elif_preds = list()
             for preds in elif_predictions:
-                e_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), preds))
-                if len(e_preds) > 1:
-                    raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
-                elif len(e_preds) == 0:
-                    elif_pred = None
+                e_preds = list(filter(lambda x: x.grounding.equals(grounding), preds))
+                if len(e_preds) > 0:
+                    e_preds = GroundingDistribution.from_list_eq(e_preds, grounding)
+                    new_domain += e_preds.domain
                 else:
-                    elif_pred = e_preds[0]
-                    new_domain = new_domain + elif_pred.domain
-                elif_preds.append(elif_pred)
+                    e_preds = None
+                elif_preds.append(e_preds)
 
-            else_preds = list(filter(lambda x: x.predicted_grounding.equals(predicted_grounding), else_predictions))
-            if len(else_preds) > 1:
-                raise RLangSemanticError(f"Too many Predictions for {predicted_grounding.name}'")
-            elif len(else_preds) == 0:
-                else_pred = None
+            else_preds = list(filter(lambda x: x.grounding.equals(grounding), else_predictions))
+            if len(else_preds) > 0:
+                else_preds = GroundingDistribution.from_list_eq(else_preds, grounding)
+                new_domain += else_preds.domain
             else:
-                else_pred = else_preds[0]
-                new_domain = new_domain + else_pred.domain
+                else_preds = None
 
-            # TODO: Add domain to this
-            new_prediction = Prediction(grounding_function=predicted_grounding,
-                                        value=lambda *args, **kwargs: conditional_prediction_function(if_condition,
-                                                                                                      if_pred,
-                                                                                                      elif_conditions,
-                                                                                                      elif_preds,
-                                                                                                      else_pred,
-                                                                                                      *args, **kwargs),
+            new_prediction = Prediction(grounding, lambda *args, **kwargs: conditional_prediction_function(if_condition,
+                                                                                                           if_preds,
+                                                                                                           elif_conditions,
+                                                                                                           elif_preds,
+                                                                                                           else_preds,
+                                                                                                           *args,
+                                                                                                           **kwargs),
                                         domain=new_domain)
+            # TODO: I'm not sure this is necessary
+            new_prediction = Prediction.from_grounding_distribution(grounding,
+                                                                    GroundingDistribution.from_single(new_prediction,
+                                                                                                      g=grounding))
             new_predictions.append(new_prediction)
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function,
-                            predictions=new_predictions)
-        ctx.value = new_effect
+        ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
+                           predictions=new_predictions)
 
     def exitProbabilistic_effect(self, ctx: RLangParser.Probabilistic_effectContext):
         # Rewards
         reward_statements = [statement.value.reward_function for statement in ctx.effects]
-        if reward_statements:
-            reward_function = reduce(lambda a, b: a + b, reward_statements)
+        reward_statements = list(filter(lambda x: x, reward_statements))
+        if len(reward_statements) > 0:
+            reward_function = RewardFunction.from_reward_distribution(
+                RewardDistribution.from_list_eq(reward_statements))
         else:
             reward_function = None
 
-        # Predictions
-        #   -> TransitionFunctions
+        # TransitionFunctions
         transition_statements = [statement.value.transition_function for statement in ctx.effects]
-        domain = reduce(lambda a, b: a + b.domain, [transition_statements[0].domain, *transition_statements[1:]])
+        transition_statements = list(filter(lambda x: x, transition_statements))
         if len(transition_statements) > 0:
-            transition_function = TransitionFunction(
-                lambda *args, **kwargs: effect_transition_dict_function(transition_statements, *args, **kwargs),
-                domain=domain)
+            transition_function = TransitionFunction.from_state_distribution(
+                StateDistribution.from_list_eq(transition_statements))
         else:
             transition_function = None
 
-        #   -> Predictions
+        # Predictions
         prediction_statements = list()
         for statement in ctx.effects:
             prediction_statements.extend(statement.value.predictions)
 
-        all_predicted_groundings = list(set([pred.predicted_grounding for pred in prediction_statements]))
-
+        predicted_groundings = list({p.grounding for p in prediction_statements})
         new_predictions = list()
-        for predicted_grounding in all_predicted_groundings:
-            shared_predictions = list(
-                filter(lambda x: x.predicted_grounding.equals(predicted_grounding), prediction_statements))
-            domain = reduce(lambda a, b: a + b.domain, [shared_predictions[0].domain, *shared_predictions[1:]])
-            new_prediction = Prediction(grounding_function=predicted_grounding,
-                                        value=lambda *args, **kwargs: effect_transition_dict_function(
-                                            shared_predictions, *args, **kwargs),
-                                        domain=domain)
-            new_predictions.append(new_prediction)
 
-        new_effect = Effect(reward_function=reward_function, transition_function=transition_function, predictions=new_predictions)
-        ctx.value = new_effect
+        for grounding in predicted_groundings:
+            predictions_g = list(filter(lambda x: x.grounding.equals(grounding), prediction_statements))
+            prediction = Prediction.from_grounding_distribution(grounding,
+                                                                GroundingDistribution.from_list_eq(predictions_g,
+                                                                                                   grounding))
+            new_predictions.append(prediction)
+
+        ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
+                           predictions=new_predictions)
 
     def exitProbabilistic_effect_statement_no_sugar(self,
                                                     ctx: RLangParser.Probabilistic_effect_statement_no_sugarContext):
-        effect = ctx.effect_statement_collection().value
-        effect.compose_probability(ctx.probabilistic_condition().value)
-        ctx.value = effect
+        ctx.value = ctx.effect_statement_collection().value
+        ctx.value.compose_probabilities(ctx.probabilistic_condition().value)
 
     def exitProbabilistic_effect_statement_sugar(self, ctx: RLangParser.Probabilistic_effect_statement_sugarContext):
         if ctx.reward() is not None:
-            effect = Effect(reward_function=ctx.reward().value)
-            effect.compose_probability(ctx.probabilistic_condition().value)
-            ctx.value = effect
+            reward_function = ctx.reward().value
+            ctx.value = Effect(reward_function=reward_function)
         elif ctx.prediction() is not None:
-            if isinstance(ctx.prediction().value, TransitionFunction):
-                effect = Effect(transition_function=ctx.prediction().value)
-                effect.compose_probability(ctx.probabilistic_condition().value)
-                ctx.value = effect
-            else:
-                effect = Effect(predictions=[ctx.prediction().value])
-                effect.compose_probability(ctx.probabilistic_condition().value)
-                ctx.value = effect
+            if isinstance(ctx.prediction().value, StateDistribution):
+                ctx.value = Effect(
+                    transition_function=TransitionFunction.from_state_distribution(ctx.prediction().value))
+            elif isinstance(ctx.prediction().value, GroundingDistribution):
+                ctx.value = Effect(predictions=[
+                    Prediction.from_grounding_distribution(ctx.prediction().value.grounding, ctx.prediction().value)])
         else:
-            effect = ctx.effect_reference().value
-            effect.compose_probability(ctx.probabilistic_condition().value)
-            ctx.value = effect
+            ctx.value = ctx.effect_reference().value
+        ctx.value.compose_probabilities(ctx.probabilistic_condition().value)
+
+    def exitReward(self, ctx: RLangParser.RewardContext):
+        if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
+            raise RLangSemanticError(
+                f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
+        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
+            raise RLangSemanticError(
+                f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
+        ctx.value = RewardDistribution.from_single(ctx.arithmetic_exp().value)
+
+    def exitPrediction(self, ctx: RLangParser.PredictionContext):
+        if ctx.IDENTIFIER() is not None:
+            grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
+            if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
+                raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
+            ctx.value = GroundingDistribution.from_single(ctx.arithmetic_exp().value, g=grounding_function)
+        elif ctx.S_PRIME() is not None:
+            ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
+
+    def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
+        effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if not isinstance(effect, Effect):
+            raise RLangSemanticError(f"Can only use this syntax to reference Effects")
+        ctx.value = effect
+
+    def exitProbabilistic_condition(self, ctx: RLangParser.Probabilistic_conditionContext):
+        if ctx.any_number():
+            probability = ctx.any_number().value
+        else:
+            probability = ctx.integer_fraction().value
+        if probability > 1.0 or probability < 0.0:
+            raise RLangSemanticError("Probability must be between 0 and 1")
+        ctx.value = probability
 
     # ============================= arithmetic expression =============================
 
@@ -569,7 +521,7 @@ class RLangListener(RLangParserListener):
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
-                          (IdentityGrounding, ConstantGrounding, Factor, Feature, Policy, ActionReference)):
+                          (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -612,18 +564,18 @@ class RLangListener(RLangParserListener):
         ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (Predicate, PrimitiveGrounding)):
+        if not isinstance(ctx.any_bound_var().value, (Proposition, PrimitiveGrounding)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
-            ctx.value = Predicate.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
+            ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
         else:
             ctx.value = ctx.any_bound_var().value
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
         if ctx.TRUE() is not None:
-            ctx.value = Predicate(function=lambda *args, **kwargs: True, domain=Domain.ANY)
+            ctx.value = Proposition(function=lambda *args, **kwargs: True, domain=Domain.ANY)
         elif ctx.FALSE() is not None:
-            ctx.value = Predicate(function=lambda *args, **kwargs: False, domain=Domain.ANY)
+            ctx.value = Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())

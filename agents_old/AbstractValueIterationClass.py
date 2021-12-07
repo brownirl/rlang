@@ -37,7 +37,7 @@ def _subpolicies_to_aa(subpolicies, primitive_actions):
         o.append(
             SimpleRLOption(
                 SimpleRLPredicate(simplerl_to_rlang_predicate(s._init)),
-                SimpleRLPredicate(simplerl_to_rlang_predicate(s._termination)),
+                SimpleRLPredicate(simplerl_to_rlang_predicate(s.termination)),
                 s.policy_fun,
                 name=s.name)
         )

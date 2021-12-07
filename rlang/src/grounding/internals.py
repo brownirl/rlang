@@ -2,8 +2,11 @@ from __future__ import annotations
 from typing import Any
 from enum import Enum
 from functools import total_ordering
+
+import gym.spaces
 import numpy as np
 from rlang.src.exceptions import RLangGroundingError
+from gym.spaces import Space
 
 
 @total_ordering
@@ -78,50 +81,27 @@ class Domain(Enum):
             raise RLangGroundingError(f"Can't compare a Domain enum to a {type(other)}")
 
 
-class ActionSpace:
-    def __init__(self, dtype: np.dtype, shape: tuple):
-        self.dtype = dtype
-        self.shape = shape
-
-    @classmethod
-    def from_action(cls, action: np.ndarray):
-        return cls(dtype=action.dtype, shape=action.shape)
-
-
-class StateSpace:
-    def __init__(self, dtype: np.dtype, shape: tuple):
-        self.dtype = dtype
-        self.shape = shape
-
-    @classmethod
-    def from_state(cls, state: np.ndarray):
-        return cls(dtype=state.dtype, shape=state.shape)
-
-
 class MDPMetadata:
     """Represents important parameters of the MDP like the state space and action space."""
-    def __init__(self, state_space: StateSpace, action_space: ActionSpace):
+    def __init__(self, state_space: Space, action_space: Space):
         self.state_space = state_space
         self.action_space = action_space
 
     @classmethod
     def from_state_action(cls, state: np.ndarray, action: np.ndarray):
-        return cls(state_space=StateSpace.from_state(state), action_space=ActionSpace.from_action(action))
+        return cls(state_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=state.shape),
+                   action_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=action.shape))
 
 
-class BatchedPrimitive(np.ndarray):
+class Primitive(np.ndarray):
     """Represents a batched real-valued object.
 
     States and Actions should be easily batchable. This takes care of that.
     """
 
     def __new__(cls, input_array: Any):
-        # All BatchablePrimitives are batched automatically
-        obj_arr = np.array(input_array, ndmin=2)
-        if obj_arr.ndim != 2:
-            raise RLangGroundingError(f"Cannot construct a {str(cls)} with input array of shape {input_array.shape}.")
+        obj_arr = np.array(input_array, ndmin=1)
         obj = obj_arr.view(cls)
-        obj.primitive_size = obj.shape[1]
         return obj
 
     def as_tuple(self):
@@ -133,29 +113,14 @@ class BatchedPrimitive(np.ndarray):
             return s_tuple
 
     def __getitem__(self, item):
-        # This should abstract away batched variables
-        if type(item) != tuple:
-            item = (slice(None, None, None), item)
-        return State(super().__getitem__(item))
+        return super().__getitem__(item).view(Primitive)
 
     def __eq__(self, other):
-        if not isinstance(other, np.ndarray):
-            other = np.array(other)
-
-        if len(other.shape) == 0:
-            other = np.array(other, ndmin=1)
-
-        if other.shape[-1] != self.shape[-1]:
-            return BatchedPrimitive(np.full((self.shape[0], 1), False))
-            # Should this take the shape of self or other?
-        #  Try BatchedPrimitive(0) == BatchedPrimitive([[1, 0], [0, 0]]).
-        #  Returns [[False],[True]] instead of [[False],[False]]
-        #  UPDATE: Now returns [[False]], but should it return [[False],[False]]?
-        return BatchedPrimitive(np.asarray(np.all(super().__eq__(other), axis=1, keepdims=True)))
+        return super().__eq__(other).all().view(Primitive)
 
     def unbatched_eq(self, other):
-        if isinstance(other, BatchedPrimitive):
-            #TODO: investigate deprecation cause - include version 
+        if isinstance(other, Primitive):
+            #TODO: investigate deprecation cause - include version
             return np.all(super().__eq__(other))
         else:
             return False
@@ -167,11 +132,8 @@ class BatchedPrimitive(np.ndarray):
         return np.bitwise_not(self.__eq__(other))
 
 
-class State(BatchedPrimitive):
+class State(Primitive):
     """Represents a State object.
-
-    RLang expects MDP states to always be of a single dimension. This class makes
-    it easy to batch single-dimensional states together.
 
     Args:
         input_array: a numpy array or list representing a state or set of states.
@@ -180,16 +142,12 @@ class State(BatchedPrimitive):
         .. code-block:: python
 
             s1 = State(3)
-            >> State([[3]])
+            >> State([3])
             s2 = State([3, 4])
-            >> State([[3, 4]]})
-            s3 = State([[3, 4], [5, 6]])
-            Factor([0])(state=s3)
-            >> State([[3], [5]])
-
+            >> State([3, 4])
     """
     pass
 
 
-class Action(BatchedPrimitive):
+class Action(Primitive):
     pass

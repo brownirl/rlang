@@ -32,7 +32,6 @@ def simple_experiment():
 
 def rlang_experiment():
     # We need to know these MDP and Q Learning parameters
-
     mdp = create_mdp()
     knowledge = parse_file("gridworld.rlang")
 
@@ -42,10 +41,10 @@ def rlang_experiment():
             states.append((w, h))
 
     agent = QLearningAgent(mdp.get_actions())
-    RLang_agent = RLangQLearningAgent(mdp.get_actions(), states, knowledge)
-    RLang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name="RLang-Q-learning-transition",
+    rlang_agent = RLangQLearningAgent(mdp.get_actions(), states, knowledge)
+    rlang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name="RLang-Q-learning-transition",
                                         use_transition=True)
-    run_agents_on_mdp([agent, RLang_agent, RLang_agent_2], mdp)
+    run_agents_on_mdp([agent, rlang_agent, rlang_agent_2], mdp)
 
 
 if __name__ == '__main__':

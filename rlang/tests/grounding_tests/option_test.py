@@ -1,7 +1,7 @@
 import unittest
 from grounding.internals import Action
 import numpy as np
-from rlang.src.grounding import Action, Option, State, Factor, Predicate, Policy
+from rlang.src.grounding import Action, Option, State, Factor, Proposition, Policy, OptionTermination
 
 class OptionTest(unittest.TestCase):
     def test_termination(self):
@@ -10,12 +10,12 @@ class OptionTest(unittest.TestCase):
         pos = Factor([0, 1])
         x = pos[0]
         y = pos[1]
-        termincation_func = x + 1 == y
-        initiation = Predicate(termincation_func)
+        termination_func = x + 1 == y
+        initiation = Proposition(termination_func)
         policy = Policy(lambda: a)
-        termination = Predicate(termincation_func)
+        termination = Proposition(termination_func)
         option = Option(initiation, policy, termination)
-        self.assertEqual(option(state=s), None)
+        self.assertEqual(option(state=s), OptionTermination())
 
     def test_can_execute(self):
         a = Action([0, 1])
@@ -23,13 +23,13 @@ class OptionTest(unittest.TestCase):
         pos = Factor([0, 1])
         x = pos[0]
         y = pos[1]
-        initiation = Predicate(x + 1 == y)
+        initiation = Proposition(x + 1 == y)
         policy = Policy(lambda: a)
-        termination = Predicate(x + 1 == y)
+        termination = Proposition(x + 1 == y)
         option = Option(initiation, policy, termination)
         self.assertTrue(option.can_initiate(state=s))
 
-        initiation2 = Predicate(x == y)
+        initiation2 = Proposition(x == y)
         option2 = Option(initiation2, policy, termination)
         self.assertFalse(option2.can_initiate(state=s))
 

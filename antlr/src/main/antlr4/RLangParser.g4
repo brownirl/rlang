@@ -15,7 +15,7 @@ dec
     : constant NL+
     | action NL+
     | factor NL+
-    | predicate NL+
+    | proposition NL+
     | goal NL+
     | feature NL+
     | markov_feature NL+
@@ -28,32 +28,30 @@ dec
 constant: CONSTANT IDENTIFIER BIND (arithmetic_exp | boolean_exp);
 action: ACTION IDENTIFIER BIND (any_number | any_num_array_exp);
 factor: FACTOR IDENTIFIER BIND any_bound_var;
-predicate: PREDICATE IDENTIFIER BIND boolean_exp;
+proposition: PROPOSITION IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
 
-option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement_collection DEDENT UNTIL until=option_condition NL* DEDENT;
+option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement NL* DEDENT UNTIL until=option_condition NL* DEDENT;
 option_condition: boolean_exp | ANY_CONDITION;
 
-policy: POLICY IDENTIFIER COL INDENT policy_statement_collection DEDENT;
-policy_statement_collection: statements+=policy_statement NL* (THEN statements+=policy_statement NL*)*;
+policy: POLICY (IDENTIFIER| MAIN) COL INDENT policy_statement NL* DEDENT;
 policy_statement
     : execute                    # policy_statement_execute
     | conditional_subpolicy      # policy_statement_conditional
     | probabilistic_subpolicy    # policy_statement_probabilistic
     ;
-execute: EXECUTE (IDENTIFIER | arithmetic_exp);
-conditional_subpolicy: IF if_condition=boolean_exp COL INDENT if_subpolicy=policy_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_subpolicies+=policy_statement_collection DEDENT)* (ELSE COL INDENT else_subpolicy=policy_statement_collection DEDENT)?;
+conditional_subpolicy: IF if_condition=boolean_exp COL INDENT if_subpolicy=policy_statement NL* DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_subpolicies+=policy_statement NL* DEDENT)* (ELSE COL INDENT else_subpolicy=policy_statement NL* DEDENT)?;
 probabilistic_subpolicy: subpolicies+=probabilistic_policy_statement (OR subpolicies+=probabilistic_policy_statement)*;
 probabilistic_policy_statement
-    : probabilistic_condition COL INDENT policy_statement_collection DEDENT   # probabilistic_policy_statement_no_sugar
-    | execute probabilistic_condition NL+                                     # probabilistic_policy_statement_sugar
+    : probabilistic_condition COL INDENT policy_statement NL* DEDENT    # probabilistic_policy_statement_no_sugar
+    | execute probabilistic_condition NL+                               # probabilistic_policy_statement_sugar
     ;
+execute: EXECUTE (IDENTIFIER | arithmetic_exp);
 
-
-effect: EFFECT IDENTIFIER? COL INDENT effect_statement_collection DEDENT;
+effect: EFFECT (IDENTIFIER| MAIN) COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;
 effect_statement
     : reward                    # effect_statement_reward
@@ -62,15 +60,15 @@ effect_statement
     | conditional_effect        # effect_statement_conditional
     | probabilistic_effect      # effect_statement_probabilistic
     ;
-reward: REWARD arithmetic_exp;
-prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
-effect_reference: PREDICT IDENTIFIER;
 conditional_effect: IF if_condition=boolean_exp COL INDENT if_effect=effect_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_effects+=effect_statement_collection DEDENT)* (ELSE COL INDENT else_effect=effect_statement_collection DEDENT)?;
 probabilistic_effect: effects+=probabilistic_effect_statement (OR effects+=probabilistic_effect_statement)*;
 probabilistic_effect_statement
     : probabilistic_condition COL INDENT effect_statement_collection DEDENT   # probabilistic_effect_statement_no_sugar
     | (reward | prediction | effect_reference) probabilistic_condition NL+    # probabilistic_effect_statement_sugar
     ;
+reward: REWARD arithmetic_exp;
+prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
+effect_reference: PREDICT IDENTIFIER;
 
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 

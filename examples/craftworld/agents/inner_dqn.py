@@ -80,7 +80,7 @@ class CraftworldInnerDQNPreset(Preset):
         update_frequency (int): Number of timesteps per training update.
         target_update_frequency (int): Number of timesteps between updates the target network.
         replay_start_size (int): Number of experiences in replay buffer when training begins.
-        replay_buffer_size (int): Maximum number of experiences to store in the replay buffer.
+        replay_buffer_size (int): Maximum number of experiences to rlang_variables in the replay buffer.
         initial_exploration (float): Initial probability of choosing a random action,
             decayed over course of training.
         final_exploration (float): Final probability of choosing a random action.

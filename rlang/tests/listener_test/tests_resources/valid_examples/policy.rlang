@@ -1,167 +1,60 @@
-Action up := 1
-Action down := -1
-Action left := 2
-Action right := -2
+Action up := 2
+Action down := 3
 
-Predicate a := S[0] == 0
-Predicate b := S[0] == 1
-Predicate c := S[0] == 3
-
-Policy cc:
-    Execute right
-    then Execute down
-#
-Policy node:
+Policy simple:
     Execute up
-    then Execute right
-    then Execute down
-    then Execute cc
-#
-Policy cone:
-#    Execute cc
-#    then Execute cc
-    Execute node
-    then Execute node
 
-#Policy cone:
-#    Execute cc
+Policy prob_split:
+    Execute 5 with P(0.1)
+    or Execute 3 with P(0.9)
 
-#Policy prob:
-#    Execute up
-#    then Execute down
-#    then with P(0.2):
-#        Execute left
-#    or with P(0.3):
-#        with P(0.5):
-#            Execute right
-#        or Execute up with P(0.5)
+Policy prob_split_less_than_1:
+    Execute 2 with P(0.1)
+    or Execute 6 with P(0.5)
 
-#    with P(0.5):
-#        Execute up
-#        Execute right
-#
-#    then Execute left with P(0.2):
-#    or with P(0.9):
-#        Execute up
-#        Execute down
-#
-#    then Execute left
+Policy prob_split_frac:
+    Execute 1 with P(1/3)
+    or Execute 2 with P(2/3)
 
-#Policy test1:
-#    if a:
-#        Execute down with P(0.5)
-#        then Execute right with P(0.5)
-#    elif b:
-#        with P(0.2):
-#            Execute up
-#            then Execute up
-#    then Execute left
-#    then Execute up
+Policy prob_nest:
+    with P(0.5):
+        with P(0.5):
+            with P(0.1):
+                Execute down
 
-#Policy test1:
-#    if a:
-#        if b:
-#            Execute left
-#    then Execute up
+Policy prob_rejoin:
+    Execute 1 * 2 + 0 with P(1/2)
+    or with P(1/2):
+        Execute up
 
-#Option build_bridge:
-#	init Any
-#		Execute [0]
-#		then Execute [1]
-#		then Execute [2]
-#	until c
-#
-#Policy test1:
-##    Execute build_bridge
-#    with P(0.9):
-#        Execute [0, 2]
-#        then Execute right
-#    or with P(0.05):
-#        Execute 5 * 3
-#    or Execute left with P(0.05)
-#    then Execute right with P(0.5)
-#    or Execute down with P(0.25)
-#    or with P(0.25):
-#        Execute right
-#        then Execute right
-#        then Execute down
-#    then Execute up
+Policy one_layer_deep:
+    Execute prob_split with P(0.5)
+    or Execute down with P(0.5)
 
-#Policy test1:
-#    with P(0.9):
-#        Execute up
-#        then Execute right
-#    or with P(0.1):
-#        Execute down
-#    then with P(1.0):
-#        Execute left
+Policy two_layers_deep:
+    Execute one_layer_deep
 
-#    Execute up with P(0.5)
-#    Execute down with P(0.2)
-#    or Execute right with P(0.8)
+Policy two_layers_deep_rejoin:
+    Execute one_layer_deep with P(1/3)
+    or Execute one_layer_deep with P(2/3)
 
-#Policy test1:
-#    Execute up
-#    then Execute down
+Policy simple_conditional:
+    if True:
+        Execute up
+    else:
+        Execute down
 
-#Policy test0:
-#    Execute up
+Policy factor_conditional:
+    if S[0] == 0:
+        Execute up
+    else:
+        with P(0.2):
+            Execute down
+        or Execute up with P(0.8)
 
-#Policy test1:
-#    with P(0.1):
-#        Execute down
-#        Execute up
-#
-#    Execute down
-#    with P(0.4):
-#        if c:
-#            Execute down
-#        else:
-#            Execute right
+Policy missing_conditional:
+    if S[0] == -1:
+        Execute up
 
-#Policy test1:
-#	Execute [0, -0.5]
-#	Execute down
-#
-#Policy test2:
-#	if False:
-#		Execute down
-#	elif True:
-#		Execute test1
-#	else:
-#		Execute down
-#
-#Policy test3:
-#	if a:
-#		Execute down
-#	elif b:
-#		Execute up
-#	else:
-#		if c:
-#			Execute left
-#		elif True:
-#			Execute up
-#		else:
-#			Execute right
-
-
-#Policy test1:
-#	Execute up
-#
-#Policy test2:
-#	if at_workshop:
-#		Execute down
-#	elif iron >= 1:
-#		Execute leave
-#	else:
-#		Execute left
-#
-#Action left := -1
-#Action right := 1
-#Factor velocity := S[0]
-#
-#Policy mountain_car:
-#    if velocity > 0:
-#        Execute right
-#    else:
-#        Execute left
+Policy main:
+    Execute factor_conditional

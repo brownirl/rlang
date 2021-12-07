@@ -31,7 +31,7 @@ NL: ('\r'? '\n' ' '*) | ('\r'? '\n' '\t'*);
  */
 
 IMPORT: 'import';
-PREDICATE: 'Predicate';
+PROPOSITION: 'Proposition';
 FEATURE: 'Feature';
 FACTOR: 'Factor';
 GOAL: 'Goal';
@@ -61,7 +61,7 @@ UNTIL: 'until';
 WITH: 'with';
 THEN: 'then';
 NEVER: 'never';
-//MAIN: 'main';
+MAIN: 'main';
 
 AND: 'and';
 OR: 'or';

@@ -182,7 +182,7 @@ class OptionDDQN(DQN):
         return torch.stack(active).transpose(1, 0)  # batch x action
 
     def _train_step(self, curr_state, action, next_state):
-        self.replay_buffer.store(curr_state, action, next_state)
+        self.replay_buffer.rlang_variables(curr_state, action, next_state)
         self._train()
 
 
