@@ -9,7 +9,7 @@ Factor pole_angle := S[2]
 Factor pole_ang_velocity := S[3]
 
 
-Policy main:
+Policy balance_pole:
     if pole_ang_velocity > 0:
         Execute go_right
     else:

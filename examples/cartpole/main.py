@@ -13,8 +13,9 @@ import numpy as np
 import torch
 from torch import nn
 
-from examples.control_sharing import ControlSharingPolicy
-from run_rlang_agent import train_reinforce
+from examples.utils.control_sharing import ControlSharingPolicy, beta_scheduler
+from examples.utils.rlang_policy import RLangPolicy
+from examples.utils.reinforce_agent import train_reinforce
 
 from pfrl.policies import SoftmaxCategoricalHead
 
@@ -111,33 +112,6 @@ class linear_scheduler:
     def reset(self):
         self._t = 0
 
-class RLangPolicy(nn.Module):
-    def __init__(self, rlang_policy, epsilon=1e-8, n_actions=2):
-        self.rlang_policy = rlang_policy
-        self.eps = epsilon
-        self.n_actions = n_actions
-        super().__init__()
-
-
-    def forward(self, state):
-        actions_prob = torch.zeros(self.n_actions)
-        actions_mask = torch.zeros(self.n_actions)
-        for action, prob in self.rlang_policy(state).items():
-            actions_prob[action] = prob
-            actions_mask[action] = 1
-        if len(actions_prob) < self.n_actions: # redistribute the remaining prob uniformly
-            remaining_prob = (1. - actions_prob.sum()) / (len(actions_prob)-self.n_actions)
-            actions_prob = torch.Tensor(actions_prob)
-            actions_prob -= self.eps * (len(actions_prob)-self.n_actions) if remaining_prob == 0 else actions_prob
-            remaining_prob = self.eps if remaining_prob == 0 else remaining_prob
-            actions_prob += (1-actions_mask) * remaining_prob
-        else:
-            if (actions_prob == 0).any():
-                actions_prob += self.eps
-        return torch.log(actions_prob).unsqueeze(0)
-
-
-
 def policy_mixing(policy_model, advice_policy):
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -168,8 +142,6 @@ def policy_mixing(policy_model, advice_policy):
     
     return ControlSharingPolicy(policy_model, advice_policy, scheduler)
 
-
-
 def make_rlang_agent_model(model, rlang_policy, n_actions):
     advice_policy = RLangPolicy(rlang_policy, n_actions=n_actions)
     return advice_policy
@@ -190,8 +162,18 @@ def make_uninformed_agent_model(obs_size=4, action_space=2, hidden_size=200):
     return agent_model, model
 
 def rlang_experiment():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--rlang", type=str, default="./near_optimal_policy.rlang", help="Path to RLang policy"
+    )
+    args, _ = parser.parse_known_args()
+
+    cartpole_policy = parse_file(args.rlang)['balance_pole']
+
+
     _, model = make_uninformed_agent_model()
-    rlang_advice_policy = make_rlang_agent_model(model, cartpole_policy_1, n_actions=2)
+    rlang_advice_policy = make_rlang_agent_model(model, cartpole_policy, n_actions=2)
     learning_policy = policy_mixing(model, rlang_advice_policy)
 
     train_reinforce(learning_policy, anneal=True, demo=True) # evaluate at zero

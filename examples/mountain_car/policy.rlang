@@ -7,8 +7,8 @@ Action no_op := 1
 Factor position := S[0]
 Factor velocity := S[1]
 
-Policy main:
+Policy gain_momentum:
     if velocity < 0:
-        go_left
+        Execute go_left
     else:
-        go_right
+        Execute go_right

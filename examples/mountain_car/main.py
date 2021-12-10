@@ -25,38 +25,9 @@ def run_experiment():
 
 
 
-def mountain_car_policy_1(state):
-    LEFT = 0
-    NO_OP = 1
-    RIGHT = 2
-    velocity = state[1]
-
-    if state[0] < 0 and velocity == 0:
-        return LEFT
-    elif state[0] > 0 and velocity == 0:
-        return RIGHT
-    elif state[0] == 0 and velocity == 0:
-        return LEFT
-    else:
-        return NO_OP
-
-def mountain_car_policy_2(state):
-    LEFT = 0
-    NO_OP = 1
-    RIGHT = 2
-    velocity = state[1]
-
-    if velocity < 0:
-        return LEFT
-    return RIGHT
-
-
 def rlang_experiment():
     mdp = create_mdp()
-    knowledge = parse_file("examples/mountain_car/policy.rlang") 
-    agent = TestAgent(mountain_car_policy_2)
-
-    eval_agent(agent, mdp)
+    knowledge = parse_file("examples/mountain_car/policy.rlang")
 
 
 if __name__ == '__main__':
