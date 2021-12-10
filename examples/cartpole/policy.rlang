@@ -7,3 +7,10 @@ Factor cart_position := S[0]
 Factor cart_velocity := S[1]
 Factor pole_angle := S[2]
 Factor pole_ang_velocity := S[3]
+
+
+Policy main:
+    if pole_ang_velocity > 0:
+        Execute go_right
+    else:
+        Execute go_left

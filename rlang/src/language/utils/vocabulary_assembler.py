@@ -18,7 +18,6 @@ class VocabularyAssembler:
         # Add grounding modules to self.modules
         modules_json = vocab_json['modules']
         modules = {}
-
         for mod_info in modules_json:
             mname = mod_info['module_name']
             fname = f"{os.getcwd()}/{mod_info['file_name']}"
