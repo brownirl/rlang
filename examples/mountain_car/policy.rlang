@@ -8,7 +8,7 @@ Factor position := S[0]
 Factor velocity := S[1]
 
 Policy gain_momentum:
-    if velocity < 0:
+    if velocity <= 0:
         Execute go_left
     else:
         Execute go_right
