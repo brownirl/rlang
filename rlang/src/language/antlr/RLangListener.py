@@ -586,6 +586,7 @@ class RLangListener(RLangParserListener):
         elif isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
+            print(ctx.trailer()[0].value)
             new_var = variable[ctx.trailer()[0].value]
         elif isinstance(variable, Feature):
             if len(ctx.trailer()) > 1:

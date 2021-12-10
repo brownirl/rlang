@@ -367,15 +367,16 @@ class Factor(GroundingFunction):
         self.state_indexer = new_indexer
 
     def __getitem__(self, item):
+        if isinstance(item, int):
+            item = [item]
         if isinstance(self.state_indexer, slice):
             if self.state_indexer.stop is None:
                 raise RLangGroundingError("We don't know enough about the state space")
             else:
-                new_indexer = list(range(*self.state_indexer.indices(self.state_indexer.stop)))
+                old_indexer = list(range(*self.state_indexer.indices(self.state_indexer.stop)))
+                new_indexer = [old_indexer[i] for i in item]
                 return Factor(state_indexer=new_indexer, domain=self.domain)
         if isinstance(self.state_indexer, list):
-            if isinstance(item, int):
-                item = [item]
             if isinstance(item, list):
                 return Factor([self.state_indexer[i] for i in item], domain=self.domain)
             elif isinstance(item, slice):

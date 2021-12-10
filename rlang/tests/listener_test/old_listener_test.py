@@ -40,5 +40,18 @@ def txest_Effect():
 #     print(predictions['f2'](state=s))
 
 
+def test_features():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    s = State([0, 1, 2, 3, 4])
+
+    knowledge = rlang.parse('Factor f := S[2:4]\nFeature g := f[1] + f[0]')
+    f = knowledge['f']
+    g = knowledge['g']
+    print(f)
+    print(f(state=s))
+    print(g)
+    print(g(state=s))
+
+
 if __name__ == "__main__":
-    txest_Effect()
+    test_features()
