@@ -125,6 +125,9 @@ class Primitive(np.ndarray):
         else:
             return False
 
+    def unwrap(self):
+        return self.view(np.ndarray)
+
     def __hash__(self):
         return hash(str(self))
 

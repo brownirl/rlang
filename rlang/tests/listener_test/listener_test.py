@@ -295,8 +295,16 @@ class ListenerTests(unittest.TestCase):
         assert conditional_transition.transition_function(state=s2) == {s2 * 2: 1.0}
         assert conditional_transition.transition_function(state=s3) == {s3: 0.5, s3 * 5: 0.3}
 
-        # single_predictions = knowledge['single_predictions']
-        # print(single_predictions.predictions)
+        single_predictions = knowledge['single_predictions']
+        f1_prediction = single_predictions.prediction_dict['f1'][0]
+        f2_prediction = single_predictions.prediction_dict['f2'][0]
+        # assert f1_prediction(state=s2) == {s2[0] * 10: 1.0}
+        assert f2_prediction(state=s2) == {s2 * 2 + 3: 1.0}
+        print(f1_prediction(state=s2))
+        print({s2[0] * 10: 1.0})
+        # print({s2 * 2 + 3: 1.0})
+        # print(single_predictions.prediction_dict)
+        # print(knowledge.predictions(state=s))
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import MutableMapping
+from collections import defaultdict
 from typing import Callable, Any, Union
 
 import numpy as np
@@ -1016,6 +1017,14 @@ class Effect(Grounding):
             new_predictions.append(
                 Prediction.from_grounding_distribution(p.grounding, GroundingDistribution(p.grounding, {p: probability})))
         self.predictions = new_predictions
+
+    @property
+    def prediction_dict(self):
+        prediction_dict = defaultdict(list)
+        for p in self.predictions:
+            print(prediction_dict[p.grounding.name])
+            prediction_dict[p.grounding.name].append(p)
+        return dict(prediction_dict)
 
     def __repr__(self):
         if self.name:
