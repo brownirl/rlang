@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 import unittest
+
 import numpy as np
+
 import rlang
 from rlang.src.grounding import *
 
@@ -151,16 +154,12 @@ class ListenerTests(unittest.TestCase):
         assert x_parsed(state=state2) == [[True]]
 
         state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Proposition x := S[0] == [[0], [5]]", metadata)['x']
-        assert ((x_parsed(state=state2)) == [[True], [True]]).all()
+        x_parsed = rlang.parse("Proposition x := S[0] == [[0, 1]]", metadata)['x']
+        assert (x_parsed(state=state2) == [[True]])
 
-        test_parsed = rlang.parse("Feature f := S[0, 1] * 3\nProposition test := f == [3, 6]", metadata)["test"]
-        state3 = State(np.array([[1, 2], [1, 1]]))
-        assert ((test_parsed(state=state3)) == [[True], [False]]).all()
-
-        state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Proposition x := S[0] == [[0], [1]]", metadata)['x']
-        assert ((x_parsed(state=state2)) == [[True], [False]]).all()
+        # test_parsed = rlang.parse("Feature f := S[0, 1] * 3\nProposition test := f == [3, 6]", metadata)["test"]
+        # state3 = State(np.array([[1, 2], [1, 1]]))
+        # assert ((test_parsed(state=state3)) == [[True], [False]]).all()
 
         # QUESTION: just to confirm, we cannot compare between instances of PrimitiveGroundings
         # x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nFeature y := position[0]\nPredicate test3 := x < y", metadata)['x']
@@ -205,7 +204,7 @@ class ListenerTests(unittest.TestCase):
         assert prob_split_less_than_1(state=s) == {Action(2): 0.1, Action(6): 0.5}
 
         prob_split_frac = knowledge['prob_split_frac']
-        assert prob_split_frac(state=s) == {Action(1): 1.0/3, Action(2): 2.0/3}
+        assert prob_split_frac(state=s) == {Action(1): 1.0 / 3, Action(2): 2.0 / 3}
 
         prob_nest = knowledge['prob_nest']
         assert prob_nest(state=s) == {Action(3): 0.025}
