@@ -298,13 +298,14 @@ class ListenerTests(unittest.TestCase):
         single_predictions = knowledge['single_predictions']
         f1_prediction = single_predictions.prediction_dict['f1'][0]
         f2_prediction = single_predictions.prediction_dict['f2'][0]
-        # assert f1_prediction(state=s2) == {s2[0] * 10: 1.0}
+        assert f1_prediction(state=s2) == {s2[0] * 10: 1.0}
         assert f2_prediction(state=s2) == {s2 * 2 + 3: 1.0}
-        print(f1_prediction(state=s2))
-        print({s2[0] * 10: 1.0})
-        # print({s2 * 2 + 3: 1.0})
-        # print(single_predictions.prediction_dict)
-        # print(knowledge.predictions(state=s))
+
+        compound_predictions = knowledge['compound_predictions']
+        f1_prediction = compound_predictions.prediction_dict['f1'][0]
+        f2_prediction = compound_predictions.prediction_dict['f2'][0]
+        assert f1_prediction(state=s) == {s[0] + s[1]: 1.0}
+        assert f2_prediction(state=s2) == {s2[0] * 2 * s2[1]: 1.0}
 
 
 if __name__ == '__main__':

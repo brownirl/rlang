@@ -113,7 +113,11 @@ class Primitive(np.ndarray):
             return s_tuple
 
     def __getitem__(self, item):
-        return super().__getitem__(item).view(Primitive)
+        val = super().__getitem__(item)
+        if isinstance(val, np.ndarray):
+            return val.view(Primitive)
+        else:
+            return Primitive(val)
 
     def __eq__(self, other):
         return super().__eq__(other).all().view(Primitive)

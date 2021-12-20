@@ -44,7 +44,9 @@ Effect single_predictions:
     f1' -> f1 * 10
     f2' -> S * 2 + 3
 
-
+Effect compound_predictions:
+    f1' -> f1 + f2
+    f2' -> f1 * f2 * 2
 
 #Effect jo:
 #    if f1 == 0:
