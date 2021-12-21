@@ -307,6 +307,29 @@ class ListenerTests(unittest.TestCase):
         assert f1_prediction(state=s) == {s[0] + s[1]: 1.0}
         assert f2_prediction(state=s2) == {s2[0] * 2 * s2[1]: 1.0}
 
+        probabilistic_prediction_a = knowledge['probabilistic_prediction_a']
+        f1_prediction = probabilistic_prediction_a.prediction_dict['f1'][0]
+        assert f1_prediction(state=s2) == {s2[0] * 2: 0.25, s2[0] * 3: 0.75}
+
+        probabilistic_prediction_b = knowledge['probabilistic_prediction_b']
+        f1_prediction = probabilistic_prediction_b.prediction_dict['f1'][0]
+        f2_prediction = probabilistic_prediction_b.prediction_dict['f2'][0]
+        assert f1_prediction(state=s2) == {s2[0] + 6: 0.7}
+        assert f2_prediction(state=s2) == {s2[1] + 4: 0.3}
+
+        conditional_prediction = knowledge['conditional_prediction']
+        f1_prediction = conditional_prediction.prediction_dict['f1'][0]
+        f2_prediction = conditional_prediction.prediction_dict['f2'][0]
+        print(f1_prediction(state=s))
+        print(f1_prediction(state=s2))
+        print(f1_prediction(state=s3))
+        print(f2_prediction(state=s3))
+        # print({s3[1]: 0.5, s3[1] * 5: 0.3})
+        # print({s3[1]: 0.5, s3[1] * 5: 0.3} == {s3[1]: 0.5, s3[1] * 5: 0.3})
+        assert f1_prediction(state=s) == {s[0] * 3: 1.0}
+        assert f1_prediction(state=s2) == {s2[0] * 2: 1.0}
+        assert f2_prediction(state=s3) == {s3[1]: 0.5, s3[1] * 5: 0.3}
+
 
 if __name__ == '__main__':
     unittest.main()

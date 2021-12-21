@@ -48,6 +48,26 @@ Effect compound_predictions:
     f1' -> f1 + f2
     f2' -> f1 * f2 * 2
 
+Effect probabilistic_prediction_a:
+    f1' -> f1 * 2 with P(0.25)
+    or f1' -> f1 * 3 with P(0.75)
+
+Effect probabilistic_prediction_b:
+    with P(0.3):
+        f2' -> f2 + 4
+    or with P(0.7):
+        f1' -> f1 + 6
+
+Effect conditional_prediction:
+    if f1 == 0:
+        f1' -> f1 * 3
+    elif f1 == 3:
+        f1' -> f1 * 2
+    else:
+        f2' -> f2 with P(0.5)
+        or with P(0.3):
+            f2' -> f2 * 5
+
 #Effect jo:
 #    if f1 == 0:
 #        f1' -> 99 with P(0.5)
