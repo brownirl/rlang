@@ -272,6 +272,10 @@ class ListenerTests(unittest.TestCase):
         single_reward = knowledge['single_reward']
         assert single_reward.reward_function(state=s) == 10
 
+        factor_reward = knowledge['factor_reward']
+        assert factor_reward.reward_function(state=s) == 0
+        assert factor_reward.reward_function(state=s2) == 6
+
         probabilistic_reward = knowledge['probabilistic_reward']
         assert probabilistic_reward.reward_function(state=s) == 2.8
 
@@ -288,6 +292,7 @@ class ListenerTests(unittest.TestCase):
         assert single_transition.transition_function(state=s2) == {s2 * 2: 1.0}
 
         probabilistic_transition = knowledge['probabilistic_transition']
+        # print(probabilistic_transition.transition_function(state=s))
         assert probabilistic_transition.transition_function(state=s) == {s * 3: 0.5, s * 2: 0.5}
 
         conditional_transition = knowledge['conditional_transition']
@@ -329,7 +334,7 @@ class ListenerTests(unittest.TestCase):
         f2_prediction = simple_effect_references.prediction_dict['f2'][0]
         assert f1_prediction(state=s2) == {s2[0] * 10: 1.0}
         assert f2_prediction(state=s2) == {s2 * 2 + 3: 1.0}
-        assert simple_effect_references.reward_function(state=s) == 10
+        assert simple_effect_references.reward_function(state=s2) == 16
         assert simple_effect_references.transition_function(state=s) == {s * 2: 1.0}
 
         simple_effect_references_overlap = knowledge['simple_effect_references_overlap']
@@ -338,6 +343,17 @@ class ListenerTests(unittest.TestCase):
         assert f1_prediction(state=s) == {s[0] * 10: 1.0, s[0] + s[1]: 1.0}
         assert f2_prediction(state=s2) == {s2 * 2 + 3: 1.0, s2[0] * s2[1] * 2: 1.0}
         assert simple_effect_references_overlap.reward_function(state=s) == 20
+
+        simple_probabilistic_effect_references = knowledge['simple_probabilistic_effect_references']
+        assert simple_probabilistic_effect_references.transition_function(state=s) == {s * 2: 0.2, s * 3: 0.1}
+
+        combined_probabilistic_effect_references = knowledge['combined_probabilistic_effect_references']
+        assert combined_probabilistic_effect_references.transition_function(state=s) == {s * 2: 0.2, s * 3: 0.1}
+
+        conditional_effect_references = knowledge['conditional_effect_references']
+        assert conditional_effect_references.transition_function(state=s) == {s * 2: 1.0}
+        assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
+        assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
 
 
 if __name__ == '__main__':

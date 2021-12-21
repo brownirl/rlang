@@ -246,9 +246,6 @@ class RLangListener(RLangParserListener):
         reward_distributions = list(filter(lambda x: isinstance(x, RewardDistribution), all_statements))
         reward_function = None
 
-        print(reward_functions)
-        print(len(reward_functions))
-        print(len(reward_distributions))
         if len(reward_distributions) > 0:
             combined_rd = RewardDistribution()
             [combined_rd.join(rd) for rd in reward_distributions]
@@ -469,7 +466,7 @@ class RLangListener(RLangParserListener):
                 ctx.value = Effect(predictions=[
                     Prediction.from_grounding_distribution(ctx.prediction().value.grounding, ctx.prediction().value)])
         else:
-            ctx.value = ctx.effect_reference().value
+            ctx.value = ctx.effect_reference().value.shallow_copy()
         ctx.value.compose_probabilities(ctx.probabilistic_condition().value)
 
     def exitReward(self, ctx: RLangParser.RewardContext):
@@ -597,7 +594,7 @@ class RLangListener(RLangParserListener):
         elif isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
-            print(ctx.trailer()[0].value)
+            # print(ctx.trailer()[0].value)
             new_var = variable[ctx.trailer()[0].value]
         elif isinstance(variable, Feature):
             if len(ctx.trailer()) > 1:

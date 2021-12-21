@@ -4,6 +4,10 @@ Factor f2 := S[1]
 Effect single_reward:
     Reward 10
 
+Effect factor_reward:
+    Reward f1
+    Reward f1
+
 Effect probabilistic_reward:
     with P(0.2):
         Reward 10
@@ -72,6 +76,7 @@ Effect simple_effect_references:
     -> single_predictions
     -> single_transition
     -> single_reward
+    -> factor_reward
 
 Effect simple_effect_references_overlap:
     -> single_predictions
@@ -79,10 +84,23 @@ Effect simple_effect_references_overlap:
     -> single_reward
     -> single_reward
 
-#Effect probabilistic_effect_references:
-#    with P(0.35):
-#        -> single_transition
-#    or -> probabilistic_transition with P(0.65)
+Effect simple_probabilistic_effect_references:
+    -> probabilistic_transition with P(0.2)
+    -> single_transition with P(0.1)
+
+Effect combined_probabilistic_effect_references:
+    with P(0.1):
+        -> single_transition
+    or -> probabilistic_transition with P(0.2)
+
+Effect conditional_effect_references:
+    if f1 == 0:
+        -> single_transition
+    elif f1 == 3:
+        -> probabilistic_transition
+    else:
+        -> probabilistic_transition with P(0.2)
+        or -> single_transition with P(0.1)
 
 #Effect jo:
 #    if f1 == 0:

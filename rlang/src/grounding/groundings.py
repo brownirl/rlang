@@ -540,9 +540,9 @@ class ProbabilityDistribution(MutableMapping):
     def __init__(self, distribution=None):
         if distribution is None:
             distribution = dict()
-        for k, v in distribution.items():
-            if v < 0.0 or v > 1.0:
-                raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
+        # for k, v in distribution.items():
+        #     if v < 0.0 or v > 1.0:
+        #         raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
         self.domain = Domain.ANY
         self.distribution = distribution
@@ -728,11 +728,13 @@ class RewardDistribution(ProbabilityDistribution):
         true_distribution = dict()
         update_dictionary(self.distribution, 1.0)
 
+        # print(true_distribution.keys())
+
         self.true_distribution = true_distribution
         self.calculated = True
 
     def expected(self):
-        expected_reward = 0
+        expected_reward = 0.0
         for k, v in self.true_distribution.items():
             expected_reward += k * v
 
@@ -740,7 +742,18 @@ class RewardDistribution(ProbabilityDistribution):
 
     @classmethod
     def from_list_eq(cls, ks, *args, **kwargs):
-        return cls({sum(ks): 1.0})
+        numeric_reward = 0.0
+        sd_dict = dict()
+        for k in ks:
+            if isinstance(k, int):
+                numeric_reward += k
+            else:
+                if k in sd_dict:
+                    sd_dict[k] += 1.0
+                else:
+                    sd_dict[k] = 1.0
+        # sd_dict[RewardFunction(lambda *args, **kwargs: numeric_reward, domain=Domain.ANY)] = 1.0
+        return cls(sd_dict)
 
     def __call__(self, *args, **kwargs):
         super().__call__(*args, **kwargs)
@@ -1008,6 +1021,10 @@ class Effect(Grounding):
         self.probability = probability
         super().__init__(name=name)
 
+    def shallow_copy(self):
+        return Effect(reward_function=self.reward_function, predictions=self.predictions,
+                      transition_function=self.transition_function)
+
     def compose_probabilities(self, probability: float):
         self.probability = self.probability * probability
         if self.reward_function:
@@ -1026,7 +1043,7 @@ class Effect(Grounding):
     def prediction_dict(self):
         prediction_dict = defaultdict(list)
         for p in self.predictions:
-            print(prediction_dict[p.grounding.name])
+            # print(prediction_dict[p.grounding.name])
             prediction_dict[p.grounding.name].append(p)
         return dict(prediction_dict)
 
