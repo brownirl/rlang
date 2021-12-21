@@ -356,8 +356,7 @@ class RLangListener(RLangParserListener):
 
         predicted_groundings = list({pred.grounding for pred in all_predictions})
 
-        domain3 = reduce(lambda a, b: a + b.domain,
-                        [if_condition.domain, *elif_conditions])
+        domain3 = reduce(lambda a, b: a + b.domain, [if_condition.domain, *elif_conditions])
 
         new_predictions = list()
 
@@ -387,15 +386,23 @@ class RLangListener(RLangParserListener):
             else:
                 else_preds = None
 
-            new_prediction = Prediction(grounding, lambda *args, **kwargs: conditional_prediction_function(if_condition,
-                                                                                                           if_preds,
-                                                                                                           elif_conditions,
-                                                                                                           elif_preds,
-                                                                                                           else_preds,
-                                                                                                           *args,
-                                                                                                           **kwargs),
-                                        domain=new_domain)
-            # TODO: I'm not sure this is necessary
+            # This needs to be here for lambda scope reasons
+            def construct_cond_pred_func(if_cond_f, if_pred_f, elif_conds_f, elif_preds_f, else_preds_f):
+                return lambda *args, **kwargs: conditional_prediction_function(if_cond_f,
+                                                                               if_pred_f,
+                                                                               elif_conds_f,
+                                                                               elif_preds_f,
+                                                                               else_preds_f,
+                                                                               *args, **kwargs)
+
+            func = construct_cond_pred_func(if_condition,
+                                            if_preds,
+                                            elif_conditions,
+                                            elif_preds,
+                                            else_preds)
+
+            new_prediction = Prediction(grounding, func, domain=new_domain)
+            # TODO: I'm not sure this next line is necessary
             new_prediction = Prediction.from_grounding_distribution(grounding,
                                                                     GroundingDistribution.from_single(new_prediction,
                                                                                                       g=grounding))
