@@ -320,22 +320,9 @@ class ListenerTests(unittest.TestCase):
         conditional_prediction = knowledge['conditional_prediction']
         f1_prediction = conditional_prediction.prediction_dict['f1'][0]
         f2_prediction = conditional_prediction.prediction_dict['f2'][0]
-        print(f1_prediction(state=s))
-        print(f1_prediction(state=s2))
-        print(f1_prediction(state=s3))
-        print(f2_prediction(state=s))
-        print(f2_prediction(state=s2))
-        print(f2_prediction(state=s3))
-        # print(f2_prediction(state=s3))
-        # print({s3[1]: 0.5, s3[1] * 5: 0.3})
-        # print({s3[1]: 0.5, s3[1] * 5: 0.3} == {s3[1]: 0.5, s3[1] * 5: 0.3})
-        # assert f1_prediction(state=s) == {s[0] * 3: 1.0}
-        # assert f1_prediction(state=s2) == {s2[0] * 2: 1.0}
-
-        print(conditional_prediction.predictions)
+        assert f1_prediction(state=s) == {s[0] * 3: 1.0}
+        assert f1_prediction(state=s2) == {s2[0] * 2: 1.0}
         assert f2_prediction(state=s3) == {s3[1]: 0.5, s3[1] * 5: 0.3}
-
-
 
 
 if __name__ == '__main__':
