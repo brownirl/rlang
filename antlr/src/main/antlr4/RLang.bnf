@@ -1,0 +1,50 @@
+program ::= import declarations
+
+declarations ::= declaration | declarations | ""
+
+declaration ::= constant
+              | action
+              | factor
+              | proposition
+              | goal
+              | feature
+              | markov_feature
+              | option
+              | policy
+              | effect
+
+constant ::= "Constant" identifier ":=" arithmetic_expression
+action ::= "Action" identifier ":=" arithmetic_expression
+factor ::= "Factor" identifier ":=" special_variable
+proposition ::= "Proposition" identifier ":=" boolean_expression
+goal ::= "Goal" identifier ":=" boolean_expression
+feature ::= "Feature" identifier ":=" arithmetic_expression
+markov_feature ::= "MarkovFeature" identifier ":=" arithmetic_expression
+
+policy ::= "Policy" identifier ":\n" policy_statement
+policy_statement ::= execute_statement
+                   | conditional_policy_statement
+                   | probabilistic_policy_statement
+
+execute_statement ::= "Execute" arithmetic_expression
+conditional_policy_statement ::=
+probabilistic_policy_statement ::= probability_condition ":\n" policy_statement probabilistic_policy_tail
+probabilistic_policy_tail ::= "or" probability_condition ":\n" policy_statement probabilistic_policy_tail | ""
+
+option ::= "Option" identifier ":\n" option_init policy_statement open_until
+option_init ::= "init" boolean_expression
+option_until ::= "until" boolean_expression
+
+effect ::= "Effect" identifier ":\n" effect_statements
+effect_statement ::= reward
+                   | prediction
+                   | effect_reference
+                   | conditional_effect_statement
+                   | probabilistic_effect_statement
+
+reward ::= "Reward" arithmetic_expression
+prediction ::= identifier "'" "->" arithmetic_expression
+effect_reference ::= "->" identifier
+conditional_effect_statement ::=
+probabilistic_effect_statement ::= probability_condition ":\n" effect_statements probabilistic_effect_tail
+probabilistic_effect_tail ::= "or" probability_condition ":\n" effect_statements probabilistic_effect_tail | ""
