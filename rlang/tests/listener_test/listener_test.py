@@ -324,6 +324,21 @@ class ListenerTests(unittest.TestCase):
         assert f1_prediction(state=s2) == {s2[0] * 2: 1.0}
         assert f2_prediction(state=s3) == {s3[1]: 0.5, s3[1] * 5: 0.3}
 
+        simple_effect_references = knowledge['simple_effect_references']
+        f1_prediction = simple_effect_references.prediction_dict['f1'][0]
+        f2_prediction = simple_effect_references.prediction_dict['f2'][0]
+        assert f1_prediction(state=s2) == {s2[0] * 10: 1.0}
+        assert f2_prediction(state=s2) == {s2 * 2 + 3: 1.0}
+        assert simple_effect_references.reward_function(state=s) == 10
+        assert simple_effect_references.transition_function(state=s) == {s * 2: 1.0}
+
+        simple_effect_references_overlap = knowledge['simple_effect_references_overlap']
+        f1_prediction = simple_effect_references_overlap.prediction_dict['f1'][0]
+        f2_prediction = simple_effect_references_overlap.prediction_dict['f2'][0]
+        assert f1_prediction(state=s) == {s[0] * 10: 1.0, s[0] + s[1]: 1.0}
+        assert f2_prediction(state=s2) == {s2 * 2 + 3: 1.0, s2[0] * s2[1] * 2: 1.0}
+        assert simple_effect_references_overlap.reward_function(state=s) == 20
+
 
 if __name__ == '__main__':
     unittest.main()

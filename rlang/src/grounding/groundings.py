@@ -738,6 +738,10 @@ class RewardDistribution(ProbabilityDistribution):
 
         return expected_reward
 
+    @classmethod
+    def from_list_eq(cls, ks, *args, **kwargs):
+        return cls({sum(ks): 1.0})
+
     def __call__(self, *args, **kwargs):
         super().__call__(*args, **kwargs)
         return self.expected()

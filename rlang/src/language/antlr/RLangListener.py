@@ -246,12 +246,16 @@ class RLangListener(RLangParserListener):
         reward_distributions = list(filter(lambda x: isinstance(x, RewardDistribution), all_statements))
         reward_function = None
 
+        print(reward_functions)
+        print(len(reward_functions))
+        print(len(reward_distributions))
         if len(reward_distributions) > 0:
             combined_rd = RewardDistribution()
             [combined_rd.join(rd) for rd in reward_distributions]
             reward_functions.append(RewardFunction.from_reward_distribution(combined_rd))
         if len(reward_functions) > 0:
-            reward_function = RewardFunction.from_reward_distribution(RewardDistribution.from_list_eq(reward_functions))
+            rd = RewardDistribution.from_list_eq(reward_functions)
+            reward_function = RewardFunction.from_reward_distribution(rd)
 
         # Predictions
         predictions = list(filter(lambda x: isinstance(x, Prediction), all_statements))

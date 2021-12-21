@@ -68,6 +68,22 @@ Effect conditional_prediction:
         or with P(0.3):
             f2' -> f2 * 5
 
+Effect simple_effect_references:
+    -> single_predictions
+    -> single_transition
+    -> single_reward
+
+Effect simple_effect_references_overlap:
+    -> single_predictions
+    -> compound_predictions
+    -> single_reward
+    -> single_reward
+
+#Effect probabilistic_effect_references:
+#    with P(0.35):
+#        -> single_transition
+#    or -> probabilistic_transition with P(0.65)
+
 #Effect jo:
 #    if f1 == 0:
 #        f1' -> 99 with P(0.5)
