@@ -1,6 +1,4 @@
-program ::= import declarations
-
-declarations ::= declaration declarations | declaration | ""
+program ::= "import" declarations
 
 declaration ::= constant
               | action
@@ -27,8 +25,6 @@ policy_statement ::= execute_statement
                    | probabilistic_policy_statement // Show example syntax
 
 execute_statement ::= "Execute" arithmetic_expression
-//probabilistic_policy_statement ::= probability_condition ":" policy_statement probabilistic_policy_tail
-//probabilistic_policy_tail ::= "or" probability_condition ":" policy_statement probabilistic_policy_tail | ""
 
 option ::= "Option" identifier ":" option_init policy_statement open_until
 option_init ::= "init" boolean_expression
@@ -44,5 +40,3 @@ effect_statement ::= reward
 reward ::= "Reward" arithmetic_expression
 prediction ::= identifier "'" "->" arithmetic_expression
 effect_reference ::= "->" identifier
-//probabilistic_effect_statement ::= probability_condition ":" effect_statements probabilistic_effect_tail
-//probabilistic_effect_tail ::= "or" probability_condition ":" effect_statements probabilistic_effect_tail | ""
