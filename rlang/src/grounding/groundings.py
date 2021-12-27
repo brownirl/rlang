@@ -98,7 +98,14 @@ class GroundingFunction(Grounding):
     def function(self, function: Callable):
         self._function = function
 
+    def __contains__(self, item):
+        def contains(*args, **kwargs):
+            return item(*args, **kwargs) in self(*args, **kwargs)
+
+        return Proposition(function=contains, domain=self.domain + item.domain)
+
     def contains(self, item):
+        # TODO: ALERT: This is not actually being used right now. Hopefully we can discard it eventually
         # Cannot override __contains__ and return a non-boolean
         list_cast = lambda x: x.tolist() if isinstance(x, np.ndarray) else x
         # TODO: Fix this! 'in' only works for singleton batch items!

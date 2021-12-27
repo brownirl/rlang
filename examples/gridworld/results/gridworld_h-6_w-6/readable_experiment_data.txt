@@ -3,7 +3,6 @@
 (Agents)
 	Q-learning,0
 	RLang-Q-learning,1
-	RLang-Q-learning-transition,2
 (Params)
 	instances : 5
 	episodes : 100

@@ -42,9 +42,9 @@ def rlang_experiment():
 
     agent = QLearningAgent(mdp.get_actions())
     rlang_agent = RLangQLearningAgent(mdp.get_actions(), states, knowledge)
-    rlang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name="RLang-Q-learning-transition",
-                                        use_transition=True)
-    run_agents_on_mdp([agent, rlang_agent, rlang_agent_2], mdp)
+    # rlang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name="RLang-Q-learning-transition",
+    #                                     use_transition=True)
+    run_agents_on_mdp([agent, rlang_agent], mdp)
 
 
 if __name__ == '__main__':

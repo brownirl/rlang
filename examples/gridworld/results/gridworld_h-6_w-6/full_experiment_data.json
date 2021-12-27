@@ -86,7 +86,7 @@
                 "anneal": false,
                 "explore": "uniform"
             },
-            "index": 2
+            "index": 1
         }
     },
     "MISC": {

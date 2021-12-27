@@ -75,6 +75,15 @@ def test_features():
     print(g)
     print(g(state=s))
 
+def test_prop():
+    metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+    state = State(np.array([4, 5, 6, 7, 8]))
+
+    knowledge = rlang.parse('Proposition p := S[0] in [1, 4, 2]')
+    p = knowledge['p']
+    # g = knowledge['g']
+    print(p(state=state))
+
 
 if __name__ == "__main__":
-    txest_Effect()
+    test_prop()

@@ -124,6 +124,7 @@ class ListenerTests(unittest.TestCase):
         # TODO: Re-write these using new Primitive
         metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         state = State(np.array([4, 5, 6, 7, 8]))
+        state2 = State(np.array([1, 4, 6, 7, 8]))
 
         hi_parsed = \
             rlang.parse(
@@ -140,22 +141,41 @@ class ListenerTests(unittest.TestCase):
         hi_parsed = rlang.parse("Proposition hi := True or False and False or True", metadata)['hi']
         assert hi_parsed(state=state) == True
 
-        x_parsed = rlang.parse("Proposition x := [0] in [[2], [1], [2, 3]]", metadata)['x']
-        assert x_parsed(state=state) == [[False]]
+        # Singleton in
+        p_parsed = rlang.parse('Proposition p := S[0] in [0, 4, 2]')['p']
+        assert p_parsed(state=state) == True
+        assert p_parsed(state=state2) == False
 
-        x_parsed = rlang.parse("Proposition x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
-        assert x_parsed(state=state) == [[True]]
+        # Array in
+        p_parsed = rlang.parse('Proposition p := S[0, 1] in [[4, 5], [6, 7]]')['p']
+        assert p_parsed(state=state) == True
+        assert p_parsed(state=state2) == False
 
-        state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Factor h := S[0, 1]\nProposition x := h in [[0, 1], [2, 3]]", metadata)['x']
+        knowledge = rlang.parse(
+            'Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]\nFactor position := S[0, 1]\nProposition in_lava := position in lava_locs')
+        in_lava = knowledge['in_lava']
 
-        # TODO: fix this
-        # QUESTION: why is this true because isn't [5, 6] not in the array
-        assert x_parsed(state=state2) == [[True]]
+        assert in_lava(state=state) == False
+        assert in_lava(state=state2) == True
 
-        state2 = State(np.array([[0, 1], [5, 6]]))
-        x_parsed = rlang.parse("Proposition x := S[0] == [[0, 1]]", metadata)['x']
-        assert (x_parsed(state=state2) == [[True]])
+
+
+        # x_parsed = rlang.parse("Proposition x := [0] in [[2], [1], [2, 3]]", metadata)['x']
+        # assert x_parsed(state=state) == [[False]]
+        #
+        # x_parsed = rlang.parse("Proposition x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
+        # assert x_parsed(state=state) == [[True]]
+        #
+        # state2 = State(np.array([[0, 1], [5, 6]]))
+        # x_parsed = rlang.parse("Factor h := S[0, 1]\nProposition x := h in [[0, 1], [2, 3]]", metadata)['x']
+
+        # # TODO: fix this
+        # # QUESTION: why is this true because isn't [5, 6] not in the array
+        # assert x_parsed(state=state2) == [[True]]
+        #
+        # state2 = State(np.array([[0, 1], [5, 6]]))
+        # x_parsed = rlang.parse("Proposition x := S[0] == [[0, 1]]", metadata)['x']
+        # assert (x_parsed(state=state2) == [[True]])
 
         # test_parsed = rlang.parse("Feature f := S[0, 1] * 3\nProposition test := f == [3, 6]", metadata)["test"]
         # state3 = State(np.array([[1, 2], [1, 1]]))
@@ -165,10 +185,10 @@ class ListenerTests(unittest.TestCase):
         # x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nFeature y := position[0]\nPredicate test3 := x < y", metadata)['x']
         # print(x_parsed(state=state2))
 
-        up_parsed = rlang.parse("Action up := -1.3\nProposition x := up == A", metadata)['x']
-        up = ActionReference(-1.3, "up")
-        assert up_parsed(state=state2, action=up) == [[True]]
-        assert up_parsed(state=state2, action=Action(-1.3)) == [[True]]
+        # up_parsed = rlang.parse("Action up := -1.3\nProposition x := up == A", metadata)['x']
+        # up = ActionReference(-1.3, "up")
+        # assert up_parsed(state=state2, action=up) == [[True]]
+        # assert up_parsed(state=state2, action=Action(-1.3)) == [[True]]
 
     def test_Action(self):
         metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))

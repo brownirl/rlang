@@ -546,7 +546,7 @@ class RLangListener(RLangParserListener):
         ctx.value = ~ ctx.boolean_exp().value
 
     def exitBool_in(self, ctx: RLangParser.Bool_inContext):
-        ctx.value = ctx.rhs.value.contains(ctx.lhs.value)
+        ctx.value = ctx.rhs.value.__contains__(ctx.lhs.value)
 
     def exitBool_bool_eq(self, ctx: RLangParser.Bool_bool_eqContext):
         if ctx.EQ_TO() is not None:
