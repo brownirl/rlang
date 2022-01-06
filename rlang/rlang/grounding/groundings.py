@@ -6,8 +6,9 @@ from typing import Callable, Any, Union
 
 import numpy as np
 from numpy.random import default_rng
-from rlang.src.grounding.internals import Domain, State, Action, Primitive
-from rlang.src.exceptions import RLangGroundingError
+from .utils.utils import Domain
+from .utils.primitives import State, Action, Primitive
+from .utils.grounding_exceptions import RLangGroundingError
 
 
 class Grounding(object):
@@ -360,7 +361,7 @@ class Factor(GroundingFunction):
         if domain is not Domain.STATE and domain is not Domain.NEXT_STATE:
             raise RLangGroundingError(f"Factor cannot have domain of type {domain.name}")
 
-        elif isinstance(state_indexer, int):
+        if isinstance(state_indexer, int):
             state_indexer = [state_indexer]
         self.state_indexer = state_indexer
         super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),

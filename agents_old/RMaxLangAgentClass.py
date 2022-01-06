@@ -1,7 +1,7 @@
 import numpy as np
 from simple_rl.agents.RMaxAgentClass import RMaxAgent
 
-from agents.LangAgentClass import LangAgent
+from agents import LangAgent
 from lmdp.utils.collections import DefaultDict
 
 from functools import reduce

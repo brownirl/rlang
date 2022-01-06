@@ -15,7 +15,7 @@
 import numpy as np
 import torch
 
-from agents.LangAgentClass import LangAgent
+from agents import LangAgent
 
 
 class ReinforceMLPLangAgent(LangAgent):

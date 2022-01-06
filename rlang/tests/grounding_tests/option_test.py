@@ -1,5 +1,5 @@
 import unittest
-from grounding.internals import Action
+from grounding.utils import Action
 import numpy as np
 from rlang.src.grounding import Action, Option, State, Factor, Proposition, Policy, OptionTermination
 

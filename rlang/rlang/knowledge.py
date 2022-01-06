@@ -2,9 +2,8 @@ from __future__ import annotations
 from typing import Callable
 from collections.abc import MutableMapping
 
-from rlang.src.exceptions import RLangGroundingError
-from rlang.src.grounding.internals import State, Domain, MDPMetadata
-from rlang.src.grounding.groundings import *
+from .grounding.utils.utils import Domain
+from .grounding.groundings import *
 
 
 class RLangKnowledge(MutableMapping):

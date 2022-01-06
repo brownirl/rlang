@@ -1,6 +1,6 @@
 from collections import defaultdict
 from simple_rl.agents import QLearningAgent
-from rlang.src.grounding import State
+from ..grounding.utils.primitives import State
 
 
 class RLangQLearningAgent(QLearningAgent):

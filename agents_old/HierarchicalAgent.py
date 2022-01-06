@@ -108,7 +108,7 @@ class OptionAgent(HierarchicalAgent):
         return self._inner_agent.eval(state)
 
 
-from agents.factories import OptQLearningFactory
+from agents import OptQLearningFactory
 
 
 class IntraoptionQAgent(SubgoalHierarchicalAgent):

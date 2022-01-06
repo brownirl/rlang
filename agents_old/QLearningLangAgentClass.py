@@ -5,7 +5,7 @@
           v1 February 2021
 '''
 from simple_rl.agents.QLearningAgentClass import QLearningAgent
-from agents.LangAgentClass import LangAgent
+from agents import LangAgent
 from lmdp.utils.collections import ArrayDict, Index, _cartesian
 from collections import namedtuple
 import numpy as np

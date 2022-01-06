@@ -1,27 +1,31 @@
+from __future__ import annotations
 from functools import reduce
 import json
 
-from rlang.src.grounding import *
-from rlang.src.grounding.groundings import GroundingFunction, PrimitiveGrounding, ConstantGrounding, IdentityGrounding
+from ..grounding.groundings import *
+
+from .utils.language_exceptions import AlreadyBoundError, UnknownVariableError, RLangSemanticError
+from .utils.semantic_schemas import conditional_policy_function, conditional_reward_function, \
+    conditional_transition_function, conditional_prediction_function
+from .utils.vocabulary_assembler import VocabularyAssembler
 
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
-from rlang.src.language.utils.vocabulary_assembler import VocabularyAssembler
-from rlang.src.language.utils.semantic_schemas import *
-from .Exceptions import *
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from rlang.knowledge import RLangKnowledge
 
 
 class RLangListener(RLangParserListener):
-    def __init__(self, mdp_metadata: MDPMetadata = None, prior_knowledge: RLangKnowledge = None):
-        if prior_knowledge is not None:
-            mdp_metadata = prior_knowledge.mdp_metadata
-        else:
-            prior_knowledge = RLangKnowledge()
+    def __init__(self, prior_knowledge: RLangKnowledge):
+        # mdp_metadata = prior_knowledge.mdp_metadata
+        # self.mdp_metadata = mdp_metadata
 
         self.vocab_fnames = []
         self.grounded_vars = {}
         self.rlang_knowledge = prior_knowledge
-        self.mdp_metadata = mdp_metadata
 
     # This function adds the lmdp objects in the vocabulary files to self.grounded_vars
     # And probably keep track of object names in the vocab for later reference from the rlang file
@@ -92,10 +96,10 @@ class RLangListener(RLangParserListener):
         if isinstance(ctx.any_bound_var().value, Factor):
             new_factor = ctx.any_bound_var().value
             new_factor.name = ctx.IDENTIFIER().getText()
-            if isinstance(new_factor.indexer, slice):
-                if self.mdp_metadata is not None:
-                    new_factor.indexer = list(
-                        range(*new_factor.indexer.indices(self.mdp_metadata.state_space.shape[0])))
+            # if isinstance(new_factor.indexer, slice):
+            #     if self.mdp_metadata is not None:
+            #         new_factor.indexer = list(
+            #             range(*new_factor.indexer.indices(self.mdp_metadata.state_space.shape[0])))
         elif isinstance(ctx.any_bound_var().value, IdentityGrounding):
             raise RLangSemanticError("A Factor must subscript from S or another Factor")
         else:

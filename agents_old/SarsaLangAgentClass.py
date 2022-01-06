@@ -4,7 +4,7 @@
     date: September 2020
 '''
 from agents import SarsaAgent
-from agents.LangAgentClass import LangAgent
+from agents import LangAgent
 from lmdp.utils.collections import DefaultDict
 
 

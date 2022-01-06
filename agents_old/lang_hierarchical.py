@@ -1,6 +1,6 @@
 from copy import deepcopy
-from agents.LangAgentClass import LangAgent
-from agents.HierarchicalAgent import IntraoptionQAgent, SMDPQAgent
+from agents import LangAgent
+from agents import IntraoptionQAgent, SMDPQAgent
 from lmdp.utils.collections import DefaultDict
 
 

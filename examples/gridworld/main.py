@@ -1,15 +1,10 @@
-import copy
-from collections import defaultdict
-
-import numpy as np
 from simple_rl.run_experiments import run_agents_on_mdp
 from simple_rl.tasks import GridWorldMDP
 from simple_rl.agents import QLearningAgent
 
-from rlang import parse_file, parse
-from rlang.src.grounding import State, Action
+from rlang import parse_file
 
-from agents.RLangQLearningAgentClass import RLangQLearningAgent
+from agents import RLangQLearningAgent
 
 
 def create_mdp():
