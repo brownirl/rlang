@@ -2,8 +2,9 @@ from __future__ import annotations
 import unittest
 import numpy as np
 
-from context import rlang
-from rlang.grounding.utils.primitives import State, Action
+import context
+import rlang
+from rlang import State, Action
 
 
 class ListenerTests(unittest.TestCase):

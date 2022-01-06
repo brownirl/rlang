@@ -2,9 +2,9 @@ from simple_rl.run_experiments import run_agents_on_mdp
 from simple_rl.tasks import GridWorldMDP
 from simple_rl.agents import QLearningAgent
 
-from rlang import parse_file
-
-from agents import RLangQLearningAgent
+import context
+import rlang
+from rlang.agents import RLangQLearningAgent
 
 
 def create_mdp():
@@ -28,7 +28,7 @@ def simple_experiment():
 def rlang_experiment():
     # We need to know these MDP and Q Learning parameters
     mdp = create_mdp()
-    knowledge = parse_file("gridworld.rlang")
+    knowledge = rlang.parse_file("gridworld.rlang")
 
     states = list()
     for w in range(mdp.width):
