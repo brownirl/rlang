@@ -8,7 +8,7 @@ from .language.RLangListener import RLangListener
 from .grounding.utils.utils import MDPMetadata
 
 
-def parse_file(rlang_fname: str, mdp_metadata: MDPMetadata = None, prior_knowledge: RLangKnowledge = None) -> RLangKnowledge:
+def parse_file(rlang_fname: str, prior_knowledge: RLangKnowledge = None) -> RLangKnowledge:
     """Parses a .rlang file
 
     Args:
@@ -35,7 +35,7 @@ def parse_file(rlang_fname: str, mdp_metadata: MDPMetadata = None, prior_knowled
     return listener.rlang_knowledge
 
 
-def parse(rlang: str, mdp_metadata: MDPMetadata = None, prior_knowledge: RLangKnowledge = None) -> RLangKnowledge:
+def parse(rlang: str, prior_knowledge: RLangKnowledge = None) -> RLangKnowledge:
     """Parses an rlang string
 
     Args:

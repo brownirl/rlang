@@ -20,8 +20,6 @@ if TYPE_CHECKING:
 
 class RLangListener(RLangParserListener):
     def __init__(self, prior_knowledge: RLangKnowledge):
-        # mdp_metadata = prior_knowledge.mdp_metadata
-        # self.mdp_metadata = mdp_metadata
 
         self.vocab_fnames = []
         self.grounded_vars = {}

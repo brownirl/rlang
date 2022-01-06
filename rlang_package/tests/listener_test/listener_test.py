@@ -2,92 +2,95 @@ from __future__ import annotations
 import unittest
 import numpy as np
 
-import context
-import rlang
-from rlang.grounding.groundings import *
-from rlang.grounding.utils.utils import MDPMetadata
+from context import rlang
 from rlang.grounding.utils.primitives import State, Action
+from rlang.grounding.groundings import *
+# from rlang.grounding.utils.utils import MDPMetadata
+# from rlang.rlang.grounding.utils.primitives import State, Action
+# print(rlang.grounding)
+# from rlang.grounding.groundings import *
+# # from rlang.grounding.groundings import *
+# from rlang.grounding.utils.utils import MDPMetadata
+# from rlang.grounding.utils.primitives import State, Action
 
 
 class ListenerTests(unittest.TestCase):
 
     def test_Factor(self):
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         state = State(np.array([4, 5, 6, 7, 8]))
 
-        position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
+        position_parsed = rlang.parse("Factor position := S[0]")['position']
         position = Factor(0, "position")
         assert position(state=state) == position_parsed(state=state)
         # assert position_parsed(state=state) == Primitive(4)
 
-        position_parsed = rlang.parse("Factor position := S[0:3]\nFactor p2 := position[0]", metadata)['position']
+        position_parsed = rlang.parse("Factor position := S[0:3]\nFactor p2 := position[0]")['position']
         position = Factor([0, 1, 2], "position")
         assert position(state=state) == position_parsed(state=state)
 
-        position_parsed = rlang.parse("Factor position := S[0:3]", metadata)['position']
+        position_parsed = rlang.parse("Factor position := S[0:3]")['position']
         assert position(state=state) == position_parsed(state=state)
 
-        position_parsed = rlang.parse("Factor position := S[0, 3, 1]", metadata)['position']
+        position_parsed = rlang.parse("Factor position := S[0, 3, 1]")['position']
         position = Factor([0, 3, 1], "position")
         assert position(state=state) == position_parsed(state=state)
 
         state2 = State(np.array([[0, 1], [2, 3]]))
-        position_parsed = rlang.parse("Factor position := S[0]", metadata)['position']
+        position_parsed = rlang.parse("Factor position := S[0]")['position']
         position = Factor([0], "position")
         assert (position_parsed(state=state2) == position(state=state2)).all()
 
-        position_parsed = rlang.parse("Factor position := S[:-1]", metadata)['position']
+        position_parsed = rlang.parse("Factor position := S[:-1]")['position']
         position = Factor(slice(0, -1), "position")
         assert (position_parsed(state=state) == position(state=state)).all()
 
     def test_Feature(self):
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         state = State(np.array([4, 5, 6, 7, 8]))
 
-        x_parsed = rlang.parse("Feature x := S[0, 1]", metadata)['x']
+        x_parsed = rlang.parse("Feature x := S[0, 1]")['x']
         x = Feature.from_Factor(Factor([0, 1]), "x")
         assert x(state=state) == x_parsed(state=state)
 
-        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]", metadata)['x']
+        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]")['x']
         position = Factor([0, 1], "position")
         x = Feature.from_Factor(position[0], "x")
         assert x(state=state) == x_parsed(state=state)
 
-        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position * 2", metadata)['x']
+        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position * 2")['x']
         position = Factor([0, 1], "position")
         x = Feature.from_Factor(position * 2, "x")
         assert x(state=state) == x_parsed(state=state)
         x = Feature.from_Factor(2 * position, "x")
         assert x(state=state) == x_parsed(state=state)
 
-        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + 4 * 2 + position[1]", metadata)[
+        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + 4 * 2 + position[1]")[
             'x']
         position = Factor([0, 1], "position")
         x = Feature(position[0] + 4 * 2 + position[1], "x")
         assert x(state=state) == x_parsed(state=state)
 
         x_parsed = \
-            rlang.parse("Factor position := S[0:3]\nFeature x := position[0] + 4 * 2 + 3 / position[1]", metadata)['x']
+            rlang.parse("Factor position := S[0:3]\nFeature x := position[0] + 4 * 2 + 3 / position[1]")['x']
         position = Factor(list(range(5))[slice(0, 3, 1)], "position")
         x = Feature(position[0] + 4 * 2 + 3 / position[1], "x")
         assert x(state=state) == x_parsed(state=state)
 
-        x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)", metadata)['x']
+        x_parsed = rlang.parse("Feature x := 1 * 2 + 4 * (1 + 2)")['x']
         assert x_parsed(state=state) == 14
 
-        x_parsed = rlang.parse("Feature x := [2, 1] * 2 * S[0, 1]", metadata)['x']
+        x_parsed = rlang.parse("Feature x := [2, 1] * 2 * S[0, 1]")['x']
         position = Factor([0, 1], "position")
 
         x = Feature(2 * position * np.array([2, 1]), "x")
         y = Feature(2 * np.array([2, 1]) * position, "y")
-        y_parsed = rlang.parse("Feature x := S[0, 1] * [2, 1] * 2", metadata)['x']
+        y_parsed = rlang.parse("Feature x := S[0, 1] * [2, 1] * 2")['x']
 
         assert (x(state=state) == x_parsed(state=state)).all()
         assert (x(state=state) == y(state=state)).all()
         assert (y(state=state) == y_parsed(state=state)).all()
 
-        x_parsed = rlang.parse("Feature x := [2, 1] / S[0, 1]", metadata)['x']
-        y_parsed = rlang.parse("Feature x := S[0, 1] / [2, 1]", metadata)['x']
+        x_parsed = rlang.parse("Feature x := [2, 1] / S[0, 1]")['x']
+        y_parsed = rlang.parse("Feature x := S[0, 1] / [2, 1]")['x']
         y = Feature(position / np.array([2, 1]), "x")
         x = Feature(np.array([2, 1]) / position, "y")
 
@@ -95,8 +98,8 @@ class ListenerTests(unittest.TestCase):
         assert (x(state=state) != y(state=state)).all()
         assert (y(state=state) == y_parsed(state=state)).all()
 
-        x_parsed = rlang.parse("Feature x := [2, 1] + S[0, 1]", metadata)['x']
-        y_parsed = rlang.parse("Feature x := S[0, 1] + [2, 1]", metadata)['x']
+        x_parsed = rlang.parse("Feature x := [2, 1] + S[0, 1]")['x']
+        y_parsed = rlang.parse("Feature x := S[0, 1] + [2, 1]")['x']
         y = Feature(position + np.array([2, 1]), "x")
         x = Feature(np.array([2, 1]) + position, "y")
 
@@ -104,8 +107,8 @@ class ListenerTests(unittest.TestCase):
         assert (x(state=state) == y(state=state)).all()
         assert (y(state=state) == y_parsed(state=state)).all()
 
-        x_parsed = rlang.parse("Feature x := [2, 1] - S[0, 1]", metadata)['x']
-        y_parsed = rlang.parse("Feature x := S[0, 1] - [2, 1]", metadata)['x']
+        x_parsed = rlang.parse("Feature x := [2, 1] - S[0, 1]")['x']
+        y_parsed = rlang.parse("Feature x := S[0, 1] - [2, 1]")['x']
         y = Feature(position - np.array([2, 1]), "x")
         x = Feature(np.array([2, 1]) - position, "y")
 
@@ -113,33 +116,31 @@ class ListenerTests(unittest.TestCase):
         assert (x(state=state) != y(state=state)).all()
         assert (y(state=state) == y_parsed(state=state)).all()
 
-        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + position[1]", metadata)['x']
+        x_parsed = rlang.parse("Factor position := S[0, 1]\nFeature x := position[0] + position[1]")['x']
         assert (x_parsed(state=state)) == 9
 
         x_parsed = \
-            rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nFeature y := position[1]/x", metadata)[
+            rlang.parse("Factor position := S[0, 1]\nFeature x := position[0]\nFeature y := position[1]/x")[
                 'y']
         assert (x_parsed(state=state)) == 5 / 4
 
     def test_Proposition(self):
         # TODO: Re-write these using new Primitive
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         state = State(np.array([4, 5, 6, 7, 8]))
         state2 = State(np.array([1, 4, 6, 7, 8]))
 
         hi_parsed = \
             rlang.parse(
-                "Factor position := S[0, 1]\nFeature x := position[0]\nProposition hi := x == 1 and True or False",
-                metadata)['hi']
+                "Factor position := S[0, 1]\nFeature x := position[0]\nProposition hi := x == 1 and True or False")['hi']
         position = Factor([0, 1], "position")
         x = Feature(position[0])
         hi = Proposition(x == 1 & True | False)
         assert hi(state=state) == hi_parsed(state=state)
 
-        hi_parsed = rlang.parse("Proposition hi := True or False and True == True and 14 == 14", metadata)['hi']
+        hi_parsed = rlang.parse("Proposition hi := True or False and True == True and 14 == 14")['hi']
         assert hi_parsed(state=state) == True
 
-        hi_parsed = rlang.parse("Proposition hi := True or False and False or True", metadata)['hi']
+        hi_parsed = rlang.parse("Proposition hi := True or False and False or True")['hi']
         assert hi_parsed(state=state) == True
 
         # Singleton in
@@ -192,7 +193,8 @@ class ListenerTests(unittest.TestCase):
         # assert up_parsed(state=state2, action=Action(-1.3)) == [[True]]
 
     def test_Action(self):
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+        # metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
+        metadata = None
 
         up_parsed = rlang.parse("Action up := -1.3", metadata)['up']
         up = ActionReference(-1.3, "up")
@@ -208,11 +210,10 @@ class ListenerTests(unittest.TestCase):
         # print(down_parsed(state=state2))
 
     def test_Policy(self):
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         s = State([0, 1, 2, 3, 4])
         s2 = State([1, 1, 2, 3, 4])
 
-        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/policy.rlang", metadata)
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/policy.rlang")
 
         simple = knowledge['simple']
         assert simple(state=s) == {Action(2): 1.0}
@@ -253,14 +254,13 @@ class ListenerTests(unittest.TestCase):
         assert missing_conditional(state=s) == {}
 
     def test_Option(self):
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         s = State([0, 1, 2, 3, 4])
         s2 = State([1, 2, 2, 3, 4])
         s3 = State([2, 1, 2, 3, 4])
         s4 = State([2, 3, 2, 3, 4])
         s5 = State([0, 0, 2, 3, 4])
 
-        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/option.rlang", metadata)
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/option.rlang")
 
         simple_option = knowledge['simple_option']
         assert simple_option.can_initiate(state=s)
@@ -283,12 +283,11 @@ class ListenerTests(unittest.TestCase):
         assert all_in_one(state=s2) == OptionTermination()
 
     def test_Effect(self):
-        metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
         s = State([0, 1, 2, 3, 4])
         s2 = State([3, 2, 2, 3, 4])
         s3 = State([5, 2, 2, 3, 4])
 
-        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/effect.rlang", metadata)
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/effect.rlang")
 
         single_reward = knowledge['single_reward']
         assert single_reward.reward_function(state=s) == 10
