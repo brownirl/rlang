@@ -15,6 +15,9 @@ import sys
 sys.path.insert(0, os.path.abspath('../../rlang/grounding'))
 sys.path.insert(0, os.path.abspath('../..'))
 
+import sphinx_rtd_theme
+from sphinx.locale import _
+
 
 # -- Project information -----------------------------------------------------
 
@@ -24,6 +27,7 @@ author = 'Anonymous'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'
+version = 'master'
 
 
 # -- General configuration ---------------------------------------------------
@@ -32,9 +36,10 @@ release = '1.0.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'myst_parser',
     'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'sphinx_rtd_theme'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -44,6 +49,9 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db']
+
+master_doc = 'index'
+pygments_style = 'default'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -58,6 +66,48 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 
-html_sidebars = {
-    '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']
+# html_sidebars = {
+#     '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']
+# }
+
+html_theme_options = {
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': False,
+    'vcs_pageview_mode': '',
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
 }
+
+
+# Extensions to theme docs
+def setup(app):
+    from sphinx.domains.python import PyField
+    from sphinx.util.docfields import Field
+
+    app.add_object_type(
+        'confval',
+        'confval',
+        objname='configuration value',
+        indextemplate='pair: %s; configuration value',
+        doc_field_types=[
+            PyField(
+                'type',
+                label=_('Type'),
+                has_arg=False,
+                names=('type',),
+                bodyrolename='class'
+            ),
+            Field(
+                'default',
+                label=_('Default'),
+                has_arg=False,
+                names=('default',),
+            ),
+        ]
+    )

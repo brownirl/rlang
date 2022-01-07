@@ -32,5 +32,5 @@
 
 ## Building the documentation with Sphinx
 
-- You can easily generate html files by running `make html` from `rlang/docs/`
+- You can easily generate html files by running `make clean` and `make html` from `rlang/docs/`
 - If you add or remove a module, run `sphinx-apidoc -o source/ ../src/ ../src/language` from `rlang/docs/` and then run `rst2myst convert **/*.rst` to convert to markdown.

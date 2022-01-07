@@ -9,6 +9,7 @@ Subpackages
 
    rlang.agents
    rlang.grounding
+   rlang.language
 
 Submodules
 ----------
