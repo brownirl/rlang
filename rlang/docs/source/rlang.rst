@@ -1,30 +1,30 @@
-src package
-===========
+rlang package
+=============
 
 Subpackages
 -----------
 
 .. toctree::
    :maxdepth: 4
-   :titlesonly:
 
-   src.grounding
+   rlang.agents
+   rlang.grounding
 
 Submodules
 ----------
 
-src.api\_functions module
--------------------------
+rlang.core module
+-----------------
 
-.. automodule:: src.api_functions
+.. automodule:: rlang.core
    :members:
    :undoc-members:
    :show-inheritance:
 
-src.exceptions module
----------------------
+rlang.knowledge module
+----------------------
 
-.. automodule:: src.exceptions
+.. automodule:: rlang.knowledge
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +32,7 @@ src.exceptions module
 Module contents
 ---------------
 
-.. automodule:: src
+.. automodule:: rlang
    :members:
    :undoc-members:
    :show-inheritance:

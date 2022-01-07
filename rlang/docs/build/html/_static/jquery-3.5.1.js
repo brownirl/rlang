@@ -4540,7 +4540,7 @@ jQuery.fn.extend( {
 			// Set the data...
 			this.each( function() {
 
-				// We always rlang_variables the camelCased key
+				// We always store the camelCased key
 				dataUser.set( this, key, value );
 			} );
 		}, null, value, arguments.length > 1, null, true );

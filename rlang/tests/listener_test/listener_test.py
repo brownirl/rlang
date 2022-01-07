@@ -195,7 +195,7 @@ class ListenerTests(unittest.TestCase):
 
         up_parsed = rlang.parse("Action up := [0, 1.0, -4.2]", metadata)['up']
         up = rlang.ActionReference([0, 1.0, -4.2], "up")
-        assert (up() == up_parsed()).all()
+        assert up() == up_parsed()
 
         # TODO: test action as a batched primitive in lmdp tests
         # state2 = State(np.array([[0, 1], [5, 6]]))

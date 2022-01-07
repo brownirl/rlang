@@ -12,19 +12,18 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src/grounding'))
-sys.path.insert(0, os.path.abspath('../../src/language'))
+sys.path.insert(0, os.path.abspath('../../rlang/grounding'))
 sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'RLang'
-copyright = '2021, Benjamin Spiegel, Rafael Rodriguez-Sanchez, Jennifer Wang'
-author = 'Benjamin Spiegel, Rafael Rodriguez-Sanchez, Jennifer Wang'
+copyright = '2022, Anonymous'
+author = 'Anonymous'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -57,7 +56,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 html_sidebars = {
     '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']

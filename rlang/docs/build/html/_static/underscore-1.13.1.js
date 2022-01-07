@@ -198,7 +198,7 @@
     return isNumber(obj) && _isNaN(obj);
   }
 
-  // Proposition-generating function. Often useful outside of Underscore.
+  // Predicate-generating function. Often useful outside of Underscore.
   function constant(value) {
     return function() {
       return value;
@@ -770,7 +770,7 @@
     return results;
   }
 
-  // Proposition-generating function. Often useful outside of Underscore.
+  // Predicate-generating function. Often useful outside of Underscore.
   function noop(){}
 
   // Generates a function for a given object that returns a given property.

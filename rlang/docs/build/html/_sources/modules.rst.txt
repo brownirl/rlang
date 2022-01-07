@@ -1,8 +1,7 @@
-src
-===
+rlang
+=====
 
 .. toctree::
    :maxdepth: 4
-   :titlesonly:
 
-   src
+   rlang
