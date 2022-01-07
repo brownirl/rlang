@@ -12,7 +12,7 @@ Parts of the documentation:
        start here for an intro to RLang
 
     :doc:`install`
-       Installing the RLang package for Python.
+       installing the RLang package for Python.
 
     :doc:`language_reference`
        describes the syntax and semantics of RLang

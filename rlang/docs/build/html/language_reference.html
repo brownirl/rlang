@@ -180,8 +180,19 @@
   <div class="section" id="rlang-language-reference">
 <h1>RLang Language Reference<a class="headerlink" href="#rlang-language-reference" title="Permalink to this headline">¶</a></h1>
 <p>To be filled out. Based on this page on Python’s documentation: <a class="reference external" href="https://docs.python.org/3/reference/index.html#reference-index">Python Language Reference</a></p>
-<p>This reference describes the core syntax and semantics of RLang. RLang’s syntax is Python-inspired for
-readability, and includes Python-like indentation for specifying scope.</p>
+<p>This reference describes the core syntax and semantics of RLang.</p>
+<p>Much of RLang’s syntax is similar to Python’s.</p>
+<div class="section" id="format-of-an-rlang-program">
+<h2>Format of an RLang Program<a class="headerlink" href="#format-of-an-rlang-program" title="Permalink to this headline">¶</a></h2>
+<pre>
+<strong id="grammar-token-program">program</strong> ::=  import* declaration*
+</pre>
+<p>An RLang program contains two optional components:</p>
+<ol class="arabic simple">
+<li><p>A series of import statements.</p></li>
+<li><p>A series of RLang object declarations.</p></li>
+</ol>
+</div>
 </div>
 
 
