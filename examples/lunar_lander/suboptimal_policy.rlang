@@ -1,0 +1,33 @@
+import vocab.json
+
+Action do_nothing := 0
+Action left_thruster := 1
+Action main_engine := 2
+Action right_thruster := 3
+
+
+Factor position_x := S[0]
+Factor position_y := S[1]
+Factor velocity_x := S[2]
+Factor velocity_y := S[3]
+Factor angle := S[4]
+Factor angular_velocity := S[5]
+Factor left_leg_in_contact := S[6]
+Factor right_leg_in_contact := S[7]
+
+Policy land:
+    if angle <= 0.005 and angle >= -0.005:
+        Execute main_engine with P(0.5)
+        or Execute do_nothing with P(0.5) 
+    elif angle > 0.005:
+        if angular_velocity >= 0:
+            Execute right_thruster
+        else:
+            Execute do_nothing
+    elif angle < -0.005:
+        if angular_velocity <= 0:
+            Execute left_thruster
+        else:
+            Execute do_nothing
+    else:
+        Execute do_nothing
