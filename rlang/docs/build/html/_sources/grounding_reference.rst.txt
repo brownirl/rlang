@@ -2,5 +2,9 @@
 RLang Grounding Reference
 *************************
 
+.. toctree::
+   :caption: Grounding Module
+   :maxdepth: 5
 
+   rlang.grounding
 

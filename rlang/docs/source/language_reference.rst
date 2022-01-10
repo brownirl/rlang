@@ -8,15 +8,37 @@ To be filled out. Based on this page on Python's documentation: `Python Language
 
 This reference describes the core syntax and semantics of RLang.
 
-Much of RLang's syntax is similar to Python's.
 
 Format of an RLang Program
 --------------------------
 .. productionlist::
    program: import* declaration*
 
-An RLang program contains two optional components:
+An RLang program consists mainly of RLang object declarations.
 
-1. A series of import statements.
-2. A series of RLang object declarations.
+
+Reserved Keywords
+-----------------
+
+.. code-block:: text
+
+    S   # Current state
+    A   # Current action
+    S'  # Next state
+
+
+
+RLang Object Definition Syntax
+------------------------------
+
+Factors
+^^^^^^^
+
+These represent portions of the state space. Can be defined using Python-like array slicing syntax on ``S``.
+
+.. code-block:: text
+
+    Factor x_position := S[1]
+    Factor inventory := S[2:]
+
 

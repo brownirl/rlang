@@ -93,10 +93,16 @@
             
               <p class="caption" role="heading"><span class="caption-text">Package Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Intro / Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">RLang Language Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="grounding_reference.html">RLang Grounding Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grounding_reference.html">RLang Grounding Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rlang.grounding.html">rlang.grounding package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rlang.grounding.utils.html">rlang.grounding.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="agents.html">RLang-enabled Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rlang.html">rlang package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="rlang.agents.html">rlang.agents package</a></li>
@@ -181,17 +187,31 @@
 <h1>RLang Language Reference<a class="headerlink" href="#rlang-language-reference" title="Permalink to this headline">¶</a></h1>
 <p>To be filled out. Based on this page on Python’s documentation: <a class="reference external" href="https://docs.python.org/3/reference/index.html#reference-index">Python Language Reference</a></p>
 <p>This reference describes the core syntax and semantics of RLang.</p>
-<p>Much of RLang’s syntax is similar to Python’s.</p>
 <div class="section" id="format-of-an-rlang-program">
 <h2>Format of an RLang Program<a class="headerlink" href="#format-of-an-rlang-program" title="Permalink to this headline">¶</a></h2>
 <pre>
 <strong id="grammar-token-program">program</strong> ::=  import* declaration*
 </pre>
-<p>An RLang program contains two optional components:</p>
-<ol class="arabic simple">
-<li><p>A series of import statements.</p></li>
-<li><p>A series of RLang object declarations.</p></li>
-</ol>
+<p>An RLang program consists mainly of RLang object declarations.</p>
+</div>
+<div class="section" id="reserved-keywords">
+<h2>Reserved Keywords<a class="headerlink" href="#reserved-keywords" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>S   # Current state
+A   # Current action
+S&#39;  # Next state
+</pre></div>
+</div>
+</div>
+<div class="section" id="rlang-object-definition-syntax">
+<h2>RLang Object Definition Syntax<a class="headerlink" href="#rlang-object-definition-syntax" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="factors">
+<h3>Factors<a class="headerlink" href="#factors" title="Permalink to this headline">¶</a></h3>
+<p>These represent portions of the state space. Can be defined using Python-like array slicing syntax on <code class="docutils literal notranslate"><span class="pre">S</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Factor x_position := S[1]
+Factor inventory := S[2:]
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
