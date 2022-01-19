@@ -10,9 +10,13 @@ from .utils.utils import Domain
 from .utils.primitives import State, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
 
+"""Module containing all RLang groundings."""
+
 
 class Grounding(object):
-    """Parent class for all grounded objects."""
+    """Parent class for all grounded objects.
+
+    For all intents and purposes, this is an abstract class."""
 
     def __init__(self, name=None):
         self._name = name

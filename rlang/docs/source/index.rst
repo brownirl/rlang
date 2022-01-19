@@ -12,7 +12,7 @@ Parts of the documentation:
        start here for an intro to RLang
 
     :doc:`install`
-       installing the RLang package for Python.
+       installing the RLang package for Python
 
     :doc:`language_reference`
        describes the syntax and semantics of RLang
@@ -24,7 +24,7 @@ Parts of the documentation:
        overview of RLang-enabled Reinforcement Learning agents
 
     :doc:`rlang`
-       The rlang package
+       full package documentation. Includes the language module
 
 
 
