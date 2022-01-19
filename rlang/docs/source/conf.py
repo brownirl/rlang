@@ -53,7 +53,12 @@ exclude_patterns = ['_build', 'Thumbs.db']
 
 master_doc = 'index'
 pygments_style = 'default'
+autoclass_content = 'class'
 autodoc_member_order = 'bysource'
+autodoc_typehints = 'description'
+autodoc_class_signature = 'separated'
+autodoc_typehints_format = 'short'
+autodoc_inherit_docstrings = True
 
 
 # -- Options for HTML output -------------------------------------------------

@@ -92,8 +92,18 @@
 <span id="rlang-grounding-utils-grounding-exceptions-module"></span><h2>rlang.grounding.utils.grounding_exceptions module<a class="headerlink" href="#module-rlang.grounding.utils.grounding_exceptions" title="Permalink to this headline"></a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="rlang.grounding.utils.grounding_exceptions.RLangGroundingError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.grounding_exceptions.</span></span><span class="sig-name descname"><span class="pre">RLangGroundingError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/grounding_exceptions.html#RLangGroundingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.grounding_exceptions.RLangGroundingError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.grounding_exceptions.</span></span><span class="sig-name descname"><span class="pre">RLangGroundingError</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/grounding_exceptions.html#RLangGroundingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.grounding_exceptions.RLangGroundingError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.grounding.utils.grounding_exceptions.RLangGroundingError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/grounding_exceptions.html#RLangGroundingError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.grounding_exceptions.RLangGroundingError.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -101,10 +111,20 @@
 <span id="rlang-grounding-utils-primitives-module"></span><h2>rlang.grounding.utils.primitives module<a class="headerlink" href="#module-rlang.grounding.utils.primitives" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.utils.primitives.Primitive">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">Primitive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Primitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Primitive" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">Primitive</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Primitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Primitive" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 <p>Represents a batched real-valued object.</p>
 <p>States and Actions should be easily batchable. This takes care of that.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.grounding.utils.primitives.Primitive.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Primitive.__new__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Primitive.__new__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_array</strong> (<em>Any</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.utils.primitives.Primitive.as_tuple">
 <span class="sig-name descname"><span class="pre">as_tuple</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Primitive.as_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Primitive.as_tuple" title="Permalink to this definition"></a></dt>
@@ -124,8 +144,8 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.utils.primitives.State">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#State"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.State" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.grounding.utils.primitives.Primitive</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">State</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#State"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.State" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Primitive</span></code></a></p>
 <p>Represents a State object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -143,8 +163,8 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.utils.primitives.Action">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Action" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlang.grounding.utils.primitives.Primitive</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Action" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Primitive</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -152,8 +172,8 @@
 <span id="rlang-grounding-utils-utils-module"></span><h2>rlang.grounding.utils.utils module<a class="headerlink" href="#module-rlang.grounding.utils.utils" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#Domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.Domain" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#Domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.Domain" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>Enum representing the domain or codomain of a OldGroundingFunction</p>
 <p>Domain enums can be automatically combined using an addition operation:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span> <span class="o">+</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ACTION</span> <span class="o">==</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE_ACTION</span>
@@ -161,80 +181,109 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.ANY">
-<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.ANY" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ANY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.ANY" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.ACTION">
-<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.ACTION" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.ACTION" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.STATE">
-<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.STATE_ACTION">
-<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_ACTION" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">STATE_ACTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_ACTION" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.NEXT_STATE">
-<span class="sig-name descname"><span class="pre">NEXT_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.NEXT_STATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">NEXT_STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.NEXT_STATE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.STATE_NEXT_STATE">
-<span class="sig-name descname"><span class="pre">STATE_NEXT_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">15</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_NEXT_STATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">STATE_NEXT_STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_NEXT_STATE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.STATE_ACTION_NEXT_STATE">
-<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXT_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">30</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_ACTION_NEXT_STATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">STATE_ACTION_NEXT_STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_ACTION_NEXT_STATE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.BOOLEAN">
-<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.BOOLEAN" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.BOOLEAN" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.REAL_VALUE">
-<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">11</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.REAL_VALUE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REAL_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.REAL_VALUE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.STATE_VALUE">
-<span class="sig-name descname"><span class="pre">STATE_VALUE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">13</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_VALUE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">STATE_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">13</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.STATE_VALUE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.FACTOR_STATE">
-<span class="sig-name descname"><span class="pre">FACTOR_STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">17</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.FACTOR_STATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">FACTOR_STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">17</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.FACTOR_STATE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.REWARD">
-<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"> <span class="pre">=</span> <span class="pre">19</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.REWARD" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REWARD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">19</span></em><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.REWARD" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.Domain.from_name">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><span class="pre">rlang.grounding.utils.utils.Domain</span></a></span></span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#Domain.from_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.from_name" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#Domain.from_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.Domain.from_name" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">gym.spaces.space.Space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">gym.spaces.space.Space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents important parameters of the MDP like the state space and action space.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_space</strong> (<em>Space</em>) – </p></li>
+<li><p><strong>action_space</strong> (<em>Space</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata.from_state_action">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_state_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata.from_state_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata.from_state_action" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_state_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata.from_state_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata.from_state_action" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<em>ndarray</em>) – </p></li>
+<li><p><strong>action</strong> (<em>ndarray</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

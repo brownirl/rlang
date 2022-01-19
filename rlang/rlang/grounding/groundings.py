@@ -14,7 +14,7 @@ from .utils.grounding_exceptions import RLangGroundingError
 
 
 class Grounding(object):
-    """Parent class for all grounded objects.
+    """Parent class for all groundings.
 
     For all intents and purposes, this is an abstract class."""
 
@@ -40,23 +40,31 @@ class Grounding(object):
 
 
 class GroundingFunction(Grounding):
-    """Parent class for groundings which are functions.
+    """Parent class for groundings that are callable. In general, only the children of this class should be used.
 
-    GroundingFunctions have a specified domain and codomain.
-    They are invoked using keyword arguments for their domain:
+    All GroundingFunctions have a specified domain and codomain.
+    They are invoked using keyword arguments that correspond to their domain::
 
-    .. code-block:: python
+        from RLang import Domain
 
-        door_closed(state=s)
+        def can_move_fun(*args, **kwargs):
+            return not kwargs['state'] in pit_states and kwargs['action'] in move_actions
 
-    Args:
-        domain: Domain of the function.
-        codomain: Codomain of the function.
-        function: the actual function.
-        name (optional): the name of the Grounding.
+        can_move = GroundingFunction(domain=Domain.STATE_ACTION, codomain=Domain.BOOLEAN, function=can_move_fun)
+        can_move(state=0, action=1)
+        >> True
+
     """
 
     def __init__(self, domain: Union[str, Domain], codomain: Union[str, Domain], function: Callable, name: str = None):
+        """Initializes a GroundingFunction.
+
+        Args:
+            domain: Domain of the function.
+            codomain: Codomain of the function.
+            function: the function.
+            name: the name of the Grounding.
+        """
         if isinstance(domain, str):
             domain = Domain.from_name(domain)
 
@@ -336,13 +344,10 @@ class ActionReference(GroundingFunction):
 
 
 class IdentityGrounding(GroundingFunction):
-    """Represents S, A, and S'
-
-    Args:
-        domain: 'state', 'action', or 'next_state'
-    """
+    """Grounding for representing S, A, and S'."""
 
     def __init__(self, domain: Union[str, Domain]):
+        """Initialize a new IdentityGrounding."""
         if not isinstance(domain, str):
             domain = domain.name.lower()
         super().__init__(domain=domain, codomain=domain,
@@ -353,15 +358,16 @@ class IdentityGrounding(GroundingFunction):
 
 
 class Factor(GroundingFunction):
-    """Represents a factor of the state space.
-
-    Args:
-        state_indexer: the indices or slice of the state space.
-        name (optional): the name of the grounding.
-        domain (optional [str]): the domain of the Factor.
-    """
+    """Represents a factor of the state space."""
 
     def __init__(self, state_indexer: Any, name: str = None, domain: Union[str, Domain] = Domain.STATE):
+        """
+
+        Args:
+            state_indexer: the indices or slice of the state space.
+            name (optional): the name of the grounding.
+            domain (optional [str]): the domain of the Factor.
+        """
         if isinstance(domain, Domain):
             domain_arg = domain.name.lower()
         elif isinstance(domain, str):

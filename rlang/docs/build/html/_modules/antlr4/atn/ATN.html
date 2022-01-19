@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>antlr4.atn.ATN &mdash; RLang 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> RLang
+          </a>
+              <div class="version">
+                master
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Package Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Intro / Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../language_reference.html">RLang Language Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../grounding_reference.html">RLang Grounding Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agents.html">RLang-enabled Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rlang.html">rlang package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RLang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>antlr4.atn.ATN</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for antlr4.atn.ATN</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.</span>
+<span class="c1"># Use of this file is governed by the BSD 3-clause license that</span>
+<span class="c1"># can be found in the LICENSE.txt file in the project root.</span>
+<span class="c1">#/</span>
+<span class="kn">from</span> <span class="nn">antlr4.IntervalSet</span> <span class="kn">import</span> <span class="n">IntervalSet</span>
+
+<span class="kn">from</span> <span class="nn">antlr4.RuleContext</span> <span class="kn">import</span> <span class="n">RuleContext</span>
+
+<span class="kn">from</span> <span class="nn">antlr4.Token</span> <span class="kn">import</span> <span class="n">Token</span>
+<span class="kn">from</span> <span class="nn">antlr4.atn.ATNType</span> <span class="kn">import</span> <span class="n">ATNType</span>
+<span class="kn">from</span> <span class="nn">antlr4.atn.ATNState</span> <span class="kn">import</span> <span class="n">ATNState</span><span class="p">,</span> <span class="n">DecisionState</span>
+
+
+<span class="k">class</span> <span class="nc">ATN</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;grammarType&#39;</span><span class="p">,</span> <span class="s1">&#39;maxTokenType&#39;</span><span class="p">,</span> <span class="s1">&#39;states&#39;</span><span class="p">,</span> <span class="s1">&#39;decisionToState&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ruleToStartState&#39;</span><span class="p">,</span> <span class="s1">&#39;ruleToStopState&#39;</span><span class="p">,</span> <span class="s1">&#39;modeNameToStartState&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ruleToTokenType&#39;</span><span class="p">,</span> <span class="s1">&#39;lexerActions&#39;</span><span class="p">,</span> <span class="s1">&#39;modeToStartState&#39;</span>
+    <span class="p">)</span>
+
+    <span class="n">INVALID_ALT_NUMBER</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Used for runtime deserialization of ATNs from strings#/</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grammarType</span><span class="p">:</span><span class="n">ATNType</span> <span class="p">,</span> <span class="n">maxTokenType</span><span class="p">:</span><span class="nb">int</span> <span class="p">):</span>
+        <span class="c1"># The type of the ATN.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grammarType</span> <span class="o">=</span> <span class="n">grammarType</span>
+        <span class="c1"># The maximum value for any symbol recognized by a transition in the ATN.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxTokenType</span> <span class="o">=</span> <span class="n">maxTokenType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Each subrule/rule is a decision point and we must track them so we</span>
+        <span class="c1">#  can go back later and build DFA predictors for them.  This includes</span>
+        <span class="c1">#  all the rules, subrules, optional blocks, ()+, ()* etc...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionToState</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Maps from rule index to starting state number.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ruleToStartState</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Maps from rule index to stop state number.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ruleToStopState</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeNameToStartState</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># For lexer ATNs, this maps the rule index to the resulting token type.</span>
+        <span class="c1"># For parser ATNs, this maps the rule index to the generated bypass token</span>
+        <span class="c1"># type if the</span>
+        <span class="c1"># {@link ATNDeserializationOptions#isGenerateRuleBypassTransitions}</span>
+        <span class="c1"># deserialization option was specified; otherwise, this is {@code null}.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ruleToTokenType</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># For lexer ATNs, this is an array of {@link LexerAction} objects which may</span>
+        <span class="c1"># be referenced by action transitions in the ATN.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexerActions</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeToStartState</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Compute the set of valid tokens that can occur starting in state {@code s}.</span>
+    <span class="c1">#  If {@code ctx} is null, the set of tokens will not include what can follow</span>
+    <span class="c1">#  the rule surrounding {@code s}. In other words, the set will be</span>
+    <span class="c1">#  restricted to tokens reachable staying within {@code s}&#39;s rule.</span>
+    <span class="k">def</span> <span class="nf">nextTokensInContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">ATNState</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span><span class="n">RuleContext</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">antlr4.LL1Analyzer</span> <span class="kn">import</span> <span class="n">LL1Analyzer</span>
+        <span class="n">anal</span> <span class="o">=</span> <span class="n">LL1Analyzer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">anal</span><span class="o">.</span><span class="n">LOOK</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+
+    <span class="c1"># Compute the set of valid tokens that can occur starting in {@code s} and</span>
+    <span class="c1"># staying in same rule. {@link Token#EPSILON} is in set if we reach end of</span>
+    <span class="c1"># rule.</span>
+    <span class="k">def</span> <span class="nf">nextTokensNoContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">ATNState</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">nextTokenWithinRule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">nextTokenWithinRule</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">nextTokenWithinRule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextTokensInContext</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">nextTokenWithinRule</span><span class="o">.</span><span class="n">readOnly</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">nextTokenWithinRule</span>
+
+    <span class="k">def</span> <span class="nf">nextTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">ATNState</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span><span class="n">RuleContext</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextTokensNoContext</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextTokensInContext</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">addState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span><span class="n">ATNState</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">atn</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">stateNumber</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">removeState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span><span class="n">ATNState</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">stateNumber</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># just free mem, don&#39;t shift states in list</span>
+
+    <span class="k">def</span> <span class="nf">defineDecisionState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">DecisionState</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionToState</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionToState</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">decision</span>
+
+    <span class="k">def</span> <span class="nf">getDecisionState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionToState</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionToState</span><span class="p">[</span><span class="n">decision</span><span class="p">]</span>
+
+    <span class="c1"># Computes the set of input symbols which could follow ATN state number</span>
+    <span class="c1"># {@code stateNumber} in the specified full {@code context}. This method</span>
+    <span class="c1"># considers the complete parser context, but does not evaluate semantic</span>
+    <span class="c1"># predicates (i.e. all predicates encountered during the calculation are</span>
+    <span class="c1"># assumed true). If a path in the ATN exists from the starting state to the</span>
+    <span class="c1"># {@link RuleStopState} of the outermost context without matching any</span>
+    <span class="c1"># symbols, {@link Token#EOF} is added to the returned set.</span>
+    <span class="c1">#</span>
+    <span class="c1"># &lt;p&gt;If {@code context} is {@code null}, it is treated as</span>
+    <span class="c1"># {@link ParserRuleContext#EMPTY}.&lt;/p&gt;</span>
+    <span class="c1">#</span>
+    <span class="c1"># @param stateNumber the ATN state number</span>
+    <span class="c1"># @param context the full parse context</span>
+    <span class="c1"># @return The set of potentially valid input symbols which could follow the</span>
+    <span class="c1"># specified state in the specified context.</span>
+    <span class="c1"># @throws IllegalArgumentException if the ATN does not contain a state with</span>
+    <span class="c1"># number {@code stateNumber}</span>
+    <span class="c1">#/</span>
+    <span class="k">def</span> <span class="nf">getExpectedTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stateNumber</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span><span class="n">RuleContext</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">stateNumber</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">stateNumber</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid state number.&quot;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">stateNumber</span><span class="p">]</span>
+        <span class="n">following</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextTokens</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">EPSILON</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">following</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">following</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">IntervalSet</span><span class="p">()</span>
+        <span class="n">expected</span><span class="o">.</span><span class="n">addSet</span><span class="p">(</span><span class="n">following</span><span class="p">)</span>
+        <span class="n">expected</span><span class="o">.</span><span class="n">removeOne</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">EPSILON</span><span class="p">)</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">ctx</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ctx</span><span class="o">.</span><span class="n">invokingState</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">Token</span><span class="o">.</span><span class="n">EPSILON</span> <span class="ow">in</span> <span class="n">following</span><span class="p">):</span>
+            <span class="n">invokingState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">ctx</span><span class="o">.</span><span class="n">invokingState</span><span class="p">]</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="n">invokingState</span><span class="o">.</span><span class="n">transitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">following</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextTokens</span><span class="p">(</span><span class="n">rt</span><span class="o">.</span><span class="n">followState</span><span class="p">)</span>
+            <span class="n">expected</span><span class="o">.</span><span class="n">addSet</span><span class="p">(</span><span class="n">following</span><span class="p">)</span>
+            <span class="n">expected</span><span class="o">.</span><span class="n">removeOne</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">EPSILON</span><span class="p">)</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">parentCtx</span>
+        <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">EPSILON</span> <span class="ow">in</span> <span class="n">following</span><span class="p">:</span>
+            <span class="n">expected</span><span class="o">.</span><span class="n">addOne</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">EOF</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">expected</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anonymous.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

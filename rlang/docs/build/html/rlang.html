@@ -139,36 +139,42 @@
 <span id="rlang-core-module"></span><h2>rlang.core module<a class="headerlink" href="#module-rlang.core" title="Permalink to this headline"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="rlang.core.parse_file">
-<span class="sig-prename descclassname"><span class="pre">rlang.core.</span></span><span class="sig-name descname"><span class="pre">parse_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang_fname</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><span class="pre">rlang.knowledge.RLangKnowledge</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><span class="pre">rlang.knowledge.RLangKnowledge</span></a></span></span><a class="reference internal" href="_modules/rlang/core.html#parse_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.core.parse_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">rlang.core.</span></span><span class="sig-name descname"><span class="pre">parse_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang_fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/core.html#parse_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.core.parse_file" title="Permalink to this definition"></a></dt>
 <dd><p>Parses a .rlang file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rlang_fname</strong> – filename</p></li>
+<li><p><strong>rlang_fname</strong> (<em>str</em>) – filename</p></li>
 <li><p><strong>mdp_metadata</strong> (<em>optional</em>) – an MDPMetadata object</p></li>
 <li><p><strong>prior_knowledge</strong> (<em>optional</em>) – an RLangKnowledge object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An RLangKnowledge object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><em>RLangKnowledge</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="rlang.core.parse">
-<span class="sig-prename descclassname"><span class="pre">rlang.core.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><span class="pre">rlang.knowledge.RLangKnowledge</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><span class="pre">rlang.knowledge.RLangKnowledge</span></a></span></span><a class="reference internal" href="_modules/rlang/core.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.core.parse" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">rlang.core.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/core.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.core.parse" title="Permalink to this definition"></a></dt>
 <dd><p>Parses an rlang string</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rlang</strong> – string containing rlang</p></li>
+<li><p><strong>rlang</strong> (<em>str</em>) – string containing rlang</p></li>
 <li><p><strong>mdp_metadata</strong> (<em>optional</em>) – an MDPMetadata object</p></li>
 <li><p><strong>prior_knowledge</strong> (<em>optional</em>) – an RLangKnowledge object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An RLangKnowledge object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><em>RLangKnowledge</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -178,8 +184,8 @@
 <span id="rlang-knowledge-module"></span><h2>rlang.knowledge module<a class="headerlink" href="#module-rlang.knowledge" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">rlang.knowledge.</span></span><span class="sig-name descname"><span class="pre">RLangKnowledge</span></span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.knowledge.</span></span><span class="sig-name descname"><span class="pre">RLangKnowledge</span></span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></p>
 <p>Acts as a container for Groundings.</p>
 <p>Acts just like a Python dictionary.</p>
 <dl class="py attribute">
@@ -201,6 +207,11 @@ A partial specification of the transition function</p>
 <span class="n">base</span><span class="p">[</span><span class="s1">&#39;x_location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Factor</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.predictions">
 <span class="sig-name descname"><span class="pre">predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge.predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.predictions" title="Permalink to this definition"></a></dt>
