@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rlang.knowledge &mdash; RLang 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/rtd_sphinx_search.min.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/js/rtd_sphinx_search.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> RLang
+          </a>
+              <div class="version">
+                master
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Package Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Intro / Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../language_reference.html">RLang Language Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grounding_reference.html">RLang Grounding Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agents.html">RLang-enabled Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rlang.html">rlang package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RLang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>rlang.knowledge</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rlang.knowledge</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+
+<span class="kn">from</span> <span class="nn">.grounding.utils.utils</span> <span class="kn">import</span> <span class="n">Domain</span>
+<span class="kn">from</span> <span class="nn">.grounding.groundings</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="RLangKnowledge"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge">[docs]</a><span class="k">class</span> <span class="nc">RLangKnowledge</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Acts as a container for Groundings.</span>
+
+<span class="sd">        Acts just like a Python dictionary.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            reward_function: RewardFunction</span>
+<span class="sd">                A partial specification of the reward function</span>
+<span class="sd">            transition_function: TransitionFunction</span>
+<span class="sd">                A partial specification of the transition function</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                base = RLangKnowledge()</span>
+<span class="sd">                base[&#39;x_location&#39;] = Factor([1])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RLangKnowledge.__init__"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proto_predictions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdp_metadata</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.predictions"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.predictions">[docs]</a>    <span class="k">def</span> <span class="nf">predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state: State, optional</span>
+<span class="sd">            action: Action, optional</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary containing all GroundingFunctions which can be predicted for the next state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: This breaks after migrating to probabilistic functions. Fix this somehow.</span>
+
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
+        <span class="k">if</span> <span class="s1">&#39;state&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span>
+        <span class="k">if</span> <span class="s1">&#39;action&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ACTION</span>
+        <span class="k">if</span> <span class="s1">&#39;next_state&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">NEXT_STATE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_state</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">next_state</span><span class="p">:</span>
+                <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">NEXT_STATE</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;next_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">next_state</span>
+
+        <span class="n">predictables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">domain</span> <span class="o">&lt;=</span> <span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proto_predictions</span><span class="p">))</span>
+
+        <span class="n">predictions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">predictables</span><span class="p">:</span>
+            <span class="n">predictions</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">grounding</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predictions</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.next_state"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.next_state">[docs]</a>    <span class="k">def</span> <span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Grounding</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RLangKnowledge.rlang_variables_of_type"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.rlang_variables_of_type">[docs]</a>    <span class="k">def</span> <span class="nf">rlang_variables_of_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grounding_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">grounding_type</span><span class="p">)}</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.factors"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.factors">[docs]</a>    <span class="k">def</span> <span class="nf">factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">Factor</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.features"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.features">[docs]</a>    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">Feature</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.propositions"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.propositions">[docs]</a>    <span class="k">def</span> <span class="nf">propositions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">Proposition</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.policies"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.policies">[docs]</a>    <span class="k">def</span> <span class="nf">policies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">Policy</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RLangKnowledge.effects"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge.effects">[docs]</a>    <span class="k">def</span> <span class="nf">effects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">Effect</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anonymous.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
