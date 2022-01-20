@@ -14,6 +14,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -82,10 +83,14 @@
 <pre>
 <strong id="grammar-token-program">program</strong> ::=  import* declaration*
 </pre>
-<p>An RLang program consists mainly of RLang object declarations.</p>
 </div>
 <div class="section" id="reserved-keywords">
 <h2>Reserved Keywords<a class="headerlink" href="#reserved-keywords" title="Permalink to this headline"></a></h2>
+<p>An RLang program consists of a set of object declarations,
+where each object grounds to one or more elements of an <span class="math notranslate nohighlight">\((\mathcal{S}, \mathcal{A}, O, R, T, \pi)\)</span> tuple.
+More specifically, every RLang object is a function with a domain in <span class="math notranslate nohighlight">\(\mathcal{S}\times\mathcal{A}\times\mathcal{S}\)</span>
+and a co-domain in <span class="math notranslate nohighlight">\(\mathcal{S}, \mathcal{A}, \mathbb{R}^n\)</span> where <span class="math notranslate nohighlight">\(n\in \mathbb{N}\)</span>, or <span class="math notranslate nohighlight">\(\{\top, \bot\}\)</span> dependingon the object’s type.</p>
+<p><code class="docutils literal notranslate"><span class="pre">S</span></code>, <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">S'</span></code> are reserved keywords referring to the current state, current action and the next state, respectively.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>S   # Current state
 A   # Current action
 S&#39;  # Next state
@@ -96,9 +101,116 @@ S&#39;  # Next state
 <h2>RLang Object Definition Syntax<a class="headerlink" href="#rlang-object-definition-syntax" title="Permalink to this headline"></a></h2>
 <div class="section" id="factors">
 <h3>Factors<a class="headerlink" href="#factors" title="Permalink to this headline"></a></h3>
-<p>These represent portions of the state space. Can be defined using Python-like array slicing syntax on <code class="docutils literal notranslate"><span class="pre">S</span></code>.</p>
+<p>Factors are used to reference independent state variables.
+They represent portions of the state space and can be defined using the slicing syntax <code class="docutils literal notranslate"><span class="pre">[start:end]</span></code> on <code class="docutils literal notranslate"><span class="pre">S</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Factor x_position := S[1]
 Factor inventory := S[2:]
+</pre></div>
+</div>
+</div>
+<div class="section" id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline"></a></h3>
+<p>Features are used to define more complex functions of state. They can be derived using arithmetic operations (+, -, <span class="math notranslate nohighlight">\(*\)</span>, /), numeric literals, function compositions.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Feature distance_to_gold := abs([0,4] - position)
+</pre></div>
+</div>
+</div>
+<div class="section" id="propositions">
+<h3>Propositions<a class="headerlink" href="#propositions" title="Permalink to this headline"></a></h3>
+<p>Propositions are functions of the form <span class="math notranslate nohighlight">\(\mathcal{S} \rightarrow \{\top, \bot\}\)</span>, generating a boolean value.
+They can be defined using logical operators (<code class="docutils literal notranslate"><span class="pre">and</span></code>, <code class="docutils literal notranslate"><span class="pre">or</span></code>, <code class="docutils literal notranslate"><span class="pre">not</span></code>) and order relations of the real numbers (&lt;, &lt;= , &gt;, &gt;=, =, !=)</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Constant workbench_locations := [[1, 0], [1, 3]]
+Proposition at_workbench := position in workbench_locations
+Proposition have_bridge_material := iron &gt;= 1 and wood &gt;= 1
+</pre></div>
+</div>
+</div>
+<div class="section" id="goals">
+<h3>Goals<a class="headerlink" href="#goals" title="Permalink to this headline"></a></h3>
+<p>Goals are used to specify goal states given by a proposition.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Goal get_gold := gold &gt;= 1
+</pre></div>
+</div>
+</div>
+<div class="section" id="markov-features">
+<h3>Markov Features<a class="headerlink" href="#markov-features" title="Permalink to this headline"></a></h3>
+<p>Markov Features allow users to compute features on an (<span class="math notranslate nohighlight">\(s,a,s'\)</span>) experience tuple
+and can be then used to define partial specification of functions related to the task, such as action-value functions and transition functions.
+<strong>Note:</strong> the prime operator (<code class="docutils literal notranslate"><span class="pre">'</span></code>) can be used to reference the valueof an RLang object on the next state.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Markov Feature inventory_change := inventory&#39; -inventory
+</pre></div>
+</div>
+</div>
+<div class="section" id="policies">
+<h3>Policies<a class="headerlink" href="#policies" title="Permalink to this headline"></a></h3>
+<p>Policies prompt the agent to perform an action/subpolicy in a given situation.
+The keyword <code class="docutils literal notranslate"><span class="pre">Execute</span></code> is used to perform an action or call another policy and
+<em>provides a prior probability for the action to be executed</em>.</p>
+<p>Policies can be specified in RLang using conditional or probabilistic expressions.
+Conditional expressions are written using the keywords <code class="docutils literal notranslate"><span class="pre">if</span></code> and <code class="docutils literal notranslate"><span class="pre">else</span></code>, and
+probability expressions can be written using the keywords <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">P(float)</span></code> and <code class="docutils literal notranslate"><span class="pre">or</span></code> to specify probability values.</p>
+<p>The following policy instructs the agent to craft iron tools at a workbench by first collecting ironand then navigating to the workbench.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Policy main:
+if iron &gt;= 2:
+    if at_workbench:
+        Execute Use # Use is an action
+    else:
+        Execute go_to_workbench # go_to_workbench is a policy
+else:
+    Execute collect_iron
+</pre></div>
+</div>
+<p>Here is an example of a probabilistic policy. <em>Note that for the probabilities to be correct their sum must be equal to
+1.</em></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Policy random_move:
+    Execute up with P(0.25)
+    or Execute down with P(0.25)
+    or Execute left with P(0.25)
+    or Execute right with P(0.25)
+</pre></div>
+</div>
+</div>
+<div class="section" id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline"></a></h3>
+<p>Temporally-extended abstract actions can be specified using Options, which include initiation and termination propositions.
+Initiation propositions are defined using the keyword <code class="docutils literal notranslate"><span class="pre">init</span></code>, and termination propositions are written using the keyword <code class="docutils literal notranslate"><span class="pre">until</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Option build_bridge:
+init have_bridge_material and at_workbench
+    Execute craft_bridge
+until bridge in inventory
+</pre></div>
+</div>
+</div>
+<div class="section" id="action-restrictions">
+<h3>Action Restrictions<a class="headerlink" href="#action-restrictions" title="Permalink to this headline"></a></h3>
+<p>Action Restrictions are used to specify constraints on the set of possible actions an agent can take in a given circumstance.
+The keyword <code class="docutils literal notranslate"><span class="pre">Restrict</span></code> removes an action from consideration in the given situation, <em>meaning that the action will have
+probability zero even after learning.</em></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ActionRestriction dont_get_burned:
+    if (position + [0, 1]) in lava_locations:
+        Restrict up
+</pre></div>
+</div>
+</div>
+<div class="section" id="effects">
+<h3>Effects<a class="headerlink" href="#effects" title="Permalink to this headline"></a></h3>
+<p>Effects provide an interface for specifying partial information about the transition and reward functions,
+allowing users to denote the consequences of an action when performed in a given state.</p>
+<p>The following effect captures the predicted consequence of moving left on the <code class="docutils literal notranslate"><span class="pre">x_position</span></code> factor,
+stating that the <code class="docutils literal notranslate"><span class="pre">x_position</span></code> of the agent in the next state will be less than in the current state.
+This Effect also specifies a -0.1 step penalty regardless of the current state or action.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Effect movement_effect:
+    if x_position &gt;= 1 and A == left:
+        x_position&#39; -&gt; x_position - 1
+    Reward -0.1
+</pre></div>
+</div>
+<p>When using a factored MDP, Effects can also be used to specify factored transition functions,
+i.e. transition functions for individual factors, which we call <strong>predictions</strong>:</p>
+<p>Here is a prediction made about the full transition function:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Effect tic_tac_toe:
+    if three_in_a_row:
+        S&#39; -&gt; empty_board # Board is reset
 </pre></div>
 </div>
 </div>
