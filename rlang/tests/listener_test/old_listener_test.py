@@ -67,9 +67,9 @@ def test_features():
     metadata = MDPMetadata.from_state_action(np.zeros(5), np.zeros(5))
     s = State([0, 1, 2, 3, 4])
 
-    knowledge = rlang.parse('Factor f := S[2:4]\nFeature g := f[1] + f[0]')
+    knowledge = rlang.parse('Factor f := S[2:4]\nFeature grounding := f[1] + f[0]')
     f = knowledge['f']
-    g = knowledge['g']
+    g = knowledge['grounding']
     print(f)
     print(f(state=s))
     print(g)
@@ -81,7 +81,7 @@ def test_prop():
 
     knowledge = rlang.parse('Proposition p := S[0] in [1, 4, 2]')
     p = knowledge['p']
-    # g = knowledge['g']
+    # grounding = knowledge['grounding']
     print(p(state=state))
 
 

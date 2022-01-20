@@ -2,8 +2,7 @@ from __future__ import annotations
 import unittest
 import numpy as np
 
-import context
-import rlang
+from .context import rlang
 from rlang import State, Action
 
 

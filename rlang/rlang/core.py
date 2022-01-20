@@ -2,7 +2,8 @@ from __future__ import annotations
 from antlr4 import *
 
 from .knowledge import RLangKnowledge
-from .language.RLangLexer import RLangLexer, RLangParser
+from .language.RLangLexer import RLangLexer
+from .language.RLangParser import RLangParser
 from .language.RLangErrorListener import RLangErrorListener
 from .language.RLangListener import RLangListener
 from .grounding.utils.utils import MDPMetadata

@@ -34,7 +34,7 @@ class VocabularyAssembler:
             return
         # import the objects mentioned in vocabulary
         for k, v in vocab_json['vocabulary'].items():
-            # print(f"Importing {k}")
+            # print(f"Importing {function}")
             for var_info in v:
                 grounding_info = var_info['grounding'].split('.')
                 grounding_mod_name = grounding_info[0]

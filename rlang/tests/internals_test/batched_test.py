@@ -68,8 +68,8 @@
 #         arr3d2 = np.random.randint(0, 100, size=(3, 3, 3))
 #         bp3d = Primitive(arr3d)
 #         n = 3
-#         true_arr = [[[True for k in range(n)] for j in range(n)] for i in range(n)]
-#         false_arr = [[[False for k in range(n)] for j in range(n)] for i in range(n)]
+#         true_arr = [[[True for function in range(n)] for j in range(n)] for i in range(n)]
+#         false_arr = [[[False for function in range(n)] for j in range(n)] for i in range(n)]
 #         self.assertTrue(((bp3d == arr3d) == (true_arr)).all())
 #         self.assertTrue(((bp3d == arr3d2) == (false_arr)).all())
 #
@@ -141,8 +141,8 @@
 #         arr3d2 = np.random.randint(0, 100, size=(3, 3, 3))
 #         bp3d = Primitive(arr3d)
 #         n = 3
-#         true_arr = [[[True for k in range(n)] for j in range(n)] for i in range(n)]
-#         false_arr = [[[False for k in range(n)] for j in range(n)] for i in range(n)]
+#         true_arr = [[[True for function in range(n)] for j in range(n)] for i in range(n)]
+#         false_arr = [[[False for function in range(n)] for j in range(n)] for i in range(n)]
 #         self.assertTrue(((bp3d != arr3d) == (false_arr)).all())
 #         self.assertTrue(((bp3d != arr3d2) == (true_arr)).all())
 #

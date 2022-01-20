@@ -76,7 +76,7 @@
 
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span>
@@ -87,13 +87,15 @@
 <span class="sd">&quot;&quot;&quot;Module containing all RLang groundings.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Grounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Grounding">[docs]</a><span class="k">class</span> <span class="nc">Grounding</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Grounding</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parent class for all groundings.</span>
 
-<span class="sd">    For all intents and purposes, this is an abstract class.&quot;&quot;&quot;</span>
+<span class="sd">    For all intents and purposes, this is an abstract class.</span>
 
-<div class="viewcode-block" id="Grounding.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Grounding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span></div>
+<span class="sd">    :meta private:&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -103,14 +105,14 @@
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
 
-<div class="viewcode-block" id="Grounding.equals"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Grounding.equals">[docs]</a>    <span class="k">def</span> <span class="nf">equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span></div>
+    <span class="k">def</span> <span class="nf">equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
 
 <div class="viewcode-block" id="GroundingFunction"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingFunction">[docs]</a><span class="k">class</span> <span class="nc">GroundingFunction</span><span class="p">(</span><span class="n">Grounding</span><span class="p">):</span>
@@ -360,18 +362,19 @@
         <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">codomain</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="PrimitiveGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.PrimitiveGrounding">[docs]</a><span class="k">class</span> <span class="nc">PrimitiveGrounding</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;GroundingFunction which requires no arguments, i.e. domain=Domain.ANY&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">PrimitiveGrounding</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;GroundingFunction which requires no arguments, i.e. domain=Domain.ANY</span>
 
-<div class="viewcode-block" id="PrimitiveGrounding.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.PrimitiveGrounding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">codomain</span><span class="p">:</span> <span class="n">Domain</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="sd">    :meta private:&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">codomain</span><span class="p">:</span> <span class="n">Domain</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># TODO: What about lists? Should lists be cast? Only non-jagged ones?</span>
         <span class="c1"># TODO: Probably need to cast `value` to a Primitive</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">codomain</span><span class="p">,</span>
-                         <span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+                         <span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
@@ -380,24 +383,27 @@
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;PrimitiveGrounding: </span><span class="si">{</span><span class="bp">self</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
 
 
 <div class="viewcode-block" id="ConstantGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ConstantGrounding">[docs]</a><span class="k">class</span> <span class="nc">ConstantGrounding</span><span class="p">(</span><span class="n">PrimitiveGrounding</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;GroundingFunction for defined RLang Constants&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;GroundingFunction for defined RLang Constants</span>
+<span class="sd">    :meta private:&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Constant </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
 <div class="viewcode-block" id="ActionReference"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ActionReference">[docs]</a><span class="k">class</span> <span class="nc">ActionReference</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a reference to a specified action.</span>
+    <span class="sd">&quot;&quot;&quot;Represents a reference to a specified action.&quot;&quot;&quot;</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        action: the action.</span>
-<span class="sd">        name (optional): name of the action.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="ActionReference.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ActionReference.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            action: the action.</span>
+<span class="sd">            name (optional): name of the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
             <span class="n">function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">sargs</span><span class="p">,</span> <span class="o">**</span><span class="n">skwargs</span><span class="p">:</span> <span class="n">Action</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
             <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
@@ -425,6 +431,7 @@
         <span class="sd">&quot;&quot;&quot;Initialize a new IdentityGrounding.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="c1"># Does this work properly?</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
                          <span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">domain</span><span class="p">])</span></div>
 
@@ -499,14 +506,15 @@
     <span class="sd">&quot;&quot;&quot;Represents a feature of the state space.</span>
 
 <span class="sd">    Can represent any function of the state space.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        function: a function of state.</span>
-<span class="sd">        name (optional): the name of the grounding.</span>
-<span class="sd">        domain (optional [str]): the domain of the Feature.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Feature.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Feature.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            function: a function of state.</span>
+<span class="sd">            name (optional): the name of the grounding.</span>
+<span class="sd">            domain (optional [str]): the domain of the Feature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">REAL_VALUE</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Feature.from_Factor"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Feature.from_Factor">[docs]</a>    <span class="nd">@classmethod</span>
@@ -521,13 +529,13 @@
 
 
 <div class="viewcode-block" id="MarkovFeature"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.MarkovFeature">[docs]</a><span class="k">class</span> <span class="nc">MarkovFeature</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a Grounding that is a function of (state, action, next_state)</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        function: a function of (state, action, next_state)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Represents a Grounding that is a function of (state, action, next_state)&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MarkovFeature.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.MarkovFeature.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            function: a function of (state, action, next_state)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">STATE_ACTION_NEXT_STATE</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">REAL_VALUE</span><span class="p">,</span>
                          <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
@@ -543,14 +551,15 @@
     <span class="sd">&quot;&quot;&quot;Represents a function which has a truth value.</span>
 
 <span class="sd">    A Proposition is a feature with a codomain restricted to True or False.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        function: a function of state that evaluates to a bool.</span>
-<span class="sd">        name (optional): the name of the grounding.</span>
-<span class="sd">        domain (optional [str]): the domain of the Proposition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Proposition.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Proposition.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            function: a function of state that evaluates to a bool.</span>
+<span class="sd">            name (optional): the name of the grounding.</span>
+<span class="sd">            domain (optional [str]): the domain of the Proposition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Proposition.from_PrimitiveGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Proposition.from_PrimitiveGrounding">[docs]</a>    <span class="nd">@classmethod</span>
@@ -618,12 +627,14 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">STATE_VALUE</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ProbabilisticFunction"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilisticFunction">[docs]</a><span class="k">class</span> <span class="nc">ProbabilisticFunction</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a function which provides stochastic output.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">ProbabilisticFunction</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a function which provides stochastic output.</span>
 
-<div class="viewcode-block" id="ProbabilisticFunction.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilisticFunction.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="sd">    :meta private:&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_probability</span> <span class="o">=</span> <span class="n">probability</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -633,12 +644,15 @@
     <span class="k">def</span> <span class="nf">probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_probability</span> <span class="o">=</span> <span class="n">probability</span>
 
-<div class="viewcode-block" id="ProbabilisticFunction.compose_probability"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilisticFunction.compose_probability">[docs]</a>    <span class="k">def</span> <span class="nf">compose_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_probability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_probability</span> <span class="o">*</span> <span class="n">probability</span></div></div>
+    <span class="k">def</span> <span class="nf">compose_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_probability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_probability</span> <span class="o">*</span> <span class="n">probability</span>
 
 
-<div class="viewcode-block" id="ProbabilityDistribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution">[docs]</a><span class="k">class</span> <span class="nc">ProbabilityDistribution</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
-<div class="viewcode-block" id="ProbabilityDistribution.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ProbabilityDistribution</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :meta private:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">distribution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="c1"># for k, v in distribution.items():</span>
@@ -652,49 +666,49 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arg_store</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kwarg_store</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">False</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.calculate_true_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.calculate_true_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.from_single"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.from_single">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_single</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.from_list_eq"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.from_list_eq">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_list_eq</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">sd_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ks</span><span class="p">:</span>
             <span class="n">sd_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sd_dict</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sd_dict</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.update_metadata"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.update_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_domain</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="nf">update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_domain</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.calculate_domain"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.calculate_domain">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calculate_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">k</span><span class="o">.</span><span class="n">domain</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">k</span><span class="o">.</span><span class="n">domain</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.sample"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">random_variable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">offset</span> <span class="o">+=</span> <span class="n">v</span>
             <span class="k">if</span> <span class="n">random_variable</span> <span class="o">&lt;</span> <span class="n">offset</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">k</span></div>
+                <span class="k">return</span> <span class="n">k</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.join"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_distribution</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_distribution</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">new_distribution</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">k</span><span class="o">.</span><span class="n">domain</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">k</span><span class="o">.</span><span class="n">domain</span>
 
-<div class="viewcode-block" id="ProbabilityDistribution.compose_probabilities"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilityDistribution.compose_probabilities">[docs]</a>    <span class="k">def</span> <span class="nf">compose_probabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">compose_probabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">probability</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">probability</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arg_store</span> <span class="o">=</span> <span class="n">args</span>
@@ -735,17 +749,19 @@
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="ActionDistribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ActionDistribution">[docs]</a><span class="k">class</span> <span class="nc">ActionDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ActionDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents a distribution of possible next actions, options, or policies</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        distribution: a dictionary of the form {Action/Option/Policy: probability,}</span>
+
+<span class="sd">    :meta private:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ActionDistribution.calculate_true_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ActionDistribution.calculate_true_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># TODO: Might be able to change all isinstance(k__, Action) calls to isinstance(k__, PrimitiveGrounding)</span>
         <span class="k">def</span> <span class="nf">update_dictionary</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="n">v_</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ProbabilityDistribution</span><span class="p">)):</span>
@@ -767,17 +783,17 @@
         <span class="n">true_distribution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">update_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span> <span class="o">=</span> <span class="n">true_distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="StateDistribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.StateDistribution">[docs]</a><span class="k">class</span> <span class="nc">StateDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
-<div class="viewcode-block" id="StateDistribution.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.StateDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">StateDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">distribution</span><span class="p">:</span>
             <span class="k">pass</span>
             <span class="c1"># ensure that everything is a State or function of state or something</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
 
-<div class="viewcode-block" id="StateDistribution.calculate_true_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.StateDistribution.calculate_true_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">update_dictionary</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="n">v_</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ProbabilityDistribution</span><span class="p">)):</span>
                 <span class="k">for</span> <span class="n">k__</span><span class="p">,</span> <span class="n">v__</span> <span class="ow">in</span> <span class="n">k_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -798,17 +814,17 @@
         <span class="n">true_distribution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">update_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span> <span class="o">=</span> <span class="n">true_distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="RewardDistribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.RewardDistribution">[docs]</a><span class="k">class</span> <span class="nc">RewardDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
-<div class="viewcode-block" id="RewardDistribution.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.RewardDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RewardDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">distribution</span><span class="p">:</span>
             <span class="k">pass</span>
             <span class="c1"># ensure that everything is a Reward or something</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
 
-<div class="viewcode-block" id="RewardDistribution.calculate_true_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.RewardDistribution.calculate_true_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">update_dictionary</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="n">v_</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ProbabilityDistribution</span><span class="p">)):</span>
                 <span class="k">for</span> <span class="n">k__</span><span class="p">,</span> <span class="n">v__</span> <span class="ow">in</span> <span class="n">k_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -832,16 +848,16 @@
         <span class="c1"># print(true_distribution.keys())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span> <span class="o">=</span> <span class="n">true_distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="RewardDistribution.expected"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.RewardDistribution.expected">[docs]</a>    <span class="k">def</span> <span class="nf">expected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">expected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">expected_reward</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">expected_reward</span> <span class="o">+=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">v</span>
 
-        <span class="k">return</span> <span class="n">expected_reward</span></div>
+        <span class="k">return</span> <span class="n">expected_reward</span>
 
-<div class="viewcode-block" id="RewardDistribution.from_list_eq"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.RewardDistribution.from_list_eq">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_list_eq</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">numeric_reward</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">sd_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -854,22 +870,22 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">sd_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="c1"># sd_dict[RewardFunction(lambda *args, **kwargs: numeric_reward, domain=Domain.ANY)] = 1.0</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sd_dict</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sd_dict</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="GroundingDistribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingDistribution">[docs]</a><span class="k">class</span> <span class="nc">GroundingDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
-<div class="viewcode-block" id="GroundingDistribution.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grounding</span><span class="p">:</span> <span class="n">Grounding</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">GroundingDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grounding</span><span class="p">:</span> <span class="n">Grounding</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">distribution</span><span class="p">:</span>
             <span class="k">pass</span>
             <span class="c1"># ensure that everything is a groundingfunction or something</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grounding</span> <span class="o">=</span> <span class="n">grounding</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GroundingDistribution.calculate_true_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingDistribution.calculate_true_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calculate_true_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">update_dictionary</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="n">v_</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k_</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ProbabilityDistribution</span><span class="p">)):</span>
                 <span class="k">for</span> <span class="n">k__</span><span class="p">,</span> <span class="n">v__</span> <span class="ow">in</span> <span class="n">k_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -890,27 +906,28 @@
         <span class="n">true_distribution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">update_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_distribution</span> <span class="o">=</span> <span class="n">true_distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="GroundingDistribution.from_single"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingDistribution.from_single">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_single</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
 
-<div class="viewcode-block" id="GroundingDistribution.from_list_eq"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingDistribution.from_list_eq">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_list_eq</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">sd_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ks</span><span class="p">:</span>
             <span class="n">sd_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sd_dict</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sd_dict</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Policy"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Policy">[docs]</a><span class="k">class</span> <span class="nc">Policy</span><span class="p">(</span><span class="n">ProbabilisticFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a closed-loop policy function</span>
+    <span class="sd">&quot;&quot;&quot;Represents a closed-loop policy function&quot;&quot;&quot;</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        function: a function from states to action distributions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Policy.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Policy.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            function: a function from states to action distributions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">ACTION</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Policy.from_action_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Policy.from_action_distribution">[docs]</a>    <span class="nd">@classmethod</span>
@@ -926,15 +943,17 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Policy [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]-&gt;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">codomain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">additional_info</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Plan"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan">[docs]</a><span class="k">class</span> <span class="nc">Plan</span><span class="p">(</span><span class="n">ProbabilisticFunction</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Plan</span><span class="p">(</span><span class="n">ProbabilisticFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;THIS DOES NOT WORK YET</span>
 
 <span class="sd">    Represents an open-loop policy</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        distribution_list: a list of ActionDistributions</span>
+
+<span class="sd">    :meta private:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Plan.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution_list</span><span class="p">:</span> <span class="p">[</span><span class="n">ActionDistribution</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution_list</span><span class="p">:</span> <span class="p">[</span><span class="n">ActionDistribution</span><span class="p">]):</span>
         <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
         <span class="n">length</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">distribution_list</span><span class="p">:</span>
@@ -949,9 +968,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="n">distribution_list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Plan.append"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">ActionDistribution</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expecting </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ActionDistribution</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
@@ -959,9 +978,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="Plan.extend"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution_list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution_list</span><span class="p">):</span>
         <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">distribution_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ActionDistribution</span><span class="p">):</span>
@@ -972,10 +991,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">distribution_list</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">domain</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">domain</span>
 
-<div class="viewcode-block" id="Plan.reset"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span></div>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
@@ -987,28 +1006,31 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="OptionTermination"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.OptionTermination">[docs]</a><span class="k">class</span> <span class="nc">OptionTermination</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">OptionTermination</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :meta private:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;OptionTermination&gt;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">OptionTermination</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">OptionTermination</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Option"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Option">[docs]</a><span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">Grounding</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Grounding object for an option.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        initiation: A Proposition capturing the initiation set of the option.</span>
-<span class="sd">        policy: A PolicyOld capturing the policy of the option.</span>
-<span class="sd">        termination: A Proposition capturing the termination set of the option.</span>
-<span class="sd">        name (optional): the name of the grounding.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Grounding object for an option.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Option.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Option.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initiation</span><span class="p">:</span> <span class="n">Proposition</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">termination</span><span class="p">:</span> <span class="n">Proposition</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            initiation: A Proposition capturing the initiation set of the option.</span>
+<span class="sd">            policy: A PolicyOld capturing the policy of the option.</span>
+<span class="sd">            termination: A Proposition capturing the termination set of the option.</span>
+<span class="sd">            name (optional): the name of the grounding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initiation</span> <span class="o">=</span> <span class="n">initiation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">termination</span> <span class="o">=</span> <span class="n">termination</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span>
@@ -1085,13 +1107,14 @@
 
 <span class="sd">    Used to express the predicted value of another RLang object.</span>
 <span class="sd">    Limited to GroundingFunctions with a domain of (S) or (S, A).</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        grounding (Grounding): the grounding whom&#39;s value we are predicting</span>
-<span class="sd">        function (:obj:`Callable`, optional): a function that predicts the value of grounding; can use a GroundingFunction</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Prediction.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Prediction.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grounding</span><span class="p">:</span> <span class="n">Grounding</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE_ACTION</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            grounding (Grounding): the grounding whom&#39;s value we are predicting</span>
+<span class="sd">            function (:obj:`Callable`, optional): a function that predicts the value of grounding; can use a GroundingFunction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">function</span> <span class="o">=</span> <span class="n">GroundingDistribution</span><span class="p">(</span><span class="n">grounding</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grounding</span> <span class="o">=</span> <span class="n">grounding</span>
@@ -1115,17 +1138,21 @@
 
 <span class="sd">    Contains an optional RewardFunction, TransitionFunction,</span>
 <span class="sd">    and list of Predictions.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        reward_function (:obj:`RewardFunction`, optional): a RewardFunction</span>
-<span class="sd">        transition_function (:obj:`TransitionFunction`, optional): a TransitionFunction</span>
-<span class="sd">        predictions (:obj:`list[Prediction]`, optional): a list of Predictions</span>
-<span class="sd">        name (:obj:`str`, optional): name of the Effect</span>
-<span class="sd">        probability (:obj:`float`, optional): probability of this effect occurring; default: 1</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Effect.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Effect.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward_function</span><span class="p">:</span> <span class="n">RewardFunction</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">transition_function</span><span class="p">:</span> <span class="n">TransitionFunction</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+                 <span class="n">predictions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prediction</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            reward_function: a RewardFunction</span>
+<span class="sd">            transition_function: a TransitionFunction</span>
+<span class="sd">            predictions: a list of Predictions</span>
+<span class="sd">            name: name of the Effect</span>
+<span class="sd">            probability (Optional[float]): probability of this effect occurring; default: 1</span>
+
+
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">predictions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span> <span class="o">=</span> <span class="n">reward_function</span>
