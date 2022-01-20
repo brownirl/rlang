@@ -33,7 +33,6 @@ Parts of the documentation:
 .. toctree::
    :caption: Package Documentation
    :maxdepth: 5
-   :titlesonly:
    :hidden:
 
    tutorial

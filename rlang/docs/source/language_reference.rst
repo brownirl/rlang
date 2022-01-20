@@ -2,25 +2,23 @@
 RLang Language Reference
 ************************
 
-To be filled out. Based on this page on Python's documentation: `Python Language Reference`_
-
-.. _`Python Language Reference`: https://docs.python.org/3/reference/index.html#reference-index
-
-This reference describes the core syntax and semantics of RLang.
+.. contents:: Table of Contents
 
 
 Format of an RLang Program
---------------------------
+==========================
 .. productionlist::
    program: import* declaration*
+
+An RLang program consists of a set of object declarations,
+where each object grounds to one or more elements of an :math:`(\mathcal{S}, \mathcal{A}, O, R, T, \pi)` tuple.
+More specifically, every RLang object is a function with a domain in :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
+and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or :math:`\{\top, \bot\}`
+depending on the object’s type.
 
 Reserved Keywords
 -----------------
 
-An RLang program consists of a set of object declarations, 
-where each object grounds to one or more elements of an :math:`(\mathcal{S}, \mathcal{A}, O, R, T, \pi)` tuple.  
-More specifically, every RLang object is a function with a domain in :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
-and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or :math:`\{\top, \bot\}` dependingon the object’s type.
 
 
 ``S``, ``A``, ``S'`` are reserved keywords referring to the current state, current action and the next state, respectively.

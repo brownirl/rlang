@@ -40,8 +40,15 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx_rtd_theme',
-    'notfound.extension'
+    'notfound.extension',
+    'sphinx.ext.autosummary'
 ]
+
+# 'autoapi.extension',
+# 'sphinx.ext.autodoc.typehints'
+
+# autoapi_type = 'python'
+# autoapi_dirs = ['../../rlang/grounding']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -59,6 +66,9 @@ autodoc_typehints = 'description'
 autodoc_class_signature = 'separated'
 autodoc_typehints_format = 'short'
 autodoc_inherit_docstrings = True
+
+# autodoc_default_flags = ['members']
+# autosummary_generate = True
 
 
 # -- Options for HTML output -------------------------------------------------
