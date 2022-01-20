@@ -17,14 +17,8 @@ Parts of the documentation:
     :doc:`language_reference`
        describes the syntax and semantics of RLang
 
-    :doc:`grounding_reference`
-       documentation for the objects that RLang grounds to
-
-    :doc:`agents`
-       overview of RLang-enabled Reinforcement Learning agents
-
     :doc:`rlang`
-       full package documentation. Includes the language module
+       package documentation. Includes agents and grounding subpackages.
 
 
 
@@ -38,6 +32,4 @@ Parts of the documentation:
    tutorial
    install
    language_reference
-   grounding_reference
-   agents
    rlang

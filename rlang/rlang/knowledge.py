@@ -1,5 +1,7 @@
+"""Every RLang program (including any vocabulary files) grounds to an :py:class:`.RLangKnowledge` object."""
+
 from __future__ import annotations
-from typing import Callable
+from typing import Dict, Any
 from collections.abc import MutableMapping
 
 from .grounding.utils.utils import Domain
@@ -7,41 +9,38 @@ from .grounding.groundings import *
 
 
 class RLangKnowledge(MutableMapping):
-    """Acts as a container for Groundings.
+    """Provides an interface for accessing stored RLang information. Behaves similarly to a Python dictionary.
 
-        Acts just like a Python dictionary.
+    .. note::
+        In typical usage, an :py:class:`.RLangKnowledge` object is not instantiated by the user
+        but is instead returned from a call to :py:func:`.parse_file` or :py:func:`.parse`.
 
-        Attributes:
-            reward_function: RewardFunction
-                A partial specification of the reward function
-            transition_function: TransitionFunction
-                A partial specification of the transition function
+    Examples::
 
-        Examples:
-            .. code-block:: python
-
-                base = RLangKnowledge()
-                base['x_location'] = Factor([1])
+        base = RLangKnowledge()
+        base['x_location'] = Factor([1])
 
     """
 
     def __init__(self):
         self.rlang_variables = dict()
         self.policy = None
+        """A :py:class:`.Policy` object"""
         self.reward_function = None
+        """A :py:class:`.RewardFunction` object"""
         self.transition_function = None
+        """A :py:class:`.TransitionFunction` object"""
         self.proto_predictions = list()
         self.mdp_metadata = None
 
-    def predictions(self, *args, **kwargs):
-        """
+    def predictions(self, *args, **kwargs) -> Dict[Grounding, Any]:
+        """Get a dictionary of :py:class:`.Grounding` objects whose value for the next state
+        can be predicted using the keyword arguments provided.
 
         Args:
-            state: State, optional
-            action: Action, optional
+            state (Optional[State]): a given current state
+            action (Optional[Action]): a given action
 
-        Returns:
-            dict: A dictionary containing all GroundingFunctions which can be predicted for the next state
         """
         # TODO: This breaks after migrating to probabilistic functions. Fix this somehow.
 
@@ -53,7 +52,7 @@ class RLangKnowledge(MutableMapping):
         if 'next_state' in kwargs.keys():
             domain += Domain.NEXT_STATE
         else:
-            next_state = self.next_state(*args, **kwargs)
+            next_state = self.get_next_state(*args, **kwargs)
             if next_state:
                 domain += Domain.NEXT_STATE
                 kwargs['next_state'] = next_state
@@ -66,7 +65,7 @@ class RLangKnowledge(MutableMapping):
 
         return predictions
 
-    def next_state(self, *args, **kwargs):
+    def get_next_state(self, *args, **kwargs):
         if self.transition_function:
             return self.transition_function(*args, **kwargs)
         else:
@@ -88,6 +87,7 @@ class RLangKnowledge(MutableMapping):
         return len(self.rlang_variables)
 
     def rlang_variables_of_type(self, grounding_type):
+        """:meta private:"""
         return {k: v for (k, v) in self.rlang_variables.items() if isinstance(v, grounding_type)}
 
     def factors(self):

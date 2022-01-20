@@ -9,7 +9,6 @@ rlang.core module
 
 .. automodule:: rlang.core
    :members:
-   :undoc-members:
    :show-inheritance:
 
 rlang.knowledge module
@@ -17,7 +16,6 @@ rlang.knowledge module
 
 .. automodule:: rlang.knowledge
    :members:
-   :undoc-members:
    :show-inheritance:
 
 Subpackages

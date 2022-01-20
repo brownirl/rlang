@@ -1,3 +1,5 @@
+"""Module containing all RLang groundings."""
+
 from __future__ import annotations
 
 from collections.abc import MutableMapping
@@ -10,15 +12,13 @@ from .utils.utils import Domain
 from .utils.primitives import State, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
 
-"""Module containing all RLang groundings."""
-
 
 class Grounding(object):
     """Parent class for all groundings.
 
     For all intents and purposes, this is an abstract class.
 
-    :meta private:"""
+    """
 
     def __init__(self, name=None):
         self._name = name
@@ -47,7 +47,7 @@ class GroundingFunction(Grounding):
     All GroundingFunctions have a specified domain and codomain.
     They are invoked using keyword arguments that correspond to their domain::
 
-        from RLang import Domain
+        from rlang import Domain
 
         def can_move_fun(*args, **kwargs):
             return not kwargs['state'] in pit_states and kwargs['action'] in move_actions
@@ -291,7 +291,7 @@ class GroundingFunction(Grounding):
 class PrimitiveGrounding(GroundingFunction):
     """GroundingFunction which requires no arguments, i.e. domain=Domain.ANY
 
-    :meta private:"""
+    """
 
     def __init__(self, codomain: Domain, value: Any, name: str = None):
         # TODO: What about lists? Should lists be cast? Only non-jagged ones?
@@ -314,7 +314,7 @@ class PrimitiveGrounding(GroundingFunction):
 
 class ConstantGrounding(PrimitiveGrounding):
     """GroundingFunction for defined RLang Constants
-    :meta private:"""
+    """
 
     def __repr__(self):
         return f"<Constant \"{self.name}\" = {self()}>"
@@ -556,7 +556,7 @@ class ValueFunction(GroundingFunction):
 class ProbabilisticFunction(GroundingFunction):
     """Represents a function which provides stochastic output.
 
-    :meta private:"""
+    """
 
     def __init__(self, probability: float = 1.0, *args, **kwargs):
         self._probability = probability
@@ -576,7 +576,7 @@ class ProbabilisticFunction(GroundingFunction):
 
 class ProbabilityDistribution(MutableMapping):
     """
-    :meta private:
+    
     """
     def __init__(self, distribution=None):
         if distribution is None:
@@ -684,7 +684,7 @@ class ActionDistribution(ProbabilityDistribution):
     Args:
         distribution: a dictionary of the form {Action/Option/Policy: probability,}
 
-    :meta private:
+    
     """
 
     def calculate_true_distribution(self):
@@ -873,7 +873,7 @@ class Plan(ProbabilisticFunction):
     Args:
         distribution_list: a list of ActionDistributions
 
-    :meta private:
+    
     """
     def __init__(self, distribution_list: [ActionDistribution]):
         domain = Domain.ANY
@@ -933,7 +933,7 @@ class Plan(ProbabilisticFunction):
 
 class OptionTermination:
     """
-    :meta private:
+    
     """
     def __repr__(self):
         return "<OptionTermination>"
@@ -1086,7 +1086,7 @@ class Effect(Grounding):
         super().__init__(name=name)
 
     def shallow_copy(self):
-        """:meta private:"""
+        """"""
         return Effect(reward_function=self.reward_function, predictions=self.predictions,
                       transition_function=self.transition_function)
 

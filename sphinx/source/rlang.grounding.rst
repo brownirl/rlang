@@ -9,7 +9,6 @@ rlang.grounding.groundings module
 
 .. automodule:: rlang.grounding.groundings
    :members:
-   :undoc-members:
    :show-inheritance:
 
 Subpackages

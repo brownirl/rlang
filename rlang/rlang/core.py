@@ -1,3 +1,7 @@
+"""This module contains simple user-facing functions for parsing RLang
+ into an :py:class:`.RLangKnowledge` object, which can be
+ provided to an RLang-enabled agent."""
+
 from __future__ import annotations
 from antlr4 import *
 
@@ -6,19 +10,14 @@ from .language.RLangLexer import RLangLexer
 from .language.RLangParser import RLangParser
 from .language.RLangErrorListener import RLangErrorListener
 from .language.RLangListener import RLangListener
-from .grounding.utils.utils import MDPMetadata
 
 
 def parse_file(rlang_fname: str, prior_knowledge: RLangKnowledge = None) -> RLangKnowledge:
-    """Parses a .rlang file
+    """Parses an ``.rlang`` file into an :py:class:`.RLangKnowledge` object.
 
     Args:
         rlang_fname: filename
-        mdp_metadata (optional): an MDPMetadata object
-        prior_knowledge (optional): an RLangKnowledge object
-
-    Returns:
-        An RLangKnowledge object
+        prior_knowledge: prior knowledge that should be retained after parsing
 
     """
     if prior_knowledge is None:
@@ -37,15 +36,11 @@ def parse_file(rlang_fname: str, prior_knowledge: RLangKnowledge = None) -> RLan
 
 
 def parse(rlang: str, prior_knowledge: RLangKnowledge = None) -> RLangKnowledge:
-    """Parses an rlang string
+    """Parses an rlang string into an :py:class:`.RLangKnowledge` object.
 
     Args:
         rlang: string containing rlang
-        mdp_metadata (optional): an MDPMetadata object
-        prior_knowledge (optional): an RLangKnowledge object
-
-    Returns:
-        An RLangKnowledge object
+        prior_knowledge: prior knowledge that should be retained after parsing
 
     """
     if prior_knowledge is None:

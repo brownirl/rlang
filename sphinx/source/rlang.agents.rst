@@ -9,5 +9,4 @@ rlang.agents.RLangQLearningAgentClass module
 
 .. automodule:: rlang.agents.RLangQLearningAgentClass
    :members:
-   :undoc-members:
    :show-inheritance:

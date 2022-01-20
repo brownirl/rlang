@@ -44,8 +44,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Intro / Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../language_reference.html">RLang Language Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../grounding_reference.html">RLang Grounding Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agents.html">RLang-enabled Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rlang.html">rlang package</a></li>
 </ul>
 
@@ -108,9 +106,9 @@
     <span class="n">FACTOR_STATE</span> <span class="o">=</span> <span class="mi">17</span>
     <span class="n">REWARD</span> <span class="o">=</span> <span class="mi">19</span>
 
-<div class="viewcode-block" id="Domain.from_name"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain.from_name">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Domain</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Domain</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span></div>
+        <span class="k">return</span> <span class="n">Domain</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Domain</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Domain</span><span class="p">):</span>
@@ -162,10 +160,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span> <span class="o">=</span> <span class="n">state_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">action_space</span></div>
 
-<div class="viewcode-block" id="MDPMetadata.from_state_action"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.utils.MDPMetadata.from_state_action">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_state_action</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">state_space</span><span class="o">=</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
-                   <span class="n">action_space</span><span class="o">=</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span></div></div>
+                   <span class="n">action_space</span><span class="o">=</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span></div>
 
 
 </pre></div>

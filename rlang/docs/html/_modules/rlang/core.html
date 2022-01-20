@@ -44,8 +44,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Intro / Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../language_reference.html">RLang Language Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../grounding_reference.html">RLang Grounding Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agents.html">RLang-enabled Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../rlang.html">rlang package</a></li>
 </ul>
 
@@ -74,7 +72,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for rlang.core</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains simple user-facing functions for parsing RLang</span>
+<span class="sd"> into an :py:class:`.RLangKnowledge` object, which can be</span>
+<span class="sd"> provided to an RLang-enabled agent.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">antlr4</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">from</span> <span class="nn">.knowledge</span> <span class="kn">import</span> <span class="n">RLangKnowledge</span>
@@ -82,19 +84,14 @@
 <span class="kn">from</span> <span class="nn">.language.RLangParser</span> <span class="kn">import</span> <span class="n">RLangParser</span>
 <span class="kn">from</span> <span class="nn">.language.RLangErrorListener</span> <span class="kn">import</span> <span class="n">RLangErrorListener</span>
 <span class="kn">from</span> <span class="nn">.language.RLangListener</span> <span class="kn">import</span> <span class="n">RLangListener</span>
-<span class="kn">from</span> <span class="nn">.grounding.utils.utils</span> <span class="kn">import</span> <span class="n">MDPMetadata</span>
 
 
 <div class="viewcode-block" id="parse_file"><a class="viewcode-back" href="../../rlang.html#rlang.core.parse_file">[docs]</a><span class="k">def</span> <span class="nf">parse_file</span><span class="p">(</span><span class="n">rlang_fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prior_knowledge</span><span class="p">:</span> <span class="n">RLangKnowledge</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RLangKnowledge</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Parses a .rlang file</span>
+    <span class="sd">&quot;&quot;&quot;Parses an ``.rlang`` file into an :py:class:`.RLangKnowledge` object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rlang_fname: filename</span>
-<span class="sd">        mdp_metadata (optional): an MDPMetadata object</span>
-<span class="sd">        prior_knowledge (optional): an RLangKnowledge object</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        An RLangKnowledge object</span>
+<span class="sd">        prior_knowledge: prior knowledge that should be retained after parsing</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">prior_knowledge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -113,15 +110,11 @@
 
 
 <div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../rlang.html#rlang.core.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">rlang</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prior_knowledge</span><span class="p">:</span> <span class="n">RLangKnowledge</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RLangKnowledge</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Parses an rlang string</span>
+    <span class="sd">&quot;&quot;&quot;Parses an rlang string into an :py:class:`.RLangKnowledge` object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rlang: string containing rlang</span>
-<span class="sd">        mdp_metadata (optional): an MDPMetadata object</span>
-<span class="sd">        prior_knowledge (optional): an RLangKnowledge object</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        An RLangKnowledge object</span>
+<span class="sd">        prior_knowledge: prior knowledge that should be retained after parsing</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">prior_knowledge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
