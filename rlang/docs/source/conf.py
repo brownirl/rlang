@@ -40,8 +40,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx_rtd_theme',
-    'notfound.extension',
-    'sphinx.ext.autosummary'
+    'notfound.extension'
 ]
 
 # 'autoapi.extension',

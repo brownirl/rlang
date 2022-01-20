@@ -1,8 +1,8 @@
 rlang.grounding.utils package
 =============================
 
-Submodules
-----------
+
+.. contents:: Table of Contents
 
 rlang.grounding.utils.grounding\_exceptions module
 --------------------------------------------------
@@ -24,14 +24,6 @@ rlang.grounding.utils.utils module
 ----------------------------------
 
 .. automodule:: rlang.grounding.utils.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: rlang.grounding.utils
    :members:
    :undoc-members:
    :show-inheritance:

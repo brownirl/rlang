@@ -1,16 +1,8 @@
 rlang.grounding package
 =======================
 
-Subpackages
------------
 
-.. toctree::
-   :maxdepth: 4
-
-   rlang.grounding.utils
-
-Submodules
-----------
+.. contents:: Table of Contents
 
 rlang.grounding.groundings module
 ---------------------------------
@@ -20,10 +12,10 @@ rlang.grounding.groundings module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Subpackages
+-----------
 
-.. automodule:: rlang.grounding
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 3
+
+   rlang.grounding.utils

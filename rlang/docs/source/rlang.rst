@@ -1,18 +1,8 @@
 rlang package
 =============
 
-Subpackages
------------
 
-.. toctree::
-   :maxdepth: 4
-
-   rlang.agents
-   rlang.grounding
-   rlang.language
-
-Submodules
-----------
+.. contents:: Table of Contents
 
 rlang.core module
 -----------------
@@ -30,10 +20,11 @@ rlang.knowledge module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Subpackages
+-----------
 
-.. automodule:: rlang
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 3
+
+   rlang.agents
+   rlang.grounding
