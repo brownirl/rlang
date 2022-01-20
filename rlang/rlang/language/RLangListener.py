@@ -407,8 +407,9 @@ class RLangListener(RLangParserListener):
             new_prediction = Prediction(grounding, func, domain=new_domain)
             # TODO: I'm not sure this next line is necessary
             new_prediction = Prediction.from_grounding_distribution(grounding,
-                                                                    GroundingDistribution.from_single(new_prediction,
-                                                                                                      g=grounding))
+                                                                    GroundingDistribution(grounding=grounding,
+                                                                                          distribution={
+                                                                                              new_prediction: 1.0}))
             new_predictions.append(new_prediction)
 
         ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
@@ -485,7 +486,7 @@ class RLangListener(RLangParserListener):
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            ctx.value = GroundingDistribution.from_single(ctx.arithmetic_exp().value, g=grounding_function)
+            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={ctx.arithmetic_exp().value: 1.0})
         elif ctx.S_PRIME() is not None:
             ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
 

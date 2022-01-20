@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from collections import defaultdict
-from typing import Callable, Any, Union
+from typing import Callable, Any, Union, List
 
 import numpy as np
 from numpy.random import default_rng
@@ -16,7 +16,9 @@ from .utils.grounding_exceptions import RLangGroundingError
 class Grounding(object):
     """Parent class for all groundings.
 
-    For all intents and purposes, this is an abstract class."""
+    For all intents and purposes, this is an abstract class.
+
+    :meta private:"""
 
     def __init__(self, name=None):
         self._name = name
@@ -287,7 +289,9 @@ class GroundingFunction(Grounding):
 
 
 class PrimitiveGrounding(GroundingFunction):
-    """GroundingFunction which requires no arguments, i.e. domain=Domain.ANY"""
+    """GroundingFunction which requires no arguments, i.e. domain=Domain.ANY
+
+    :meta private:"""
 
     def __init__(self, codomain: Domain, value: Any, name: str = None):
         # TODO: What about lists? Should lists be cast? Only non-jagged ones?
@@ -309,20 +313,23 @@ class PrimitiveGrounding(GroundingFunction):
 
 
 class ConstantGrounding(PrimitiveGrounding):
-    """GroundingFunction for defined RLang Constants"""
+    """GroundingFunction for defined RLang Constants
+    :meta private:"""
 
     def __repr__(self):
         return f"<Constant \"{self.name}\" = {self()}>"
 
 
 class ActionReference(GroundingFunction):
-    """Represents a reference to a specified action.
+    """Represents a reference to a specified action."""
 
-    Args:
-        action: the action.
-        name (optional): name of the action.
-    """
     def __init__(self, action: Any, name=None, *args, **kwargs):
+        """
+        Args:
+            action: the action.
+            name (optional): name of the action.
+
+        """
         if isinstance(action, (int, float, list)):
             function = lambda *sargs, **skwargs: Action(np.array(action))
             domain = Domain.ANY
@@ -350,6 +357,7 @@ class IdentityGrounding(GroundingFunction):
         """Initialize a new IdentityGrounding."""
         if not isinstance(domain, str):
             domain = domain.name.lower()
+        # Does this work properly?
         super().__init__(domain=domain, codomain=domain,
                          function=lambda *args, **kwargs: kwargs[domain])
 
@@ -424,14 +432,15 @@ class Feature(GroundingFunction):
     """Represents a feature of the state space.
 
     Can represent any function of the state space.
-
-    Args:
-        function: a function of state.
-        name (optional): the name of the grounding.
-        domain (optional [str]): the domain of the Feature.
     """
 
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
+        """
+        Args:
+            function: a function of state.
+            name (optional): the name of the grounding.
+            domain (optional [str]): the domain of the Feature.
+        """
         super().__init__(function=function, codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
     @classmethod
@@ -446,13 +455,13 @@ class Feature(GroundingFunction):
 
 
 class MarkovFeature(GroundingFunction):
-    """Represents a Grounding that is a function of (state, action, next_state)
-
-    Args:
-        function: a function of (state, action, next_state)
-    """
+    """Represents a Grounding that is a function of (state, action, next_state)"""
 
     def __init__(self, function: Callable, name: str):
+        """
+        Args:
+            function: a function of (state, action, next_state)
+        """
         super().__init__(domain=Domain.STATE_ACTION_NEXT_STATE, function=function, codomain=Domain.REAL_VALUE,
                          name=name)
 
@@ -468,14 +477,15 @@ class Proposition(GroundingFunction):
     """Represents a function which has a truth value.
 
     A Proposition is a feature with a codomain restricted to True or False.
-
-    Args:
-        function: a function of state that evaluates to a bool.
-        name (optional): the name of the grounding.
-        domain (optional [str]): the domain of the Proposition.
     """
 
     def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
+        """
+        Args:
+            function: a function of state that evaluates to a bool.
+            name (optional): the name of the grounding.
+            domain (optional [str]): the domain of the Proposition.
+        """
         super().__init__(function=function, codomain=Domain.BOOLEAN, domain=domain, name=name)
 
     @classmethod
@@ -544,7 +554,9 @@ class ValueFunction(GroundingFunction):
 
 
 class ProbabilisticFunction(GroundingFunction):
-    """Represents a function which provides stochastic output."""
+    """Represents a function which provides stochastic output.
+
+    :meta private:"""
 
     def __init__(self, probability: float = 1.0, *args, **kwargs):
         self._probability = probability
@@ -563,10 +575,13 @@ class ProbabilisticFunction(GroundingFunction):
 
 
 class ProbabilityDistribution(MutableMapping):
+    """
+    :meta private:
+    """
     def __init__(self, distribution=None):
         if distribution is None:
             distribution = dict()
-        # for k, v in distribution.items():
+        # for function, v in distribution.items():
         #     if v < 0.0 or v > 1.0:
         #         raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
 
@@ -668,6 +683,8 @@ class ActionDistribution(ProbabilityDistribution):
 
     Args:
         distribution: a dictionary of the form {Action/Option/Policy: probability,}
+
+    :meta private:
     """
 
     def calculate_true_distribution(self):
@@ -818,10 +835,6 @@ class GroundingDistribution(ProbabilityDistribution):
         self.calculated = True
 
     @classmethod
-    def from_single(cls, k, *args, **kwargs):
-        return cls(kwargs['g'], {k: 1.0})
-
-    @classmethod
     def from_list_eq(cls, ks, *args, **kwargs):
         sd_dict = dict()
         for k in ks:
@@ -830,12 +843,13 @@ class GroundingDistribution(ProbabilityDistribution):
 
 
 class Policy(ProbabilisticFunction):
-    """Represents a closed-loop policy function
+    """Represents a closed-loop policy function"""
 
-    Args:
-        function: a function from states to action distributions.
-    """
     def __init__(self, function: Callable, domain: Domain = Domain.STATE, *args, **kwargs):
+        """
+        Args:
+            function: a function from states to action distributions.
+        """
         super().__init__(function=function, domain=domain, codomain=Domain.ACTION, *args, **kwargs)
 
     @classmethod
@@ -858,6 +872,8 @@ class Plan(ProbabilisticFunction):
 
     Args:
         distribution_list: a list of ActionDistributions
+
+    :meta private:
     """
     def __init__(self, distribution_list: [ActionDistribution]):
         domain = Domain.ANY
@@ -916,6 +932,9 @@ class Plan(ProbabilisticFunction):
 
 
 class OptionTermination:
+    """
+    :meta private:
+    """
     def __repr__(self):
         return "<OptionTermination>"
 
@@ -924,16 +943,16 @@ class OptionTermination:
 
 
 class Option(Grounding):
-    """Grounding object for an option.
-
-    Args:
-        initiation: A Proposition capturing the initiation set of the option.
-        policy: A PolicyOld capturing the policy of the option.
-        termination: A Proposition capturing the termination set of the option.
-        name (optional): the name of the grounding.
-    """
+    """Grounding object for an option."""
 
     def __init__(self, initiation: Proposition, policy: Policy, termination: Proposition, name: str = None):
+        """
+        Args:
+            initiation: A Proposition capturing the initiation set of the option.
+            policy: A PolicyOld capturing the policy of the option.
+            termination: A Proposition capturing the termination set of the option.
+            name (optional): the name of the grounding.
+        """
         self.initiation = initiation
         self.termination = termination
         self.policy = policy
@@ -1010,23 +1029,29 @@ class Prediction(ProbabilisticFunction):
 
     Used to express the predicted value of another RLang object.
     Limited to GroundingFunctions with a domain of (S) or (S, A).
-
-    Args:
-        grounding (Grounding): the grounding whom's value we are predicting
-        function (:obj:`Callable`, optional): a function that predicts the value of grounding; can use a GroundingFunction
     """
 
     def __init__(self, grounding: Grounding, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+        """
+        Args:
+            grounding (Grounding): the grounding whom's value we are predicting
+            function (:obj:`Callable`, optional): a function that predicts the value of grounding; can use a GroundingFunction
+        """
         if function is None:
             function = GroundingDistribution(grounding).__call__
         self.grounding = grounding
         super().__init__(function=function, domain=domain, codomain=Domain.REAL_VALUE, *args, **kwargs)
 
     @classmethod
-    def from_grounding_distribution(cls, g, k):
-        if not isinstance(k, GroundingDistribution):
-            raise RLangGroundingError(f"Expecting a GroundingDistribution, got {type(k)}")
-        return cls(grounding=g, function=k.__call__, domain=k.domain)
+    def from_grounding_distribution(cls, grounding: Grounding, function: GroundingDistribution):
+        """
+        Args:
+            grounding: The grounding that is predicted
+            function: The prediction function
+        """
+        if not isinstance(function, GroundingDistribution):
+            raise RLangGroundingError(f"Expecting a GroundingDistribution, got {type(function)}")
+        return cls(grounding=grounding, function=function.__call__, domain=function.domain)
 
     def __repr__(self):
         additional_info = ""
@@ -1040,17 +1065,18 @@ class Effect(Grounding):
 
     Contains an optional RewardFunction, TransitionFunction,
     and list of Predictions.
-
-    Args:
-        reward_function (:obj:`RewardFunction`, optional): a RewardFunction
-        transition_function (:obj:`TransitionFunction`, optional): a TransitionFunction
-        predictions (:obj:`list[Prediction]`, optional): a list of Predictions
-        name (:obj:`str`, optional): name of the Effect
-        probability (:obj:`float`, optional): probability of this effect occurring; default: 1
-
     """
     def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
-                 predictions: list = None, name: str = None, probability: float = 1.0):
+                 predictions: List[Prediction] = None, name: str = None, probability: float = 1.0):
+        """
+        Args:
+            reward_function: a RewardFunction
+            transition_function: a TransitionFunction
+            predictions: a list of Predictions
+            name: name of the Effect
+            probability (Optional[float]): probability of this effect occurring; default: 1
+
+        """
         if predictions is None:
             predictions = list()
         self.reward_function = reward_function
@@ -1060,6 +1086,7 @@ class Effect(Grounding):
         super().__init__(name=name)
 
     def shallow_copy(self):
+        """:meta private:"""
         return Effect(reward_function=self.reward_function, predictions=self.predictions,
                       transition_function=self.transition_function)
 

@@ -82,10 +82,10 @@
 <span class="sd">    States and Actions should be easily batchable. This takes care of that.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<div class="viewcode-block" id="Primitive.__new__"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.Primitive.__new__">[docs]</a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="n">obj_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">obj_arr</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
 
 <div class="viewcode-block" id="Primitive.as_tuple"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.Primitive.as_tuple">[docs]</a>    <span class="k">def</span> <span class="nf">as_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>

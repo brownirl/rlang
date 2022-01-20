@@ -77,14 +77,14 @@
 
 
 <div class="viewcode-block" id="VocabularyAssembler"><a class="viewcode-back" href="../../../../rlang.language.utils.html#rlang.language.utils.vocabulary_assembler.VocabularyAssembler">[docs]</a><span class="k">class</span> <span class="nc">VocabularyAssembler</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_json</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyAssembler.__init__"><a class="viewcode-back" href="../../../../rlang.language.utils.html#rlang.language.utils.vocabulary_assembler.VocabularyAssembler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_json</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modules</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmdp_objects</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_size</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># TODO: Replace this with a dataclass for MDP info (i.e. state size, dtype, etc.)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span><span class="p">(</span><span class="n">vocab_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">import_lmdp_objects</span><span class="p">(</span><span class="n">vocab_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_state_size</span><span class="p">(</span><span class="n">vocab_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_state_size</span><span class="p">(</span><span class="n">vocab_json</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VocabularyAssembler.import_modules"><a class="viewcode-back" href="../../../../rlang.language.utils.html#rlang.language.utils.vocabulary_assembler.VocabularyAssembler.import_modules">[docs]</a>    <span class="k">def</span> <span class="nf">import_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_json</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">&#39;modules&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vocab_json</span><span class="p">:</span>
@@ -108,7 +108,7 @@
             <span class="k">return</span>
         <span class="c1"># import the objects mentioned in vocabulary</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vocab_json</span><span class="p">[</span><span class="s1">&#39;vocabulary&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="c1"># print(f&quot;Importing {k}&quot;)</span>
+            <span class="c1"># print(f&quot;Importing {function}&quot;)</span>
             <span class="k">for</span> <span class="n">var_info</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
                 <span class="n">grounding_info</span> <span class="o">=</span> <span class="n">var_info</span><span class="p">[</span><span class="s1">&#39;grounding&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
                 <span class="n">grounding_mod_name</span> <span class="o">=</span> <span class="n">grounding_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

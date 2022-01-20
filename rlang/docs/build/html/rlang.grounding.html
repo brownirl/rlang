@@ -105,32 +105,9 @@
 <div class="section" id="module-rlang.grounding.groundings">
 <span id="rlang-grounding-groundings-module"></span><h2>rlang.grounding.groundings module<a class="headerlink" href="#module-rlang.grounding.groundings" title="Permalink to this headline"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Grounding">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Grounding</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Grounding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Grounding" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Parent class for all groundings.</p>
-<p>For all intents and purposes, this is an abstract class.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Grounding.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Grounding.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Grounding.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Grounding.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#rlang.grounding.groundings.Grounding.name" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Grounding.equals">
-<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Grounding.equals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Grounding.equals" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.GroundingFunction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">GroundingFunction</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#GroundingFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.GroundingFunction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></p>
 <p>Parent class for groundings that are callable. In general, only the children of this class should be used.</p>
 <p>All GroundingFunctions have a specified domain and codomain.
 They are invoked using keyword arguments that correspond to their domain:</p>
@@ -178,31 +155,11 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.PrimitiveGrounding">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">PrimitiveGrounding</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#PrimitiveGrounding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.PrimitiveGrounding" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.GroundingFunction" title="rlang.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroundingFunction</span></code></a></p>
-<p>GroundingFunction which requires no arguments, i.e. domain=Domain.ANY</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.PrimitiveGrounding.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codomain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#PrimitiveGrounding.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.PrimitiveGrounding.__init__" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>codomain</strong> (<a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a>) – </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) – </p></li>
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.ConstantGrounding">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">ConstantGrounding</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ConstantGrounding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ConstantGrounding" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.PrimitiveGrounding" title="rlang.grounding.groundings.PrimitiveGrounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveGrounding</span></code></a></p>
-<p>GroundingFunction for defined RLang Constants</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveGrounding</span></code></p>
+<p>GroundingFunction for defined RLang Constants
+:meta private:</p>
 </dd></dl>
 
 <dl class="py class">
@@ -210,26 +167,14 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">ActionReference</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ActionReference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ActionReference" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.GroundingFunction" title="rlang.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroundingFunction</span></code></a></p>
 <p>Represents a reference to a specified action.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>action</strong> – the action.</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – name of the action.</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.ActionReference.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ActionReference.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ActionReference.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> – the function.</p></li>
-<li><p><strong>name</strong> – the name of the Grounding.</p></li>
-<li><p><strong>action</strong> (<em>Any</em>) – </p></li>
+<li><p><strong>action</strong> (<em>Any</em>) – the action.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – name of the action.</p></li>
 </ul>
 </dd>
 </dl>
@@ -287,26 +232,15 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.GroundingFunction" title="rlang.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroundingFunction</span></code></a></p>
 <p>Represents a feature of the state space.</p>
 <p>Can represent any function of the state space.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>function</strong> – a function of state.</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
-<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Feature.</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Feature.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Domain.STATE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Feature.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Feature.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a><em>]</em>) – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> (<em>Callable</em>) – the function.</p></li>
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – the name of the Grounding.</p></li>
+<li><p><strong>function</strong> (<em>Callable</em>) – a function of state.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
+<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Feature.</p></li>
 </ul>
 </dd>
 </dl>
@@ -332,22 +266,14 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">MarkovFeature</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#MarkovFeature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.MarkovFeature" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.GroundingFunction" title="rlang.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroundingFunction</span></code></a></p>
 <p>Represents a Grounding that is a function of (state, action, next_state)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>function</strong> – a function of (state, action, next_state)</p>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.MarkovFeature.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#MarkovFeature.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.MarkovFeature.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> (<em>Callable</em>) – the function.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – the name of the Grounding.</p></li>
+<li><p><strong>function</strong> (<em>Callable</em>) – a function of (state, action, next_state)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -374,26 +300,15 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.GroundingFunction" title="rlang.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroundingFunction</span></code></a></p>
 <p>Represents a function which has a truth value.</p>
 <p>A Proposition is a feature with a codomain restricted to True or False.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>function</strong> – a function of state that evaluates to a bool.</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
-<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Proposition.</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Proposition.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Domain.STATE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Proposition.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Proposition.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a><em>]</em>) – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> (<em>Callable</em>) – the function.</p></li>
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – the name of the Grounding.</p></li>
+<li><p><strong>function</strong> (<em>Callable</em>) – a function of state that evaluates to a bool.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
+<li><p><strong>domain</strong> (<em>optional</em><em> [</em><em>str</em><em>]</em>) – the domain of the Proposition.</p></li>
 </ul>
 </dd>
 </dl>
@@ -404,7 +319,7 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_PrimitiveGrounding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primitive_grounding</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Proposition.from_PrimitiveGrounding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Proposition.from_PrimitiveGrounding" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>primitive_grounding</strong> (<a class="reference internal" href="#rlang.grounding.groundings.PrimitiveGrounding" title="rlang.grounding.groundings.PrimitiveGrounding"><em>PrimitiveGrounding</em></a>) – </p>
+<dd class="field-odd"><p><strong>primitive_grounding</strong> (<em>PrimitiveGrounding</em>) – </p>
 </dd>
 </dl>
 </dd></dl>
@@ -451,206 +366,18 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilisticFunction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">ProbabilisticFunction</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilisticFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilisticFunction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.GroundingFunction" title="rlang.grounding.groundings.GroundingFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroundingFunction</span></code></a></p>
-<p>Represents a function which provides stochastic output.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilisticFunction.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilisticFunction.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilisticFunction.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> – the function.</p></li>
-<li><p><strong>name</strong> – the name of the Grounding.</p></li>
-<li><p><strong>probability</strong> (<em>float</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilisticFunction.probability">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">probability</span></span><a class="headerlink" href="#rlang.grounding.groundings.ProbabilisticFunction.probability" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilisticFunction.compose_probability">
-<span class="sig-name descname"><span class="pre">compose_probability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilisticFunction.compose_probability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilisticFunction.compose_probability" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>probability</strong> (<em>float</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">ProbabilityDistribution</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.calculate_true_distribution">
-<span class="sig-name descname"><span class="pre">calculate_true_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.calculate_true_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.calculate_true_distribution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.from_single">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.from_single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.from_single" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.from_list_eq">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.from_list_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.from_list_eq" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.update_metadata">
-<span class="sig-name descname"><span class="pre">update_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.update_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.update_metadata" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.calculate_domain">
-<span class="sig-name descname"><span class="pre">calculate_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.calculate_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.calculate_domain" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.sample" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.join">
-<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_distribution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.join" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ProbabilityDistribution.compose_probabilities">
-<span class="sig-name descname"><span class="pre">compose_probabilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ProbabilityDistribution.compose_probabilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ProbabilityDistribution.compose_probabilities" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ActionDistribution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">ActionDistribution</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ActionDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ActionDistribution" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilityDistribution" title="rlang.grounding.groundings.ProbabilityDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilityDistribution</span></code></a></p>
-<p>Represents a distribution of possible next actions, options, or policies</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>distribution</strong> – a dictionary of the form {Action/Option/Policy: probability,}</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.ActionDistribution.calculate_true_distribution">
-<span class="sig-name descname"><span class="pre">calculate_true_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#ActionDistribution.calculate_true_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.ActionDistribution.calculate_true_distribution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.StateDistribution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">StateDistribution</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#StateDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.StateDistribution" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilityDistribution" title="rlang.grounding.groundings.ProbabilityDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilityDistribution</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.StateDistribution.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#StateDistribution.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.StateDistribution.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.StateDistribution.calculate_true_distribution">
-<span class="sig-name descname"><span class="pre">calculate_true_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#StateDistribution.calculate_true_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.StateDistribution.calculate_true_distribution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.RewardDistribution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">RewardDistribution</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#RewardDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.RewardDistribution" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilityDistribution" title="rlang.grounding.groundings.ProbabilityDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilityDistribution</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.RewardDistribution.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#RewardDistribution.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.RewardDistribution.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.RewardDistribution.calculate_true_distribution">
-<span class="sig-name descname"><span class="pre">calculate_true_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#RewardDistribution.calculate_true_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.RewardDistribution.calculate_true_distribution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.RewardDistribution.expected">
-<span class="sig-name descname"><span class="pre">expected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#RewardDistribution.expected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.RewardDistribution.expected" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.RewardDistribution.from_list_eq">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#RewardDistribution.from_list_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.RewardDistribution.from_list_eq" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.GroundingDistribution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">GroundingDistribution</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#GroundingDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.GroundingDistribution" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilityDistribution" title="rlang.grounding.groundings.ProbabilityDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilityDistribution</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.GroundingDistribution.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grounding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#GroundingDistribution.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.GroundingDistribution.__init__" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>grounding</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><em>Grounding</em></a>) – </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.GroundingDistribution.calculate_true_distribution">
-<span class="sig-name descname"><span class="pre">calculate_true_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#GroundingDistribution.calculate_true_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.GroundingDistribution.calculate_true_distribution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.GroundingDistribution.from_single">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#GroundingDistribution.from_single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.GroundingDistribution.from_single" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.GroundingDistribution.from_list_eq">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#GroundingDistribution.from_list_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.GroundingDistribution.from_list_eq" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Policy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Policy</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Policy" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilisticFunction" title="rlang.grounding.groundings.ProbabilisticFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></p>
 <p>Represents a closed-loop policy function</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>function</strong> – a function from states to action distributions.</p>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Policy.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Domain.STATE</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Policy.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Policy.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a>) – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> (<em>Callable</em>) – the function.</p></li>
-<li><p><strong>name</strong> – the name of the Grounding.</p></li>
+<li><p><strong>function</strong> (<em>Callable</em>) – a function from states to action distributions.</p></li>
+<li><p><strong>domain</strong> (<a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -664,81 +391,20 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Plan">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Plan</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Plan" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilisticFunction" title="rlang.grounding.groundings.ProbabilisticFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></a></p>
-<p>THIS DOES NOT WORK YET</p>
-<p>Represents an open-loop policy</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>distribution_list</strong> – a list of ActionDistributions</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Plan.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Plan.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Plan.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> – the function.</p></li>
-<li><p><strong>name</strong> – the name of the Grounding.</p></li>
-<li><p><strong>distribution_list</strong> (<em>[</em><a class="reference internal" href="#rlang.grounding.groundings.ActionDistribution" title="rlang.grounding.groundings.ActionDistribution"><em>ActionDistribution</em></a><em>]</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Plan.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Plan.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Plan.append" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Plan.extend">
-<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Plan.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Plan.extend" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Plan.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Plan.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Plan.reset" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.OptionTermination">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">OptionTermination</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#OptionTermination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.OptionTermination" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Option">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Option</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Option" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></p>
 <p>Grounding object for an option.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>initiation</strong> – A Proposition capturing the initiation set of the option.</p></li>
-<li><p><strong>policy</strong> – A PolicyOld capturing the policy of the option.</p></li>
-<li><p><strong>termination</strong> – A Proposition capturing the termination set of the option.</p></li>
-<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Option.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Option.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Option.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>initiation</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Proposition" title="rlang.grounding.groundings.Proposition"><em>Proposition</em></a>) – </p></li>
-<li><p><strong>policy</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Policy" title="rlang.grounding.groundings.Policy"><em>Policy</em></a>) – </p></li>
-<li><p><strong>termination</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Proposition" title="rlang.grounding.groundings.Proposition"><em>Proposition</em></a>) – </p></li>
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>initiation</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Proposition" title="rlang.grounding.groundings.Proposition"><em>Proposition</em></a>) – A Proposition capturing the initiation set of the option.</p></li>
+<li><p><strong>policy</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Policy" title="rlang.grounding.groundings.Policy"><em>Policy</em></a>) – A PolicyOld capturing the policy of the option.</p></li>
+<li><p><strong>termination</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Proposition" title="rlang.grounding.groundings.Proposition"><em>Proposition</em></a>) – A Proposition capturing the termination set of the option.</p></li>
+<li><p><strong>name</strong> (<em>optional</em>) – the name of the grounding.</p></li>
 </ul>
 </dd>
 </dl>
@@ -766,7 +432,7 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.TransitionFunction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">TransitionFunction</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#TransitionFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.TransitionFunction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilisticFunction" title="rlang.grounding.groundings.ProbabilisticFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></p>
 <p>Represents a transition function.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.TransitionFunction.__init__">
@@ -794,7 +460,7 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.RewardFunction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">RewardFunction</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#RewardFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.RewardFunction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilisticFunction" title="rlang.grounding.groundings.ProbabilisticFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></p>
 <p>Represents function of expected reward.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.RewardFunction.__init__">
@@ -822,30 +488,19 @@ They are invoked using keyword arguments that correspond to their domain:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Prediction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Prediction</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Prediction" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.ProbabilisticFunction" title="rlang.grounding.groundings.ProbabilisticFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ProbabilisticFunction</span></code></p>
 <p>GroundingFunction for an RLang Prediction object.</p>
 <p>Used to express the predicted value of another RLang object.
 Limited to GroundingFunctions with a domain of (S) or (S, A).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>grounding</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><em>Grounding</em></a>) – the grounding whom’s value we are predicting</p></li>
-<li><p><strong>function</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Callable</span></code>, optional) – a function that predicts the value of grounding; can use a GroundingFunction</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Prediction.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grounding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Domain.STATE_ACTION</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Prediction.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Prediction.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a GroundingFunction.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a>) – Domain of the function.</p></li>
-<li><p><strong>codomain</strong> – Codomain of the function.</p></li>
-<li><p><strong>function</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>]</em>) – the function.</p></li>
-<li><p><strong>name</strong> – the name of the Grounding.</p></li>
-<li><p><strong>grounding</strong> (<a class="reference internal" href="#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><em>Grounding</em></a>) – </p></li>
+<li><p><strong>grounding</strong> (<em>Grounding</em>) – the grounding whom’s value we are predicting</p></li>
+<li><p><strong>function</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Callable</span></code>, optional) – a function that predicts the value of grounding; can use a GroundingFunction</p></li>
+<li><p><strong>domain</strong> (<a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.utils.Domain" title="rlang.grounding.utils.utils.Domain"><em>Domain</em></a>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -853,49 +508,41 @@ Limited to GroundingFunctions with a domain of (S) or (S, A).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Prediction.from_grounding_distribution">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_grounding_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Prediction.from_grounding_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Prediction.from_grounding_distribution" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_grounding_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grounding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Prediction.from_grounding_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Prediction.from_grounding_distribution" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grounding</strong> (<em>Grounding</em>) – The grounding that is predicted</p></li>
+<li><p><strong>function</strong> (<em>GroundingDistribution</em>) – The prediction function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Effect">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.groundings.</span></span><span class="sig-name descname"><span class="pre">Effect</span></span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Effect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Effect" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></p>
 <p>GroundingFunction for an RLang Effect object.</p>
 <p>Contains an optional RewardFunction, TransitionFunction,
 and list of Predictions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>reward_function</strong> (<a class="reference internal" href="#rlang.grounding.groundings.RewardFunction" title="rlang.grounding.groundings.RewardFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewardFunction</span></code></a>, optional) – a RewardFunction</p></li>
-<li><p><strong>transition_function</strong> (<a class="reference internal" href="#rlang.grounding.groundings.TransitionFunction" title="rlang.grounding.groundings.TransitionFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransitionFunction</span></code></a>, optional) – a TransitionFunction</p></li>
-<li><p><strong>predictions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list[Prediction]</span></code>, optional) – a list of Predictions</p></li>
-<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – name of the Effect</p></li>
-<li><p><strong>probability</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – probability of this effect occurring; default: 1</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Effect.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reward_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Effect.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Effect.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>reward_function</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#rlang.grounding.groundings.RewardFunction" title="rlang.grounding.groundings.RewardFunction"><em>RewardFunction</em></a><em>]</em>) – </p></li>
-<li><p><strong>transition_function</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#rlang.grounding.groundings.TransitionFunction" title="rlang.grounding.groundings.TransitionFunction"><em>TransitionFunction</em></a><em>]</em>) – </p></li>
-<li><p><strong>predictions</strong> (<em>Optional</em><em>[</em><em>list</em><em>]</em>) – </p></li>
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>probability</strong> (<em>float</em>) – </p></li>
+<li><p><strong>reward_function</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#rlang.grounding.groundings.RewardFunction" title="rlang.grounding.groundings.RewardFunction"><em>RewardFunction</em></a><em>]</em>) – a RewardFunction</p></li>
+<li><p><strong>transition_function</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#rlang.grounding.groundings.TransitionFunction" title="rlang.grounding.groundings.TransitionFunction"><em>TransitionFunction</em></a><em>]</em>) – a TransitionFunction</p></li>
+<li><p><strong>predictions</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="#rlang.grounding.groundings.Prediction" title="rlang.grounding.groundings.Prediction"><em>Prediction</em></a><em>]</em><em>]</em>) – a list of Predictions</p></li>
+<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – name of the Effect</p></li>
+<li><p><strong>probability</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – probability of this effect occurring; default: 1</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.groundings.Effect.shallow_copy">
-<span class="sig-name descname"><span class="pre">shallow_copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/groundings.html#Effect.shallow_copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.groundings.Effect.shallow_copy" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.grounding.groundings.Effect.compose_probabilities">
