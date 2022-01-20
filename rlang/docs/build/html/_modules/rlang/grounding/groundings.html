@@ -655,7 +655,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">distribution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="c1"># for k, v in distribution.items():</span>
+        <span class="c1"># for function, v in distribution.items():</span>
         <span class="c1">#     if v &lt; 0.0 or v &gt; 1.0:</span>
         <span class="c1">#         raise RLangGroundingError(f&quot;Must be bounded between 0.0 and 1.0, got {v}&quot;)</span>
 
@@ -909,10 +909,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_single</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
-
-    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_list_eq</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">sd_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ks</span><span class="p">:</span>
@@ -1121,10 +1117,15 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">REAL_VALUE</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Prediction.from_grounding_distribution"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Prediction.from_grounding_distribution">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_grounding_distribution</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">GroundingDistribution</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expecting a GroundingDistribution, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">grounding</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">k</span><span class="o">.</span><span class="fm">__call__</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">k</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">from_grounding_distribution</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">grounding</span><span class="p">:</span> <span class="n">Grounding</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">GroundingDistribution</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            grounding: The grounding that is predicted</span>
+<span class="sd">            function: The prediction function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">GroundingDistribution</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expecting a GroundingDistribution, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">function</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">grounding</span><span class="o">=</span><span class="n">grounding</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="o">.</span><span class="fm">__call__</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">function</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">additional_info</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -1149,9 +1150,6 @@
 <span class="sd">            name: name of the Effect</span>
 <span class="sd">            probability (Optional[float]): probability of this effect occurring; default: 1</span>
 
-
-
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">predictions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -1161,9 +1159,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span> <span class="o">=</span> <span class="n">probability</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Effect.shallow_copy"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Effect.shallow_copy">[docs]</a>    <span class="k">def</span> <span class="nf">shallow_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shallow_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Effect</span><span class="p">(</span><span class="n">reward_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">,</span>
-                      <span class="n">transition_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span><span class="p">)</span></div>
+                      <span class="n">transition_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Effect.compose_probabilities"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Effect.compose_probabilities">[docs]</a>    <span class="k">def</span> <span class="nf">compose_probabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probability</span> <span class="o">*</span> <span class="n">probability</span>
