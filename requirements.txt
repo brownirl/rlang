@@ -5,3 +5,5 @@ numpy==1.21.5
 setuptools==60.5.0
 simple_rl==0.811
 sphinx_rtd_theme==1.0.0
+readthedocs-sphinx-search==0.1.1
+sphinx-notfound-page==0.8

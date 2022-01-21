@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RLang Groundings Reference &mdash; RLang 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -89,7 +90,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="rlang-groundings-reference">
+  <section id="rlang-groundings-reference">
 <h1><a class="toc-backref" href="#id1">RLang Groundings Reference</a><a class="headerlink" href="#rlang-groundings-reference" title="Permalink to this headline"></a></h1>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title">Table of Contents</p>
@@ -119,12 +120,12 @@
 </ol>
 </dd>
 </dl>
-<div class="section" id="rlang-object-syntax">
+<section id="rlang-object-syntax">
 <h2><a class="toc-backref" href="#id2">RLang Object Syntax</a><a class="headerlink" href="#rlang-object-syntax" title="Permalink to this headline"></a></h2>
 <p>Every RLang object is a function with a domain in <span class="math notranslate nohighlight">\(\mathcal{S}\times\mathcal{A}\times\mathcal{S}\)</span>
 and a co-domain in <span class="math notranslate nohighlight">\(\mathcal{S}, \mathcal{A}, \mathbb{R}^n\)</span> where <span class="math notranslate nohighlight">\(n\in \mathbb{N}\)</span>, or <span class="math notranslate nohighlight">\(\{\top, \bot\}\)</span>,
 depending on the object’s type.</p>
-<div class="section" id="factors">
+<section id="factors">
 <h3><a class="toc-backref" href="#id3">Factors</a><a class="headerlink" href="#factors" title="Permalink to this headline"></a></h3>
 <p>Factors are used to reference independent state variables.
 They represent portions of the state space and can be defined using Python’s slicing syntax <code class="docutils literal notranslate"><span class="pre">[start?:end?]</span></code> on the current state variable <code class="docutils literal notranslate"><span class="pre">S</span></code>:</p>
@@ -133,15 +134,15 @@ Factor y_position := S[1]
 Factor inventory := S[2:]
 </pre></div>
 </div>
-</div>
-<div class="section" id="features">
+</section>
+<section id="features">
 <h3><a class="toc-backref" href="#id4">Features</a><a class="headerlink" href="#features" title="Permalink to this headline"></a></h3>
 <p>Features are used to define more complex functions of state. They can be defined using arithmetic operations (+, -, <span class="math notranslate nohighlight">\(*\)</span>, /), numeric literals, function compositions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Feature distance_to_gold := abs([0,4] - position)
 </pre></div>
 </div>
-</div>
-<div class="section" id="propositions">
+</section>
+<section id="propositions">
 <h3><a class="toc-backref" href="#id5">Propositions</a><a class="headerlink" href="#propositions" title="Permalink to this headline"></a></h3>
 <p>Propositions are functions of the form <span class="math notranslate nohighlight">\(\mathcal{S} \rightarrow \{\top, \bot\}\)</span>, generating a boolean value.
 They can be defined using logical operators (<code class="docutils literal notranslate"><span class="pre">and</span></code>, <code class="docutils literal notranslate"><span class="pre">or</span></code>, <code class="docutils literal notranslate"><span class="pre">not</span></code>) and order relations of the real numbers (&lt;, &lt;= , &gt;, &gt;=, =, !=)</p>
@@ -150,15 +151,15 @@ Proposition at_workbench := position in workbench_locations
 Proposition have_bridge_material := iron &gt;= 1 and wood &gt;= 1
 </pre></div>
 </div>
-</div>
-<div class="section" id="goals">
+</section>
+<section id="goals">
 <h3><a class="toc-backref" href="#id6">Goals</a><a class="headerlink" href="#goals" title="Permalink to this headline"></a></h3>
 <p>Goals are used to specify goal states given by a proposition.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Goal get_gold := gold &gt;= 1
 </pre></div>
 </div>
-</div>
-<div class="section" id="markov-features">
+</section>
+<section id="markov-features">
 <h3><a class="toc-backref" href="#id7">Markov Features</a><a class="headerlink" href="#markov-features" title="Permalink to this headline"></a></h3>
 <p>Markov Features allow users to compute features on an (<span class="math notranslate nohighlight">\(s,a,s'\)</span>) experience tuple
 and can be then used to define partial specification of functions related to the task, such as action-value functions and transition functions.
@@ -166,8 +167,8 @@ and can be then used to define partial specification of functions related to the
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Markov Feature inventory_change := inventory&#39; -inventory
 </pre></div>
 </div>
-</div>
-<div class="section" id="policies">
+</section>
+<section id="policies">
 <h3><a class="toc-backref" href="#id8">Policies</a><a class="headerlink" href="#policies" title="Permalink to this headline"></a></h3>
 <p>Policies prompt the agent to perform an action/subpolicy in a given situation.
 The keyword <code class="docutils literal notranslate"><span class="pre">Execute</span></code> is used to perform an action or call another policy and
@@ -195,8 +196,8 @@ else:
     or Execute right with P(0.25)
 </pre></div>
 </div>
-</div>
-<div class="section" id="options">
+</section>
+<section id="options">
 <h3><a class="toc-backref" href="#id9">Options</a><a class="headerlink" href="#options" title="Permalink to this headline"></a></h3>
 <p>Temporally-extended abstract actions can be specified using Options, which include initiation and termination propositions.
 Initiation propositions are defined using the keyword <code class="docutils literal notranslate"><span class="pre">init</span></code>, and termination propositions are written using the keyword <code class="docutils literal notranslate"><span class="pre">until</span></code>.</p>
@@ -206,8 +207,8 @@ init have_bridge_material and at_workbench
 until bridge in inventory
 </pre></div>
 </div>
-</div>
-<div class="section" id="action-restrictions">
+</section>
+<section id="action-restrictions">
 <h3><a class="toc-backref" href="#id10">Action Restrictions</a><a class="headerlink" href="#action-restrictions" title="Permalink to this headline"></a></h3>
 <p>Action Restrictions are used to specify constraints on the set of possible actions an agent can take in a given circumstance.
 The keyword <code class="docutils literal notranslate"><span class="pre">Restrict</span></code> removes an action from consideration in the given situation, <em>meaning that the action will have
@@ -217,8 +218,8 @@ probability zero even after learning.</em></p>
         Restrict up
 </pre></div>
 </div>
-</div>
-<div class="section" id="effects">
+</section>
+<section id="effects">
 <h3><a class="toc-backref" href="#id11">Effects</a><a class="headerlink" href="#effects" title="Permalink to this headline"></a></h3>
 <p>Effects provide an interface for specifying partial information about the transition and reward functions,
 allowing users to denote the consequences of an action when performed in a given state.</p>
@@ -239,9 +240,9 @@ i.e. transition functions for individual factors, which we call <strong>predicti
         S&#39; -&gt; empty_board # Board is reset
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
