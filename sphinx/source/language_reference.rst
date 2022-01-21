@@ -5,51 +5,65 @@ RLang Language Reference
 .. contents:: Table of Contents
 
 
+Things this reference needs:
+ 1. Needs to be broken up into multiple files and organized
+ 2. Needs a description of all arithmetic and boolean operations
+ 3. Needs a list of all RLang Objects that can be defined in a program
+ 4. Needs a description and sample of a vocabulary.json file and an accompanying grounding file. Directory structure of an RLang project.
+ 5. Needs a list of special variables
+
 Format of an RLang Program
 ==========================
+
+An RLang program takes the following form:
+
 .. productionlist::
-   program: import* declaration*
+   program: import* NEWLINE declaration*
 
-An RLang program consists of a set of object declarations,
-where each object grounds to one or more elements of an :math:`(\mathcal{S}, \mathcal{A}, O, R, T, \pi)` tuple.
-More specifically, every RLang object is a function with a domain in :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
-and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or :math:`\{\top, \bot\}`
-depending on the object’s type.
+It is an optional list of imports followed by an optional list of RLang object declarations. Users can import additional
+RLang groundings from a vocabulary file.
 
-Reserved Keywords
+An RLang program should reside inside a ``.rlang`` file. Vocabulary files are in ``json`` format. Grounding files are Python ``.py`` files.
+
+RLang Syntax and Semantics
+==========================
+
+Special Variables
 -----------------
 
-
-
-``S``, ``A``, ``S'`` are reserved keywords referring to the current state, current action and the next state, respectively.
+``S``, ``A``, ``S'`` are reserved keywords referring to the current state, the current action, and the next state, respectively.
+Depending on the type an RLang object, one or more of these keywords can be referenced in the definition of the object.
 
 .. code-block:: text
 
-    S   # Current state
-    A   # Current action
-    S'  # Next state
+    S   # Current state - Used in Factors and Features
+    A   # Current action - Used in Effects
+    S'  # Next state - Used most often in MarkovFeatures
 
+RLang Object Syntax
+-------------------
 
-
-RLang Object Definition Syntax
-------------------------------
+Every RLang object is a function with a domain in :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
+and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or :math:`\{\top, \bot\}`,
+depending on the object’s type.
 
 Factors
 ^^^^^^^
 
 Factors are used to reference independent state variables. 
-They represent portions of the state space and can be defined using the slicing syntax ``[start:end]`` on ``S``.
+They represent portions of the state space and can be defined using Python's slicing syntax ``[start?:end?]`` on the current state variable ``S``:
 
 .. code-block:: text
 
-    Factor x_position := S[1]
+    Factor x_position := S[0]
+    Factor y_position := S[1]
     Factor inventory := S[2:]
 
 
 Features
 ^^^^^^^^
 
-Features are used to define more complex functions of state. They can be derived using arithmetic operations (+, -, :math:`*`, /), numeric literals, function compositions.
+Features are used to define more complex functions of state. They can be defined using arithmetic operations (+, -, :math:`*`, /), numeric literals, function compositions.
 
 .. code-block:: text
 

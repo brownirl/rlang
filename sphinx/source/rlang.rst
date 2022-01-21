@@ -1,4 +1,4 @@
-rlang package
+API Reference
 =============
 
 
@@ -22,7 +22,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    rlang.agents
    rlang.grounding

@@ -1,6 +1,6 @@
-****************
-Intro / Tutorial
-****************
+***************
+Getting Started
+***************
 
 Flesh this out based on `Python Tutorial`_
 

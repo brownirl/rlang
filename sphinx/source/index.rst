@@ -8,11 +8,11 @@ To fill-out based on `Python's Documentation`_
 .. _`Python's Documentation`: https://docs.python.org/3/
 
 Parts of the documentation:
-    :doc:`tutorial`
-       start here for an intro to RLang
-
     :doc:`install`
        installing the RLang package for Python
+
+    :doc:`tutorial`
+       start here for an intro to RLang
 
     :doc:`language_reference`
        describes the syntax and semantics of RLang
@@ -26,10 +26,10 @@ Parts of the documentation:
 
 .. toctree::
    :caption: Package Documentation
-   :maxdepth: 5
+   :maxdepth: -1
    :hidden:
 
-   tutorial
    install
+   tutorial
    language_reference
    rlang
