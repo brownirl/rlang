@@ -1,5 +1,5 @@
-API Reference
-=============
+Package Documentation
+=====================
 
 
 .. contents:: Table of Contents

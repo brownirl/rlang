@@ -12,6 +12,8 @@ RLang objects can be seen here: :doc:`language_reference`
 
 Diagram of RLang and how it fits into Python here. Or rather, how it fits into the agent-environment cycle.
 
+Installation instructions here.
+
 
 In this tutorial, we'll first look at a toy elevator environment:
 
