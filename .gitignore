@@ -12,3 +12,4 @@ antlr/target
 *__pycache__/
 *.egg-info
 *.yml
+results/
