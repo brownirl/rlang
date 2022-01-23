@@ -1,11 +1,11 @@
-***********
-Using RLang
-***********
+******************
+Working with RLang
+******************
 
 There are many ways RLang can be integrated into a project. The simplest involves using a pre-existing RLang-enabled
 reinforcement learning agent that utilizes RLang information in a predefined manner. In this scenario, it is up to the
-user to provide a written RLang program which can be parsed using :py:func:`rlang.parse` in a Python script or
-:py:func:`rlang.parse_file` if the program resides in a ``.rlang`` file.
+user to provide a written RLang program which can be parsed using :py:func:`.parse` or :py:func:`.parse_file` if the
+program resides in a ``.rlang`` file.
 
 It is also possible to write your own RLang-enabled agent that can utilize the information stored in an RLang program
 (accessible via the :py:class:`.RLangKnowledge` class). This route requires a more thorough understanding of the RLang
@@ -44,18 +44,20 @@ where ``main.py`` could be as simple as::
     run_agents_on_mdp([agent, rlang_agent], mdp)  # Compare performance of agents on mdp
 
 
-For help on how to write an RLang program, see :doc:`language_reference` and :doc:`grounding_reference`.
+For help on how to write an RLang program, see :doc:`language_reference`.
 
-Creating a Custom RLang Agent
-=============================
+Creating a Custom RLang Agent using :py:class:`.RLangKnowledge`
+===============================================================
 
 To get the most out of RLang, users should implement their own RLang-enabled reinforcement learning agents. Doing so
 requires becoming familiar with RLang's :py:mod:`.groundings` module and most importantly the
 :py:class:`.RLangKnowledge` object, which holds all RLang groundings parsed from an RLang program. See the source for
 the :py:class:`.RLangQLearningAgent` for a good example on how to integrate RLang knowledge into an RL agent.
 
-Using a Vocabulary File
-=======================
+This section should perhaps discuss the knowledge object in more detail and provide examples.
+
+Importing Python Groundings using a Vocabulary File
+===================================================
 
 Where should this section go? What file?
 

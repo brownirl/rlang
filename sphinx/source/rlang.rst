@@ -1,8 +1,8 @@
-Package Documentation
-=====================
+RLang Package
+=============
 
 
-.. contents:: Table of Contents
+.. contents::
 
 rlang.core module
 -----------------

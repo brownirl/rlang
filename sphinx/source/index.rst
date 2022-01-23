@@ -14,16 +14,13 @@ Parts of the documentation:
        start here for an intro to RLang
 
     :doc:`using_rlang`
-       how to use RLang in your project
-
-    :doc:`grounding_reference`
-       describes the available RLang Groundings for use in an RLang program
+       discusses the many ways of using RLang
 
     :doc:`language_reference`
        describes the syntax and semantics of RLang
 
     :doc:`rlang`
-       includes documentation for the :py:mod:`rlang.agents` and :py:mod:`rlang.grounding` subpackages
+       includes documentation for the :py:mod:`.groundings` module
 
 
 
@@ -36,6 +33,5 @@ Parts of the documentation:
 
    tutorial
    using_rlang
-   grounding_reference
    language_reference
    rlang
