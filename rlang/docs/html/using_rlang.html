@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using RLang &mdash; RLang 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -46,8 +45,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using RLang</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#using-rlang-and-a-pre-built-agent">Using RLang and a Pre-built Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#integrating-rlang-into-a-custom-agent">Integrating RLang into a custom agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-a-pre-built-rlang-agent">Using a Pre-built RLang Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-custom-rlang-agent">Creating a Custom RLang Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-a-vocabulary-file">Using a Vocabulary File</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="grounding_reference.html">RLang Groundings Reference</a></li>
@@ -79,37 +79,69 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="using-rlang">
-<h1>Using RLang<a class="headerlink" href="#using-rlang" title="Permalink to this headline"></a></h1>
-<dl>
-<dt>Goals of this section:</dt><dd><ol class="arabic simple">
-<li><p>To describe the various ways RLang can be used in a project:</p></li>
-</ol>
-<blockquote>
-<div><ol class="loweralpha simple">
-<li><p>Using RLang and a pre-made agent</p></li>
-<li><p>Integrating RLang into a custom agent</p></li>
-</ol>
-</div></blockquote>
-</dd>
-</dl>
-<p>RLang is a DSL for specifying world knowledge to reinforcement learning agents. It can be used in many different ways.</p>
-<p>There are different ways to use RLang. You can use it and a pre-made RLang agent directly in your code or you can
-integrate RLang in your own learning algorithm.</p>
-<section id="using-rlang-and-a-pre-built-agent">
-<h2>Using RLang and a Pre-built Agent<a class="headerlink" href="#using-rlang-and-a-pre-built-agent" title="Permalink to this headline"></a></h2>
-<p>RLang provides a way of supplying grounded world knowledge to learning agents.</p>
-<p>An RLang program should reside inside a <code class="docutils literal notranslate"><span class="pre">.rlang</span></code> file. Vocabulary files are in <code class="docutils literal notranslate"><span class="pre">json</span></code> format. Grounding files are Python <code class="docutils literal notranslate"><span class="pre">.py</span></code> files.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>\dir
+  <div class="section" id="using-rlang">
+<h1><a class="toc-backref" href="#id1">Using RLang</a><a class="headerlink" href="#using-rlang" title="Permalink to this headline"></a></h1>
+<p>There are many ways RLang can be integrated into a project. The simplest involves using a pre-existing RLang-enabled
+reinforcement learning agent that utilizes RLang information in a predefined manner. In this scenario, it is up to the
+user to provide a written RLang program which can be parsed using <code class="xref py py-func docutils literal notranslate"><span class="pre">rlang.parse()</span></code> in a Python script or
+<code class="xref py py-func docutils literal notranslate"><span class="pre">rlang.parse_file()</span></code> if the program resides in a <code class="docutils literal notranslate"><span class="pre">.rlang</span></code> file.</p>
+<p>It is also possible to write your own RLang-enabled agent that can utilize the information stored in an RLang program
+(accessible via the <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> class). This route requires a more thorough understanding of the RLang
+Python <a class="reference internal" href="rlang.grounding.html#module-rlang.grounding.groundings" title="rlang.grounding.groundings"><code class="xref py py-mod docutils literal notranslate"><span class="pre">groundings</span></code></a> module.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#using-rlang" id="id1">Using RLang</a></p>
+<ul>
+<li><p><a class="reference internal" href="#using-a-pre-built-rlang-agent" id="id2">Using a Pre-built RLang Agent</a></p></li>
+<li><p><a class="reference internal" href="#creating-a-custom-rlang-agent" id="id3">Creating a Custom RLang Agent</a></p></li>
+<li><p><a class="reference internal" href="#using-a-vocabulary-file" id="id4">Using a Vocabulary File</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="using-a-pre-built-rlang-agent">
+<h2><a class="toc-backref" href="#id2">Using a Pre-built RLang Agent</a><a class="headerlink" href="#using-a-pre-built-rlang-agent" title="Permalink to this headline"></a></h2>
+<p>An RLang project using a pre-built agent might have the following directory structure:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gridworld/
+    main.py           \\ Python code for running the project
+    gridworld.rlang   \\ RLang program containing world information
+    vocab.json        \\ An optional (but useful) file that holds metadata and can reference additional groundings
+    groundings.py     \\ An optional file that can store RLang grounding defined in Python
 </pre></div>
 </div>
-</section>
-<section id="integrating-rlang-into-a-custom-agent">
-<h2>Integrating RLang into a custom agent<a class="headerlink" href="#integrating-rlang-into-a-custom-agent" title="Permalink to this headline"></a></h2>
-<p>In the case that you’d like to do something more interesting with the information that RLang supplies, you can integrate
-RLang into a custom agent.</p>
-</section>
-</section>
+<p>where <code class="docutils literal notranslate"><span class="pre">main.py</span></code> could be as simple as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simple_rl.run_experiments</span> <span class="kn">import</span> <span class="n">run_agents_on_mdp</span>
+<span class="kn">from</span> <span class="nn">simple_rl.agents</span> <span class="kn">import</span> <span class="n">QLearningAgent</span>
+
+<span class="kn">import</span> <span class="nn">rlang</span>
+<span class="kn">from</span> <span class="nn">rlang.agents</span> <span class="kn">import</span> <span class="n">RLangQLearningAgent</span>
+
+<span class="n">mdp</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">create_mdp</span><span class="p">()</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">QLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">())</span>     <span class="c1"># Create a baseline Q-Learning agent</span>
+
+<span class="n">knowledge</span> <span class="o">=</span> <span class="n">rlang</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">&quot;gridworld.rlang&quot;</span><span class="p">)</span>  <span class="c1"># Parse RLang program into knowledge object</span>
+<span class="n">rlang_agent</span> <span class="o">=</span> <span class="n">RLangQLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">(),</span> <span class="n">states</span><span class="p">,</span> <span class="n">knowledge</span><span class="p">)</span> <span class="c1"># Create RLang Q-Learning agent</span>
+
+<span class="n">run_agents_on_mdp</span><span class="p">([</span><span class="n">agent</span><span class="p">,</span> <span class="n">rlang_agent</span><span class="p">],</span> <span class="n">mdp</span><span class="p">)</span>  <span class="c1"># Compare performance of agents on mdp</span>
+</pre></div>
+</div>
+<p>For help on how to write an RLang program, see <a class="reference internal" href="language_reference.html"><span class="doc">RLang Language Reference</span></a> and <a class="reference internal" href="grounding_reference.html"><span class="doc">RLang Groundings Reference</span></a>.</p>
+</div>
+<div class="section" id="creating-a-custom-rlang-agent">
+<h2><a class="toc-backref" href="#id3">Creating a Custom RLang Agent</a><a class="headerlink" href="#creating-a-custom-rlang-agent" title="Permalink to this headline"></a></h2>
+<p>To get the most out of RLang, users should implement their own RLang-enabled reinforcement learning agents. Doing so
+requires becoming familiar with RLang’s <a class="reference internal" href="rlang.grounding.html#module-rlang.grounding.groundings" title="rlang.grounding.groundings"><code class="xref py py-mod docutils literal notranslate"><span class="pre">groundings</span></code></a> module and most importantly the
+<a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object, which holds all RLang groundings parsed from an RLang program. See the source for
+the <a class="reference internal" href="rlang.agents.html#rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent" title="rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangQLearningAgent</span></code></a> for a good example on how to integrate RLang knowledge into an RL agent.</p>
+</div>
+<div class="section" id="using-a-vocabulary-file">
+<h2><a class="toc-backref" href="#id4">Using a Vocabulary File</a><a class="headerlink" href="#using-a-vocabulary-file" title="Permalink to this headline"></a></h2>
+<p>Where should this section go? What file?</p>
+<p>How does a vocabulary file work? How to import groundings</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Q-learning">Q Learning</a></p>
+</div>
+</div>
 
 
            </div>
