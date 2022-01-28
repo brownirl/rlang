@@ -7,10 +7,10 @@ This page covers the core syntax and semantics of the RLang language.
 .. contents::
 
 
-Format of an RLang Program
---------------------------
+Structure of an RLang Program
+-----------------------------
 
-An RLang program takes the following form:
+An RLang program has the following structure:
 
 .. productionlist::
    program: import* declaration*
@@ -29,8 +29,6 @@ where each declaration is the instantiation of an RLang grounding:
     : | policy
     : | effect
 
-See :doc:`grounding_reference` for these declarations explained in detail.
-
 
 RLang Groundings Syntax
 -----------------------
@@ -39,10 +37,25 @@ Every RLang object is a function with a domain in :math:`\mathcal{S}\times\mathc
 and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or :math:`\{\top, \bot\}`,
 depending on the object’s type.
 
-We should include the ebnf inside all of these
+Constants
+^^^^^^^^^
+
+.. productionlist::
+   constant: "Constant" IDENTIFIER ":=" (arithmetic_exp | boolean_exp)
+
+Constants can be defined and used later in other RLang groundings:
+
+.. code-block:: text
+
+    Constant lava_positions := [[0, 1], [5, 2]]
+    Constant step_cost := -0.1
+
 
 Factors
 ^^^^^^^
+
+.. productionlist::
+   factor: "Factor" IDENTIFIER ":=" any_bound_var
 
 Factors are used to reference independent state variables.
 They represent portions of the state space and can be defined using Python's slicing syntax ``[start?:end?]`` on the current state variable ``S``:
@@ -57,6 +70,9 @@ They represent portions of the state space and can be defined using Python's sli
 Features
 ^^^^^^^^
 
+.. productionlist::
+   feature: "Feature" IDENTIFIER ":=" arithmetic_exp
+
 Features are used to define more complex functions of state. They can be defined using arithmetic operations (+, -, :math:`*`, /), numeric literals, function compositions.
 
 .. code-block:: text
@@ -66,6 +82,9 @@ Features are used to define more complex functions of state. They can be defined
 
 Propositions
 ^^^^^^^^^^^^
+
+.. productionlist::
+   proposition: "Proposition" IDENTIFIER ":=" boolean_exp
 
 Propositions are functions of the form :math:`\mathcal{S} \rightarrow \{\top, \bot\}`, generating a boolean value.
 They can be defined using logical operators (``and``, ``or``, ``not``) and order relations of the real numbers (<, <= , >, >=, =, !=)
@@ -80,6 +99,9 @@ They can be defined using logical operators (``and``, ``or``, ``not``) and order
 Goals
 ^^^^^
 
+.. productionlist::
+   goal: "Goal" IDENTIFIER ":=" boolean_exp
+
 Goals are used to specify goal states given by a proposition.
 
 .. code-block:: text
@@ -89,6 +111,9 @@ Goals are used to specify goal states given by a proposition.
 
 Markov Features
 ^^^^^^^^^^^^^^^
+
+.. productionlist::
+   markov_feature: "MarkovFeature" IDENTIFIER ":=" arithmetic_exp
 
 Markov Features allow users to compute features on an (:math:`s,a,s'`) experience tuple
 and can be then used to define partial specification of functions related to the task, such as action-value functions and transition functions.

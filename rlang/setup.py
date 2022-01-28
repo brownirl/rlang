@@ -11,7 +11,7 @@ setuptools.setup(
     description="For specifying partial information about MDPs.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="rlang.ai",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
