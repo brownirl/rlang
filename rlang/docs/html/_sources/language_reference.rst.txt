@@ -15,7 +15,8 @@ An RLang program has the following structure:
 .. productionlist::
    program: import* declaration*
 
-where each declaration is the instantiation of an RLang grounding:
+where each import statement imports a local vocabulary file (e.g. ``import vocab.json``) and each declaration is the
+instantiation of an RLang grounding:
 
 .. productionlist::
    declaration: constant NL+
@@ -30,12 +31,29 @@ where each declaration is the instantiation of an RLang grounding:
     : | effect
 
 
-RLang Groundings Syntax
------------------------
+Syntax of RLang Groundings
+--------------------------
 
-Every RLang object is a function with a domain in :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
-and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or :math:`\{\top, \bot\}`,
-depending on the object’s type.
+Every RLang grounding is a function with a domain in :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
+and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n\in \mathbb{N}`, or
+:math:`\{\top, \bot\}`, depending on the grounding’s type. Each grounding declared in an RLang program grounds to one
+or more Python RLang objects which are in the :py:mod:`.groundings` module and are accessible to the user after
+parsing using the :py:class:`.RLangKnowledge` class.
+
+.. Important:: Put a table here mapping groundings to their Python objects.
+
+=====  =====  ======
+   Inputs     Output
+------------  ------
+  A      B    A or B
+=====  =====  ======
+False  False  False
+True   False  True
+False  True   True
+True   True   True
+=====  =====  ======
+
+.. Note:: Every RLang grounding declared in an program is static. Groundings cannot be re-bound.
 
 Constants
 ^^^^^^^^^
@@ -50,6 +68,7 @@ Constants can be defined and used later in other RLang groundings:
     Constant lava_positions := [[0, 1], [5, 2]]
     Constant step_cost := -0.1
 
+Constants ground to :py:class:`.ConstantGrounding`.
 
 Factors
 ^^^^^^^
@@ -58,7 +77,8 @@ Factors
    factor: "Factor" IDENTIFIER ":=" any_bound_var
 
 Factors are used to reference independent state variables.
-They represent portions of the state space and can be defined using Python's slicing syntax ``[start?:end?]`` on the current state variable ``S``:
+They represent portions of the state space and can be defined using Python's slicing syntax ``[start?:end?]`` on the
+current state variable ``S``:
 
 .. code-block:: text
 
@@ -66,6 +86,7 @@ They represent portions of the state space and can be defined using Python's sli
     Factor y_position := S[1]
     Factor inventory := S[2:]
 
+Factors ground to :py:class:`.Factor`.
 
 Features
 ^^^^^^^^
@@ -73,12 +94,14 @@ Features
 .. productionlist::
    feature: "Feature" IDENTIFIER ":=" arithmetic_exp
 
-Features are used to define more complex functions of state. They can be defined using arithmetic operations (+, -, :math:`*`, /), numeric literals, function compositions.
+Features are used to define more complex functions of state. They can be defined using arithmetic operations
+(+, -, :math:`*`, /), numeric literals, function compositions.
 
 .. code-block:: text
 
     Feature distance_to_gold := abs([0,4] - position)
 
+Features ground to :py:class:`.Feature`.
 
 Propositions
 ^^^^^^^^^^^^
@@ -87,14 +110,15 @@ Propositions
    proposition: "Proposition" IDENTIFIER ":=" boolean_exp
 
 Propositions are functions of the form :math:`\mathcal{S} \rightarrow \{\top, \bot\}`, generating a boolean value.
-They can be defined using logical operators (``and``, ``or``, ``not``) and order relations of the real numbers (<, <= , >, >=, =, !=)
+They can be defined using logical operators (``and``, ``or``, ``not``) and order relations of the real numbers
+(<, <= , >, >=, =, !=)
 
 .. code-block:: text
 
-    Constant workbench_locations := [[1, 0], [1, 3]]
     Proposition at_workbench := position in workbench_locations
     Proposition have_bridge_material := iron >= 1 and wood >= 1
 
+Propositions ground to :py:class:`.Proposition`.
 
 Goals
 ^^^^^
@@ -108,6 +132,8 @@ Goals are used to specify goal states given by a proposition.
 
     Goal get_gold := gold >= 1
 
+Goals ground to :py:class:`.Goal`.
+
 
 Markov Features
 ^^^^^^^^^^^^^^^
@@ -115,66 +141,83 @@ Markov Features
 .. productionlist::
    markov_feature: "MarkovFeature" IDENTIFIER ":=" arithmetic_exp
 
-Markov Features allow users to compute features on an (:math:`s,a,s'`) experience tuple
-and can be then used to define partial specification of functions related to the task, such as action-value functions and transition functions.
-**Note:** the prime operator (``'``) can be used to reference the valueof an RLang object on the next state.
+Markov Features allow users to compute features on an (:math:`s,a,s'`) experience tuple and can be then used to define
+partial specification of functions related to the task, such as action-value functions and transition functions.
+
+The prime operator (``'``) can be used to reference the value of an RLang grounding on the next state.
 
 .. code-block:: text
 
-    Markov Feature inventory_change := inventory' -inventory
+    Markov Feature inventory_change := inventory' - inventory
 
+MarkovFeatures ground to :py:class:`.MarkovFeature`.
 
 Policies
 ^^^^^^^^
 
+.. productionlist::
+    policy: "Policy" IDENTIFIER ":" INDENT policy_statement NL* DEDENT
+
 Policies prompt the agent to perform an action/subpolicy in a given situation.
-The keyword ``Execute`` is used to perform an action or call another policy and
-*provides a prior probability for the action to be executed*.
-
-Policies can be specified in RLang using conditional or probabilistic expressions.
-Conditional expressions are written using the keywords ``if`` and ``else``, and
-probability expressions can be written using the keywords ``with P(float)`` and ``or`` to specify probability values.
+The keyword ``Execute`` is used to perform an action or call another policy. Policies can be specified in RLang using
+conditional expressions using the keywords ``if``, ``elif``, and ``else``.
 
 
-The following policy instructs the agent to craft iron tools at a workbench by first collecting ironand then navigating to the workbench.
+The following policy instructs the agent to craft iron tools at a workbench by first collecting iron and then
+navigating to the workbench.
 
 .. code-block:: text
 
     Policy main:
-    if iron >= 2:
-        if at_workbench:
-            Execute Use # Use is an action
+        if iron >= 2:
+            if at_workbench:
+                Execute Use # Use is an action
+            else:
+                Execute go_to_workbench # go_to_workbench is a policy
         else:
-            Execute go_to_workbench # go_to_workbench is a policy
-    else:
-        Execute collect_iron
+            Execute collect_iron
+
+.. note:: Naming a policy ``main`` recognizes it as the main policy, which accessed from a :py:class:`.RLangKnowledge` object with ``knowledge.policy``. There can only be one `main` policy.
 
 
-Here is an example of a probabilistic policy. *Note that for the probabilities to be correct their sum must be equal to
-1.*
+Policies can be made probabilistic using ``with P(float)``:
 
 .. code-block:: text
 
     Policy random_move:
-        Execute up with P(0.25)
-        or Execute down with P(0.25)
-        or Execute left with P(0.25)
-        or Execute right with P(0.25)
+        with P(0.5):
+            Execute up
+        or with P(0.5):
+            Execute down
 
+    Policy random_move_syntax_sugar:
+        Execute up with P(0.5)
+        or Execute down with P(0.5)
+
+Policies ground to :py:class:`.Policy`.
 
 Options
 ^^^^^^^
 
-Temporally-extended abstract actions can be specified using Options, which include initiation and termination propositions.
-Initiation propositions are defined using the keyword ``init``, and termination propositions are written using the keyword ``until``.
+.. productionlist::
+    option: "Option" IDENTIFIER ":" INDENT "init" option_condition
+          :  INDENT policy_statement NL* DEDENT
+          :  "until" option_condition NL* DEDENT
+
+Temporally-extended abstract actions can be specified using Options, which include initiation and termination
+propositions. Initiation propositions are denoted using the keyword ``init``, and termination propositions are denoted
+using ``until``:
 
 .. code-block:: text
 
     Option build_bridge:
-    init have_bridge_material and at_workbench
-        Execute craft_bridge
-    until bridge in inventory
+        init have_bridge_material and at_workbench
+            Execute craft_bridge
+        until bridge in inventory
 
+.. note:: ``Any`` can also be specified in place of both the ``init`` and ``until`` propositions and functions the same as ``True``.
+
+Options ground to :py:class:`.Option`.
 
 Action Restrictions
 ^^^^^^^^^^^^^^^^^^^
@@ -192,6 +235,11 @@ probability zero even after learning.*
 
 Effects
 ^^^^^^^
+
+.. productionlist::
+    effect: "Effect" IDENTIFIER ":" INDENT effect_statement* DEDENT
+    effect_statement: reward | prediction | effect_reference
+
 
 Effects provide an interface for specifying partial information about the transition and reward functions,
 allowing users to denote the consequences of an action when performed in a given state.
@@ -217,6 +265,9 @@ Here is a prediction made about the full transition function:
     Effect tic_tac_toe:
         if three_in_a_row:
             S' -> empty_board # Board is reset
+
+Effects ground to :py:class:`.Effect`, which holds a :py:class:`.TransitionFunction`, a :py:class:`.RewardFunction`,
+and a list of :py:class:`.Prediction`.
 
 Expressions and Keywords
 ------------------------
