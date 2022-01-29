@@ -2,42 +2,49 @@
 Getting Started
 ***************
 
-Flesh this out based on `Python Tutorial`_
-
-.. _`Python Tutorial`: https://docs.python.org/3/tutorial/index.html
-
-RLang is a Domain-Specific Language for specifying information to Decision-Making agents about MDPs and policies. Using
-RLang, you can specify information about policies, options, transition dynamics, and features of state.
+RLang is a Domain-Specific Language for communicating domain knowledge to an RL agent. Using RLang, you can specify
+information about policies, options, transition dynamics, and state factors and features. [*]_ Using the RLang Python
+package, you can parse RLang programs into algorithm-agnostic Python objects. This page provides a quick tutorial on
+getting set up with RLang and writing an RLang program.
 
 Diagram of RLang and how it fits into Python here. Or rather, how it fits into the agent-environment cycle.
 
-Installation instructions here.
+Installing RLang
+----------------
 
+Installation instructions here once uploaded to pypi.
 
-In this tutorial, we'll first look at a toy elevator environment:
+.. code-block:: console
 
-Elevator
---------
+    $ pip install rlang
 
-Let's imagine an agent is controlling an elevator. A typical environment
+Gridworld Example
+-----------------
 
-
-Let's look at a simple RLang Program that provides information regarding:
+In this tutorial, we'll look at an example using a gridworld environment. Here is the directory structure of the
+example:
 
 .. code-block:: text
 
-    Action up := 1
-    Action down := -1
+   gridworld/
+       main.py           \\ Python code for running the project
+       gridworld.rlang   \\ RLang program containing world information
+       vocab.json        \\ Holds metadata and can reference additional groundings
 
-    Factor floor := S[0]
+Here is ``main.py``:
 
-    Effect elevator_movement_effect:
-        if A == up:
-            floor' -> floor + 1
-        elif A == down:
-            floor' -> floor - 1
+.. literalinclude:: ../../rlang/examples/gridworld/main.py
+   :linenos:
 
-    Effect main:
-        -> elevator_movement_effect
+Here is ``gridworld.rlang``:
 
+.. literalinclude:: ../../rlang/examples/gridworld/gridworld.rlang
+   :language: text
+   :linenos:
 
+Here is ``vocab.json``:
+
+.. literalinclude:: ../../rlang/examples/gridworld/vocab.json
+   :language: json
+
+.. [*] For a full list of groundings, see :doc:`language_reference`.

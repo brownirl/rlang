@@ -1,13 +1,7 @@
 RLang 1.0.0 Documentation
 =========================
 
-This is the official documentation for RLang, which is currently under submission to ICML 2022.
-
-Installation instructions here.
-
-To fill-out based on `Python's Documentation`_
-
-.. _`Python's Documentation`: https://docs.python.org/3/
+This is the official documentation website for RLang, which is currently under submission to ICML 2022.
 
 Parts of the documentation:
     :doc:`tutorial`

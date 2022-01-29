@@ -28,7 +28,8 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> RLang
+            <a href="index.html">
+            <img src="_static/RLang_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 master
@@ -44,7 +45,8 @@
               <p class="caption" role="heading"><span class="caption-text">Package Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#elevator">Elevator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-rlang">Installing RLang</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gridworld-example">Gridworld Example</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="using_rlang.html">Working with RLang</a></li>
@@ -78,31 +80,141 @@
              
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
-<p>Flesh this out based on <a class="reference external" href="https://docs.python.org/3/tutorial/index.html">Python Tutorial</a></p>
-<p>RLang is a Domain-Specific Language for specifying information to Decision-Making agents about MDPs and policies. Using
-RLang, you can specify information about policies, options, transition dynamics, and features of state.</p>
+<p>RLang is a Domain-Specific Language for communicating domain knowledge to an RL agent. Using RLang, you can specify
+information about policies, options, transition dynamics, and state factors and features. <a class="footnote-reference brackets" href="#id2" id="id1">*</a> Using the RLang Python
+package, you can parse RLang programs into algorithm-agnostic Python objects. This page provides a quick tutorial on
+getting set up with RLang and writing an RLang program.</p>
 <p>Diagram of RLang and how it fits into Python here. Or rather, how it fits into the agent-environment cycle.</p>
-<p>Installation instructions here.</p>
-<p>In this tutorial, we’ll first look at a toy elevator environment:</p>
-<div class="section" id="elevator">
-<h2>Elevator<a class="headerlink" href="#elevator" title="Permalink to this headline"></a></h2>
-<p>Let’s imagine an agent is controlling an elevator. A typical environment</p>
-<p>Let’s look at a simple RLang Program that provides information regarding:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action up := 1
-Action down := -1
-
-Factor floor := S[0]
-
-Effect elevator_movement_effect:
-    if A == up:
-        floor&#39; -&gt; floor + 1
-    elif A == down:
-        floor&#39; -&gt; floor - 1
-
-Effect main:
-    -&gt; elevator_movement_effect
+<div class="section" id="installing-rlang">
+<h2>Installing RLang<a class="headerlink" href="#installing-rlang" title="Permalink to this headline"></a></h2>
+<p>Installation instructions here once uploaded to pypi.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install rlang
 </pre></div>
 </div>
+</div>
+<div class="section" id="gridworld-example">
+<h2>Gridworld Example<a class="headerlink" href="#gridworld-example" title="Permalink to this headline"></a></h2>
+<p>In this tutorial, we’ll look at an example using a gridworld environment. Here is the directory structure of the
+example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gridworld/
+    main.py           \\ Python code for running the project
+    gridworld.rlang   \\ RLang program containing world information
+    vocab.json        \\ Holds metadata and can reference additional groundings
+</pre></div>
+</div>
+<p>Here is <code class="docutils literal notranslate"><span class="pre">main.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">simple_rl.run_experiments</span> <span class="kn">import</span> <span class="n">run_agents_on_mdp</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">simple_rl.tasks</span> <span class="kn">import</span> <span class="n">GridWorldMDP</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">simple_rl.agents</span> <span class="kn">import</span> <span class="n">QLearningAgent</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="kn">import</span> <span class="nn">context</span>
+<span class="linenos"> 6</span><span class="kn">import</span> <span class="nn">rlang</span>
+<span class="linenos"> 7</span><span class="kn">from</span> <span class="nn">rlang.agents</span> <span class="kn">import</span> <span class="n">RLangQLearningAgent</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="k">def</span> <span class="nf">create_mdp</span><span class="p">():</span>
+<span class="linenos">11</span>    <span class="c1"># MDP parameters</span>
+<span class="linenos">12</span>    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="linenos">13</span>    <span class="n">lava_locs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="linenos">14</span>    <span class="n">walls</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="linenos">15</span>    <span class="n">goal_locs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span>    <span class="n">mdp</span> <span class="o">=</span> <span class="n">GridWorldMDP</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">walls</span><span class="o">=</span><span class="n">walls</span><span class="p">,</span> <span class="n">lava_locs</span><span class="o">=</span><span class="n">lava_locs</span><span class="p">,</span> <span class="n">goal_locs</span><span class="o">=</span><span class="n">goal_locs</span><span class="p">,</span> <span class="n">slip_prob</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+<span class="linenos">18</span>                       <span class="n">step_cost</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="linenos">19</span>    <span class="k">return</span> <span class="n">mdp</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="k">def</span> <span class="nf">simple_experiment</span><span class="p">():</span>
+<span class="linenos">23</span>    <span class="n">mdp</span> <span class="o">=</span> <span class="n">create_mdp</span><span class="p">()</span>
+<span class="linenos">24</span>    <span class="n">agent</span> <span class="o">=</span> <span class="n">QLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">())</span>
+<span class="linenos">25</span>    <span class="n">run_agents_on_mdp</span><span class="p">([</span><span class="n">agent</span><span class="p">],</span> <span class="n">mdp</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="k">def</span> <span class="nf">rlang_experiment</span><span class="p">():</span>
+<span class="linenos">29</span>    <span class="c1"># We need to know these MDP and Q Learning parameters</span>
+<span class="linenos">30</span>    <span class="n">mdp</span> <span class="o">=</span> <span class="n">create_mdp</span><span class="p">()</span>
+<span class="linenos">31</span>    <span class="n">knowledge</span> <span class="o">=</span> <span class="n">rlang</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">&quot;gridworld.rlang&quot;</span><span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>    <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="linenos">34</span>    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">width</span><span class="p">):</span>
+<span class="linenos">35</span>        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
+<span class="linenos">36</span>            <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span>    <span class="n">agent</span> <span class="o">=</span> <span class="n">QLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">())</span>
+<span class="linenos">39</span>    <span class="n">rlang_agent</span> <span class="o">=</span> <span class="n">RLangQLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">(),</span> <span class="n">states</span><span class="p">,</span> <span class="n">knowledge</span><span class="p">)</span>
+<span class="linenos">40</span>    <span class="c1"># rlang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name=&quot;RLang-Q-learning-transition&quot;,</span>
+<span class="linenos">41</span>    <span class="c1">#                                     use_transition=True)</span>
+<span class="linenos">42</span>    <span class="n">run_agents_on_mdp</span><span class="p">([</span><span class="n">agent</span><span class="p">,</span> <span class="n">rlang_agent</span><span class="p">],</span> <span class="n">mdp</span><span class="p">)</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="linenos">46</span>    <span class="n">rlang_experiment</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here is <code class="docutils literal notranslate"><span class="pre">gridworld.rlang</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>import vocab.json
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>Factor position := S[0, 1]
+<span class="linenos"> 6</span>Action up := 0
+<span class="linenos"> 7</span>Action down := 1
+<span class="linenos"> 8</span>Action left := 2
+<span class="linenos"> 9</span>Action right := 3
+<span class="linenos">10</span>
+<span class="linenos">11</span>Factor x := position[0]
+<span class="linenos">12</span>Factor y := position[1]
+<span class="linenos">13</span>
+<span class="linenos">14</span>Proposition reached_goal := x == 5 and y == 1
+<span class="linenos">15</span>Proposition reached_wall := x == 3 and y == 1
+<span class="linenos">16</span>Proposition in_lava := position in lava_locs
+<span class="linenos">17</span>
+<span class="linenos">18</span>Effect action_effect:
+<span class="linenos">19</span>    if A == up:
+<span class="linenos">20</span>        position&#39; -&gt; position + [0, 1]
+<span class="linenos">21</span>        S&#39; -&gt; S + [0, 1]
+<span class="linenos">22</span>    elif A == down:
+<span class="linenos">23</span>        position&#39; -&gt; position + [0, -1]
+<span class="linenos">24</span>        S&#39; -&gt; S + [0, -1]
+<span class="linenos">25</span>    elif A == left:
+<span class="linenos">26</span>        position&#39; -&gt; position + [-1, 0]
+<span class="linenos">27</span>        S&#39; -&gt; S + [-1, 0]
+<span class="linenos">28</span>    elif A == right:
+<span class="linenos">29</span>        position&#39; -&gt; position + [1, 0]
+<span class="linenos">30</span>        S&#39; -&gt; S + [1, 0]
+<span class="linenos">31</span>
+<span class="linenos">32</span>Effect main:
+<span class="linenos">33</span>    if in_lava:
+<span class="linenos">34</span>        Reward -1
+<span class="linenos">35</span>    if reached_goal:
+<span class="linenos">36</span>        Reward 1
+<span class="linenos">37</span>    if reached_wall:
+<span class="linenos">38</span>        S&#39; -&gt; S
+<span class="linenos">39</span>    else:
+<span class="linenos">40</span>        -&gt; action_effect
+</pre></div>
+</div>
+<p>Here is <code class="docutils literal notranslate"><span class="pre">vocab.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;gridworld&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;state_space&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;action_space&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">*</a></span></dt>
+<dd><p>For a full list of groundings, see <a class="reference internal" href="language_reference.html"><span class="doc">RLang Language Reference</span></a>.</p>
+</dd>
+</dl>
 </div>
 </div>
 

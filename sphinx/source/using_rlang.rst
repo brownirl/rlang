@@ -44,7 +44,74 @@ where ``main.py`` could be as simple as::
     run_agents_on_mdp([agent, rlang_agent], mdp)  # Compare performance of agents on mdp
 
 
+and ``gridworld.rlang`` could look like this:
+
+.. code-block:: text
+
+    import vocab.json
+
+    Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
+
+    Factor position := S[0, 1]
+    Factor x := position[0]
+    Factor y := position[1]
+
+    Proposition reached_goal := x == 5 and y == 1
+    Proposition reached_wall := x == 3 and y == 1
+    Proposition in_lava := position in lava_locs
+
+    Effect main:
+        if in_lava:
+            Reward -1
+        if reached_goal:
+            Reward 1
+        if reached_wall:
+            S' -> S
+
 For help on how to write an RLang program, see :doc:`language_reference`.
+
+Using a Vocabulary File
+-----------------------
+
+While optional, vocabulary files allow for extremely powerful functionality. A minimal ``vocabulary.json`` file might
+contain metadata on the MDP that's being interfaced with like the size of the state and action space:
+
+.. code-block:: json
+
+    {
+      "domain": "gridworld",
+      "mdp_metadata": {
+        "state_space": {
+          "size": 2,
+          "dtype": "int"
+        },
+        "action_space": {
+          "shape": 1,
+          "dtype": "int"
+        }
+      }
+    }
+
+A more powerful vocabulary file can be used to reference additional RLang groundings declared inside an auxiliary
+Python file: [*]_
+
+.. code-block:: json
+
+    {
+      "domain": "gridworld",
+      "mdp_metadata": {
+        "state_space": {
+          "size": 2,
+          "dtype": "int"
+        },
+        "action_space": {
+          "shape": 1,
+          "dtype": "int"
+        }
+      }
+    }
+
+.. [*] Using more than one Python file for groundings is also possible.
 
 Creating a Custom RLang Agent using :py:class:`.RLangKnowledge`
 ===============================================================
@@ -55,16 +122,3 @@ requires becoming familiar with RLang's :py:mod:`.groundings` module and most im
 the :py:class:`.RLangQLearningAgent` for a good example on how to integrate RLang knowledge into an RL agent.
 
 This section should perhaps discuss the knowledge object in more detail and provide examples.
-
-Importing Python Groundings using a Vocabulary File
-===================================================
-
-Where should this section go? What file?
-
-How does a vocabulary file work? How to import groundings
-
-
-
-`Q Learning`_
-
-.. _`Q Learning`: https://en.wikipedia.org/wiki/Q-learning
