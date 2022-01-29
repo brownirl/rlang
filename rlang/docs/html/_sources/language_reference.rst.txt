@@ -31,6 +31,58 @@ instantiation of an RLang grounding:
     : | effect
 
 
+.. list-table:: The domains and codomains of RLang groundings.
+    :widths: 5 5 5 5
+    :header-rows: 1
+    :stub-columns: 1
+
+    * - RLang Grounding
+      - Domain
+      - Codomain
+      - Package Documentation
+    * - Constants_
+      - :math:`\emptyset`
+      - :math:`\mathbb{R}^n`, list of :math:`\mathbb{R}^n`
+      - :py:class:`.ConstantGrounding`
+    * - Actions_
+      - :math:`\emptyset`
+      - :math:`\mathcal{A}`
+      - :py:class:`.ActionReference`
+    * - Factors_
+      - :math:`\mathcal{S}`
+      - :math:`\mathbb{R}^n`
+      - :py:class:`.Factor`
+    * - Propositions_
+      - :math:`\mathcal{S}`
+      - :math:`\{\top, \bot\}`
+      - :py:class:`.Proposition`
+    * - Goals_
+      - :math:`\mathcal{S}`
+      - :math:`\{\top, \bot\}`
+      - :py:class:`.Goal`
+    * - Features_
+      - :math:`\mathcal{S}`
+      - :math:`\mathbb{R}^n`
+      - :py:class:`.Feature`
+    * - `Markov Features`_
+      - :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
+      - :math:`\mathbb{R}^n`
+      - :py:class:`.MarkovFeature`
+    * - Options_
+      - :math:`\mathcal{S}`
+      - :math:`\mathcal{A}`
+      - :py:class:`.Option`
+    * - Policies_
+      - :math:`\mathcal{S}`
+      - :math:`\mathcal{A}`
+      - :py:class:`.Policy`
+    * - Effects_
+      - :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
+      - :math:`\{\mathcal{S}, \top, \bot, \mathbb{R}^n, R\}` [*]_
+      - :py:class:`.Effects`
+
+.. [*] :math:`\top, \bot, \mathbb{R}^n` refer to the potential value of an RLang grounding on the next state. :math:`R` refers to a reward.
+
 Syntax of RLang Groundings
 --------------------------
 
@@ -40,19 +92,6 @@ and a co-domain in :math:`\mathcal{S}, \mathcal{A}, \mathbb{R}^n` where :math:`n
 or more Python RLang objects which are in the :py:mod:`.groundings` module and are accessible to the user after
 parsing using the :py:class:`.RLangKnowledge` class.
 
-.. Important:: Put a table here mapping groundings to their Python objects.
-
-=====  =====  ======
-   Inputs     Output
-------------  ------
-  A      B    A or B
-=====  =====  ======
-False  False  False
-True   False  True
-False  True   True
-True   True   True
-=====  =====  ======
-
 .. Note:: Every RLang grounding declared in an program is static. Groundings cannot be re-bound.
 
 Constants
@@ -61,7 +100,7 @@ Constants
 .. productionlist::
    constant: "Constant" IDENTIFIER ":=" (arithmetic_exp | boolean_exp)
 
-Constants can be defined and used later in other RLang groundings:
+Constants can be defined and used later in other RLang groundings.
 
 .. code-block:: text
 
@@ -69,6 +108,21 @@ Constants can be defined and used later in other RLang groundings:
     Constant step_cost := -0.1
 
 Constants ground to :py:class:`.ConstantGrounding`.
+
+Actions
+^^^^^^^
+
+.. productionlist::
+   action: "Action" IDENTIFIER ":=" (any_number | any_num_array_exp)
+
+Actions can be defined for reference in Policies_ and Options_.
+
+.. code-block:: text
+
+    Action up := [0, 1]
+
+Actions ground to :py:class:`.ActionReference`.
+
 
 Factors
 ^^^^^^^
@@ -267,10 +321,14 @@ Here is a prediction made about the full transition function:
             S' -> empty_board # Board is reset
 
 Effects ground to :py:class:`.Effect`, which holds a :py:class:`.TransitionFunction`, a :py:class:`.RewardFunction`,
-and a list of :py:class:`.Prediction`.
+and a list of :py:class:`.Prediction` objects.
 
 Expressions and Keywords
 ------------------------
+
+RLang provides support for the following expression types.
+
+.. important:: Restrictions on the kinds of bound variables (i.e. ``S`` or ``health``) usable in the following expressions depends on the domains of the groundings they are used in. E.g. Factors_ can't contain ``A`` or ``S'`` because they have domain :math:`\mathcal{S}`.
 
 Arithmetic Expressions
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -285,11 +343,11 @@ Arithmetic expressions are the most common expression used in defining RLang gro
     : | any_array
     : | any_bound_var
 
-Some examples of arithmetic expressions:
+The following arithmetic expression could appear inside a Feature:
 
 .. code-block:: text
 
-   some text here
+   (2 * health) - 1 + S[0]
 
 Boolean Expressions
 ^^^^^^^^^^^^^^^^^^^
@@ -308,11 +366,13 @@ Boolean expressions are also commonly used in Propositions, Goals, Effects, Opti
     : | any_bound_var
     : | (TRUE | FALSE)
 
-Some examples of boolean expressions:
+Examples of boolean expressions:
 
 .. code-block:: text
 
-   some text here
+   True
+   True and not (at_workbench)
+   health * 2 == 6
 
 Conditional Expressions
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -328,10 +388,35 @@ Some examples of conditional expressions:
 
 .. code-block:: text
 
-   some text here
+    if S[0] == 1 and y_pos == 0:
+        Execute stay
+    elif y_pos < 0:
+        Execute up
+    else:
+        Execute down
 
 Probabilistic Expressions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Probabilistic expressions can be used inside Policies_, Options_, and Effects_.
+
+.. productionlist::
+    prob_statement: prob_condition ":" INDENT statement NL* DEDENT
+    : | statement prob_condition NL+
+    prob_condition: "with P(" (any_number | integer_fraction) ")"
+
+Some examples:
+
+.. code-block:: text
+
+    Effect probabilistic_reward:
+        with P(0.2):
+            Reward 10
+        or Reward 1 with P(0.8)
+
+    Policy up_or_down:
+        Execute up with P(1/2)
+        or Execute down with P(1/2)
 
 
 Special Variables
