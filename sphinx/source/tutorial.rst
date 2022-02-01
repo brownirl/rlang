@@ -31,6 +31,15 @@ example:
        gridworld.rlang   \\ RLang program containing world information
        vocab.json        \\ Holds metadata and can reference additional groundings
 
+Using the simple_rl framework to run experiments where RL agents interact with an MDP,
+we can follow these instructions to apply RLang:
+
+#. Create an MDP
+#. Create an RLang Program that can be parsed into a knowledge object
+#. Create RLang Agents (See :doc:`using_rlang`)
+#. Set experiment parameters (instances, episodes, steps)
+#. Run all experiments
+
 Here is ``main.py``:
 
 .. literalinclude:: ../../rlang/examples/gridworld/main.py
@@ -46,5 +55,7 @@ Here is ``vocab.json``:
 
 .. literalinclude:: ../../rlang/examples/gridworld/vocab.json
    :language: json
+
+It contains the size of the state and action space.
 
 .. [*] For a full list of groundings, see :doc:`language_reference`.

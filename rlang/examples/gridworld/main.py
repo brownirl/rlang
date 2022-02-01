@@ -28,6 +28,8 @@ def simple_experiment():
 def rlang_experiment():
     # We need to know these MDP and Q Learning parameters
     mdp = create_mdp()
+
+    # Parse RLang program into knowledge object
     knowledge = rlang.parse_file("gridworld.rlang")
 
     states = list()
@@ -35,10 +37,14 @@ def rlang_experiment():
         for h in range(mdp.height):
             states.append((w, h))
 
+    # Create a baseline Q-Learning agent
     agent = QLearningAgent(mdp.get_actions())
-    rlang_agent = RLangQLearningAgent(mdp.get_actions(), states, knowledge)
-    # rlang_agent_2 = RLangQLearningAgent(mdp.get_actions(), states, knowledge, name="RLang-Q-learning-transition",
-    #                                     use_transition=True)
+
+    # Create RLang Q-Learning agent
+    rlang_agent = RLangQLearningAgent(
+        actions=mdp.get_actions(), states=states, knowledge=knowledge)
+
+    # Compare performance of agents on mdp
     run_agents_on_mdp([agent, rlang_agent], mdp)
 
 

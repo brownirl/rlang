@@ -60,4 +60,5 @@ class RLangQLearningAgent(QLearningAgent):
                         v_s_prime = weighted_value(q_func, s_primei)
                         q_func[s][a] += alpha * (r_prime + gamma * v_s_prime)
 
-        super().__init__(actions, name, alpha, gamma, epsilon, explore, anneal, q_func, default_q)
+        super().__init__(actions, name, alpha, gamma,
+                         epsilon, explore, anneal, q_func, default_q)

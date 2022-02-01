@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Working with RLang &mdash; RLang 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -81,7 +82,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="working-with-rlang">
+  <section id="working-with-rlang">
 <h1><a class="toc-backref" href="#id3">Working with RLang</a><a class="headerlink" href="#working-with-rlang" title="Permalink to this headline"></a></h1>
 <p>There are many ways RLang can be integrated into a project. The simplest involves using a pre-existing RLang-enabled
 reinforcement learning agent that utilizes RLang information in a predefined manner. In this scenario, it is up to the
@@ -105,7 +106,7 @@ Python <a class="reference internal" href="rlang.grounding.html#module-rlang.gro
 </li>
 </ul>
 </div>
-<div class="section" id="using-a-pre-built-rlang-agent">
+<section id="using-a-pre-built-rlang-agent">
 <h2><a class="toc-backref" href="#id4">Using a Pre-built RLang Agent</a><a class="headerlink" href="#using-a-pre-built-rlang-agent" title="Permalink to this headline"></a></h2>
 <p>An RLang project using a pre-built agent might have the following directory structure:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gridworld/
@@ -154,40 +155,40 @@ Effect main:
 </pre></div>
 </div>
 <p>For help on how to write an RLang program, see <a class="reference internal" href="language_reference.html"><span class="doc">RLang Language Reference</span></a>.</p>
-<div class="section" id="using-a-vocabulary-file">
+<section id="using-a-vocabulary-file">
 <h3><a class="toc-backref" href="#id5">Using a Vocabulary File</a><a class="headerlink" href="#using-a-vocabulary-file" title="Permalink to this headline"></a></h3>
 <p>While optional, vocabulary files allow for extremely powerful functionality. A minimal <code class="docutils literal notranslate"><span class="pre">vocabulary.json</span></code> file might
 contain metadata on the MDP that’s being interfaced with like the size of the state and action space:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;gridworld&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;state_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;action_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gridworld&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;state_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;action_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shape&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>A more powerful vocabulary file can be used to reference additional RLang groundings declared inside an auxiliary
 Python file: <a class="footnote-reference brackets" href="#id2" id="id1">*</a></p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;gridworld&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;state_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;action_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gridworld&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;state_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;action_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shape&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <dl class="footnote brackets">
@@ -195,17 +196,17 @@ Python file: <a class="footnote-reference brackets" href="#id2" id="id1">*</a></
 <dd><p>Using more than one Python file for groundings is also possible.</p>
 </dd>
 </dl>
-</div>
-</div>
-<div class="section" id="creating-a-custom-rlang-agent-using-rlangknowledge">
+</section>
+</section>
+<section id="creating-a-custom-rlang-agent-using-rlangknowledge">
 <h2><a class="toc-backref" href="#id6">Creating a Custom RLang Agent using <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a></a><a class="headerlink" href="#creating-a-custom-rlang-agent-using-rlangknowledge" title="Permalink to this headline"></a></h2>
 <p>To get the most out of RLang, users should implement their own RLang-enabled reinforcement learning agents. Doing so
 requires becoming familiar with RLang’s <a class="reference internal" href="rlang.grounding.html#module-rlang.grounding.groundings" title="rlang.grounding.groundings"><code class="xref py py-mod docutils literal notranslate"><span class="pre">groundings</span></code></a> module and most importantly the
 <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object, which holds all RLang groundings parsed from an RLang program. See the source for
 the <a class="reference internal" href="rlang.agents.html#rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent" title="rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangQLearningAgent</span></code></a> for a good example on how to integrate RLang knowledge into an RL agent.</p>
 <p>This section should perhaps discuss the knowledge object in more detail and provide examples.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
