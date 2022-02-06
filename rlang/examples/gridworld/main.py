@@ -16,26 +16,26 @@ def create_mdp():
 
     mdp = GridWorldMDP(width, height, walls=walls, lava_locs=lava_locs, goal_locs=goal_locs, slip_prob=0.0,
                        step_cost=0)
-    return mdp
+    states = list()
+    for w in range(mdp.width):
+        for h in range(mdp.height):
+            states.append((w, h))
+
+    return mdp, states
 
 
 def simple_experiment():
-    mdp = create_mdp()
+    mdp, states = create_mdp()
     agent = QLearningAgent(mdp.get_actions())
     run_agents_on_mdp([agent], mdp)
 
 
 def rlang_experiment():
     # We need to know these MDP and Q Learning parameters
-    mdp = create_mdp()
+    mdp, states = create_mdp()
 
     # Parse RLang program into knowledge object
     knowledge = rlang.parse_file("gridworld.rlang")
-
-    states = list()
-    for w in range(mdp.width):
-        for h in range(mdp.height):
-            states.append((w, h))
 
     # Create a baseline Q-Learning agent
     agent = QLearningAgent(mdp.get_actions())

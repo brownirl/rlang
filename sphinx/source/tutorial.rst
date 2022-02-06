@@ -18,44 +18,63 @@ Installation instructions here once uploaded to pypi.
 
     $ pip install rlang
 
-Gridworld Example
------------------
+Full Example
+------------
 
-In this tutorial, we'll look at an example using a gridworld environment. Here is the directory structure of the
-example:
+In this example, we'll take a look at how RLang can be used to provide domain knowledge about a gridworld environment
+that can be used to speed up the learning of an RL agent. This example is pulled directly from the RLang package:
 
 .. code-block:: text
 
-   gridworld/
+   examples/gridworld/
        main.py           \\ Python code for running the project
        gridworld.rlang   \\ RLang program containing world information
        vocab.json        \\ Holds metadata and can reference additional groundings
 
-Using the simple_rl framework to run experiments where RL agents interact with an MDP,
-we can follow these instructions to apply RLang:
+The project files are included below:
 
-#. Create an MDP
-#. Create an RLang Program that can be parsed into a knowledge object
-#. Create RLang Agents (See :doc:`using_rlang`)
-#. Set experiment parameters (instances, episodes, steps)
-#. Run all experiments
+.. raw:: html
 
-Here is ``main.py``:
+   <details open="true">
+   <summary><code class="docutils literal notranslate"><span class="pre">main.py</span></code></summary>
+   <br />
 
 .. literalinclude:: ../../rlang/examples/gridworld/main.py
    :linenos:
 
-Here is ``gridworld.rlang``:
+.. raw:: html
+
+   </details>
+   <br />
+
+.. raw:: html
+
+   <details open="true">
+   <summary><code class="docutils literal notranslate"><span class="pre">gridworld.rlang</span></code></summary>
+   <br />
 
 .. literalinclude:: ../../rlang/examples/gridworld/gridworld.rlang
    :language: text
    :linenos:
 
-Here is ``vocab.json``:
+.. raw:: html
+
+   </details>
+   <br />
+
+.. raw:: html
+
+   <details open="true">
+   <summary><code class="docutils literal notranslate"><span class="pre">vocab.json</span></code></summary>
+   <br />
 
 .. literalinclude:: ../../rlang/examples/gridworld/vocab.json
    :language: json
 
-It contains the size of the state and action space.
+.. raw:: html
+
+   </details>
+   <br />
+
 
 .. [*] For a full list of groundings, see :doc:`language_reference`.
