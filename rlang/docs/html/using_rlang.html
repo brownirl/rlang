@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="working-with-rlang">
-<h1><a class="toc-backref" href="#id3">Working with RLang</a><a class="headerlink" href="#working-with-rlang" title="Permalink to this headline"></a></h1>
+<h1><a class="toc-backref" href="#id1">Working with RLang</a><a class="headerlink" href="#working-with-rlang" title="Permalink to this headline"></a></h1>
 <p>There are many ways RLang can be integrated into a project. The simplest involves using a pre-existing RLang-enabled
 reinforcement learning agent that utilizes RLang information in a predefined manner. In this scenario, it is up to the
 user to provide a written RLang program which can be parsed using <a class="reference internal" href="rlang.html#rlang.core.parse" title="rlang.core.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a> or <a class="reference internal" href="rlang.html#rlang.core.parse_file" title="rlang.core.parse_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_file()</span></code></a> if the
@@ -90,20 +90,20 @@ Python <a class="reference internal" href="rlang.grounding.html#module-rlang.gro
 <div class="contents topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#working-with-rlang" id="id3">Working with RLang</a></p>
+<li><p><a class="reference internal" href="#working-with-rlang" id="id1">Working with RLang</a></p>
 <ul>
-<li><p><a class="reference internal" href="#using-a-pre-built-rlang-agent" id="id4">Using a Pre-built RLang Agent</a></p>
+<li><p><a class="reference internal" href="#using-a-pre-built-rlang-agent" id="id2">Using a Pre-built RLang Agent</a></p>
 <ul>
-<li><p><a class="reference internal" href="#using-a-vocabulary-file" id="id5">Using a Vocabulary File</a></p></li>
+<li><p><a class="reference internal" href="#using-a-vocabulary-file" id="id3">Using a Vocabulary File</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#creating-a-custom-rlang-agent-using-rlangknowledge" id="id6">Creating a Custom RLang Agent using <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a></a></p></li>
+<li><p><a class="reference internal" href="#creating-a-custom-rlang-agent-using-rlangknowledge" id="id4">Creating a Custom RLang Agent using <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a></a></p></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="using-a-pre-built-rlang-agent">
-<h2><a class="toc-backref" href="#id4">Using a Pre-built RLang Agent</a><a class="headerlink" href="#using-a-pre-built-rlang-agent" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id2">Using a Pre-built RLang Agent</a><a class="headerlink" href="#using-a-pre-built-rlang-agent" title="Permalink to this headline"></a></h2>
 <p>An RLang project using a pre-built agent might have the following directory structure:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gridworld/
     main.py           \\ Python code for running the project
@@ -152,7 +152,7 @@ Effect main:
 </div>
 <p>For help on how to write an RLang program, see <a class="reference internal" href="language_reference.html"><span class="doc">RLang Language Reference</span></a>.</p>
 <div class="section" id="using-a-vocabulary-file">
-<h3><a class="toc-backref" href="#id5">Using a Vocabulary File</a><a class="headerlink" href="#using-a-vocabulary-file" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id3">Using a Vocabulary File</a><a class="headerlink" href="#using-a-vocabulary-file" title="Permalink to this headline"></a></h3>
 <p>While optional, vocabulary files allow for extremely powerful functionality. A minimal <code class="docutils literal notranslate"><span class="pre">vocabulary.json</span></code> file might
 contain metadata on the MDP that’s being interfaced with like the size of the state and action space:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -171,36 +171,154 @@ contain metadata on the MDP that’s being interfaced with like the size of the 
 </pre></div>
 </div>
 <p>A more powerful vocabulary file can be used to reference additional RLang groundings declared inside an auxiliary
-Python file: <a class="footnote-reference brackets" href="#id2" id="id1">*</a></p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;gridworld&quot;</span><span class="p">,</span>
+Python file. This vocabulary file includes two <code class="xref py py-mod docutils literal notranslate"><span class="pre">feature</span></code> groundings (<code class="docutils literal notranslate"><span class="pre">angle_target</span></code> and <code class="docutils literal notranslate"><span class="pre">hover_target</span></code>)
+from an auxiliary module called <code class="docutils literal notranslate"><span class="pre">grounding.py</span></code>:</p>
+<details open="true">
+<summary>Example <code class="docutils literal notranslate"><span class="pre">vocab.json</span></code> with additional groundings</summary>
+<br /><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;lunarlander&quot;</span><span class="p">,</span>
   <span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;state_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
+      <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span>
     <span class="p">},</span>
     <span class="nt">&quot;action_space&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
       <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
     <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;modules&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;grounding&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;examples/lunar_lander/grounding.py&quot;</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;vocabulary&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;angle_target&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;grounding&quot;</span><span class="p">:</span> <span class="s2">&quot;grounding.angle_target&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;hover_target&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;grounding&quot;</span><span class="p">:</span> <span class="s2">&quot;grounding.hover_target&quot;</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">*</a></span></dt>
-<dd><p>Using more than one Python file for groundings is also possible.</p>
-</dd>
-</dl>
+</details>
+<br /><details open="true">
+<summary>An accompanying grounding file <code class="docutils literal notranslate"><span class="pre">grounding.py</span></code></summary>
+<br /><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlang.grounding</span> <span class="kn">import</span> <span class="n">Feature</span>
+
+<span class="k">def</span> <span class="nf">_angle_target</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">angle_targ</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">velocity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0</span>  <span class="c1"># angle should point towards center</span>
+    <span class="k">if</span> <span class="n">angle_targ</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">:</span>
+        <span class="n">angle_targ</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># more than 0.4 radians (22 degrees) is bad</span>
+    <span class="k">if</span> <span class="n">angle_targ</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">:</span>
+        <span class="n">angle_targ</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.4</span>
+    <span class="k">return</span> <span class="n">angle_targ</span>
+
+<span class="k">def</span> <span class="nf">_hover_target</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">hover_targ</span> <span class="o">=</span> <span class="mf">0.55</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span>
+        <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">hover_targ</span>
+
+
+<span class="n">angle_target</span> <span class="o">=</span> <span class="n">Feature</span><span class="p">(</span><span class="n">_angle_target</span><span class="p">)</span>
+<span class="n">hover_target</span> <span class="o">=</span> <span class="n">Feature</span><span class="p">(</span><span class="n">_hover_target</span><span class="p">)</span>
+</pre></div>
+</div>
+</details>
+<br /><p><code class="docutils literal notranslate"><span class="pre">angle_target</span></code> and <code class="docutils literal notranslate"><span class="pre">hover_target</span></code> can now be referenced in an RLang program like any other grounding.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is possible to use more than one Python module to supply additional groundings</p>
+</div>
 </div>
 </div>
 <div class="section" id="creating-a-custom-rlang-agent-using-rlangknowledge">
-<h2><a class="toc-backref" href="#id6">Creating a Custom RLang Agent using <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a></a><a class="headerlink" href="#creating-a-custom-rlang-agent-using-rlangknowledge" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id4">Creating a Custom RLang Agent using <a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a></a><a class="headerlink" href="#creating-a-custom-rlang-agent-using-rlangknowledge" title="Permalink to this headline"></a></h2>
 <p>To get the most out of RLang, users should implement their own RLang-enabled reinforcement learning agents. Doing so
 requires becoming familiar with RLang’s <a class="reference internal" href="rlang.grounding.html#module-rlang.grounding.groundings" title="rlang.grounding.groundings"><code class="xref py py-mod docutils literal notranslate"><span class="pre">groundings</span></code></a> module and most importantly the
-<a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object, which holds all RLang groundings parsed from an RLang program. See the source for
-the <a class="reference internal" href="rlang.agents.html#rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent" title="rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangQLearningAgent</span></code></a> for a good example on how to integrate RLang knowledge into an RL agent.</p>
-<p>This section should perhaps discuss the knowledge object in more detail and provide examples.</p>
+<a class="reference internal" href="rlang.html#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object, which holds all RLang groundings parsed from an RLang program.
+<a class="reference internal" href="rlang.agents.html#rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent" title="rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangQLearningAgent</span></code></a> is a good example on how to integrate RLang knowledge into an RL agent:</p>
+<details open="true">
+<summary><code class="docutils literal notranslate"><span class="pre">RLangQLearningAgentClass.py</span></code></summary>
+<br /><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">simple_rl.agents</span> <span class="kn">import</span> <span class="n">QLearningAgent</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">..grounding.utils.primitives</span> <span class="kn">import</span> <span class="n">State</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="k">class</span> <span class="nc">RLangQLearningAgent</span><span class="p">(</span><span class="n">QLearningAgent</span><span class="p">):</span>
+<span class="linenos"> 7</span>    <span class="sd">&quot;&quot;&quot;Implementation for a Q Learning agent which utilized RLang hints&quot;&quot;&quot;</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">knowledge</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RLang-Q-learning&quot;</span><span class="p">,</span> <span class="n">use_transition</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>
+<span class="linenos">10</span>                 <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">explore</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span> <span class="n">anneal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_q</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="linenos">11</span>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">12</span><span class="sd">        Args:</span>
+<span class="linenos">13</span><span class="sd">            actions (list): Contains strings denoting the actions.</span>
+<span class="linenos">14</span><span class="sd">            name (str): Denotes the name of the agent.</span>
+<span class="linenos">15</span><span class="sd">            alpha (float): Learning rate.</span>
+<span class="linenos">16</span><span class="sd">            gamma (float): Discount factor.</span>
+<span class="linenos">17</span><span class="sd">            epsilon (float): Exploration term.</span>
+<span class="linenos">18</span><span class="sd">            explore (str): One of {softmax, uniform}. Denotes explore policy.</span>
+<span class="linenos">19</span><span class="sd">            custom_q_init (defaultdict{state, defaultdict{action, float}}): a dictionary of dictionaries storing the</span>
+<span class="linenos">20</span><span class="sd">             initial q-values. Can be used for potential shaping (Wiewiora, 2003)</span>
+<span class="linenos">21</span><span class="sd">            default_q (float): the default value to initialize every entry in the q-table with [by default, set to 0.0]</span>
+<span class="linenos">22</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>        <span class="k">def</span> <span class="nf">weighted_reward</span><span class="p">(</span><span class="n">r_func</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
+<span class="linenos">25</span>            <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos">26</span>            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="linenos">27</span>                <span class="n">reward</span> <span class="o">+=</span> <span class="n">r_func</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">State</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">v</span>
+<span class="linenos">28</span>            <span class="k">return</span> <span class="n">reward</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span>        <span class="k">def</span> <span class="nf">weighted_value</span><span class="p">(</span><span class="n">q_func</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
+<span class="linenos">31</span>            <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos">32</span>            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="linenos">33</span>                <span class="n">maxx</span> <span class="o">=</span> <span class="n">q_func</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="linenos">34</span>                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+<span class="linenos">35</span>                    <span class="n">val</span> <span class="o">=</span> <span class="n">q_func</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">a</span><span class="p">]</span>
+<span class="linenos">36</span>                    <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">maxx</span><span class="p">:</span>
+<span class="linenos">37</span>                        <span class="n">maxx</span> <span class="o">=</span> <span class="n">val</span>
+<span class="linenos">38</span>                <span class="n">reward</span> <span class="o">+=</span> <span class="n">maxx</span> <span class="o">*</span> <span class="n">v</span>
+<span class="linenos">39</span>            <span class="k">return</span> <span class="n">reward</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span>        <span class="n">q_func</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">default_q</span><span class="p">))</span>
+<span class="linenos">42</span>        <span class="n">reward_function</span> <span class="o">=</span> <span class="n">knowledge</span><span class="o">.</span><span class="n">reward_function</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span>        <span class="k">if</span> <span class="n">reward_function</span><span class="p">:</span>
+<span class="linenos">45</span>            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+<span class="linenos">46</span>                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
+<span class="linenos">47</span>                    <span class="n">a</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="linenos">48</span>                    <span class="n">q_func</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">reward_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">State</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span>        <span class="n">transition_function</span> <span class="o">=</span> <span class="n">knowledge</span><span class="o">.</span><span class="n">transition_function</span>
+<span class="linenos">51</span>
+<span class="linenos">52</span>        <span class="k">if</span> <span class="n">use_transition</span> <span class="ow">and</span> <span class="n">transition_function</span> <span class="ow">and</span> <span class="n">reward_function</span><span class="p">:</span>
+<span class="linenos">53</span>            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+<span class="linenos">54</span>                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
+<span class="linenos">55</span>                    <span class="n">a</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="linenos">56</span>                    <span class="n">s_primei</span> <span class="o">=</span> <span class="n">transition_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">State</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+<span class="linenos">57</span>                    <span class="k">if</span> <span class="n">s_primei</span><span class="p">:</span>
+<span class="linenos">58</span>                        <span class="c1"># Q learning Update</span>
+<span class="linenos">59</span>                        <span class="n">r_prime</span> <span class="o">=</span> <span class="n">weighted_reward</span><span class="p">(</span><span class="n">reward_function</span><span class="p">,</span> <span class="n">s_primei</span><span class="p">)</span>
+<span class="linenos">60</span>                        <span class="n">v_s_prime</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">q_func</span><span class="p">,</span> <span class="n">s_primei</span><span class="p">)</span>
+<span class="linenos">61</span>                        <span class="n">q_func</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_prime</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">v_s_prime</span><span class="p">)</span>
+<span class="linenos">62</span>
+<span class="linenos">63</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span>
+<span class="linenos">64</span>                         <span class="n">epsilon</span><span class="p">,</span> <span class="n">explore</span><span class="p">,</span> <span class="n">anneal</span><span class="p">,</span> <span class="n">q_func</span><span class="p">,</span> <span class="n">default_q</span><span class="p">)</span>
+</pre></div>
+</div>
+</details>
+<br /><p>This section should perhaps discuss the knowledge object in more detail and provide examples.</p>
 </div>
 </div>
 
