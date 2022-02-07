@@ -62,6 +62,7 @@ autodoc_typehints_format = 'short'
 autodoc_inherit_docstrings = True
 
 # autodoc_default_flags = ['members']
+# autosummary_generate = True
 
 
 # -- Options for HTML output -------------------------------------------------
