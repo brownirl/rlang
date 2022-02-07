@@ -2,7 +2,7 @@ name: update-docs
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - sphinx/**
 env:
