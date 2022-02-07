@@ -84,10 +84,6 @@ html_static_path = ['_static']
 
 html_logo = "RLang_logo.png"
 
-# html_sidebars = {
-#     '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']
-# }
-
 html_theme_options = {
     'logo_only': True,
     'display_version': False,
