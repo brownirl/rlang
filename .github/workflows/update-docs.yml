@@ -24,4 +24,4 @@ jobs:
       - name: Delete old docs from S3
         run: aws s3 rm s3://${{ env.BUCKET_NAME }} --recursive
       - name: Peek at local files
-        run: ls rlang/rlang
+        run: ls rlang/docs

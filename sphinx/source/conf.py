@@ -29,6 +29,7 @@ author = 'Anonymous'
 release = '1.0.0'
 version = 'master'
 
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
