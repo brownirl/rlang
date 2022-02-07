@@ -25,3 +25,5 @@ jobs:
         run: aws s3 rm s3://${{ env.BUCKET_NAME }} --recursive
       - name: Peek at local files
         run: ls rlang/docs
+      - name: Push docs to S3
+        run: aws s3 cp /rlang/docs/html/ s3://${{ env.BUCKET_NAME }}/ --recursive
