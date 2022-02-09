@@ -7,7 +7,11 @@ information about policies, options, transition dynamics, and state factors and 
 package, you can parse RLang programs into algorithm-agnostic Python objects. This page provides a quick tutorial on
 getting set up with RLang and writing an RLang program.
 
-Diagram of RLang and how it fits into Python here. Or rather, how it fits into the agent-environment cycle.
+.. figure:: RLang_AEC.svg
+   :alt: RLange Agent-Environment Diagram
+
+   The RLang pipeline
+
 
 Installing RLang
 ----------------
