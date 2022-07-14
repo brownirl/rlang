@@ -12,3 +12,5 @@ antlr/target
 *__pycache__/
 *.egg-info
 results/
+*policy_pg_*
+*lunar_lander_results/
