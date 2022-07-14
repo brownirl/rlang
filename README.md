@@ -2,12 +2,12 @@
 
 ## Getting Started
 
-> **Requires** Python 3.7
+> **Requires** Python 3.7 and Antlr 4.9.2
 - Create virtual environment (conda or venv)
 - Activate environment and Pip install dependencies 
     ```pip install -r requirements.txt```
-- Clone this [simple_rl](https://github.com/rafarodsa/simple_rl)) fork and pip-install it.
-    ```pip install path/to/simple_rl/.```
+- Clone this [simple_rl](https://github.com/rafarodsa/simple_rl) fork and pip-install it.
+    ```pip install path/to/simple_rl/.``` (if you're developing, install it with the `-e` flag for convenience)
 
 ## Directory structure
 

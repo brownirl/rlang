@@ -1,0 +1,31 @@
+{
+    "domain": "lunarlander",
+    "mdp_metadata": {
+      "state_space": {
+        "size": 8,
+        "dtype": "float"
+      },
+      "action_space": {
+        "shape": 1,
+        "dtype": "int"
+      }
+    },
+    "modules": [
+      {
+        "module_name": "grounding",
+        "file_name": "grounding.py"
+      }
+    ],
+    "vocabulary":
+    {
+          "features": [
+              {   "name": "angle_target",
+                  "grounding": "grounding.angle_target"
+              },
+              {
+                "name": "hover_target",
+                "grounding": "grounding.hover_target"
+              }
+            ]
+    }
+}

@@ -1,1 +1,2 @@
 from .RLangQLearningAgentClass import RLangQLearningAgent
+from .RLangPolicyAgentClass import RLangPolicyAgent
