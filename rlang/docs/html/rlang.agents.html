@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>rlang.agents package &mdash; RLang 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/js/rtd_sphinx_search.min.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -49,6 +51,7 @@
 <li class="toctree-l2"><a class="reference internal" href="rlang.html#module-rlang.knowledge">rlang.knowledge module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="rlang.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">rlang.agents package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-rlang.agents.RLangPolicyAgentClass">rlang.agents.RLangPolicyAgentClass module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-rlang.agents.RLangQLearningAgentClass">rlang.agents.RLangQLearningAgentClass module</a></li>
 </ul>
 </li>
@@ -84,25 +87,65 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="rlang-agents-package">
-<h1><a class="toc-backref" href="#id1">rlang.agents package</a><a class="headerlink" href="#rlang-agents-package" title="Permalink to this headline"></a></h1>
+  <section id="rlang-agents-package">
+<h1><a class="toc-backref" href="#id1">rlang.agents package</a><a class="headerlink" href="#rlang-agents-package" title="Permalink to this heading"></a></h1>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title">Table of Contents</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#rlang-agents-package" id="id1">rlang.agents package</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-rlang.agents.RLangQLearningAgentClass" id="id2">rlang.agents.RLangQLearningAgentClass module</a></p></li>
+<li><p><a class="reference internal" href="#module-rlang.agents.RLangPolicyAgentClass" id="id2">rlang.agents.RLangPolicyAgentClass module</a></p></li>
+<li><p><a class="reference internal" href="#module-rlang.agents.RLangQLearningAgentClass" id="id3">rlang.agents.RLangQLearningAgentClass module</a></p></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="module-rlang.agents.RLangQLearningAgentClass">
-<span id="rlang-agents-rlangqlearningagentclass-module"></span><h2><a class="toc-backref" href="#id2">rlang.agents.RLangQLearningAgentClass module</a><a class="headerlink" href="#module-rlang.agents.RLangQLearningAgentClass" title="Permalink to this headline"></a></h2>
+<section id="module-rlang.agents.RLangPolicyAgentClass">
+<span id="rlang-agents-rlangpolicyagentclass-module"></span><h2><a class="toc-backref" href="#id2">rlang.agents.RLangPolicyAgentClass module</a><a class="headerlink" href="#module-rlang.agents.RLangPolicyAgentClass" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="rlang.agents.RLangPolicyAgentClass.RLangPolicyAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.agents.RLangPolicyAgentClass.</span></span><span class="sig-name descname"><span class="pre">RLangPolicyAgent</span></span><a class="reference internal" href="_modules/rlang/agents/RLangPolicyAgentClass.html#RLangPolicyAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.agents.RLangPolicyAgentClass.RLangPolicyAgent" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Implementation for an agent that uses an RLang policy</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.agents.RLangPolicyAgentClass.RLangPolicyAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang_policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_actions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_normalizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/agents/RLangPolicyAgentClass.html#RLangPolicyAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.agents.RLangPolicyAgentClass.RLangPolicyAgent.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rlang_policy</strong> (<a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Policy" title="rlang.grounding.groundings.Policy"><em>Policy</em></a>) – an RLang policy.</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – Exploration term.</p></li>
+<li><p><strong>n_actions</strong> (<em>int</em>) – Number of actions.</p></li>
+<li><p><strong>obs_normalizer</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.agents.RLangPolicyAgentClass.RLangPolicyAgent.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/agents/RLangPolicyAgentClass.html#RLangPolicyAgent.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.agents.RLangPolicyAgentClass.RLangPolicyAgent.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-rlang.agents.RLangQLearningAgentClass">
+<span id="rlang-agents-rlangqlearningagentclass-module"></span><h2><a class="toc-backref" href="#id3">rlang.agents.RLangQLearningAgentClass module</a><a class="headerlink" href="#module-rlang.agents.RLangQLearningAgentClass" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.agents.RLangQLearningAgentClass.</span></span><span class="sig-name descname"><span class="pre">RLangQLearningAgent</span></span><a class="reference internal" href="_modules/rlang/agents/RLangQLearningAgentClass.html#RLangQLearningAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QLearningAgent</span></code></p>
-<p>Implementation for a Q Learning agent which utilized RLang hints</p>
+<p>Implementation for a Q Learning agent that utilizes RLang hints</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RLang-Q-learning'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anneal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/agents/RLangQLearningAgentClass.html#RLangQLearningAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.agents.RLangQLearningAgentClass.RLangQLearningAgent.__init__" title="Permalink to this definition"></a></dt>
@@ -125,8 +168,8 @@ initial q-values. Can be used for potential shaping (Wiewiora, 2003)</p></li>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

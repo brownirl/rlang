@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting Started &mdash; RLang 1.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/js/rtd_sphinx_search.min.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -75,24 +77,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
 <p>RLang is a Domain-Specific Language for communicating domain knowledge to an RL agent. Using RLang, you can specify
 information about policies, options, transition dynamics, and state factors and features. <a class="footnote-reference brackets" href="#id2" id="id1">*</a> Using the RLang Python
 package, you can parse RLang programs into algorithm-agnostic Python objects. This page provides a quick tutorial on
 getting set up with RLang and writing an RLang program.</p>
-<div class="figure align-default" id="id3">
-<img alt="RLange Agent-Environment Diagram" src="_images/RLang_AEC.svg" /><p class="caption"><span class="caption-text">The RLang pipeline</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
-</div>
-<div class="section" id="installing-rlang">
-<h2>Installing RLang<a class="headerlink" href="#installing-rlang" title="Permalink to this headline"></a></h2>
+<figure class="align-default" id="id3">
+<img alt="RLange Agent-Environment Diagram" src="_images/RLang_AEC.svg" /><figcaption>
+<p><span class="caption-text">The RLang pipeline</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="installing-rlang">
+<h2>Installing RLang<a class="headerlink" href="#installing-rlang" title="Permalink to this heading"></a></h2>
 <p>Installation instructions here once uploaded to pypi.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install rlang
 </pre></div>
 </div>
-</div>
-<div class="section" id="full-example">
-<h2>Full Example<a class="headerlink" href="#full-example" title="Permalink to this headline"></a></h2>
+</section>
+<section id="full-example">
+<h2>Full Example<a class="headerlink" href="#full-example" title="Permalink to this heading"></a></h2>
 <p>In this example, we’ll take a look at how RLang can be used to provide domain knowledge about a gridworld environment
 that can be used to speed up the learning of an RL agent. This example is pulled directly from the RLang package:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>examples/gridworld/
@@ -228,19 +232,19 @@ that can be used to speed up the learning of an RL agent. This example is pulled
 </details>
 <br /><details open="true">
 <summary><code class="docutils literal notranslate"><span class="pre">vocab.json</span></code></summary>
-<br /><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;gridworld&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;state_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;action_space&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nt">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<br /><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gridworld&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;state_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;action_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shape&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 </details>
@@ -249,8 +253,8 @@ that can be used to speed up the learning of an RL agent. This example is pulled
 <dd><p>For a full list of groundings, see <a class="reference internal" href="language_reference.html"><span class="doc">RLang Language Reference</span></a>.</p>
 </dd>
 </dl>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

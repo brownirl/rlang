@@ -6,7 +6,7 @@ from ..grounding.utils.primitives import State
 
 
 class RLangQLearningAgent(QLearningAgent):
-    """Implementation for a Q Learning agent which utilized RLang hints"""
+    """Implementation for a Q Learning agent that utilizes RLang hints"""
 
     def __init__(self, actions, states, knowledge, name="RLang-Q-learning", use_transition=False, alpha=0.1, gamma=0.99,
                  epsilon=0.1, explore="uniform", anneal=False, default_q=0):

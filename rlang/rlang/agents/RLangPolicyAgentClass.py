@@ -3,7 +3,16 @@ from torch import nn
 
 
 class RLangPolicyAgent(nn.Module):
+    """Implementation for an agent that uses an RLang policy"""
+
     def __init__(self, rlang_policy, epsilon=1e-8, n_actions=2, obs_normalizer=None):
+        """
+        Args:
+            rlang_policy (Policy): an RLang policy.
+            epsilon (float): Exploration term.
+            n_actions (int): Number of actions.
+            obs_normalizer:
+        """
         self.rlang_policy = rlang_policy
         self.eps = epsilon
         self.n_actions = n_actions
