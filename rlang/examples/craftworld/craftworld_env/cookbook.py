@@ -2,17 +2,18 @@
     Implementation taken from https://github.com/jacobandreas/psketch
 '''
 
-from envs.craftworld.misc.util import Struct, Index
+from misc.util import Struct, Index
 
 import copy
 import numpy as np
 import yaml
 
+
 class Cookbook(object):
     def __init__(self, recipes_path):
         with open(recipes_path) as recipes_f:
             recipes = yaml.load(recipes_f)
-        #self.environment = set(recipes["environment"])
+        # self.environment = set(recipes["environment"])
         self.index = Index()
         self.environment = set(self.index.index(e) for e in recipes["environment"])
         self.primitives = set(self.index.index(p) for p in recipes["primitives"])

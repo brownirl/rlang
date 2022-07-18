@@ -2,7 +2,7 @@
     Implementation taken from https://github.com/jacobandreas/psketch
 '''
 
-from envs.craftworld.misc.util import Struct, Index
+from misc.util import Struct, Index
 
 import copy
 import numpy as np

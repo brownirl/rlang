@@ -1,8 +1,5 @@
 '''
     simple_rl Wrapper for Craftworld (https://github.com/jacobandreas/psketch)
-
-    author: Rafael Rodriguez-Sanchez
-    date: February 2021
 '''
 import numpy as np
 from collections import namedtuple
@@ -10,15 +7,17 @@ from collections import namedtuple
 from simple_rl.mdp.StateClass import State
 from simple_rl.mdp.MDPClass import MDP
 
-from envs.craftworld.craft import CraftScenario, CraftWorld, UP, DOWN, LEFT, RIGHT, USE, HEIGHT, WIDTH
+from craft import CraftScenario, CraftWorld, UP, DOWN, LEFT, RIGHT, USE, HEIGHT, WIDTH
 
 config = namedtuple("config", ["recipes"])
 Transition = namedtuple("Transition", ["s1", "m1", "a", "s2", "m2", "r"])
 ModelState = namedtuple("ModelState", ["action", "arg", "remaining", "task", "step"])
 
+
 def CraftworldStateFactory(self, scenario, grid, pos, dir, inventory):
-    s = CraftState(scenario, grid, pos, dir, inventory)
+    s = CraftScenario(scenario, grid, pos, dir, inventory)
     return CraftworldState(s)
+
 
 class CraftworldState(State):
 
@@ -29,7 +28,7 @@ class CraftworldState(State):
 
     def features(self):
         return self.state.features()
-    
+
     def get_craftstate(self):
         return self.state
 
@@ -40,26 +39,27 @@ class CraftworldState(State):
 
     def __eq__(self, other):
         if other is not None:
-            return  (other.data == self.data).all()
+            return (other.data == self.data).all()
         return False
 
+
 class Craftworld(MDP):
-    ACTIONS = {"down": DOWN, "up": UP, "left" : LEFT, "right": RIGHT, "use": USE}
+    ACTIONS = {"down": DOWN, "up": UP, "left": LEFT, "right": RIGHT, "use": USE}
+
     def __init__(self, goal, path_to_recipes='recipes.yaml', gamma=0.99, random_seed=0):
         self.random_seed = random_seed
         np.random.seed(random_seed)
-        
+
         self.goal = goal
         self.config = config(path_to_recipes)
         self.craft_world = CraftWorld(self.config)
         self.craft_scenario = self.craft_world.sample_scenario_with_goal(self.craft_world.cookbook.index[goal])
         self.transitions = []
-        MDP.__init__(self, actions=list(Craftworld.ACTIONS.keys()), 
-                           transition_func=self._transition_func, 
-                           reward_func=self._reward_func, 
-                           init_state=CraftworldState(self.craft_scenario.init()), 
-                           gamma=gamma)
-
+        MDP.__init__(self, actions=list(Craftworld.ACTIONS.keys()),
+                     transition_func=self._transition_func,
+                     reward_func=self._reward_func,
+                     init_state=CraftworldState(self.craft_scenario.init()),
+                     gamma=gamma)
 
     def get_grid_params(self):
         return (WIDTH, HEIGHT, self.craft_world.cookbook.n_kinds)
@@ -89,13 +89,13 @@ class Craftworld(MDP):
         t = Transition(curr_s, m, action, next_state.get_craftstate(), m, r)
         self.transitions.append(t)
         return r, next_state
-    
+
     def get_transitions(self):
         return self.transitions
 
     def reset(self):
         super().reset()
         self.transitions = []
-    
+
     def vis(self):
         self.craft_world.visualize(self.transitions)

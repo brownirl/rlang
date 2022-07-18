@@ -1,13 +1,13 @@
 '''
     Implementation taken from https://github.com/jacobandreas/psketch
 '''
-from envs.craftworld.cookbook import Cookbook
-from envs.craftworld.misc import array
+from cookbook import Cookbook
+# from misc import array
 
 import curses
 import logging
 import numpy as np
-from skimage.measure import block_reduce
+# from skimage.measure import block_reduce
 import time
 import copy
 
@@ -26,6 +26,7 @@ RIGHT = 3
 USE = 4
 N_ACTIONS = USE + 1
 
+
 def random_free(grid, random):
     pos = None
     while pos is None:
@@ -35,34 +36,36 @@ def random_free(grid, random):
         pos = (x, y)
     return pos
 
+
 def neighbors(pos, dir=None):
     x, y = pos
     neighbors = []
     if x > 0 and (dir is None or dir == LEFT):
-        neighbors.append((x-1, y))
+        neighbors.append((x - 1, y))
     if y > 0 and (dir is None or dir == DOWN):
-        neighbors.append((x, y-1))
+        neighbors.append((x, y - 1))
     if x < WIDTH - 1 and (dir is None or dir == RIGHT):
-        neighbors.append((x+1, y))
+        neighbors.append((x + 1, y))
     if y < HEIGHT - 1 and (dir is None or dir == UP):
-        neighbors.append((x, y+1))
+        neighbors.append((x, y + 1))
     return neighbors
+
 
 class CraftWorld(object):
     def __init__(self, config):
         self.cookbook = Cookbook(config.recipes)
         self.n_features = \
-                2 * WINDOW_WIDTH * WINDOW_HEIGHT * self.cookbook.n_kinds + \
-                self.cookbook.n_kinds + \
-                4 + \
-                1
+            2 * WINDOW_WIDTH * WINDOW_HEIGHT * self.cookbook.n_kinds + \
+            self.cookbook.n_kinds + \
+            4 + \
+            1
         self.n_actions = N_ACTIONS
 
         self.non_grabbable_indices = self.cookbook.environment
         self.grabbable_indices = [i for i in range(self.cookbook.n_kinds)
-                if i not in self.non_grabbable_indices]
+                                  if i not in self.non_grabbable_indices]
         self.workshop_indices = [self.cookbook.index["workshop%d" % i]
-                for i in range(N_WORKSHOPS)]
+                                 for i in range(N_WORKSHOPS)]
         self.water_index = self.cookbook.index["water"]
         self.stone_index = self.cookbook.index["stone"]
 
@@ -74,7 +77,7 @@ class CraftWorld(object):
             make_island = goal == self.cookbook.index["gold"]
             make_cave = goal == self.cookbook.index["gem"]
             return self.sample_scenario({goal: 1}, make_island=make_island,
-                    make_cave=make_cave)
+                                        make_cave=make_cave)
         elif goal in self.cookbook.recipes:
             ingredients = self.cookbook.primitives_for(goal)
             return self.sample_scenario(ingredients)
@@ -86,22 +89,22 @@ class CraftWorld(object):
         grid = np.zeros((WIDTH, HEIGHT, self.cookbook.n_kinds))
         i_bd = self.cookbook.index["boundary"]
         grid[0, :, i_bd] = 1
-        grid[WIDTH-1:, :, i_bd] = 1
+        grid[WIDTH - 1:, :, i_bd] = 1
         grid[:, 0, i_bd] = 1
-        grid[:, HEIGHT-1:, i_bd] = 1
+        grid[:, HEIGHT - 1:, i_bd] = 1
 
         # treasure
         if make_island or make_cave:
-            (gx, gy) = (1 + np.random.randint(WIDTH-2), 1)
+            (gx, gy) = (1 + np.random.randint(WIDTH - 2), 1)
             treasure_index = \
-                    self.cookbook.index["gold"] if make_island else self.cookbook.index["gem"]
+                self.cookbook.index["gold"] if make_island else self.cookbook.index["gem"]
             wall_index = \
-                    self.water_index if make_island else self.stone_index
+                self.water_index if make_island else self.stone_index
             grid[gx, gy, treasure_index] = 1
             for i in range(-1, 2):
                 for j in range(-1, 2):
-                    if not grid[gx+i, gy+j, :].any():
-                        grid[gx+i, gy+j, wall_index] = 1
+                    if not grid[gx + i, gy + j, :].any():
+                        grid[gx + i, gy + j, wall_index] = 1
 
         # ingredients
         for primitive in self.cookbook.primitives:
@@ -127,7 +130,7 @@ class CraftWorld(object):
             curses.start_color()
             for i in range(1, 8):
                 curses.init_pair(i, i, curses.COLOR_BLACK)
-                curses.init_pair(i+10, curses.COLOR_BLACK, i)
+                curses.init_pair(i + 10, curses.COLOR_BLACK, i)
             states = [transitions[0].s1] + [t.s2 for t in transitions]
             mstates = [transitions[0].m1] + [t.m2 for t in transitions]
             for state, mstate in zip(states, mstates):
@@ -160,11 +163,13 @@ class CraftWorld(object):
                             ch2 = name[-1]
                             color = curses.color_pair(10 + thing)
 
-                        win.addch(HEIGHT-y, x*2, ch1, color)
-                        win.addch(HEIGHT-y, x*2+1, ch2, color)
+                        win.addch(HEIGHT - y, x * 2, ch1, color)
+                        win.addch(HEIGHT - y, x * 2 + 1, ch2, color)
                 win.refresh()
                 time.sleep(1)
+
         curses.wrapper(_visualize)
+
 
 class CraftScenario(object):
     def __init__(self, grid, init_pos, world):
@@ -182,6 +187,7 @@ class CraftScenario(object):
         random = np.random.RandomState(0)
         self.init_pos = random_free(self.init_grid, random)
         return self.init()
+
 
 class CraftState(object):
     def __init__(self, scenario, grid, pos, dir, inventory, prev_inventory):
@@ -236,13 +242,14 @@ class CraftState(object):
             dir_features = np.zeros(4)
             dir_features[self.dir] = 1
             pos = np.zeros((WIDTH, HEIGHT))
-            x, y = self.pos 
-            for nx, ny in neighbors(self.pos, self.dir) :
+            x, y = self.pos
+            for nx, ny in neighbors(self.pos, self.dir):
                 pos[nx, ny] = 1
-            
+
             grid = np.concatenate((self.grid, pos[..., np.newaxis]), axis=-1)
-            features = np.concatenate((grid.transpose((2,0,1)).ravel(), 
-                                       self.inventory, self.inventory-self.prev_inventory, np.array(self.pos), dir_features))
+            features = np.concatenate((grid.transpose((2, 0, 1)).ravel(),
+                                       self.inventory, self.inventory - self.prev_inventory, np.array(self.pos),
+                                       dir_features))
             self._cached_features = features
 
         return self._cached_features
@@ -288,12 +295,12 @@ class CraftState(object):
                 assert here.sum() == 1
                 thing = here.argmax()
 
-                if not(thing in self.world.grabbable_indices or \
+                if not (thing in self.world.grabbable_indices or \
                         thing in self.world.workshop_indices or \
                         thing == self.world.water_index or \
                         thing == self.world.stone_index):
                     continue
-                
+
                 n_inventory = self.inventory.copy()
                 n_grid = self.grid.copy()
 
@@ -342,4 +349,4 @@ class CraftState(object):
 
     def next_to(self, i_kind):
         x, y = self.pos
-        return self.grid[x-1:x+2, y-1:y+2, i_kind].any()
+        return self.grid[x - 1:x + 2, y - 1:y + 2, i_kind].any()

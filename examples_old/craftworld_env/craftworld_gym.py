@@ -1,8 +1,8 @@
 import gym
 import gym.spaces as spaces
-import envs.craftworld.craft as craft
+import craft as craft
 from collections import namedtuple
-import torch
+# import torch
 
 PATH_TO_RECIPES = "./envs/craftworld/recipes.yaml"
 
