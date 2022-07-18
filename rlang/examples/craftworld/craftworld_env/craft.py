@@ -1,7 +1,7 @@
 '''
     Implementation taken from https://github.com/jacobandreas/psketch
 '''
-from cookbook import Cookbook
+from .cookbook import Cookbook
 # from misc import array
 
 import curses

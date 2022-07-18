@@ -1,1 +1,1 @@
-from CraftworldMDP import Craftworld
+from .CraftworldMDP import Craftworld

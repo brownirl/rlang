@@ -7,7 +7,7 @@ from collections import namedtuple
 from simple_rl.mdp.StateClass import State
 from simple_rl.mdp.MDPClass import MDP
 
-from craft import CraftScenario, CraftWorld, UP, DOWN, LEFT, RIGHT, USE, HEIGHT, WIDTH
+from .craft import CraftScenario, CraftWorld, UP, DOWN, LEFT, RIGHT, USE, HEIGHT, WIDTH
 
 config = namedtuple("config", ["recipes"])
 Transition = namedtuple("Transition", ["s1", "m1", "a", "s2", "m2", "r"])
