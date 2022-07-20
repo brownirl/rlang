@@ -1,14 +1,14 @@
 import sys, os
-from grounding.groundings.state.factor import Factor
-from grounding.groundings.state.predicate import Predicate
+# from grounding.groundings.state.factor import Factor
+# from grounding.groundings.state.predicate import Predicate
 
-sys.path.append(os.path.abspath("./"))
+# sys.path.append(os.path.abspath("./"))
 
 import yaml
 import numpy as np
 import torch
-from lmdp.grounding import *
-from envs.craftworld.cookbook import Cookbook
+# from lmdp.grounding import *
+from .craftworld.cookbook import Cookbook
 import sys, os
 
 sys.path.append(os.path.abspath("./"))

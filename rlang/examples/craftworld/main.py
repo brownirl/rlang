@@ -1,4 +1,4 @@
-from craftworld_env import Craftworld
+from craftworld_env import Craftworld, Cookbook
 from simple_rl.run_experiments import run_agents_on_mdp
 from simple_rl.agents import QLearningAgent
 
@@ -19,5 +19,11 @@ def baseline_test():
     run_agents_on_mdp([agent], mdp, steps=400, episodes=100)
 
 
+def dev():
+    cookbook = Cookbook('craftworld_env/recipes.yaml')
+    knowledge = rlang.parse_file('craftworld.rlang')
+    print(knowledge)
+
+
 if __name__ == '__main__':
-    baseline_test()
+    dev()

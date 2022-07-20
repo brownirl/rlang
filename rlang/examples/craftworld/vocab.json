@@ -1,0 +1,44 @@
+{
+  "domain": "craftworld",
+  "mdp_metadata": {
+    "state_space": {
+      "size": 2,
+      "dtype": "int"
+    },
+    "action_space": {
+      "shape": 2248,
+      "dtype": "int"
+    },
+    "modules": [
+      {
+        "module_name": "grounding",
+        "file_name": "grounding.py"
+      }
+    ],
+    "vocabulary":
+    {
+      "factors": [
+        {
+          "name": "grid_map",
+          "grounding": "grounding.grid_map"
+        },
+        {
+          "name": "inventory",
+          "grounding": "grounding.inventory"
+        },
+        {
+          "name": "delta_inventory",
+          "grounding": "grounding.delta_inventory"
+        },
+        {
+          "name": "position",
+          "grounding": "grounding.position"
+        },
+        {
+          "name": "direction",
+          "grounding": "grounding.direction"
+        }
+      ]
+    }
+  }
+}
