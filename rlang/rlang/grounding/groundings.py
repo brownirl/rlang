@@ -118,6 +118,7 @@ class GroundingFunction(Grounding):
 
         return Proposition(function=contains, domain=self.domain + item.domain)
 
+    # TODO: Contains should really only be used in sets. We should make a formal distinction between lists and sets in RLang
     # def contains(self, item):
     #     # TODO: ALERT: This is not actually being used right now. Hopefully we can discard it eventually
     #     # Cannot override __contains__ and return a non-boolean
@@ -168,10 +169,6 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs),
                                domain=self.domain + other.domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: [OLD] We must know the domain of Callable to properly track the domain
-        #     return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
@@ -180,10 +177,6 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
                                domain=self.domain + other.domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: [OLD] We must know the domain of Callable to properly track the domain
-        #     return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
@@ -192,10 +185,6 @@ class GroundingFunction(Grounding):
         if isinstance(other, GroundingFunction):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs),
                                domain=self.domain + other.domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: We must know the domain of Callable to properly track the domain
-        #     return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '!=' a {type(self)} and a {type(other)}")
@@ -208,10 +197,6 @@ class GroundingFunction(Grounding):
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs),
                                domain=new_domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: We must know the domain of Callable to properly track the domain
-        #     return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '*' a {type(self)} and a {type(other)}")
@@ -227,19 +212,11 @@ class GroundingFunction(Grounding):
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs),
                                domain=new_domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: We must know the domain of Callable to properly track the domain
-        #     return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '/' a {type(self)} and a {type(other)}")
 
     def __rtruediv__(self, other):
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: We must know the domain of Callable to properly track the domain
-        #     return Feature(function=lambda *args, **kwargs: other(*args, **kwargs) / self(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: other / self(*args, **kwargs), domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '/' a {type(other)} and a {type(self)}")
@@ -252,10 +229,6 @@ class GroundingFunction(Grounding):
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs),
                                domain=new_domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: We must know the domain of Callable to properly track the domain
-        #     return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '-' a {type(self)} and a {type(other)}")
@@ -273,10 +246,6 @@ class GroundingFunction(Grounding):
             else:
                 return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs),
                                domain=self.domain + other.domain)
-        # if isinstance(other, Callable):
-        #     # TODO: The new listener will never run this code
-        #     # TODO: We must know the domain of Callable to properly track the domain
-        #     return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
             return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other, domain=self.domain)
         raise RLangGroundingError(message=f"Cannot '+' a {type(self)} and a {type(other)}")

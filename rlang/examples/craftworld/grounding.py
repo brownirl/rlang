@@ -109,5 +109,15 @@ def go_to_cell(state, x, y):
             return up() if d[1] < 0 else down()
 
 
+# workbenches, water, boundary, stone
+environment_elements = {}
+for p in recipes['environment']:
+    environment_elements.update({"at_" + p: Proposition(lambda state: elements_to_use(state)[objects_to_idx[p]] > 0, name=f"at_{p}")})
+    print(p)
+
+environment_propositions = list(environment_elements.keys())
+locals().update(environment_elements)
+
+
 # TODO: Need to make options for building each item in the cookbook
 # go_to_cell until the option condition is satisfied for a specific recipe, then execute option policy until termination
