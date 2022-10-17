@@ -1,6 +1,8 @@
 import unittest
 import numpy as np
-from rlang.src.grounding import Factor, Feature, State
+
+from .context import rlang
+from rlang import Factor, Feature, State
 
 
 class FactorTest(unittest.TestCase):
@@ -13,7 +15,7 @@ class FactorTest(unittest.TestCase):
 
         self.assertTrue(np.array_equal(z(state=s1), State([4, 6, 7])))
         self.assertTrue(np.array_equal(x(state=s1), State(4)))
-    
+
     def test_arithmetic_op(self):
         state1 = State(np.array([2, 3]))
 
@@ -30,7 +32,7 @@ class FactorTest(unittest.TestCase):
         self.assertEqual(x(state=state1), 2)
         self.assertEqual(x_1(state=state1), 3)
         self.assertEqual(x_2(state=state1), 10)
-        self.assertEqual(x_3(state=state1), 3/5)
+        self.assertEqual(x_3(state=state1), 3 / 5)
         self.assertEqual(x_4(state=state1), 0)
         self.assertEqual(pos(state=state1), (2, 3))
         self.assertRaises(IndexError, lambda: z(state=state1))
@@ -62,7 +64,7 @@ class FactorTest(unittest.TestCase):
     def test_comparison(self):
         state1 = State(np.array([2, 3]))
         state2 = State(np.array([2, 2]))
-        
+
         x = Factor(0, "x")
         y = Factor(1, "y")
 
@@ -82,21 +84,19 @@ class FactorTest(unittest.TestCase):
         assert (x(state=state1) < a(state=state1)) == [[False, True]]
         assert (a(state=state1) > x(state=state1)) == [[False, True]]
 
-        
-    def test_contains(self):
-        x = Factor([0], "x")
-        y = Factor([0, 1], "y")
-        z = Factor([0, 2, 3], "z")
-
-        s1 = State([4, 5, 6, 7])
-        pred1 = y.contains(x)
-        pred2 = z.contains(y)
-
-        #TODO: unexpected behavior
-        print(x(state=s1))
-        print(y(state=s1))
-        print(pred1(state=s1))
-        
+    # def test_contains(self):
+    #     x = Factor([0], "x")
+    #     y = Factor([0, 1], "y")
+    #     z = Factor([0, 2, 3], "z")
+    #
+    #     s1 = State([4, 5, 6, 7])
+    #     pred1 = y.contains(x)
+    #     pred2 = z.contains(y)
+    #
+    #     # TODO: unexpected behavior
+    #     print(x(state=s1))
+    #     print(y(state=s1))
+    #     print(pred1(state=s1))
 
     def test_getitem(self):
         pos = Factor([0, 1], "pos")
@@ -110,7 +110,6 @@ class FactorTest(unittest.TestCase):
         # self.assertEqual(item(state=s1), 5)
         # print(item2(state=s1))
         # self.assertEqual(item2(state=s1), [4, 5, 6, 7])
-
 
 
 if __name__ == '__main__':
