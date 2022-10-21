@@ -52,6 +52,7 @@ FLOAT: 'float';
 STR: 'str';
 LIST: 'list';
 SET: 'set';
+BOOL: 'boolean';
 
 S_PRIME: S PRIME;
 S: 'S';

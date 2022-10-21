@@ -3,13 +3,13 @@ import unittest
 import numpy as np
 
 from .context import rlang
-from rlang import State, Action
+from rlang import VectorState, Action
 
 
 class ListenerTests(unittest.TestCase):
 
     def test_Factor(self):
-        state = State(np.array([4, 5, 6, 7, 8]))
+        state = VectorState(np.array([4, 5, 6, 7, 8]))
 
         position_parsed = rlang.parse("Factor position := S[0]")['position']
         position = rlang.Factor(0, "position")
@@ -27,7 +27,7 @@ class ListenerTests(unittest.TestCase):
         position = rlang.Factor([0, 3, 1], "position")
         assert position(state=state) == position_parsed(state=state)
 
-        state2 = State(np.array([[0, 1], [2, 3]]))
+        state2 = VectorState(np.array([[0, 1], [2, 3]]))
         position_parsed = rlang.parse("Factor position := S[0]")['position']
         position = rlang.Factor([0], "position")
         assert (position_parsed(state=state2) == position(state=state2)).all()
@@ -37,7 +37,7 @@ class ListenerTests(unittest.TestCase):
         assert (position_parsed(state=state) == position(state=state)).all()
 
     def test_Feature(self):
-        state = State(np.array([4, 5, 6, 7, 8]))
+        state = VectorState(np.array([4, 5, 6, 7, 8]))
 
         x_parsed = rlang.parse("Feature x := S[0, 1]")['x']
         x = rlang.Feature.from_Factor(rlang.Factor([0, 1]), "x")
@@ -118,8 +118,8 @@ class ListenerTests(unittest.TestCase):
 
     def test_Proposition(self):
         # TODO: Re-write these using new Primitive
-        state = State(np.array([4, 5, 6, 7, 8]))
-        state2 = State(np.array([1, 4, 6, 7, 8]))
+        state = VectorState(np.array([4, 5, 6, 7, 8]))
+        state2 = VectorState(np.array([1, 4, 6, 7, 8]))
 
         hi_parsed = \
             rlang.parse(
@@ -160,19 +160,19 @@ class ListenerTests(unittest.TestCase):
         # x_parsed = rlang.parse("Proposition x := [0, 1] in [[0, 1], [1, 1], [2, 3]]", metadata)['x']
         # assert x_parsed(state=state) == [[True]]
         #
-        # state2 = State(np.array([[0, 1], [5, 6]]))
+        # state2 = VectorState(np.array([[0, 1], [5, 6]]))
         # x_parsed = rlang.parse("Factor h := S[0, 1]\nProposition x := h in [[0, 1], [2, 3]]", metadata)['x']
 
         # # TODO: fix this
         # # QUESTION: why is this true because isn't [5, 6] not in the array
         # assert x_parsed(state=state2) == [[True]]
         #
-        # state2 = State(np.array([[0, 1], [5, 6]]))
+        # state2 = VectorState(np.array([[0, 1], [5, 6]]))
         # x_parsed = rlang.parse("Proposition x := S[0] == [[0, 1]]", metadata)['x']
         # assert (x_parsed(state=state2) == [[True]])
 
         # test_parsed = rlang.parse("Feature f := S[0, 1] * 3\nProposition test := f == [3, 6]", metadata)["test"]
-        # state3 = State(np.array([[1, 2], [1, 1]]))
+        # state3 = VectorState(np.array([[1, 2], [1, 1]]))
         # assert ((test_parsed(state=state3)) == [[True], [False]]).all()
 
         # QUESTION: just to confirm, we cannot compare between instances of PrimitiveGroundings
@@ -197,13 +197,13 @@ class ListenerTests(unittest.TestCase):
         assert up() == up_parsed()
 
         # TODO: test action as a batched primitive in lmdp tests
-        # state2 = State(np.array([[0, 1], [5, 6]]))
+        # state2 = VectorState(np.array([[0, 1], [5, 6]]))
         # down_parsed = rlang.parse("Action down := ", metadata)['down']
         # print(down_parsed(state=state2))
 
     def test_Policy(self):
-        s = State([0, 1, 2, 3, 4])
-        s2 = State([1, 1, 2, 3, 4])
+        s = VectorState([0, 1, 2, 3, 4])
+        s2 = VectorState([1, 1, 2, 3, 4])
 
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/policy.rlang")
 
@@ -246,11 +246,11 @@ class ListenerTests(unittest.TestCase):
         assert missing_conditional(state=s) == {}
 
     def test_Option(self):
-        s = State([0, 1, 2, 3, 4])
-        s2 = State([1, 2, 2, 3, 4])
-        s3 = State([2, 1, 2, 3, 4])
-        s4 = State([2, 3, 2, 3, 4])
-        s5 = State([0, 0, 2, 3, 4])
+        s = VectorState([0, 1, 2, 3, 4])
+        s2 = VectorState([1, 2, 2, 3, 4])
+        s3 = VectorState([2, 1, 2, 3, 4])
+        s4 = VectorState([2, 3, 2, 3, 4])
+        s5 = VectorState([0, 0, 2, 3, 4])
 
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/option.rlang")
 
@@ -275,9 +275,9 @@ class ListenerTests(unittest.TestCase):
         assert all_in_one(state=s2) == rlang.OptionTermination()
 
     def test_Effect(self):
-        s = State([0, 1, 2, 3, 4])
-        s2 = State([3, 2, 2, 3, 4])
-        s3 = State([5, 2, 2, 3, 4])
+        s = VectorState([0, 1, 2, 3, 4])
+        s2 = VectorState([3, 2, 2, 3, 4])
+        s3 = VectorState([5, 2, 2, 3, 4])
 
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/effect.rlang")
 
@@ -366,6 +366,9 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s) == {s * 2: 1.0}
         assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
+
+    def testClassDef(self):
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
 
 
 if __name__ == '__main__':
