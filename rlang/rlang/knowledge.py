@@ -31,6 +31,7 @@ class RLangKnowledge(MutableMapping):
         self.transition_function = None
         """A :py:class:`.TransitionFunction` object"""
         self.proto_predictions = list()
+        self.mdp_object_classes = dict()
         self.mdp_metadata = None
 
     def predictions(self, *args, **kwargs) -> Dict[Grounding, Any]:

@@ -3,6 +3,7 @@ from functools import reduce
 import json
 
 from ..grounding.groundings import *
+from ..grounding.utils.primitives import *
 
 from .utils.language_exceptions import AlreadyBoundError, UnknownVariableError, RLangSemanticError
 from .utils.semantic_schemas import conditional_policy_function, conditional_reward_function, \
@@ -23,6 +24,7 @@ class RLangListener(RLangParserListener):
 
         self.vocab_fnames = []
         self.grounded_vars = {}
+        self.grounded_classes = {}
         self.rlang_knowledge = prior_knowledge
 
     # This function adds the lmdp objects in the vocabulary files to self.grounded_vars
@@ -34,6 +36,8 @@ class RLangListener(RLangParserListener):
                 # I'm not sure if this is best practice, maybe I should make VocabularyAssembler a util function
                 voc_assembler = VocabularyAssembler(vocab)
                 self.grounded_vars.update(voc_assembler.lmdp_objects)
+                # TODO: Augment voc_assembler to get classes
+                # self.grounded_classes.update(voc_assembler.something)
 
         for fname in self.vocab_fnames:
             parseVocabFile(fname)
@@ -63,6 +67,19 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.reward_function = variable.reward_function
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
+
+    def retrieveOOMDPClass(self, class_name):
+        if class_name in self.grounded_classes.keys():
+            return self.grounded_classes[class_name]
+        elif class_name in self.rlang_knowledge.mdp_object_classes.keys():
+            return self.rlang_knowledge.mdp_object_classes[class_name]
+        else:
+            raise UnknownVariableError(class_name)
+
+    def addOOMDPClass(self, class_name, class_):
+        if class_name in self.rlang_knowledge.mdp_object_classes.keys() or class_name in self.grounded_classes.keys():
+            raise AlreadyBoundError(class_name)
+        self.rlang_knowledge.mdp_object_classes.update({class_name: class_})
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -135,21 +152,21 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
-        # TODO
-        pass
+        self.addOOMDPClass(ctx.IDENTIFIER().getText(),
+                           type(ctx.IDENTIFIER().getText(), (MDPObject,), ctx.attribute_definition_collection().value))
 
     def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
         attributes = {}
         for item in ctx.definitions:
+            item = item.value
             if item[0] in attributes.keys():
-                # TODO: what's the right exception here?
-                raise Exception
+                raise RLangSemanticError("Attributes must have unique names for a given Class")
             else:
                 attributes.update({item[0]: item[1]})
         ctx.value = attributes
 
     def exitAttribute_definition(self, ctx: RLangParser.Attribute_definitionContext):
-        ctx.value = (ctx.IDENTIFIER(), ctx.type_def().value)
+        ctx.value = (ctx.IDENTIFIER().getText(), ctx.type_def().value)
 
     # ============================= Option =============================
 
@@ -634,6 +651,8 @@ class RLangListener(RLangParserListener):
             ctx.value = str
         elif ctx.BOOL() is not None:
             ctx.value = bool
+        elif ctx.IDENTIFIER() is not None:
+            ctx.value = self.retrieveOOMDPClass(ctx.IDENTIFIER().getText())
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())

@@ -369,6 +369,8 @@ class ListenerTests(unittest.TestCase):
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
+        print(knowledge.mdp_object_classes)
+        print(knowledge.mdp_object_classes['Book'].__dict__)
 
 
 if __name__ == '__main__':

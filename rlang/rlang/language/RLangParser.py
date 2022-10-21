@@ -76,12 +76,12 @@ def serializedATN():
         buf.write("\62\u0283\n\62\3\62\3\62\3\62\2\4DF\63\2\4\6\b\n\f\16")
         buf.write("\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDF")
         buf.write("HJLNPRTVXZ\\^`b\2\t\4\2**LL\3\2FG\3\2HI\4\28;DE\3\2./")
-        buf.write("\4\288;;\4\2\26\30\33\33\2\u02b4\2g\3\2\2\2\4z\3\2\2\2")
-        buf.write("\6}\3\2\2\2\b\u0083\3\2\2\2\n\u00b4\3\2\2\2\f\u00b6\3")
-        buf.write("\2\2\2\16\u00bd\3\2\2\2\20\u00c4\3\2\2\2\22\u00c9\3\2")
-        buf.write("\2\2\24\u00ce\3\2\2\2\26\u00d3\3\2\2\2\30\u00d8\3\2\2")
-        buf.write("\2\32\u00dd\3\2\2\2\34\u00eb\3\2\2\2\36\u00ef\3\2\2\2")
-        buf.write(" \u00f3\3\2\2\2\"\u010e\3\2\2\2$\u0110\3\2\2\2&\u0120")
+        buf.write("\4\288;;\5\2\26\30\33\33LL\2\u02b4\2g\3\2\2\2\4z\3\2\2")
+        buf.write("\2\6}\3\2\2\2\b\u0083\3\2\2\2\n\u00b4\3\2\2\2\f\u00b6")
+        buf.write("\3\2\2\2\16\u00bd\3\2\2\2\20\u00c4\3\2\2\2\22\u00c9\3")
+        buf.write("\2\2\2\24\u00ce\3\2\2\2\26\u00d3\3\2\2\2\30\u00d8\3\2")
+        buf.write("\2\2\32\u00dd\3\2\2\2\34\u00eb\3\2\2\2\36\u00ef\3\2\2")
+        buf.write("\2 \u00f3\3\2\2\2\"\u010e\3\2\2\2$\u0110\3\2\2\2&\u0120")
         buf.write("\3\2\2\2(\u0122\3\2\2\2*\u014e\3\2\2\2,\u0169\3\2\2\2")
         buf.write(".\u016b\3\2\2\2\60\u0170\3\2\2\2\62\u017e\3\2\2\2\64\u0187")
         buf.write("\3\2\2\2\66\u0189\3\2\2\28\u01a3\3\2\2\2:\u01bc\3\2\2")
@@ -4113,7 +4113,7 @@ class RLangParser ( Parser ):
                 self.state = 523
                 self.compound_type()
                 pass
-            elif token in [RLangParser.INT, RLangParser.FLOAT, RLangParser.STR, RLangParser.BOOL]:
+            elif token in [RLangParser.INT, RLangParser.FLOAT, RLangParser.STR, RLangParser.BOOL, RLangParser.IDENTIFIER]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 524
                 self.simple_type()
@@ -4227,7 +4227,7 @@ class RLangParser ( Parser ):
                     self.state = 531
                     self._errHandler.sync(self)
                     token = self._input.LA(1)
-                    if token in [RLangParser.INT, RLangParser.FLOAT, RLangParser.STR, RLangParser.BOOL]:
+                    if token in [RLangParser.INT, RLangParser.FLOAT, RLangParser.STR, RLangParser.BOOL, RLangParser.IDENTIFIER]:
                         self.state = 529
                         self.simple_type()
                         pass
@@ -4257,7 +4257,7 @@ class RLangParser ( Parser ):
                     self.state = 541
                     self._errHandler.sync(self)
                     token = self._input.LA(1)
-                    if token in [RLangParser.INT, RLangParser.FLOAT, RLangParser.STR, RLangParser.BOOL]:
+                    if token in [RLangParser.INT, RLangParser.FLOAT, RLangParser.STR, RLangParser.BOOL, RLangParser.IDENTIFIER]:
                         self.state = 539
                         self.simple_type()
                         pass
@@ -4304,6 +4304,9 @@ class RLangParser ( Parser ):
         def BOOL(self):
             return self.getToken(RLangParser.BOOL, 0)
 
+        def IDENTIFIER(self):
+            return self.getToken(RLangParser.IDENTIFIER, 0)
+
         def getRuleIndex(self):
             return RLangParser.RULE_simple_type
 
@@ -4327,7 +4330,7 @@ class RLangParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 549
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << RLangParser.INT) | (1 << RLangParser.FLOAT) | (1 << RLangParser.STR) | (1 << RLangParser.BOOL))) != 0)):
+            if not(((((_la - 20)) & ~0x3f) == 0 and ((1 << (_la - 20)) & ((1 << (RLangParser.INT - 20)) | (1 << (RLangParser.FLOAT - 20)) | (1 << (RLangParser.STR - 20)) | (1 << (RLangParser.BOOL - 20)) | (1 << (RLangParser.IDENTIFIER - 20)))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)

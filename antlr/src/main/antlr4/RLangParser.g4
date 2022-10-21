@@ -108,7 +108,7 @@ compound_type
     | SET (L_BRK (simple_type | compound_type) R_BRK)?    # type_set
     ;
 
-simple_type: INT | FLOAT | STR | BOOL;
+simple_type: INT | FLOAT | STR | BOOL | IDENTIFIER;
 
 
 any_bound_var

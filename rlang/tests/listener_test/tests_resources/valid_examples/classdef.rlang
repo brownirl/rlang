@@ -4,8 +4,8 @@ Class Color:
 	green: int
 	blue: int
 
-#Class Book:
-#	pages: int
-#	title: str
-#	colors: list[Color]
-#	test: list[list[int]]
+Class Book:
+	pages: int
+	title: str
+	colors: list[Color]
+	test: list[list[int]]

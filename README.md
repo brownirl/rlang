@@ -25,7 +25,7 @@
 
 ## How to run tests
 
-- In the `rlang/rlang/tests/` directory run `pytest listener_test/listener_test.py`.
+- In the `rlang/rlang/tests/` directory run `pytest -s listener_test/listener_test.py`.
     
 ## Building the Lexer and Parser with Antlr4
 
