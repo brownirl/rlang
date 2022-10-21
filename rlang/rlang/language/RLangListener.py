@@ -12,7 +12,7 @@ from .utils.vocabulary_assembler import VocabularyAssembler
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Set
 
 if TYPE_CHECKING:
     from rlang.knowledge import RLangKnowledge
@@ -133,6 +133,18 @@ class RLangListener(RLangParserListener):
         else:
             raise RLangSemanticError(f"Cannot make a MarkovFeature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
+
+    def exitClass_def(self, ctx: RLangParser.Class_defContext):
+        # TODO
+        pass
+
+    def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
+        # TODO
+        pass
+
+    def exitAttribute_definition(self, ctx: RLangParser.Attribute_definitionContext):
+        # TODO
+        pass
 
     # ============================= Option =============================
 
@@ -314,7 +326,8 @@ class RLangListener(RLangParserListener):
 
         if len(rstats) > 0:
             domain = reduce(lambda a, b: a + b.domain, list(filter(lambda x: x is not None,
-                                        [if_condition.domain, if_reward, *elif_conditions, *elif_rewards, else_reward])))
+                                                                   [if_condition.domain, if_reward, *elif_conditions,
+                                                                    *elif_rewards, else_reward])))
 
             reward_func = RewardFunction(
                 lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
@@ -333,9 +346,9 @@ class RLangListener(RLangParserListener):
 
         if len(tstats) > 0:
             domain2 = reduce(lambda a, b: a + b.domain,
-                            list(filter(lambda x: x is not None,
-                                        [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
-                                         else_transition])))
+                             list(filter(lambda x: x is not None,
+                                         [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
+                                          else_transition])))
 
             transition_function = TransitionFunction(
                 function=lambda *args, **kwargs: conditional_transition_function(if_condition, if_transition,
@@ -486,7 +499,8 @@ class RLangListener(RLangParserListener):
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={ctx.arithmetic_exp().value: 1.0})
+            ctx.value = GroundingDistribution(grounding=grounding_function,
+                                              distribution={ctx.arithmetic_exp().value: 1.0})
         elif ctx.S_PRIME() is not None:
             ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
 
@@ -587,6 +601,22 @@ class RLangListener(RLangParserListener):
             ctx.value = Proposition(function=lambda *args, **kwargs: True, domain=Domain.ANY)
         elif ctx.FALSE() is not None:
             ctx.value = Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
+
+    def exitType_def(self, ctx: RLangParser.Type_defContext):
+        # TODO
+        pass
+
+    def exitType_list(self, ctx: RLangParser.Type_listContext):
+        # TODO
+        pass
+
+    def exitType_set(self, ctx: RLangParser.Type_setContext):
+        # TODO
+        pass
+
+    def exitSimple_type(self, ctx: RLangParser.Simple_typeContext):
+        # TODO
+        pass
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
