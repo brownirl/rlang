@@ -16,6 +16,7 @@ dec
     | action NL+
     | factor NL+
     | proposition NL+
+    | class_def NL+
     | goal NL+
     | feature NL+
     | markov_feature NL+
@@ -33,6 +34,10 @@ goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
+class_def: CLASS IDENTIFIER COL INDENT attribute_definition_collection DEDENT;
+
+attribute_definition_collection: (definitions+=attribute_definition NL *)+;
+attribute_definition: IDENTIFIER COL type_def;
 
 option: OPTION IDENTIFIER COL INDENT INIT init=option_condition INDENT policy_statement NL* DEDENT UNTIL until=option_condition NL* DEDENT;
 option_condition: boolean_exp | ANY_CONDITION;
@@ -94,6 +99,16 @@ boolean_exp
     | any_bound_var                                             # bool_bound_var
     | (TRUE | FALSE)                                            # bool_tf
     ;
+
+
+type_def: compound_type | simple_type;
+
+compound_type
+    : LIST (L_BRK (simple_type | compound_type) R_BRK)?   # type_list
+    | SET (L_BRK (simple_type | compound_type) R_BRK)?    # type_set
+    ;
+
+simple_type: INT | FLOAT | STR;
 
 
 any_bound_var

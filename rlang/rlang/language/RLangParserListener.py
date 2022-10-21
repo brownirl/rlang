@@ -116,6 +116,33 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#class_def.
+    def enterClass_def(self, ctx:RLangParser.Class_defContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#class_def.
+    def exitClass_def(self, ctx:RLangParser.Class_defContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#attribute_definition_collection.
+    def enterAttribute_definition_collection(self, ctx:RLangParser.Attribute_definition_collectionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#attribute_definition_collection.
+    def exitAttribute_definition_collection(self, ctx:RLangParser.Attribute_definition_collectionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#attribute_definition.
+    def enterAttribute_definition(self, ctx:RLangParser.Attribute_definitionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#attribute_definition.
+    def exitAttribute_definition(self, ctx:RLangParser.Attribute_definitionContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#option.
     def enterOption(self, ctx:RLangParser.OptionContext):
         pass
@@ -482,6 +509,42 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#bool_and.
     def exitBool_and(self, ctx:RLangParser.Bool_andContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#type_def.
+    def enterType_def(self, ctx:RLangParser.Type_defContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#type_def.
+    def exitType_def(self, ctx:RLangParser.Type_defContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#type_list.
+    def enterType_list(self, ctx:RLangParser.Type_listContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#type_list.
+    def exitType_list(self, ctx:RLangParser.Type_listContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#type_set.
+    def enterType_set(self, ctx:RLangParser.Type_setContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#type_set.
+    def exitType_set(self, ctx:RLangParser.Type_setContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#simple_type.
+    def enterSimple_type(self, ctx:RLangParser.Simple_typeContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#simple_type.
+    def exitSimple_type(self, ctx:RLangParser.Simple_typeContext):
         pass
 
 
