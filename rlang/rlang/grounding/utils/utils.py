@@ -1,10 +1,13 @@
 from __future__ import annotations
 from enum import Enum
+from dataclasses import dataclass
 from functools import total_ordering
+from typing import Type
 
 import gym.spaces
 import numpy as np
 from .grounding_exceptions import RLangGroundingError
+from .primitives import State
 from gym.spaces import Space
 
 
@@ -80,7 +83,8 @@ class Domain(Enum):
             raise RLangGroundingError(f"Can't compare a Domain enum to a {type(other)}")
 
 
-class MDPMetadata:
+class OldMDPMetadata:
+    # TODO: Deprecate eventually. I don't know if this is being used
     """Represents important parameters of the MDP like the state space and action space."""
     def __init__(self, state_space: Space, action_space: Space):
         self.state_space = state_space
@@ -92,3 +96,7 @@ class MDPMetadata:
                    action_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=action.shape))
 
 
+@dataclass
+class MDPMetadata:
+    """Class for holding metadata on an MDP like the state and action representations."""
+    state_representation: Type[State]

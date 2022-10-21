@@ -44,4 +44,5 @@ class VocabularyAssembler:
                 self.lmdp_objects.update({var_info['name']: the_var})
 
     def retrieve_state_size(self, vocab_json):
+        # TODO: This needs to see if state is actually a set or a vector. We'll limit to vectors of a single dimension
         self.state_size = vocab_json['mdp_metadata']['state_space']['size']

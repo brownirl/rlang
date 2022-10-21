@@ -32,9 +32,12 @@ NL: ('\r'? '\n' ' '*) | ('\r'? '\n' '\t'*);
 
 IMPORT: 'import';
 PROPOSITION: 'Proposition';
+PREDICATE: 'Predicate';
 FEATURE: 'Feature';
 FACTOR: 'Factor';
 GOAL: 'Goal';
+CLASS: 'Class';
+OBJECT: 'Object';
 CONSTANT: 'Constant';
 ACTION: 'Action';
 EFFECT: 'Effect';
@@ -43,7 +46,12 @@ POLICY: 'Policy';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
-DYNAMICS: 'Dynamics';
+
+INT: 'int';
+FLOAT: 'float';
+STR: 'str';
+LIST: 'list';
+SET: 'set';
 
 S_PRIME: S PRIME;
 S: 'S';
@@ -90,6 +98,9 @@ COM: ',';
 L_BRK: '[';
 R_BRK: ']';
 
+L_CBRK: '{';
+R_CBRK: '}';
+
 L_PAR: '(';
 R_PAR: ')';
 
@@ -101,12 +112,14 @@ DIVIDE : '/';
 PLUS : '+';
 MINUS : '-';
 
+QUOTE : '"';
+
 /*
  *
  */
 
 FNAME
-    : IDENTIFIER '.' LETTER*
+    : IDENTIFIER DOT LETTER*
     ;
 
 IDENTIFIER
@@ -114,12 +127,14 @@ IDENTIFIER
     ;
 
 DECIMAL
-    : DIGIT+ '.' DIGIT+
+    : DIGIT+ DOT DIGIT+
     ;
 
 INTEGER
     : DIGIT+
     ;
+
+DOT: '.';
 
 /*
  * fragments + skip

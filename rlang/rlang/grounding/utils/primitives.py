@@ -97,3 +97,5 @@ class ObjectOrientedState(State, set):
             pass
         else:
             return False
+
+    # TODO: Adding or multiplying this kind of state does not make sense. Need to figure this out in the listener.
