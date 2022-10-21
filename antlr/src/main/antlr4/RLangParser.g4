@@ -16,10 +16,10 @@ dec
     | action NL+
     | factor NL+
     | proposition NL+
-    | class_def NL+
     | goal NL+
     | feature NL+
     | markov_feature NL+
+    | class_def
     | option
     | policy
     | effect

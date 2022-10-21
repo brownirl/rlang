@@ -367,9 +367,10 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
 
-    def testClassDef(self):
+    def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
 
 
 if __name__ == '__main__':
     unittest.main()
+    # ListenerTests().test_ClassDef()

@@ -139,12 +139,17 @@ class RLangListener(RLangParserListener):
         pass
 
     def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
-        # TODO
-        pass
+        attributes = {}
+        for item in ctx.definitions:
+            if item[0] in attributes.keys():
+                # TODO: what's the right exception here?
+                raise Exception
+            else:
+                attributes.update({item[0]: item[1]})
+        ctx.value = attributes
 
     def exitAttribute_definition(self, ctx: RLangParser.Attribute_definitionContext):
-        # TODO
-        pass
+        ctx.value = (ctx.IDENTIFIER(), ctx.type_def().value)
 
     # ============================= Option =============================
 
@@ -603,20 +608,32 @@ class RLangListener(RLangParserListener):
             ctx.value = Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
 
     def exitType_def(self, ctx: RLangParser.Type_defContext):
-        # TODO
-        pass
+        if ctx.compound_type() is not None:
+            ctx.value = ctx.compound_type().value
+        elif ctx.simple_type() is not None:
+            ctx.value = ctx.simple_type().value
 
     def exitType_list(self, ctx: RLangParser.Type_listContext):
-        # TODO
-        pass
+        if ctx.compound_type() is not None:
+            ctx.value = List[ctx.compound_type().value]
+        elif ctx.simple_type() is not None:
+            ctx.value = List[ctx.simple_type().value]
 
     def exitType_set(self, ctx: RLangParser.Type_setContext):
-        # TODO
-        pass
+        if ctx.compound_type() is not None:
+            ctx.value = Set[ctx.compound_type().value]
+        elif ctx.simple_type() is not None:
+            ctx.value = Set[ctx.simple_type().value]
 
     def exitSimple_type(self, ctx: RLangParser.Simple_typeContext):
-        # TODO
-        pass
+        if ctx.INT() is not None:
+            ctx.value = int
+        elif ctx.FLOAT() is not None:
+            ctx.value = float
+        elif ctx.STR() is not None:
+            ctx.value = str
+        elif ctx.BOOL() is not None:
+            ctx.value = bool
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
