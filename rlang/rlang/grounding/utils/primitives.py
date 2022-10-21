@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Any
+from typing import Any, Set
 
 
 class Primitive(np.ndarray):
@@ -48,7 +48,11 @@ class Primitive(np.ndarray):
         return np.bitwise_not(self.__eq__(other))
 
 
-class State(Primitive):
+class State:
+    pass
+
+
+class VectorState(State, Primitive):
     """Represents a State object.
 
     Args:
@@ -67,3 +71,29 @@ class State(Primitive):
 
 class Action(Primitive):
     pass
+
+
+class MDPObject:
+    def __init__(self, name: str):
+        self.name = name
+
+    def __eq__(self, other):
+        if isinstance(other, MDPObject):
+            return self.__hash__() == other.__hash__()
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(self.name)
+
+
+class ObjectOrientedState(State, set):
+    def __int__(self, objects: Set[MDPObject]):
+        self.objects = objects
+
+    def __eq__(self, other):
+        if isinstance(other, ObjectOrientedState):
+            # TODO: Need to compare all objects and their attributes
+            pass
+        else:
+            return False

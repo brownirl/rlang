@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from simple_rl.agents import QLearningAgent
 
-from ..grounding.utils.primitives import State
+from ..grounding.utils.primitives import VectorState
 
 
 class RLangQLearningAgent(QLearningAgent):
@@ -26,7 +26,7 @@ class RLangQLearningAgent(QLearningAgent):
         def weighted_reward(r_func, state_dict):
             reward = 0
             for k, v in state_dict.items():
-                reward += r_func(state=State(k)) * v
+                reward += r_func(state=VectorState(k)) * v
             return reward
 
         def weighted_value(q_func, state_dict):
@@ -47,7 +47,7 @@ class RLangQLearningAgent(QLearningAgent):
             for s in states:
                 for i in range(len(actions)):
                     a = actions[i]
-                    q_func[s][a] = reward_function(state=State(s), action=i)
+                    q_func[s][a] = reward_function(state=VectorState(s), action=i)
 
         transition_function = knowledge.transition_function
 
@@ -55,7 +55,7 @@ class RLangQLearningAgent(QLearningAgent):
             for s in states:
                 for i in range(len(actions)):
                     a = actions[i]
-                    s_primei = transition_function(state=State(s), action=i)
+                    s_primei = transition_function(state=VectorState(s), action=i)
                     if s_primei:
                         # Q learning Update
                         r_prime = weighted_reward(reward_function, s_primei)

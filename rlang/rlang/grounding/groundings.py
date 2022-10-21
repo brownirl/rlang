@@ -9,7 +9,7 @@ from typing import Callable, Any, Union, List
 import numpy as np
 from numpy.random import default_rng
 from .utils.utils import Domain
-from .utils.primitives import State, Action, Primitive
+from .utils.primitives import VectorState, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
 
 
@@ -143,14 +143,14 @@ class GroundingFunction(Grounding):
 
     def __call__(self, *args, **kwargs):
         if 'state' in kwargs.keys():
-            if not isinstance(kwargs['state'], State):
-                kwargs.update({'state': State(kwargs['state'])})
+            if not isinstance(kwargs['state'], VectorState):
+                kwargs.update({'state': VectorState(kwargs['state'])})
         if 'action' in kwargs.keys():
             if not isinstance(kwargs['action'], Action):
                 kwargs.update({'action': Action(kwargs['action'])})
         if 'next_state' in kwargs.keys():
-            if not isinstance(kwargs['next_state'], State):
-                kwargs.update({'next_state': State(kwargs['next_state'])})
+            if not isinstance(kwargs['next_state'], VectorState):
+                kwargs.update({'next_state': VectorState(kwargs['next_state'])})
         return self._function(*args, **kwargs)
 
     # TODO: write leq/geq
@@ -692,15 +692,15 @@ class StateDistribution(ProbabilityDistribution):
         def update_dictionary(k_, v_):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
-                    if isinstance(k__, State):
+                    if isinstance(k__, VectorState):
                         update_dictionary(k__, v_*v__)
                     else:
                         update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
             elif k_ is not None:
-                if isinstance(k_, State):
+                if isinstance(k_, VectorState):
                     a = k_
                 else:
-                    a = State(k_)
+                    a = VectorState(k_)
                 if a in true_distribution:
                     true_distribution[a] += v_
                 else:
@@ -792,7 +792,7 @@ class GroundingDistribution(ProbabilityDistribution):
                 if isinstance(k_, Primitive):
                     a = k_
                 else:
-                    a = State(k_)
+                    a = VectorState(k_)
                 if a in true_distribution:
                     true_distribution[a] += v_
                 else:
