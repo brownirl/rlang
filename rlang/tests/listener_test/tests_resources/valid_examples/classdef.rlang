@@ -15,3 +15,6 @@ Class AlphaColor(Color):
 
 Class Zalpha(AlphaColor):
     zalpha: int
+
+Class BlphaColor(Color):
+    blpha: int

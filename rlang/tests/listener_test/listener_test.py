@@ -388,6 +388,9 @@ class ListenerTests(unittest.TestCase):
         z2 = knowledge.mdp_object_classes['Zalpha']('c', 2, blue=6, alpha=6, zalpha=7)
         print(z2)
 
+        z3 = knowledge.mdp_object_classes['BlphaColor']('c', 2, 4, 5, 6)
+        print(z3)
+
         # print(knowledge.mdp_object_classes['Book'].__dict__)
         # b = knowledge.mdp_object_classes['Book']()
         # print(c.attribute_types)
