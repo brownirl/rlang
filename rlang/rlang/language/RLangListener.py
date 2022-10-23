@@ -9,6 +9,7 @@ from .utils.language_exceptions import AlreadyBoundError, UnknownVariableError, 
 from .utils.semantic_schemas import conditional_policy_function, conditional_reward_function, \
     conditional_transition_function, conditional_prediction_function
 from .utils.vocabulary_assembler import VocabularyAssembler
+from .utils.custom_class import object_class_constructor
 
 from .RLangParser import RLangParser
 from .RLangParserListener import RLangParserListener
@@ -153,17 +154,21 @@ class RLangListener(RLangParserListener):
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
         self.addOOMDPClass(ctx.IDENTIFIER().getText(),
-                           type(ctx.IDENTIFIER().getText(), (MDPObject,), ctx.attribute_definition_collection().value))
+                           object_class_constructor(ctx.IDENTIFIER().getText(), (MDPObject,), *ctx.attribute_definition_collection().value))
 
     def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
         attributes = {}
+        attribute_order_list = list()
+        i = 0
         for item in ctx.definitions:
             item = item.value
             if item[0] in attributes.keys():
                 raise RLangSemanticError("Attributes must have unique names for a given Class")
             else:
                 attributes.update({item[0]: item[1]})
-        ctx.value = attributes
+                attribute_order_list.append(item[0])
+                i += 1
+        ctx.value = (attributes, attribute_order_list)
 
     def exitAttribute_definition(self, ctx: RLangParser.Attribute_definitionContext):
         ctx.value = (ctx.IDENTIFIER().getText(), ctx.type_def().value)

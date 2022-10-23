@@ -73,6 +73,18 @@ class Action(Primitive):
     pass
 
 
+# class MDPObjectMetaclass(type):
+#     def __new__(cls, class_name, bases, attrs):
+#         a = {}
+#         for k, v in attrs.items():
+#             if k.startswith('__'):
+#                 a[k] = v
+#             else:
+#                 a[k] = v
+#                 print(k)
+#         return type(class_name, bases, attrs)
+
+
 class MDPObject:
     def __init__(self, name: str):
         self.name = name
@@ -85,6 +97,9 @@ class MDPObject:
 
     def __hash__(self):
         return hash(self.name)
+
+    def __repr__(self):
+        return f"<MDPObject[{type(self)}] {self.__dict__}>"
 
 
 class ObjectOrientedState(State, set):
