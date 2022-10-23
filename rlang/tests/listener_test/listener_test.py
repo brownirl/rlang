@@ -369,15 +369,27 @@ class ListenerTests(unittest.TestCase):
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
-        print(knowledge.mdp_object_classes)
-        print(knowledge.mdp_object_classes['Color'].__dict__)
+        # print(knowledge.mdp_object_classes)
+        # print(knowledge.mdp_object_classes['Color'].__dict__)
 
-        print(type(knowledge.mdp_object_classes['Color']))
+        # print(type(knowledge.mdp_object_classes['Color']))
         cclass = knowledge.mdp_object_classes['Color']
-        print(cclass)
+        # print(cclass)
 
         c = knowledge.mdp_object_classes['Color']('c', 2, blue=5)
         print(c)
+
+        a = knowledge.mdp_object_classes['AlphaColor']('c', 2, 4, 5, 6)
+        print(a)
+
+        z = knowledge.mdp_object_classes['Zalpha']('c', 2, 4, 5, 6, 7)
+        print(z)
+
+        z2 = knowledge.mdp_object_classes['Zalpha']('c', 2, blue=6, alpha=6, zalpha=7)
+        print(z2)
+
+        # print(knowledge.mdp_object_classes['Book'].__dict__)
+        # b = knowledge.mdp_object_classes['Book']()
         # print(c.attribute_types)
         # print(c.red)
 

@@ -9,3 +9,9 @@ Class Book:
 	title: str
 	colors: list[Color]
 	test: list[list[int]]
+
+Class AlphaColor(Color):
+    alpha: int
+
+Class Zalpha(AlphaColor):
+    zalpha: int

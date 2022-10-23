@@ -86,6 +86,8 @@ class Action(Primitive):
 
 
 class MDPObject:
+    attr_list = ['name']
+
     def __init__(self, name: str):
         self.name = name
 

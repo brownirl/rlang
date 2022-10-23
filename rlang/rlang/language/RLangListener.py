@@ -153,8 +153,11 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
-        self.addOOMDPClass(ctx.IDENTIFIER().getText(),
-                           object_class_constructor(ctx.IDENTIFIER().getText(), (MDPObject,), *ctx.attribute_definition_collection().value))
+        bases = (MDPObject, )
+        if len(ctx.IDENTIFIER()) > 1:
+            bases = (self.retrieveOOMDPClass(ctx.IDENTIFIER(1).getText()), )
+        self.addOOMDPClass(ctx.IDENTIFIER(0).getText(),
+                           object_class_constructor(ctx.IDENTIFIER(0).getText(), bases, *ctx.attribute_definition_collection().value))
 
     def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
         attributes = {}

@@ -34,7 +34,7 @@ goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
 
-class_def: CLASS IDENTIFIER COL INDENT attribute_definition_collection DEDENT;
+class_def: CLASS IDENTIFIER (L_PAR IDENTIFIER R_PAR)? COL INDENT attribute_definition_collection DEDENT;
 
 attribute_definition_collection: (definitions+=attribute_definition NL *)+;
 attribute_definition: IDENTIFIER COL type_def;
