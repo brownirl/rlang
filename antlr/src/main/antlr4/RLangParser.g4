@@ -33,8 +33,9 @@ proposition: PROPOSITION IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
+//object_def: OBJECT IDENTIFIER BIND IDENTIFIER L_PAR argument_list R_PAR;
 
-class_def: CLASS IDENTIFIER (L_PAR IDENTIFIER R_PAR)? COL INDENT attribute_definition_collection DEDENT;
+class_def: CLASS IDENTIFIER (L_PAR any_bound_class R_PAR)? COL INDENT attribute_definition_collection DEDENT;
 
 attribute_definition_collection: (definitions+=attribute_definition NL *)+;
 attribute_definition: IDENTIFIER COL type_def;
@@ -101,6 +102,9 @@ boolean_exp
     ;
 
 
+//argument_list: arg_list+=(arithmetic_exp | boolean_exp) (COM args+=(arithmetic_exp | boolean_exp))*;
+
+
 type_def: compound_type | simple_type;
 
 compound_type
@@ -108,7 +112,7 @@ compound_type
     | SET (L_BRK (simple_type | compound_type) R_BRK)?    # type_set
     ;
 
-simple_type: INT | FLOAT | STR | BOOL | IDENTIFIER;
+simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
 
 
 any_bound_var
@@ -117,6 +121,8 @@ any_bound_var
     | S_PRIME trailer?              # bound_next_state
     | A			                    # bound_action
     ;
+
+any_bound_class: IDENTIFIER;
 
 trailer
     : int_array_exp     # trailer_array

@@ -584,6 +584,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#any_bound_class.
+    def enterAny_bound_class(self, ctx:RLangParser.Any_bound_classContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#any_bound_class.
+    def exitAny_bound_class(self, ctx:RLangParser.Any_bound_classContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#trailer_array.
     def enterTrailer_array(self, ctx:RLangParser.Trailer_arrayContext):
         pass

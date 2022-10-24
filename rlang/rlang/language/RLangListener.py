@@ -153,11 +153,12 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
-        bases = (MDPObject, )
-        if len(ctx.IDENTIFIER()) > 1:
-            bases = (self.retrieveOOMDPClass(ctx.IDENTIFIER(1).getText()), )
-        self.addOOMDPClass(ctx.IDENTIFIER(0).getText(),
-                           object_class_constructor(ctx.IDENTIFIER(0).getText(), bases, *ctx.attribute_definition_collection().value))
+        bases = (MDPObject,)
+        if ctx.any_bound_class() is not None:
+            bases = (ctx.any_bound_class().value,)
+        self.addOOMDPClass(ctx.IDENTIFIER().getText(),
+                           object_class_constructor(ctx.IDENTIFIER().getText(), bases,
+                                                    *ctx.attribute_definition_collection().value))
 
     def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
         attributes = {}
@@ -659,8 +660,8 @@ class RLangListener(RLangParserListener):
             ctx.value = str
         elif ctx.BOOL() is not None:
             ctx.value = bool
-        elif ctx.IDENTIFIER() is not None:
-            ctx.value = self.retrieveOOMDPClass(ctx.IDENTIFIER().getText())
+        elif ctx.any_bound_class() is not None:
+            ctx.value = ctx.any_bound_class().value
 
     def exitBound_identifier(self, ctx: RLangParser.Bound_identifierContext):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -708,6 +709,9 @@ class RLangListener(RLangParserListener):
 
     def exitBound_action(self, ctx: RLangParser.Bound_actionContext):
         ctx.value = IdentityGrounding(Domain.ACTION)
+
+    def exitAny_bound_class(self, ctx: RLangParser.Any_bound_classContext):
+        ctx.value = self.retrieveOOMDPClass(ctx.IDENTIFIER().getText())
 
     def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
         ctx.value = ctx.int_array_exp().value
