@@ -396,6 +396,13 @@ class ListenerTests(unittest.TestCase):
         # print(c.attribute_types)
         # print(c.red)
 
+    def test_ObjectDef(self):
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/objectdef.rlang")
+        print(knowledge['red'])
+        print(knowledge['red'].green)
+
+        print(knowledge['notebook'])
+
 
 if __name__ == '__main__':
     unittest.main()

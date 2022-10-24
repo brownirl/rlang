@@ -152,6 +152,11 @@ class RLangListener(RLangParserListener):
             raise RLangSemanticError(f"Cannot make a MarkovFeature from a {type(arith_exp)}")
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
+    def exitObject_def(self, ctx: RLangParser.Object_defContext):
+        obj = ctx.object_instantiation().value
+        obj.name = ctx.IDENTIFIER().getText()
+        self.addVariable(ctx.IDENTIFIER().getText(), obj)
+
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
         bases = (MDPObject,)
         if ctx.any_bound_class() is not None:
@@ -569,6 +574,33 @@ class RLangListener(RLangParserListener):
             elif ctx.MINUS() is not None:
                 ctx.value = ctx.lhs.value - ctx.rhs.value
 
+    def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
+        args = [None] + ctx.object_constructor_arg_list().value
+        ctx.value = ctx.any_bound_class().value(*args)
+
+    def exitObject_constructor_arg_list(self, ctx: RLangParser.Object_constructor_arg_listContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arg_list))
+
+    def exitObject_construct_arith_exp(self, ctx: RLangParser.Object_construct_arith_expContext):
+        ctx.value = ctx.arithmetic_exp().value
+
+    def exitObject_construct_bool_exp(self, ctx: RLangParser.Object_construct_bool_expContext):
+        ctx.value = ctx.boolean_exp().value
+
+    def exitObject_construct_object(self, ctx: RLangParser.Object_construct_objectContext):
+        ctx.value = ctx.an_object().value
+
+    def exitObject_construct_object_array(self, ctx: RLangParser.Object_construct_object_arrayContext):
+        ctx.value = ctx.object_array().value
+
+    def exitAn_object(self, ctx:RLangParser.An_objectContext):
+        if ctx.object_instantiation() is not None:
+            ctx.value = ctx.object_instantiation().value
+        elif ctx.any_bound_var() is not None and isinstance(ctx.any_bound_var().value, MDPObject):
+            ctx.value = ctx.any_bound_var().value
+        else:
+            raise RLangSemanticError("Must be an OOMDP object")
+
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_number().value)
 
@@ -718,6 +750,9 @@ class RLangListener(RLangParserListener):
 
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
+
+    def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
+        ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitAny_array_compound(self, ctx: RLangParser.Any_array_compoundContext):
         ctx.value = ctx.compound_array_exp().value

@@ -1,0 +1,14 @@
+Class Color:
+	red: int
+	green: int
+	blue: int
+
+Class Book:
+	pages: int
+	title: str
+	colors: list[Color]
+	test: list[list[int]]
+
+
+Object red := Color(256, 0, 0)
+Object notebook := Book(15, red, [Color(), Color(0, 256, 0), red])

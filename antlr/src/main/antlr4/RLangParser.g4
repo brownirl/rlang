@@ -19,6 +19,7 @@ dec
     | goal NL+
     | feature NL+
     | markov_feature NL+
+    | object_def NL+
     | class_def
     | option
     | policy
@@ -33,7 +34,7 @@ proposition: PROPOSITION IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
-//object_def: OBJECT IDENTIFIER BIND IDENTIFIER L_PAR argument_list R_PAR;
+object_def: OBJECT IDENTIFIER BIND object_instantiation;
 
 class_def: CLASS IDENTIFIER (L_PAR any_bound_class R_PAR)? COL INDENT attribute_definition_collection DEDENT;
 
@@ -79,6 +80,23 @@ effect_reference: PREDICT IDENTIFIER;
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 
 
+object_instantiation: any_bound_class L_PAR object_constructor_arg_list R_PAR;
+
+object_constructor_arg_list: arg_list+=object_constructor_arg? (COM arg_list+=object_constructor_arg)*;
+
+
+// TODO: eventually add strings to this
+object_constructor_arg
+    : an_object                                     # object_construct_object
+    | arithmetic_exp                                # object_construct_arith_exp
+    | boolean_exp                                   # object_construct_bool_exp
+    | object_array                                  # object_construct_object_array
+    ;
+
+
+an_object: any_bound_var | object_instantiation;
+
+
 arithmetic_exp
     : L_PAR arithmetic_exp R_PAR                                # arith_paren
     | lhs=arithmetic_exp (TIMES | DIVIDE) rhs=arithmetic_exp    # arith_times_divide
@@ -100,9 +118,6 @@ boolean_exp
     | any_bound_var                                             # bool_bound_var
     | (TRUE | FALSE)                                            # bool_tf
     ;
-
-
-//argument_list: arg_list+=(arithmetic_exp | boolean_exp) (COM args+=(arithmetic_exp | boolean_exp))*;
 
 
 type_def: compound_type | simple_type;
@@ -129,6 +144,8 @@ trailer
     | slice_exp         # trailer_slice
     ;
 
+object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
+// TODO: Naming is weird, need to update.
 any_array
     : compound_array_exp    # any_array_compound
     | any_num_array_exp     # any_array_any_num
