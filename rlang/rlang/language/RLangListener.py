@@ -593,7 +593,7 @@ class RLangListener(RLangParserListener):
     def exitObject_construct_object_array(self, ctx: RLangParser.Object_construct_object_arrayContext):
         ctx.value = ctx.object_array().value
 
-    def exitAn_object(self, ctx:RLangParser.An_objectContext):
+    def exitAn_object(self, ctx: RLangParser.An_objectContext):
         if ctx.object_instantiation() is not None:
             ctx.value = ctx.object_instantiation().value
         elif ctx.any_bound_var() is not None and isinstance(ctx.any_bound_var().value, MDPObject):

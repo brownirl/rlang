@@ -1,0 +1,28 @@
+{
+  "domain": "test",
+  "mdp_metadata": {
+    "state_space": {
+      "size": 2,
+      "dtype": "int"
+    },
+    "action_space": {
+      "shape": 1,
+      "dtype": "int"
+    },
+    "modules": [
+      {
+        "module_name": "class_grounding",
+        "file_name": "class_grounding.py"
+      }
+    ],
+    "vocabulary":
+    {
+      "classes": [
+        {
+          "name": "Manipulator",
+          "grounding": "class_grounding.Manipulator"
+        }
+      ]
+    }
+  }
+}

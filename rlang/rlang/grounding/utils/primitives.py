@@ -53,7 +53,7 @@ class State:
 
 
 class VectorState(State, Primitive):
-    """Represents a State object.
+    """Represents a VectorState object.
 
     Args:
         input_array: a numpy array or list representing a state or set of states.
@@ -61,28 +61,16 @@ class VectorState(State, Primitive):
     Examples:
         .. code-block:: python
 
-            s1 = State(3)
-            >> State([3])
-            s2 = State([3, 4])
-            >> State([3, 4])
+            s1 = VectorState(3)
+            >> VectorState([3])
+            s2 = VectorState([3, 4])
+            >> VectorState([3, 4])
     """
     pass
 
 
 class Action(Primitive):
     pass
-
-
-# class MDPObjectMetaclass(type):
-#     def __new__(cls, class_name, bases, attrs):
-#         a = {}
-#         for k, v in attrs.items():
-#             if k.startswith('__'):
-#                 a[k] = v
-#             else:
-#                 a[k] = v
-#                 print(k)
-#         return type(class_name, bases, attrs)
 
 
 class MDPObject:
