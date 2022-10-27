@@ -123,7 +123,8 @@ class ListenerTests(unittest.TestCase):
 
         hi_parsed = \
             rlang.parse(
-                "Factor position := S[0, 1]\nFeature x := position[0]\nProposition hi := x == 1 and True or False")['hi']
+                "Factor position := S[0, 1]\nFeature x := position[0]\nProposition hi := x == 1 and True or False")[
+                'hi']
         position = rlang.Factor([0, 1], "position")
         x = rlang.Feature(position[0])
         hi = rlang.Proposition(x == 1 & True | False)
@@ -151,8 +152,6 @@ class ListenerTests(unittest.TestCase):
 
         assert in_lava(state=state) == False
         assert in_lava(state=state2) == True
-
-
 
         # x_parsed = rlang.parse("Proposition x := [0] in [[2], [1], [2, 3]]", metadata)['x']
         # assert x_parsed(state=state) == [[False]]
@@ -369,39 +368,62 @@ class ListenerTests(unittest.TestCase):
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
-        # print(knowledge.mdp_object_classes)
-        # print(knowledge.mdp_object_classes['Color'].__dict__)
 
-        # print(type(knowledge.mdp_object_classes['Color']))
-        cclass = knowledge.mdp_object_classes['Color']
-        # print(cclass)
+        assert knowledge.mdp_object_classes.keys() == {'Color', 'Book', 'AlphaColor', 'Zalpha', 'BlphaColor'}
 
-        c = knowledge.mdp_object_classes['Color']('c', 2, blue=5)
-        print(c)
+        color_class = knowledge.mdp_object_classes['Color']
 
-        a = knowledge.mdp_object_classes['AlphaColor']('c', 2, 4, 5, 6)
-        print(a)
+        color_vars = color_class.__dict__.keys()
+        assert 'red' in color_vars and 'green' in color_vars and 'blue' in color_vars
 
-        z = knowledge.mdp_object_classes['Zalpha']('c', 2, 4, 5, 6, 7)
-        print(z)
+        assert color_class.attribute_types == {'red': int, 'green': int, 'blue': int}
 
-        z2 = knowledge.mdp_object_classes['Zalpha']('c', 2, blue=6, alpha=6, zalpha=7)
-        print(z2)
+        red = color_class('red', 256, 0, 0)
+        assert red.name == 'red' and red.red == 256 and red.green == 0 and red.blue == 0
 
-        z3 = knowledge.mdp_object_classes['BlphaColor']('c', 2, 4, 5, 6)
-        print(z3)
+        green = color_class('green', green=256)
+        assert green.name == 'green' and green.green == 256
 
-        # print(knowledge.mdp_object_classes['Book'].__dict__)
-        # b = knowledge.mdp_object_classes['Book']()
-        # print(c.attribute_types)
-        # print(c.red)
+        purple = color_class('purple', 128, blue=128)
+        assert purple.red == 128 and purple.blue == 128
+
+        # Test Class inheritance now
+
+        alpha_class = knowledge.mdp_object_classes['AlphaColor']
+        alpha = alpha_class('alpha', 0, 0, 0, 256)
+
+        assert alpha.name == 'alpha' and alpha.red == 0 and alpha.green == 0 and alpha.alpha == 256
+
+        semi_transparent = alpha_class('semi', 0, green=0, alpha=5)
+        assert semi_transparent.red == 0 and semi_transparent.green == 0 and semi_transparent.alpha == 5
+
+        # This makes sure that inheriting a class doesn't brake it
+
+        blpha_class = knowledge.mdp_object_classes['BlphaColor']
+        blpha = blpha_class('blpha', 0, 0, 0, 256)
+
+        assert blpha.name == 'blpha' and blpha.red == 0 and blpha.green == 0 and blpha.blpha == 256
+
+        semi_transparent = blpha_class('semi', 0, green=0, blpha=5)
+        assert semi_transparent.red == 0 and semi_transparent.green == 0 and semi_transparent.blpha == 5
+
+        # Test grandchild inheritance
+
+        zalpha_class = knowledge.mdp_object_classes['Zalpha']
+        zalpha = zalpha_class('zalpha', 0, 1, 2, 3, 4)
+
+        assert zalpha.red == 0 and zalpha.green == 1 and zalpha.blue == 2 and zalpha.alpha == 3 and zalpha.zalpha == 4
+
+        zeep = zalpha_class('zeep', 2, blue=6, alpha=6, zalpha=7)
+        assert zeep.name == 'zeep' and zeep.red == 2 and zeep.blue == 6 and zeep.alpha == 6 and zeep.zalpha == 7
+
 
     def test_ObjectDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/objectdef.rlang")
-        print(knowledge['red'])
-        print(knowledge['red'].green)
-
-        print(knowledge['notebook'])
+        # print(knowledge['red'])
+        # print(knowledge['red'].green)
+        #
+        # print(knowledge['notebook'])
 
 
 if __name__ == '__main__':
