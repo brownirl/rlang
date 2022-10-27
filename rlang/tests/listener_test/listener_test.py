@@ -420,10 +420,17 @@ class ListenerTests(unittest.TestCase):
 
     def test_ObjectDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/objectdef.rlang")
-        # print(knowledge['red'])
-        # print(knowledge['red'].green)
-        #
-        # print(knowledge['notebook'])
+
+        color_class = knowledge.mdp_object_classes['Color']
+
+        red = knowledge['red']
+        assert red.red == 256 and red.green == 0 and red.blue == 0
+
+        notebook = knowledge['notebook']
+        assert notebook.pages == 15 and notebook.title == red and isinstance(notebook.colors, list)
+
+        sutton_barto = knowledge['sutton_barto']
+        assert sutton_barto.pages == 15 and sutton_barto.title == red and sutton_barto.publisher_id == 67
 
 
 if __name__ == '__main__':

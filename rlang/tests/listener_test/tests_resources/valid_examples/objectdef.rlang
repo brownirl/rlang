@@ -7,8 +7,11 @@ Class Book:
 	pages: int
 	title: str
 	colors: list[Color]
-	test: list[list[int]]
+
+Class Textbook(Book):
+    publisher_id: int
 
 
 Object red := Color(256, 0, 0)
 Object notebook := Book(15, red, [Color(), Color(0, 256, 0), red])
+Object sutton_barto := Textbook(15, red, [Color(), Color(0, 256, 0), red], 67)
