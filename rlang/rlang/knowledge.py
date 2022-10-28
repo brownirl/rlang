@@ -5,7 +5,7 @@ from typing import Dict, Any
 from collections.abc import MutableMapping
 
 from .grounding.utils.utils import Domain
-from .grounding.groundings import *
+from .grounding.utils.primitives import MDPObject
 
 
 class RLangKnowledge(MutableMapping):
@@ -31,7 +31,6 @@ class RLangKnowledge(MutableMapping):
         self.transition_function = None
         """A :py:class:`.TransitionFunction` object"""
         self.proto_predictions = list()
-        self.mdp_object_classes = dict()
         self.mdp_metadata = None
 
     def predictions(self, *args, **kwargs) -> Dict[Grounding, Any]:
@@ -105,3 +104,6 @@ class RLangKnowledge(MutableMapping):
 
     def effects(self):
         return self.rlang_variables_of_type(Effect)
+
+    def classes(self):
+        return {k: v for (k, v) in self.rlang_variables.items() if issubclass(v, MDPObject)}

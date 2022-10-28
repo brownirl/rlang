@@ -369,9 +369,9 @@ class ListenerTests(unittest.TestCase):
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
 
-        assert knowledge.mdp_object_classes.keys() == {'Color', 'Book', 'AlphaColor', 'Zalpha', 'BlphaColor'}
+        assert knowledge.classes().keys() == {'Color', 'Book', 'AlphaColor', 'Zalpha', 'BlphaColor'}
 
-        color_class = knowledge.mdp_object_classes['Color']
+        color_class = knowledge['Color']
 
         color_vars = color_class.__dict__.keys()
         assert 'red' in color_vars and 'green' in color_vars and 'blue' in color_vars
@@ -389,7 +389,7 @@ class ListenerTests(unittest.TestCase):
 
         # Test Class inheritance now
 
-        alpha_class = knowledge.mdp_object_classes['AlphaColor']
+        alpha_class = knowledge['AlphaColor']
         alpha = alpha_class('alpha', 0, 0, 0, 256)
 
         assert alpha.name == 'alpha' and alpha.red == 0 and alpha.green == 0 and alpha.alpha == 256
@@ -399,7 +399,7 @@ class ListenerTests(unittest.TestCase):
 
         # This makes sure that inheriting a class doesn't brake it
 
-        blpha_class = knowledge.mdp_object_classes['BlphaColor']
+        blpha_class = knowledge['BlphaColor']
         blpha = blpha_class('blpha', 0, 0, 0, 256)
 
         assert blpha.name == 'blpha' and blpha.red == 0 and blpha.green == 0 and blpha.blpha == 256
@@ -409,7 +409,7 @@ class ListenerTests(unittest.TestCase):
 
         # Test grandchild inheritance
 
-        zalpha_class = knowledge.mdp_object_classes['Zalpha']
+        zalpha_class = knowledge['Zalpha']
         zalpha = zalpha_class('zalpha', 0, 1, 2, 3, 4)
 
         assert zalpha.red == 0 and zalpha.green == 1 and zalpha.blue == 2 and zalpha.alpha == 3 and zalpha.zalpha == 4
@@ -417,11 +417,10 @@ class ListenerTests(unittest.TestCase):
         zeep = zalpha_class('zeep', 2, blue=6, alpha=6, zalpha=7)
         assert zeep.name == 'zeep' and zeep.red == 2 and zeep.blue == 6 and zeep.alpha == 6 and zeep.zalpha == 7
 
-
     def test_ObjectDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/objectdef.rlang")
 
-        color_class = knowledge.mdp_object_classes['Color']
+        color_class = knowledge['Color']
 
         red = knowledge['red']
         assert red.red == 256 and red.green == 0 and red.blue == 0
@@ -431,6 +430,8 @@ class ListenerTests(unittest.TestCase):
 
         sutton_barto = knowledge['sutton_barto']
         assert sutton_barto.pages == 15 and sutton_barto.title == red and sutton_barto.publisher_id == 67
+
+        # TODO: Test objects defined in a grounding file
 
 
 if __name__ == '__main__':

@@ -25,7 +25,6 @@ class RLangListener(RLangParserListener):
 
         self.vocab_fnames = []
         self.grounded_vars = {}
-        self.grounded_classes = {}
         self.rlang_knowledge = prior_knowledge
 
     # This function adds the lmdp objects in the vocabulary files to self.grounded_vars
@@ -68,19 +67,6 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.reward_function = variable.reward_function
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
-
-    def retrieveOOMDPClass(self, class_name):
-        if class_name in self.grounded_classes.keys():
-            return self.grounded_classes[class_name]
-        elif class_name in self.rlang_knowledge.mdp_object_classes.keys():
-            return self.rlang_knowledge.mdp_object_classes[class_name]
-        else:
-            raise UnknownVariableError(class_name)
-
-    def addOOMDPClass(self, class_name, class_):
-        if class_name in self.rlang_knowledge.mdp_object_classes.keys() or class_name in self.grounded_classes.keys():
-            raise AlreadyBoundError(class_name)
-        self.rlang_knowledge.mdp_object_classes.update({class_name: class_})
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText())
@@ -161,7 +147,7 @@ class RLangListener(RLangParserListener):
         bases = (MDPObject,)
         if ctx.any_bound_class() is not None:
             bases = (ctx.any_bound_class().value,)
-        self.addOOMDPClass(ctx.IDENTIFIER().getText(),
+        self.addVariable(ctx.IDENTIFIER().getText(),
                            object_class_constructor(ctx.IDENTIFIER().getText(), bases,
                                                     *ctx.attribute_definition_collection().value))
 
@@ -743,7 +729,7 @@ class RLangListener(RLangParserListener):
         ctx.value = IdentityGrounding(Domain.ACTION)
 
     def exitAny_bound_class(self, ctx: RLangParser.Any_bound_classContext):
-        ctx.value = self.retrieveOOMDPClass(ctx.IDENTIFIER().getText())
+        ctx.value = self.retrieveVariable(ctx.IDENTIFIER().getText())
 
     def exitTrailer_array(self, ctx: RLangParser.Trailer_arrayContext):
         ctx.value = ctx.int_array_exp().value
