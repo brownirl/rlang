@@ -595,7 +595,8 @@ class RLangListener(RLangParserListener):
 
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
-                          (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference)):
+                          (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
+                           StateObjectAttributeGrounding)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -753,13 +754,10 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.slice_exp().value
 
     def exitTrailer_object(self, ctx: RLangParser.Trailer_objectContext):
-        ctx.value = ctx.object_dot_exp().value
+        ctx.value = list(map(lambda x: x.getText(), ctx.IDENTIFIER()))
 
     def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
-
-    def exitObject_dot_exp(self, ctx: RLangParser.Object_dot_expContext):
-        ctx.value = [ctx.IDENTIFIER().getText()] + list(map(lambda x: x.getText(), ctx.attr))
 
     def exitAny_array_compound(self, ctx: RLangParser.Any_array_compoundContext):
         ctx.value = ctx.compound_array_exp().value

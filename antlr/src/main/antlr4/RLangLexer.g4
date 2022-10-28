@@ -119,12 +119,16 @@ QUOTE : '"';
  *
  */
 
-FNAME
-    : IDENTIFIER DOT LETTER*
-    ;
-
 IDENTIFIER
     : LETTER ANY_CHAR*
+    ;
+
+/*
+ * This FNAME definition is bad. Probably need to fix it. Maybe it should not be a lexical rule at all
+ */
+
+FNAME
+    : QUOTE LETTER ANY_CHAR* DOT LETTER* QUOTE
     ;
 
 DECIMAL

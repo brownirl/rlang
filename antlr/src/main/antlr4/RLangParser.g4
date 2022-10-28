@@ -131,8 +131,8 @@ simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
 
 
 any_bound_var
-    : IDENTIFIER PRIME? trailer*    # bound_identifier
-    | S trailer?                    # bound_state
+    : S trailer?                    # bound_state
+    | IDENTIFIER PRIME? trailer*    # bound_identifier
     | S_PRIME trailer?              # bound_next_state
     | A			                    # bound_action
     ;
@@ -140,14 +140,14 @@ any_bound_var
 any_bound_class: IDENTIFIER;
 
 trailer
-    : int_array_exp         # trailer_array
-    | slice_exp             # trailer_slice
-    | DOT object_dot_exp    # trailer_object
+    : int_array_exp             # trailer_array
+    | slice_exp                 # trailer_slice
+    | (DOT attr+=IDENTIFIER)+   # trailer_object
     ;
 
 object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
 
-object_dot_exp: IDENTIFIER (DOT attr+=IDENTIFIER)*;
+//object_dot_exp: IDENTIFIER (DOT attr+=IDENTIFIER)*;
 
 // TODO: Naming is weird, need to update.
 any_array

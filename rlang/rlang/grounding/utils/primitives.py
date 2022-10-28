@@ -92,8 +92,8 @@ class MDPObject:
         return f"<MDPObject[{type(self)}] {self.__dict__}>"
 
 
-class ObjectOrientedState(State, set):
-    def __int__(self, objects: Set[MDPObject]):
+class ObjectOrientedState(State):
+    def __init__(self, objects: Set[MDPObject]):
         self.objects = objects
 
     def __eq__(self, other):

@@ -620,21 +620,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#bound_identifier.
-    def enterBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#bound_identifier.
-    def exitBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#bound_state.
     def enterBound_state(self, ctx:RLangParser.Bound_stateContext):
         pass
 
     # Exit a parse tree produced by RLangParser#bound_state.
     def exitBound_state(self, ctx:RLangParser.Bound_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_identifier.
+    def enterBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_identifier.
+    def exitBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
         pass
 
 
@@ -698,15 +698,6 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#object_array.
     def exitObject_array(self, ctx:RLangParser.Object_arrayContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_dot_exp.
-    def enterObject_dot_exp(self, ctx:RLangParser.Object_dot_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_dot_exp.
-    def exitObject_dot_exp(self, ctx:RLangParser.Object_dot_expContext):
         pass
 
 

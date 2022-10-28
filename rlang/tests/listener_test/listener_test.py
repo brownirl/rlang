@@ -367,7 +367,9 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
 
         object_effect = knowledge['object_effect']
-        oo_state = ObjectOrientedState(objects={MDPObject(name="size")})
+        color = MDPObject(name="color")
+        color.red = 256
+        oo_state = ObjectOrientedState(objects={color})
         assert object_effect.reward_function(state=oo_state) == 10
 
     def test_ClassDef(self):

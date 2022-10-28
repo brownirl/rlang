@@ -111,7 +111,7 @@ Effect conditional_effect_references:
 #Object red := Color(256, 0, 0)
 
 Effect object_effect:
-    if S.size == 256:
+    if S.color.red == 256:
         Reward 10
 
 
