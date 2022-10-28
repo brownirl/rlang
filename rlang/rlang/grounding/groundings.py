@@ -334,6 +334,26 @@ class IdentityGrounding(GroundingFunction):
         return f"<IdentityGrounding {self.codomain.name}>"
 
 
+class StateObjectAttributeGrounding(GroundingFunction):
+    """Represents a function of state that returns an object owned by the state.
+
+    This is much easier if we presume the ObjectOrientedState has object attrs just like MDPObjects do."""
+
+    def __init__(self, attribute_chain: List, name: str = None):
+        self.attribute_chain = attribute_chain
+
+        def state_object_attribute_unwrap(state_or_obj, attr_chain):
+            one_layer_deeper = getattr(state_or_obj, attr_chain[0])
+            if len(attr_chain) == 1:
+                return one_layer_deeper
+            else:
+                return state_object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
+
+        super().__init__(
+            function=lambda *args, **kwargs: state_object_attribute_unwrap(kwargs['state'], self.attribute_chain),
+            codomain=Domain.OBJECT_VALUE, domain=Domain.STATE, name=name)
+
+
 class Factor(GroundingFunction):
     """Represents a factor of the state space."""
 
@@ -547,6 +567,7 @@ class ProbabilityDistribution(MutableMapping):
     """
     
     """
+
     def __init__(self, distribution=None):
         if distribution is None:
             distribution = dict()
@@ -662,9 +683,9 @@ class ActionDistribution(ProbabilityDistribution):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
                     if isinstance(k__, Action):
-                        update_dictionary(k__, v_*v__)
+                        update_dictionary(k__, v_ * v__)
                     else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
                 if isinstance(k_, Action):
                     a = k_
@@ -693,9 +714,9 @@ class StateDistribution(ProbabilityDistribution):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
                     if isinstance(k__, VectorState):
-                        update_dictionary(k__, v_*v__)
+                        update_dictionary(k__, v_ * v__)
                     else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
                 if isinstance(k_, VectorState):
                     a = k_
@@ -724,9 +745,9 @@ class RewardDistribution(ProbabilityDistribution):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
                     if isinstance(k__, Primitive):
-                        update_dictionary(k__, v_*v__)
+                        update_dictionary(k__, v_ * v__)
                     else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
                 if isinstance(k_, Primitive):
                     a = k_
@@ -785,9 +806,9 @@ class GroundingDistribution(ProbabilityDistribution):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
                     if isinstance(k__, Primitive):
-                        update_dictionary(k__, v_*v__)
+                        update_dictionary(k__, v_ * v__)
                     else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_*v__)
+                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
                 if isinstance(k_, Primitive):
                     a = k_
@@ -844,6 +865,7 @@ class Plan(ProbabilisticFunction):
 
     
     """
+
     def __init__(self, distribution_list: [ActionDistribution]):
         domain = Domain.ANY
         length = None
@@ -904,6 +926,7 @@ class OptionTermination:
     """
     
     """
+
     def __repr__(self):
         return "<OptionTermination>"
 
@@ -1000,7 +1023,8 @@ class Prediction(ProbabilisticFunction):
     Limited to GroundingFunctions with a domain of (S) or (S, A).
     """
 
-    def __init__(self, grounding: Grounding, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
+    def __init__(self, grounding: Grounding, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args,
+                 **kwargs):
         """
         Args:
             grounding (Grounding): the grounding whom's value we are predicting
@@ -1035,6 +1059,7 @@ class Effect(Grounding):
     Contains an optional RewardFunction, TransitionFunction,
     and list of Predictions.
     """
+
     def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
                  predictions: List[Prediction] = None, name: str = None, probability: float = 1.0):
         """
@@ -1070,7 +1095,8 @@ class Effect(Grounding):
         new_predictions = list()
         for p in self.predictions:
             new_predictions.append(
-                Prediction.from_grounding_distribution(p.grounding, GroundingDistribution(p.grounding, {p: probability})))
+                Prediction.from_grounding_distribution(p.grounding,
+                                                       GroundingDistribution(p.grounding, {p: probability})))
         self.predictions = new_predictions
 
     @property

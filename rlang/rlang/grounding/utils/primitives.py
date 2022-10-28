@@ -103,4 +103,16 @@ class ObjectOrientedState(State, set):
         else:
             return False
 
+    def __getitem__(self, item):
+        for obj in self.objects:
+            if obj.name == item:
+                return obj
+        return None
+
+    def __getattr__(self, item):
+        if item == 'objects':
+            return self.objects
+        else:
+            return self.__getitem__(item)
+
     # TODO: Adding or multiplying this kind of state does not make sense. Need to figure this out in the listener.

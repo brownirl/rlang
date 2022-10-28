@@ -148,8 +148,8 @@ class RLangListener(RLangParserListener):
         if ctx.any_bound_class() is not None:
             bases = (ctx.any_bound_class().value,)
         self.addVariable(ctx.IDENTIFIER().getText(),
-                           object_class_constructor(ctx.IDENTIFIER().getText(), bases,
-                                                    *ctx.attribute_definition_collection().value))
+                         object_class_constructor(ctx.IDENTIFIER().getText(), bases,
+                                                  *ctx.attribute_definition_collection().value))
 
     def exitAttribute_definition_collection(self, ctx: RLangParser.Attribute_definition_collectionContext):
         attributes = {}
@@ -685,6 +685,8 @@ class RLangListener(RLangParserListener):
         variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
         new_var = None
 
+        # TODO: Trailer can now be a list of strings representing attributes!
+
         if not ctx.trailer():  # Check if it's not empty
             new_var = variable
         elif isinstance(variable, Factor):
@@ -715,11 +717,24 @@ class RLangListener(RLangParserListener):
 
     def exitBound_state(self, ctx: RLangParser.Bound_stateContext):
         if ctx.trailer() is not None:
-            ctx.value = Factor(ctx.trailer().value)
+            trailer = ctx.trailer().value
+            if isinstance(trailer, slice) or isinstance(trailer, int):
+                ctx.value = Factor(trailer)
+            elif isinstance(trailer, list) and len(trailer) > 0:
+                if isinstance(trailer[0], int):
+                    ctx.value = Factor(trailer)
+                else:
+                    ctx.value = StateObjectAttributeGrounding(trailer)
+            # The value of the attributes will technically be calculable at compiletime, since RLang object properties
+            # are typed. But this means we'll also expect imported classes and their properties to be typed as well.
+            # This may be too rigid.
         else:
             ctx.value = IdentityGrounding(Domain.STATE)
 
     def exitBound_next_state(self, ctx: RLangParser.Bound_next_stateContext):
+        # TODO: Trailer can now be a list of strings representing attributes!
+        #  Would prefer not to use this syntax: S'.something as opposed to S.something'
+
         if ctx.trailer() is not None:
             ctx.value = Factor(ctx.trailer().value, domain='next_state')
         else:
@@ -737,8 +752,14 @@ class RLangListener(RLangParserListener):
     def exitTrailer_slice(self, ctx: RLangParser.Trailer_sliceContext):
         ctx.value = ctx.slice_exp().value
 
+    def exitTrailer_object(self, ctx: RLangParser.Trailer_objectContext):
+        ctx.value = ctx.object_dot_exp().value
+
     def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
+
+    def exitObject_dot_exp(self, ctx: RLangParser.Object_dot_expContext):
+        ctx.value = [ctx.IDENTIFIER().getText()] + list(map(lambda x: x.getText(), ctx.attr))
 
     def exitAny_array_compound(self, ctx: RLangParser.Any_array_compoundContext):
         ctx.value = ctx.compound_array_exp().value

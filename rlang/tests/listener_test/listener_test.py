@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from .context import rlang
-from rlang import VectorState, Action
+from rlang import VectorState, ObjectOrientedState, Action, MDPObject
 
 
 class ListenerTests(unittest.TestCase):
@@ -365,6 +365,10 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s) == {s * 2: 1.0}
         assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
+
+        object_effect = knowledge['object_effect']
+        oo_state = ObjectOrientedState(objects={MDPObject(name="size")})
+        assert object_effect.reward_function(state=oo_state) == 10
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")

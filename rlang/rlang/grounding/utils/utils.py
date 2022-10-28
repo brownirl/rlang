@@ -34,6 +34,7 @@ class Domain(Enum):
     STATE_VALUE = 13
     FACTOR_STATE = 17
     REWARD = 19
+    OBJECT_VALUE = 23
 
     @classmethod
     def from_name(cls, name: str) -> Domain:

@@ -102,6 +102,19 @@ Effect conditional_effect_references:
         -> probabilistic_transition with P(0.2)
         or -> single_transition with P(0.1)
 
+
+#Class Color:
+#	red: int
+#	green: int
+#	blue: int
+
+#Object red := Color(256, 0, 0)
+
+Effect object_effect:
+    if S.size == 256:
+        Reward 10
+
+
 #Effect jo:
 #    if f1 == 0:
 #        f1' -> 99 with P(0.5)

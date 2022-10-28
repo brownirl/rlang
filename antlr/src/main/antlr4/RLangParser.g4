@@ -140,11 +140,15 @@ any_bound_var
 any_bound_class: IDENTIFIER;
 
 trailer
-    : int_array_exp     # trailer_array
-    | slice_exp         # trailer_slice
+    : int_array_exp         # trailer_array
+    | slice_exp             # trailer_slice
+    | DOT object_dot_exp    # trailer_object
     ;
 
 object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
+
+object_dot_exp: IDENTIFIER (DOT attr+=IDENTIFIER)*;
+
 // TODO: Naming is weird, need to update.
 any_array
     : compound_array_exp    # any_array_compound

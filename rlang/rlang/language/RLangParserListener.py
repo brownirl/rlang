@@ -683,12 +683,30 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#trailer_object.
+    def enterTrailer_object(self, ctx:RLangParser.Trailer_objectContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#trailer_object.
+    def exitTrailer_object(self, ctx:RLangParser.Trailer_objectContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#object_array.
     def enterObject_array(self, ctx:RLangParser.Object_arrayContext):
         pass
 
     # Exit a parse tree produced by RLangParser#object_array.
     def exitObject_array(self, ctx:RLangParser.Object_arrayContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#object_dot_exp.
+    def enterObject_dot_exp(self, ctx:RLangParser.Object_dot_expContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#object_dot_exp.
+    def exitObject_dot_exp(self, ctx:RLangParser.Object_dot_expContext):
         pass
 
 
