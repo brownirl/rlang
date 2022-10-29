@@ -68,6 +68,9 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
 
+    def exitProgram(self, ctx:RLangParser.ProgramContext):
+        self.rlang_knowledge.update(self.grounded_vars)
+
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
         self.vocab_fnames.append(ctx.FNAME().getText()[1:-1])
 

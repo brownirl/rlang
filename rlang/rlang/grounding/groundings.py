@@ -383,6 +383,8 @@ class StateObjectAttributeGrounding(GroundingFunction):
         self.attribute_chain = attribute_chain
 
         def state_object_attribute_unwrap(state_or_obj, attr_chain):
+            if not hasattr(state_or_obj, attr_chain[0]):
+                raise RLangGroundingError(f"Object {state_or_obj} does not have attribute {attr_chain[0]}")
             one_layer_deeper = getattr(state_or_obj, attr_chain[0])
             if len(attr_chain) == 1:
                 return one_layer_deeper

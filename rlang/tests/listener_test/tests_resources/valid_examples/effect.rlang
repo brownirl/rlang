@@ -1,3 +1,5 @@
+import "class_vocab.json"
+
 Factor f1 := S[0]
 Factor f2 := S[1]
 
@@ -114,8 +116,10 @@ Effect object_property_conditional:
     if S.color.red == 256:
         Reward 10
 
+Object kuka_arm := Manipulator(5)
+
 Effect object_conditional:
-    if S.color == red:
+    if S.arm == kuka_arm:
         Reward 15
 
 

@@ -375,13 +375,9 @@ class ListenerTests(unittest.TestCase):
         assert object_effect.reward_function(state=oo_state) == 10
 
         object_conditional_effect = knowledge['object_conditional']
-        color = MDPObject(name="color")
-        color.red = 256
-        color.green = 0
-        color.blue = 0
-        oo_state = ObjectOrientedState(objects={color})
+        arm = knowledge['Manipulator'](name="arm", num_fingers=5)
+        oo_state = ObjectOrientedState(objects={arm})
         assert object_conditional_effect.reward_function(state=oo_state) == 15
-
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
