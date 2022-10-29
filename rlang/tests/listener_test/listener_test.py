@@ -439,6 +439,11 @@ class ListenerTests(unittest.TestCase):
         sutton_barto = knowledge['sutton_barto']
         assert sutton_barto.pages == 15 and sutton_barto.title == red and sutton_barto.publisher_id == 67
 
+        color_from_state = knowledge['color_from_state']
+        assert color_from_state.red(state=VectorState([0, 1, 2])) == 0
+        assert color_from_state.green(state=VectorState([0, 1, 2])) == 1
+        assert color_from_state.blue(state=VectorState([0, 1, 2])) == 2
+
         # TODO: Test objects defined in a grounding file
 
 
