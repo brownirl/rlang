@@ -15,3 +15,5 @@ Class Textbook(Book):
 Object red := Color(256, 0, 0)
 Object notebook := Book(15, red, [Color(), Color(0, 256, 0), red])
 Object sutton_barto := Textbook(15, red, [Color(), Color(0, 256, 0), red], 67)
+
+Object color_from_state := Color(S[0], S[1], S[2])

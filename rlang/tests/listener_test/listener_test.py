@@ -366,9 +366,11 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
 
-        object_effect = knowledge['object_effect']
+        object_effect = knowledge['object_property_conditional']
         color = MDPObject(name="color")
         color.red = 256
+        color.green = 0
+        color.blue = 0
         oo_state = ObjectOrientedState(objects={color})
         assert object_effect.reward_function(state=oo_state) == 10
 

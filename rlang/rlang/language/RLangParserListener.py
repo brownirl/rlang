@@ -440,15 +440,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#an_object.
-    def enterAn_object(self, ctx:RLangParser.An_objectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#an_object.
-    def exitAn_object(self, ctx:RLangParser.An_objectContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#arith_number.
     def enterArith_number(self, ctx:RLangParser.Arith_numberContext):
         pass
@@ -620,6 +611,24 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#object_array.
+    def enterObject_array(self, ctx:RLangParser.Object_arrayContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#object_array.
+    def exitObject_array(self, ctx:RLangParser.Object_arrayContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#an_object.
+    def enterAn_object(self, ctx:RLangParser.An_objectContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#an_object.
+    def exitAn_object(self, ctx:RLangParser.An_objectContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#bound_state.
     def enterBound_state(self, ctx:RLangParser.Bound_stateContext):
         pass
@@ -689,15 +698,6 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#trailer_object.
     def exitTrailer_object(self, ctx:RLangParser.Trailer_objectContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_array.
-    def enterObject_array(self, ctx:RLangParser.Object_arrayContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_array.
-    def exitObject_array(self, ctx:RLangParser.Object_arrayContext):
         pass
 
 

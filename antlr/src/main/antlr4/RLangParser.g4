@@ -87,14 +87,11 @@ object_constructor_arg_list: arg_list+=object_constructor_arg? (COM arg_list+=ob
 
 // TODO: eventually add strings to this
 object_constructor_arg
-    : an_object                                     # object_construct_object
+    : object_instantiation                          # object_construct_object
     | arithmetic_exp                                # object_construct_arith_exp
     | boolean_exp                                   # object_construct_bool_exp
     | object_array                                  # object_construct_object_array
     ;
-
-
-an_object: any_bound_var | object_instantiation;
 
 
 arithmetic_exp
@@ -130,6 +127,11 @@ compound_type
 simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
 
 
+object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
+
+an_object: any_bound_var | object_instantiation;
+
+
 any_bound_var
     : S trailer?                    # bound_state
     | IDENTIFIER PRIME? trailer*    # bound_identifier
@@ -144,8 +146,6 @@ trailer
     | slice_exp                 # trailer_slice
     | (DOT attr+=IDENTIFIER)+   # trailer_object
     ;
-
-object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
 
 //object_dot_exp: IDENTIFIER (DOT attr+=IDENTIFIER)*;
 

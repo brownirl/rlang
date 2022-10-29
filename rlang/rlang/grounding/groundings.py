@@ -9,7 +9,7 @@ from typing import Callable, Any, Union, List
 import numpy as np
 from numpy.random import default_rng
 from .utils.utils import Domain
-from .utils.primitives import VectorState, ObjectOrientedState, Action, Primitive
+from .utils.primitives import MDPObject, VectorState, ObjectOrientedState, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
 
 
@@ -332,6 +332,19 @@ class IdentityGrounding(GroundingFunction):
 
     def __repr__(self):
         return f"<IdentityGrounding {self.codomain.name}>"
+
+
+# class MDPObjectGrounding(GroundingFunction):
+#     """Represents an object that is perhaps a function of state but not an object in the state space."""
+#
+#     def __init__(self, obj: MDPObject, name: str = None):
+#         self.obj = obj
+#         self.name = name
+#
+#         # TODO: The properties of objects should be functions of (S,A,S')! Need to augment MDPObject class
+#
+#         super().__init__(function=lambda *args, **kwargs: None, codomain=Domain.OBJECT_VALUE,
+#                          domain=Domain.STATE_ACTION_NEXT_STATE, name=name)
 
 
 class StateObjectAttributeGrounding(GroundingFunction):
