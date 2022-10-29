@@ -1,4 +1,4 @@
-#import class_vocab.json
+import "class_vocab.json"
 
 
 Class Color:
@@ -20,3 +20,6 @@ Class Zalpha(AlphaColor):
 
 Class BlphaColor(Color):
     blpha: int
+
+Class Appendage(Manipulator):
+    arm_length: int

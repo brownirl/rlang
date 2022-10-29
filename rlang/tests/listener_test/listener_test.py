@@ -382,7 +382,7 @@ class ListenerTests(unittest.TestCase):
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
 
-        assert knowledge.classes().keys() == {'Color', 'Book', 'AlphaColor', 'Zalpha', 'BlphaColor'}
+        assert knowledge.classes().keys() == {'Color', 'Book', 'AlphaColor', 'Zalpha', 'BlphaColor', 'Appendage', 'Manipulator'}
 
         color_class = knowledge['Color']
 
@@ -433,8 +433,6 @@ class ListenerTests(unittest.TestCase):
     def test_ObjectDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/objectdef.rlang")
 
-        color_class = knowledge['Color']
-
         red = knowledge['red']
         assert red.red == 256 and red.green == 0 and red.blue == 0
 
@@ -448,6 +446,10 @@ class ListenerTests(unittest.TestCase):
         assert color_from_state.red(state=VectorState([0, 1, 2])) == 0
         assert color_from_state.green(state=VectorState([0, 1, 2])) == 1
         assert color_from_state.blue(state=VectorState([0, 1, 2])) == 2
+
+        super_arm = knowledge['super_arm']
+        assert super_arm.arm_length == 20
+        assert super_arm.num_fingers == 5
 
         # TODO: Test objects defined in a grounding file
 
