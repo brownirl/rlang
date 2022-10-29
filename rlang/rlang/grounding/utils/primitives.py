@@ -80,13 +80,24 @@ class MDPObject:
         self.name = name
 
     def __eq__(self, other):
+        print(other)
         # TODO implement this by checking the value of each attribute! Iterate through and compare. Verify that no attribute is a GroundingFunction!
         # We assume that the attributes for this and other MDPObjects are already calculated for us!
         # Iterate through, but don't check name? Maybe check name? I don't know.
-        if isinstance(other, MDPObject):
-            return self.__hash__() == other.__hash__()
-        else:
-            return False
+        # if isinstance(other, MDPObject):
+        #     return self.__hash__() == other.__hash__()
+        # else:
+        #     return False
+
+        print(type(self))
+        print(type(other))
+
+        if type(self) == type(other):
+            print("pass")
+            eq = self.attr_list == other.attr_list
+
+            return eq
+        return False
 
     def __hash__(self):
         return hash(self.name)

@@ -1,2 +1,2 @@
-import vocab.json
+import "vocab.json"
 

@@ -69,7 +69,7 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.proto_predictions = variable.predictions
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
-        self.vocab_fnames.append(ctx.FNAME().getText())
+        self.vocab_fnames.append(ctx.FNAME().getText()[1:-1])
 
     def exitImports(self, ctx: RLangParser.ImportsContext):
         self.vocab_fnames = list(set(self.vocab_fnames))  # Remove duplicates

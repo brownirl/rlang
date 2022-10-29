@@ -1,7 +1,7 @@
 # To start, we imported a vocabulary file contains metadata on the MDP
 # and references to additional RLang groundings.
 
-import vocab.json
+import "vocab.json"
 
 # The position of the agent as well as its x and y coordinates are defined
 # as Factors, each representing a portion of the state space.

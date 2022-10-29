@@ -1,4 +1,4 @@
-import vocab.json
+import "vocab.json"
 
 Action do_nothing := 0
 Action left_thruster := 1
