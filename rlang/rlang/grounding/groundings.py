@@ -334,17 +334,44 @@ class IdentityGrounding(GroundingFunction):
         return f"<IdentityGrounding {self.codomain.name}>"
 
 
-# class MDPObjectGrounding(GroundingFunction):
-#     """Represents an object that is perhaps a function of state but not an object in the state space."""
-#
-#     def __init__(self, obj: MDPObject, name: str = None):
-#         self.obj = obj
-#         self.name = name
-#
-#         # TODO: The properties of objects should be functions of (S,A,S')! Need to augment MDPObject class
-#
-#         super().__init__(function=lambda *args, **kwargs: None, codomain=Domain.OBJECT_VALUE,
-#                          domain=Domain.STATE_ACTION_NEXT_STATE, name=name)
+class MDPObjectGrounding(GroundingFunction):
+    """Represents an object that is perhaps a function of state but not an object in the state space."""
+
+    def __init__(self, obj: MDPObject, name: str = None):
+        self.obj = obj
+        self.true_obj = None
+        self.calculated = False
+
+        # TODO: The properties of objects should be functions of (S,A,S')! Need to augment MDPObject class
+
+        super().__init__(function=self.calculate_true_obj, codomain=Domain.OBJECT_VALUE,
+                         domain=Domain.STATE_ACTION_NEXT_STATE, name=name)
+
+    def calculate_true_obj(self, *args, **kwargs):
+        def calculate_attr(attr):
+            if isinstance(attr, GroundingFunction):
+                return attr(*args, **kwargs)
+            else:
+                return attr
+
+        attrs = list(map(lambda x: getattr(self.obj, x), self.obj.attr_list))
+        calculated_attrs = list(map(calculate_attr, attrs))
+
+        self.true_obj = type(self.obj)(*calculated_attrs)
+        self.calculated = True
+        return self.true_obj
+
+    def __getattr__(self, item):
+        if self.calculated:
+            return getattr(self.true_obj, item)
+        else:
+            return getattr(self.obj, item)
+
+    def __eq__(self, other):
+        if isinstance(other, MDPObject):
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
+        else:
+            return super().__eq__(other)
 
 
 class StateObjectAttributeGrounding(GroundingFunction):

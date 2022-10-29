@@ -562,7 +562,7 @@ class RLangListener(RLangParserListener):
 
     def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
         args = [None] + ctx.object_constructor_arg_list().value
-        ctx.value = ctx.any_bound_class().value(*args)
+        ctx.value = MDPObjectGrounding(obj=ctx.any_bound_class().value(*args))
 
     def exitObject_constructor_arg_list(self, ctx: RLangParser.Object_constructor_arg_listContext):
         ctx.value = list(map(lambda x: x.value, ctx.arg_list))
@@ -582,7 +582,7 @@ class RLangListener(RLangParserListener):
     def exitAn_object(self, ctx: RLangParser.An_objectContext):
         if ctx.object_instantiation() is not None:
             ctx.value = ctx.object_instantiation().value
-        elif ctx.any_bound_var() is not None and isinstance(ctx.any_bound_var().value, MDPObject):
+        elif ctx.any_bound_var() is not None and isinstance(ctx.any_bound_var().value, MDPObjectGrounding):
             ctx.value = ctx.any_bound_var().value
         else:
             raise RLangSemanticError("Must be an OOMDP object")
@@ -596,7 +596,7 @@ class RLangListener(RLangParserListener):
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
                           (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
-                           StateObjectAttributeGrounding, MDPObject)):
+                           StateObjectAttributeGrounding, MDPObjectGrounding)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 

@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Any, Set
+from typing import Any
 
 
 class Primitive(np.ndarray):
@@ -80,6 +80,9 @@ class MDPObject:
         self.name = name
 
     def __eq__(self, other):
+        # TODO implement this by checking the value of each attribute! Iterate through and compare. Verify that no attribute is a GroundingFunction!
+        # We assume that the attributes for this and other MDPObjects are already calculated for us!
+        # Iterate through, but don't check name? Maybe check name? I don't know.
         if isinstance(other, MDPObject):
             return self.__hash__() == other.__hash__()
         else:
@@ -93,7 +96,7 @@ class MDPObject:
 
 
 class ObjectOrientedState(State):
-    def __init__(self, objects: Set[MDPObject]):
+    def __init__(self, objects: set):
         self.objects = objects
 
     def __eq__(self, other):

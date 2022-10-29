@@ -114,9 +114,9 @@ Effect object_property_conditional:
     if S.color.red == 256:
         Reward 10
 
-#Effect object_conditional:
-#    if S.color == red:
-#        Reward 15
+Effect object_conditional:
+    if S.color == red:
+        Reward 15
 
 
 
