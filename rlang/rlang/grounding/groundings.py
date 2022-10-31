@@ -380,6 +380,27 @@ class MDPObjectGrounding(GroundingFunction):
         return f"<MDPObjectGrounding[{self.obj.__repr__()}]>"
 
 
+class MDPObjectAttributeGrounding(GroundingFunction):
+    """For grounding the attributes of abstract objects, necessary for predictions"""
+
+    def __init__(self, grounding: GroundingFunction, attribute_chain: List):
+        self.attribute_chain = attribute_chain
+        self.grounding = grounding
+
+        def object_attribute_unwrap(obj, attr_chain):
+            if not hasattr(obj, attr_chain[0]):
+                raise RLangGroundingError(f"Object {obj} does not have attribute {attr_chain[0]}")
+            one_layer_deeper = getattr(obj, attr_chain[0])
+            if len(attr_chain) == 1:
+                return one_layer_deeper
+            else:
+                return object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
+
+        super().__init__(
+            function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
+            codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
+
+
 class StateObjectAttributeGrounding(GroundingFunction):
     """Represents a function of state that returns an object owned by the state.
 

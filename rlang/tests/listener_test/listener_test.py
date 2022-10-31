@@ -399,22 +399,31 @@ class ListenerTests(unittest.TestCase):
         assert sred_prediction[0](state=oo_state2) == {Primitive(128): 1.0}
 
         color2 = knowledge['Color'](name="half-red", red=128, green=0, blue=0)
-        abstract_object_property_prediction_instance_effect = knowledge['abstract_object_prediction_instance']
-        sobj_prediction = abstract_object_property_prediction_instance_effect.prediction_dict['S.color']
+        state_object_property_prediction_instance_effect = knowledge['state_object_prediction_instance']
+        sobj_prediction = state_object_property_prediction_instance_effect.prediction_dict['S.color']
         assert list(sobj_prediction[0](state=oo_state2).keys())[0] == color2
 
-        abstract_object_property_prediction_effect = knowledge['abstract_object_prediction']
-        sobj_prediction = abstract_object_property_prediction_effect.prediction_dict['S.color']
+        state_object_property_prediction_effect = knowledge['state_object_prediction']
+        sobj_prediction = state_object_property_prediction_effect.prediction_dict['S.color']
         assert list(sobj_prediction[0](state=oo_state2).keys())[0] == knowledge['red'].obj
         assert knowledge['red'] == list(sobj_prediction[0](state=oo_state2).keys())[0]
 
-        abstract_object_property_prediction_same_effect = knowledge['abstract_object_prediction_same']
-        sobj_prediction = abstract_object_property_prediction_same_effect.prediction_dict['S.color']
+        state_object_property_prediction_same_effect = knowledge['state_object_prediction_same']
+        sobj_prediction = state_object_property_prediction_same_effect.prediction_dict['S.color']
         assert list(sobj_prediction[0](state=oo_state2).keys())[0] == oo_state2.color
 
-        abstract_object_property_prediction_instance_s_effect = knowledge['abstract_object_prediction_instance_s']
-        sobj_prediction = abstract_object_property_prediction_instance_s_effect.prediction_dict['S.color']
+        state_object_property_prediction_instance_s_effect = knowledge['state_object_prediction_instance_s']
+        sobj_prediction = state_object_property_prediction_instance_s_effect.prediction_dict['S.color']
         assert list(sobj_prediction[0](state=oo_state2).keys())[0] == color2
+
+        abstract_object_prediction_effect = knowledge['abstract_object_prediction']
+        sobj_prediction = abstract_object_prediction_effect.prediction_dict['random_color']
+        assert list(sobj_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == color2
+
+        abstract_object_property_prediction_effect = knowledge['abstract_object_property_prediction']
+        sred_prediction = abstract_object_property_prediction_effect.prediction_dict['random_color.red']
+        print(sred_prediction)
+        assert list(sred_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == 128
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")

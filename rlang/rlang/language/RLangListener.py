@@ -531,6 +531,10 @@ class RLangListener(RLangParserListener):
                 predicted_value = ctx.arithmetic_exp().value
             else:
                 predicted_value = ctx.object_instantiation().value
+
+            if ctx.dot_exp() is not None:
+                grounding_function = MDPObjectAttributeGrounding(grounding_function, ctx.dot_exp().value)
+
             ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
         elif ctx.S_PRIME() is not None:
             if ctx.dot_exp() is not None:
