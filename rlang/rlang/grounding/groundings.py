@@ -861,12 +861,12 @@ class GroundingDistribution(ProbabilityDistribution):
         def update_dictionary(k_, v_):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
-                    if isinstance(k__, Primitive):
+                    if isinstance(k__, (Primitive, MDPObjectGrounding, MDPObject, StateObjectAttributeGrounding)):
                         update_dictionary(k__, v_ * v__)
                     else:
                         update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
-                if isinstance(k_, Primitive):
+                if isinstance(k_, (Primitive, MDPObjectGrounding, MDPObject, StateObjectAttributeGrounding)):
                     a = k_
                 else:
                     a = Primitive(k_)

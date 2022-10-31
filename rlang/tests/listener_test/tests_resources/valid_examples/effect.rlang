@@ -136,8 +136,9 @@ Effect state_object_property_prediction:
     if S.color.red == 256:
         S'.color.red -> 128
 
-#Effect abstract_object_prediction:
-#    pass
+Effect abstract_object_prediction:
+    if S.arm == kuka_arm:
+        S'.color -> Color(128, 0, 0)
 
 
 
