@@ -93,7 +93,7 @@ class MDPObject:
             return False
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.__repr__())
 
     def __repr__(self):
         return f"<MDPObject[{type(self)}] {self.__dict__}>"

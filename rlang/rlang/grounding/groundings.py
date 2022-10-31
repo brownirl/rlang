@@ -376,6 +376,9 @@ class MDPObjectGrounding(GroundingFunction):
     def __hash__(self):
         return self.obj.__hash__()
 
+    def __repr__(self):
+        return f"<MDPObjectGrounding[{self.obj.__repr__()}]>"
+
 
 class StateObjectAttributeGrounding(GroundingFunction):
     """Represents a function of state that returns an object owned by the state.
