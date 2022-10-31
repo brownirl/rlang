@@ -68,7 +68,7 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
 
-    def exitProgram(self, ctx:RLangParser.ProgramContext):
+    def exitProgram(self, ctx: RLangParser.ProgramContext):
         self.rlang_knowledge.update(self.grounded_vars)
 
     def enterImport_stat(self, ctx: RLangParser.Import_statContext):
@@ -527,17 +527,26 @@ class RLangListener(RLangParserListener):
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
-            ctx.value = GroundingDistribution(grounding=grounding_function,
-                                              distribution={ctx.arithmetic_exp().value: 1.0})
+            if ctx.arithmetic_exp() is not None:
+                predicted_value = ctx.arithmetic_exp().value
+            else:
+                predicted_value = ctx.object_instantiation().value
+            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
         elif ctx.S_PRIME() is not None:
             if ctx.dot_exp() is not None:
-                #TODO: Should be a GroundingDistribution I think. May need to implement a new kind of distribution
+                # TODO: Should be a GroundingDistribution I think. May need to implement a new kind of distribution
                 # that isn't numerical! A new subclass of ProbabilityDistrubution
                 grounding_function = StateObjectAttributeGrounding(ctx.dot_exp().value, domain='next_state')
-                ctx.value = GroundingDistribution(grounding=grounding_function,
-                                              distribution={ctx.arithmetic_exp().value: 1.0})
+                if ctx.arithmetic_exp() is not None:
+                    predicted_value = ctx.arithmetic_exp().value
+                else:
+                    predicted_value = ctx.object_instantiation().value
+                ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
             else:
-                ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
+                if ctx.arithmetic_exp() is not None:
+                    ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
+                else:
+                    raise RLangSemanticError("A state cannot be predicted to be an object")
 
     def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
         effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -574,7 +583,7 @@ class RLangListener(RLangParserListener):
                 ctx.value = ctx.lhs.value - ctx.rhs.value
 
     def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
-        args = [None] + ctx.object_constructor_arg_list().value
+        args = [ctx.any_bound_class().value.__name__] + ctx.object_constructor_arg_list().value
         ctx.value = MDPObjectGrounding(obj=ctx.any_bound_class().value(*args))
 
     def exitObject_constructor_arg_list(self, ctx: RLangParser.Object_constructor_arg_listContext):
@@ -779,7 +788,7 @@ class RLangListener(RLangParserListener):
     def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
 
-    def exitDot_exp(self, ctx:RLangParser.Dot_expContext):
+    def exitDot_exp(self, ctx: RLangParser.Dot_expContext):
         ctx.value = list(map(lambda x: x.getText(), ctx.IDENTIFIER()))
 
     def exitAny_array_compound(self, ctx: RLangParser.Any_array_compoundContext):

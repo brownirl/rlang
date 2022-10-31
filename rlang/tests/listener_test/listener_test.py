@@ -398,7 +398,9 @@ class ListenerTests(unittest.TestCase):
         assert sred_prediction[0](state=oo_state2) == {Primitive(128): 1.0}
 
         abstract_object_property_prediction_effect = knowledge['abstract_object_prediction']
-
+        sobj_prediction = abstract_object_property_prediction_effect.prediction_dict['S.color']
+        print(sobj_prediction[0](state=oo_state2))
+        pass
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")
