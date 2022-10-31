@@ -74,7 +74,7 @@ probabilistic_effect_statement
     | (reward | prediction | effect_reference) probabilistic_condition NL+    # probabilistic_effect_statement_sugar
     ;
 reward: REWARD arithmetic_exp;
-prediction: (IDENTIFIER PRIME? | S_PRIME) PREDICT arithmetic_exp;
+prediction: (S_PRIME dot_exp? | IDENTIFIER PRIME?) PREDICT arithmetic_exp;
 effect_reference: PREDICT IDENTIFIER;
 
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
@@ -134,8 +134,8 @@ an_object: any_bound_var | object_instantiation;
 
 any_bound_var
     : S trailer?                    # bound_state
-    | IDENTIFIER PRIME? trailer*    # bound_identifier
     | S_PRIME trailer?              # bound_next_state
+    | IDENTIFIER PRIME? trailer*    # bound_identifier
     | A			                    # bound_action
     ;
 
@@ -144,8 +144,10 @@ any_bound_class: IDENTIFIER;
 trailer
     : int_array_exp             # trailer_array
     | slice_exp                 # trailer_slice
-    | (DOT attr+=IDENTIFIER)+   # trailer_object
+    | dot_exp                   # trailer_object
     ;
+
+dot_exp: (DOT attr+=IDENTIFIER)+;
 
 //object_dot_exp: IDENTIFIER (DOT attr+=IDENTIFIER)*;
 

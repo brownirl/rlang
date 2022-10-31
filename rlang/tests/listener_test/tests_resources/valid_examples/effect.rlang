@@ -122,6 +122,23 @@ Effect object_conditional:
     if S.arm == kuka_arm:
         Reward 15
 
+Effect mixed_object_conditional_probabilistic:
+    if S.arm == kuka_arm and S.color.green == 128:
+        with P(0.4):
+            Reward 12
+        or with P(0.6):
+            Reward 1
+    else:
+        Reward S.color.green
+
+
+Effect state_object_property_prediction:
+    if S.color.red == 256:
+        S'.color.red -> 128
+
+#Effect abstract_object_prediction:
+#    pass
+
 
 
 #Effect jo:

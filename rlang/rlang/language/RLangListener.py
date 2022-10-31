@@ -514,12 +514,15 @@ class RLangListener(RLangParserListener):
         if not ctx.arithmetic_exp().value.domain <= Domain.STATE_ACTION:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is a function of {ctx.arithmetic_exp().value.domain}")
-        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE:
+        elif ctx.arithmetic_exp().value.codomain != Domain.REAL_VALUE and ctx.arithmetic_exp().value.codomain != Domain.OBJECT_VALUE:
             raise RLangSemanticError(
                 f"Cannot prescribe reward that is not numerical: {ctx.arithmetic_exp().value.codomain}")
         ctx.value = RewardDistribution.from_single(ctx.arithmetic_exp().value)
 
     def exitPrediction(self, ctx: RLangParser.PredictionContext):
+        # TODO: implement semantics for when it's not just a variable but a property of a variable!
+        # Will probably need to adjust the parser to include identifiers with trailers. Then set grounding_function
+        # to perhaps a new grounding function that unwraps MDPObjectGroundings, similar to StateObjectAttributeGrounding
         if ctx.IDENTIFIER() is not None:
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
@@ -527,7 +530,14 @@ class RLangListener(RLangParserListener):
             ctx.value = GroundingDistribution(grounding=grounding_function,
                                               distribution={ctx.arithmetic_exp().value: 1.0})
         elif ctx.S_PRIME() is not None:
-            ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
+            if ctx.dot_exp() is not None:
+                #TODO: Should be a GroundingDistribution I think. May need to implement a new kind of distribution
+                # that isn't numerical! A new subclass of ProbabilityDistrubution
+                grounding_function = StateObjectAttributeGrounding(ctx.dot_exp().value, domain='next_state')
+                ctx.value = GroundingDistribution(grounding=grounding_function,
+                                              distribution={ctx.arithmetic_exp().value: 1.0})
+            else:
+                ctx.value = StateDistribution.from_single(ctx.arithmetic_exp().value)
 
     def exitEffect_reference(self, ctx: RLangParser.Effect_referenceContext):
         effect = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -740,7 +750,14 @@ class RLangListener(RLangParserListener):
         #  Would prefer not to use this syntax: S'.something as opposed to S.something'
 
         if ctx.trailer() is not None:
-            ctx.value = Factor(ctx.trailer().value, domain='next_state')
+            trailer = ctx.trailer().value
+            if isinstance(trailer, slice) or isinstance(trailer, int):
+                ctx.value = Factor(trailer, domain='next_state')
+            elif isinstance(trailer, list) and len(trailer) > 0:
+                if isinstance(trailer[0], int):
+                    ctx.value = Factor(trailer, domain='next_state')
+                else:
+                    ctx.value = StateObjectAttributeGrounding(trailer, domain='next_state')
         else:
             ctx.value = IdentityGrounding(Domain.NEXT_STATE)
 
@@ -757,10 +774,13 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.slice_exp().value
 
     def exitTrailer_object(self, ctx: RLangParser.Trailer_objectContext):
-        ctx.value = list(map(lambda x: x.getText(), ctx.IDENTIFIER()))
+        ctx.value = ctx.dot_exp().value
 
     def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
         ctx.value = list(map(lambda x: x.value, ctx.arr))
+
+    def exitDot_exp(self, ctx:RLangParser.Dot_expContext):
+        ctx.value = list(map(lambda x: x.getText(), ctx.IDENTIFIER()))
 
     def exitAny_array_compound(self, ctx: RLangParser.Any_array_compoundContext):
         ctx.value = ctx.compound_array_exp().value

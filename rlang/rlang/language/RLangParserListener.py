@@ -638,21 +638,21 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#bound_identifier.
-    def enterBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#bound_identifier.
-    def exitBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#bound_next_state.
     def enterBound_next_state(self, ctx:RLangParser.Bound_next_stateContext):
         pass
 
     # Exit a parse tree produced by RLangParser#bound_next_state.
     def exitBound_next_state(self, ctx:RLangParser.Bound_next_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_identifier.
+    def enterBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_identifier.
+    def exitBound_identifier(self, ctx:RLangParser.Bound_identifierContext):
         pass
 
 
@@ -698,6 +698,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#trailer_object.
     def exitTrailer_object(self, ctx:RLangParser.Trailer_objectContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#dot_exp.
+    def enterDot_exp(self, ctx:RLangParser.Dot_expContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#dot_exp.
+    def exitDot_exp(self, ctx:RLangParser.Dot_expContext):
         pass
 
 

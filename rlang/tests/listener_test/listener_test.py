@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from .context import rlang
-from rlang import VectorState, ObjectOrientedState, Action, MDPObject
+from rlang import Primitive, VectorState, ObjectOrientedState, Action, MDPObject
 
 
 class ListenerTests(unittest.TestCase):
@@ -378,6 +378,25 @@ class ListenerTests(unittest.TestCase):
         arm = knowledge['Manipulator'](name="arm", num_fingers=5)
         oo_state = ObjectOrientedState(objects={arm})
         assert object_conditional_effect.reward_function(state=oo_state) == 15
+
+        mixed_object_conditional_effect = knowledge['mixed_object_conditional_probabilistic']
+        color = MDPObject(name="color")
+        color.green = 256
+        oo_state2 = ObjectOrientedState(objects={color, arm})
+        assert mixed_object_conditional_effect.reward_function(state=oo_state2) == 256
+
+        color = MDPObject(name="color")
+        color.green = 128
+        oo_state3 = ObjectOrientedState(objects={color, arm})
+        assert mixed_object_conditional_effect.reward_function(state=oo_state3) == 5.4
+
+        state_object_property_prediction_effect = knowledge['state_object_property_prediction']
+        color = MDPObject(name="color")
+        color.red = 256
+        oo_state2 = ObjectOrientedState(objects={color, arm})
+        sred_prediction = state_object_property_prediction_effect.prediction_dict['S.color.red']
+        assert sred_prediction[0](state=oo_state2) == {Primitive(128): 1.0}
+
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")

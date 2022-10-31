@@ -379,8 +379,19 @@ class StateObjectAttributeGrounding(GroundingFunction):
 
     This is much easier if we presume the ObjectOrientedState has object attrs just like MDPObjects do."""
 
-    def __init__(self, attribute_chain: List, name: str = None):
+    def __init__(self, attribute_chain: List, domain: Union[str, Domain] = Domain.STATE):
         self.attribute_chain = attribute_chain
+
+        if isinstance(domain, Domain):
+            domain_arg = domain.name.lower()
+        elif isinstance(domain, str):
+            domain_arg = domain
+            domain = Domain.from_name(domain)
+        else:
+            raise RLangGroundingError(f"Invalid domain argument for StateObjectAttributeGrounding: {type(domain)}")
+
+        if domain is not Domain.STATE and domain is not Domain.NEXT_STATE:
+            raise RLangGroundingError(f"StateObjectAttributeGrounding cannot have domain of type {domain.name}")
 
         def state_object_attribute_unwrap(state_or_obj, attr_chain):
             if not hasattr(state_or_obj, attr_chain[0]):
@@ -392,8 +403,11 @@ class StateObjectAttributeGrounding(GroundingFunction):
                 return state_object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
 
         super().__init__(
-            function=lambda *args, **kwargs: state_object_attribute_unwrap(kwargs['state'], self.attribute_chain),
-            codomain=Domain.OBJECT_VALUE, domain=Domain.STATE, name=name)
+            function=lambda *args, **kwargs: state_object_attribute_unwrap(kwargs[domain_arg], self.attribute_chain),
+            codomain=Domain.OBJECT_VALUE, domain=domain, name="S." + '.'.join(self.attribute_chain))
+
+    def __repr__(self):
+        return f"<StateObjectAttributeGrounding [S.{'.'.join(self.attribute_chain)}]>"
 
 
 class Factor(GroundingFunction):
@@ -855,7 +869,7 @@ class GroundingDistribution(ProbabilityDistribution):
                 if isinstance(k_, Primitive):
                     a = k_
                 else:
-                    a = VectorState(k_)
+                    a = Primitive(k_)
                 if a in true_distribution:
                     true_distribution[a] += v_
                 else:
