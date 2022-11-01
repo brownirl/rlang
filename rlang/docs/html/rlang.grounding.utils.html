@@ -141,20 +141,20 @@
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.utils.primitives.State">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">State</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#State"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.State" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Primitive</span></code></a></p>
-<p>Represents a State object.</p>
+<dt class="sig sig-object py" id="rlang.grounding.utils.primitives.VectorState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">VectorState</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#VectorState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.VectorState" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code>, <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Primitive</span></code></a></p>
+<p>Represents a VectorState object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>input_array</strong> – a numpy array or list representing a state or set of states.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="o">&gt;&gt;</span> <span class="n">State</span><span class="p">([</span><span class="mi">3</span><span class="p">])</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="o">&gt;&gt;</span> <span class="n">State</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">s1</span> <span class="o">=</span> <span class="n">VectorState</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">VectorState</span><span class="p">([</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">VectorState</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="o">&gt;&gt;</span> <span class="n">VectorState</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -163,6 +163,29 @@
 <dt class="sig sig-object py" id="rlang.grounding.utils.primitives.Action">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#Action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.Action" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#rlang.grounding.utils.primitives.Primitive" title="rlang.grounding.utils.primitives.Primitive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Primitive</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="rlang.grounding.utils.primitives.MDPObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.primitives.</span></span><span class="sig-name descname"><span class="pre">MDPObject</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#MDPObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.MDPObject" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents an object in an Object-Oriented MDP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – the name for this object.</p>
+</dd>
+</dl>
+<p>Inherit this class to create a new object class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.grounding.utils.primitives.MDPObject.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/primitives.html#MDPObject.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.primitives.MDPObject.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -180,19 +203,39 @@
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="rlang.grounding.utils.utils.OldMDPMetadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">OldMDPMetadata</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#OldMDPMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.OldMDPMetadata" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents important parameters of the MDP like the state space and action space.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata.__init__" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="rlang.grounding.utils.utils.OldMDPMetadata.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#OldMDPMetadata.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.OldMDPMetadata.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state_space</strong> (<em>Space</em>) – </p></li>
 <li><p><strong>action_space</strong> (<em>Space</em>) – </p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.grounding.utils.utils.</span></span><span class="sig-name descname"><span class="pre">MDPMetadata</span></span><a class="reference internal" href="_modules/rlang/grounding/utils/utils.html#MDPMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for holding metadata on an MDP like the state and action representations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.grounding.utils.utils.MDPMetadata.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_representation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlang.grounding.utils.utils.MDPMetadata.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state_representation</strong> (<em>Type</em><em>[</em><em>State</em><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>

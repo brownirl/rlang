@@ -257,7 +257,7 @@ requires becoming familiar with RLang’s <a class="reference internal" href="rl
 <span class="linenos"> 2</span>
 <span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">simple_rl.agents</span> <span class="kn">import</span> <span class="n">QLearningAgent</span>
 <span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="kn">from</span> <span class="nn">..grounding.utils.primitives</span> <span class="kn">import</span> <span class="n">State</span>
+<span class="linenos"> 5</span><span class="kn">from</span> <span class="nn">..grounding.utils.primitives</span> <span class="kn">import</span> <span class="n">VectorState</span>
 <span class="linenos"> 6</span>
 <span class="linenos"> 7</span>
 <span class="linenos"> 8</span><span class="k">class</span> <span class="nc">RLangQLearningAgent</span><span class="p">(</span><span class="n">QLearningAgent</span><span class="p">):</span>
@@ -281,7 +281,7 @@ requires becoming familiar with RLang’s <a class="reference internal" href="rl
 <span class="linenos">26</span>        <span class="k">def</span> <span class="nf">weighted_reward</span><span class="p">(</span><span class="n">r_func</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
 <span class="linenos">27</span>            <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="linenos">28</span>            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="linenos">29</span>                <span class="n">reward</span> <span class="o">+=</span> <span class="n">r_func</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">State</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">v</span>
+<span class="linenos">29</span>                <span class="n">reward</span> <span class="o">+=</span> <span class="n">r_func</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">VectorState</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">v</span>
 <span class="linenos">30</span>            <span class="k">return</span> <span class="n">reward</span>
 <span class="linenos">31</span>
 <span class="linenos">32</span>        <span class="k">def</span> <span class="nf">weighted_value</span><span class="p">(</span><span class="n">q_func</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
@@ -302,7 +302,7 @@ requires becoming familiar with RLang’s <a class="reference internal" href="rl
 <span class="linenos">47</span>            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
 <span class="linenos">48</span>                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
 <span class="linenos">49</span>                    <span class="n">a</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-<span class="linenos">50</span>                    <span class="n">q_func</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">reward_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">State</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+<span class="linenos">50</span>                    <span class="n">q_func</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">reward_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">VectorState</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
 <span class="linenos">51</span>
 <span class="linenos">52</span>        <span class="n">transition_function</span> <span class="o">=</span> <span class="n">knowledge</span><span class="o">.</span><span class="n">transition_function</span>
 <span class="linenos">53</span>
@@ -310,7 +310,7 @@ requires becoming familiar with RLang’s <a class="reference internal" href="rl
 <span class="linenos">55</span>            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
 <span class="linenos">56</span>                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
 <span class="linenos">57</span>                    <span class="n">a</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-<span class="linenos">58</span>                    <span class="n">s_primei</span> <span class="o">=</span> <span class="n">transition_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">State</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+<span class="linenos">58</span>                    <span class="n">s_primei</span> <span class="o">=</span> <span class="n">transition_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">VectorState</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">action</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
 <span class="linenos">59</span>                    <span class="k">if</span> <span class="n">s_primei</span><span class="p">:</span>
 <span class="linenos">60</span>                        <span class="c1"># Q learning Update</span>
 <span class="linenos">61</span>                        <span class="n">r_prime</span> <span class="o">=</span> <span class="n">weighted_reward</span><span class="p">(</span><span class="n">reward_function</span><span class="p">,</span> <span class="n">s_primei</span><span class="p">)</span>

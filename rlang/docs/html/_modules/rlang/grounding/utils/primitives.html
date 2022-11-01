@@ -106,7 +106,7 @@
 
     <span class="k">def</span> <span class="nf">unbatched_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Primitive</span><span class="p">):</span>
-            <span class="c1">#TODO: investigate deprecation cause - include version</span>
+            <span class="c1"># TODO: investigate deprecation cause - include version</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -121,8 +121,12 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">bitwise_not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="State"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.State">[docs]</a><span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">Primitive</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a State object.</span>
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="VectorState"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.VectorState">[docs]</a><span class="k">class</span> <span class="nc">VectorState</span><span class="p">(</span><span class="n">State</span><span class="p">,</span> <span class="n">Primitive</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a VectorState object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_array: a numpy array or list representing a state or set of states.</span>
@@ -130,16 +134,75 @@
 <span class="sd">    Examples:</span>
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            s1 = State(3)</span>
-<span class="sd">            &gt;&gt; State([3])</span>
-<span class="sd">            s2 = State([3, 4])</span>
-<span class="sd">            &gt;&gt; State([3, 4])</span>
+<span class="sd">            s1 = VectorState(3)</span>
+<span class="sd">            &gt;&gt; VectorState([3])</span>
+<span class="sd">            s2 = VectorState([3, 4])</span>
+<span class="sd">            &gt;&gt; VectorState([3, 4])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">Primitive</span><span class="p">):</span>
     <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="MDPObject"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.MDPObject">[docs]</a><span class="k">class</span> <span class="nc">MDPObject</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Represents an object in an Object-Oriented MDP</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name: the name for this object.</span>
+
+<span class="sd">    Inherit this class to create a new object class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attr_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MDPObject.__init__"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.MDPObject.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_list</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">attr_list</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span>  <span class="c1"># Ignoring name</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;MDPObject[</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">ObjectOrientedState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ObjectOrientedState</span><span class="p">):</span>
+            <span class="c1"># TODO: Need to compare all objects and their attributes</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;State does not contain attribute </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;objects&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="c1"># TODO: Adding or multiplying this kind of state does not make sense. Need to figure this out in the listener.</span>
 </pre></div>
 
            </div>

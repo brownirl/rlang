@@ -33,7 +33,7 @@ class Primitive(np.ndarray):
 
     def unbatched_eq(self, other):
         if isinstance(other, Primitive):
-            #TODO: investigate deprecation cause - include version
+            # TODO: investigate deprecation cause - include version
             return np.all(super().__eq__(other))
         else:
             return False
@@ -74,6 +74,13 @@ class Action(Primitive):
 
 
 class MDPObject:
+    """Represents an object in an Object-Oriented MDP
+
+    Args:
+        name: the name for this object.
+
+    Inherit this class to create a new object class.
+    """
     attr_list = ['name']
 
     def __init__(self, name: str):
@@ -84,7 +91,7 @@ class MDPObject:
             if self.attr_list != other.attr_list:
                 return False
             for k in self.attr_list:
-                if k == 'name':         # Ignoring name
+                if k == 'name':  # Ignoring name
                     continue
                 if getattr(self, k) != getattr(other, k):
                     return False

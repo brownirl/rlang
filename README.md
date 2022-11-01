@@ -37,4 +37,4 @@
 ## Building the documentation with Sphinx
 
 - You can easily generate html files by running `make clean` and `make html` from `sphinx/`
-- If you add or remove a module, within `sphinx/` run `export SPHINX_APIDOC_OPTIONS=members,show-inheritance` and then `sphinx-apidoc -t templates/ -o source/ ../rlang/rlang ../rlang/rlang/language`.
+- If you add or remove a module, delete the corresponding file in `sphinx/source/` and then within `sphinx/` run `export SPHINX_APIDOC_OPTIONS=members,show-inheritance` and then `sphinx-apidoc -t templates/ -o source/ ../rlang/rlang ../rlang/rlang/language`.
