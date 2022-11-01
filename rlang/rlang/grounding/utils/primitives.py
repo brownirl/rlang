@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Any
 
+from .grounding_exceptions import RLangGroundingError
+
 
 class Primitive(np.ndarray):
     """Represents a batched real-valued object.
@@ -53,7 +55,7 @@ class State:
 
 
 class VectorState(State, Primitive):
-    """Represents a VectorState object.
+    """Represents a state that is a vector.
 
     Args:
         input_array: a numpy array or list representing a state or set of states.
@@ -70,11 +72,24 @@ class VectorState(State, Primitive):
 
 
 class Action(Primitive):
+    """Represents an action that is a vector.
+
+    Args:
+        input_array: a numpy array or list representing an action or set of actions.
+
+    Examples:
+        .. code-block:: python
+
+            s1 = Action(3)
+            >> Action([3])
+            s2 = Action([3, 4])
+            >> Action([3, 4])
+    """
     pass
 
 
 class MDPObject:
-    """Represents an object in an Object-Oriented MDP
+    """Represents an object in an Object-Oriented MDP.
 
     Args:
         name: the name for this object.
@@ -103,10 +118,26 @@ class MDPObject:
         return hash(self.__repr__())
 
     def __repr__(self):
-        return f"<MDPObject[{type(self)}] {self.__dict__}>"
+        subclass_str = f"[{type(self).__name__}]" if type(self).__name__ is not "MDPObject" else ""
+        return f"<MDPObject{subclass_str} {self.__dict__}>"
 
 
 class ObjectOrientedState(State):
+    """Represents a state for an object-oriented MDP.
+
+        Args:
+            objects: a set of objects, which should be instances of subclasses of MDPObject.
+
+        Examples:
+            .. code-block:: python
+
+                color = MDPObject(name="color")
+                color.red = 256
+                oo_state = ObjectOrientedState(objects={color})
+                >> VectorState([3])
+                s2 = VectorState([3, 4])
+                >> VectorState([3, 4])
+        """
     def __init__(self, objects: set):
         self.objects = objects
 
@@ -129,4 +160,14 @@ class ObjectOrientedState(State):
         else:
             return self.__getitem__(item)
 
-    # TODO: Adding or multiplying this kind of state does not make sense. Need to figure this out in the listener.
+    def __repr__(self):
+        return f"<ObjectOrientedState {str(self.objects)}>"
+
+    def __mul__(self, other):
+        raise RLangGroundingError("An ObjectOrientedState cannot be used arithmetically")
+
+    def __add__(self, other):
+        raise RLangGroundingError("An ObjectOrientedState cannot be used arithmetically")
+
+    def __sub__(self, other):
+        raise RLangGroundingError("An ObjectOrientedState cannot be used arithmetically")

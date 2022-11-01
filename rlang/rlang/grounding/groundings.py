@@ -258,9 +258,7 @@ class GroundingFunction(Grounding):
 
 
 class PrimitiveGrounding(GroundingFunction):
-    """GroundingFunction which requires no arguments, i.e. domain=Domain.ANY
-
-    """
+    """GroundingFunction which requires no arguments, i.e. domain=Domain.ANY"""
 
     def __init__(self, codomain: Domain, value: Any, name: str = None):
         # TODO: What about lists? Should lists be cast? Only non-jagged ones?
@@ -335,14 +333,12 @@ class IdentityGrounding(GroundingFunction):
 
 
 class MDPObjectGrounding(GroundingFunction):
-    """Represents an object that is perhaps a function of state but not an object in the state space."""
+    """For representing objects, which may have properties that are functions of state."""
 
     def __init__(self, obj: MDPObject, name: str = None):
         self.obj = obj
         self.true_obj = None
         self.calculated = False
-
-        # TODO: The properties of objects should be functions of (S,A,S')! Need to augment MDPObject class
 
         super().__init__(function=self.calculate_true_obj, codomain=Domain.OBJECT_VALUE,
                          domain=Domain.STATE_ACTION_NEXT_STATE, name=name)
@@ -381,7 +377,7 @@ class MDPObjectGrounding(GroundingFunction):
 
 
 class MDPObjectAttributeGrounding(GroundingFunction):
-    """For grounding the attributes of abstract objects, necessary for predictions"""
+    """For referencing attributes of abstract objects that are *not* in the state."""
 
     def __init__(self, grounding: GroundingFunction, attribute_chain: List):
         self.attribute_chain = attribute_chain
@@ -402,9 +398,7 @@ class MDPObjectAttributeGrounding(GroundingFunction):
 
 
 class StateObjectAttributeGrounding(GroundingFunction):
-    """Represents a function of state that returns an object owned by the state.
-
-    This is much easier if we presume the ObjectOrientedState has object attrs just like MDPObjects do."""
+    """For referencing attributes of objects in the state when the state is object-oriented."""
 
     def __init__(self, attribute_chain: List, domain: Union[str, Domain] = Domain.STATE):
         self.attribute_chain = attribute_chain
@@ -626,7 +620,7 @@ class ValueFunction(GroundingFunction):
 
 
 class ProbabilisticFunction(GroundingFunction):
-    """Represents a function which provides stochastic output.
+    """Represents a function that provides stochastic output.
 
     """
 
@@ -938,71 +932,71 @@ class Policy(ProbabilisticFunction):
         return f"<Policy [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
 
 
-class Plan(ProbabilisticFunction):
-    """THIS DOES NOT WORK YET
-
-    Represents an open-loop policy
-
-    Args:
-        distribution_list: a list of ActionDistributions
-
-    
-    """
-
-    def __init__(self, distribution_list: [ActionDistribution]):
-        domain = Domain.ANY
-        length = None
-        for d in distribution_list:
-            domain += d.domain
-            if length:
-                if len(d) != length:
-                    length = 0
-                    break
-            else:
-                length = len(d)
-
-        self.i = 0
-        self.plan = distribution_list
-        self.length = length
-        super().__init__(function=lambda *args, **kwargs: self, domain=domain)
-
-    def append(self, distribution):
-        if not isinstance(distribution, ActionDistribution):
-            raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(distribution)}")
-        self.plan.append(distribution)
-        self.domain += distribution.domain
-        if self.length != 0 and len(distribution) != 0:
-            self.length += len(distribution)
-        else:
-            self.length = 0
-
-    def extend(self, distribution_list):
-        domain = Domain.ANY
-        for d in distribution_list:
-            if not isinstance(d, ActionDistribution):
-                raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(d)}")
-            domain += d.domain
-            if self.length != 0 and len(d) != 0:
-                self.length += len(d)
-            else:
-                self.length = 0
-        self.plan.extend(distribution_list)
-        self.domain += domain
-
-    def reset(self):
-        self.i = 0
-
-    def __iter__(self):
-        self.i = 0
-        return self
-
-    def __next__(self):
-        if self.i >= len(self.plan):
-            raise StopIteration
-        else:
-            i = self.i
-            self.i += 1
-            return self.plan[i]
+# class Plan(ProbabilisticFunction):
+#     """THIS DOES NOT WORK YET
+#
+#     Represents an open-loop policy
+#
+#     Args:
+#         distribution_list: a list of ActionDistributions
+#
+#
+#     """
+#
+#     def __init__(self, distribution_list: [ActionDistribution]):
+#         domain = Domain.ANY
+#         length = None
+#         for d in distribution_list:
+#             domain += d.domain
+#             if length:
+#                 if len(d) != length:
+#                     length = 0
+#                     break
+#             else:
+#                 length = len(d)
+#
+#         self.i = 0
+#         self.plan = distribution_list
+#         self.length = length
+#         super().__init__(function=lambda *args, **kwargs: self, domain=domain)
+#
+#     def append(self, distribution):
+#         if not isinstance(distribution, ActionDistribution):
+#             raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(distribution)}")
+#         self.plan.append(distribution)
+#         self.domain += distribution.domain
+#         if self.length != 0 and len(distribution) != 0:
+#             self.length += len(distribution)
+#         else:
+#             self.length = 0
+#
+#     def extend(self, distribution_list):
+#         domain = Domain.ANY
+#         for d in distribution_list:
+#             if not isinstance(d, ActionDistribution):
+#                 raise RLangGroundingError(f"Expecting {str(ActionDistribution)}, got {type(d)}")
+#             domain += d.domain
+#             if self.length != 0 and len(d) != 0:
+#                 self.length += len(d)
+#             else:
+#                 self.length = 0
+#         self.plan.extend(distribution_list)
+#         self.domain += domain
+#
+#     def reset(self):
+#         self.i = 0
+#
+#     def __iter__(self):
+#         self.i = 0
+#         return self
+#
+#     def __next__(self):
+#         if self.i >= len(self.plan):
+#             raise StopIteration
+#         else:
+#             i = self.i
+#             self.i += 1
+#             return self.plan[i]
 
 
 class OptionTermination:
