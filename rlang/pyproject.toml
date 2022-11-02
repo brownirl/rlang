@@ -29,4 +29,4 @@ classifiers = [
 
 [project.urls]
 Homepage = "http://rlang.ai/"
-Documentation = http://rlang.ai/"
+Documentation = "http://rlang.ai/"
