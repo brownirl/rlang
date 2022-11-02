@@ -15,17 +15,20 @@ An RLang program has the following structure:
 .. productionlist::
    program: import* declaration*
 
-where each import statement imports a local vocabulary file (e.g. ``import vocab.json``) and each declaration is the
+where each import statement imports a local vocabulary file (e.g. ``import "vocab.json"``) and each declaration is the
 instantiation of an RLang grounding:
 
 .. productionlist::
    declaration: constant NL+
+    : | constant NL+
     : | action NL+
     : | factor NL+
     : | proposition NL+
     : | goal NL+
     : | feature NL+
     : | markov_feature NL+
+    : | object_def NL+
+    : | class_def
     : | option
     : | policy
     : | effect
@@ -68,6 +71,10 @@ instantiation of an RLang grounding:
       - :math:`\mathcal{S}\times\mathcal{A}\times\mathcal{S}`
       - :math:`\mathbb{R}^n`
       - :py:class:`.MarkovFeature`
+    * - Objects_
+      - :math:`\mathcal{S}`
+      - :math:`O`
+      - :py:class:`.MDPObjectGrounding`
     * - Options_
       - :math:`\mathcal{S}`
       - :math:`\mathcal{A}`
@@ -188,7 +195,6 @@ Goals are used to specify goal states given by a proposition.
 
 Goals ground to :py:class:`.Goal`.
 
-
 Markov Features
 ^^^^^^^^^^^^^^^
 
@@ -202,9 +208,66 @@ The prime operator (``'``) can be used to reference the value of an RLang ground
 
 .. code-block:: text
 
-    Markov Feature inventory_change := inventory' - inventory
+    MarkovFeature inventory_change := inventory' - inventory
 
 MarkovFeatures ground to :py:class:`.MarkovFeature`.
+
+Objects
+^^^^^^^
+
+.. productionlist::
+   object_def: "Object" IDENTIFIER ":=" object_instantiation
+   object_instantiation: any_bound_class "(" object_constructor_arg_list ")"
+
+Users can instantiate abstract objects which can properties that are functions of an (:math:`s,a,s'`) experience tuple.
+Object classes can come from a grounding or be defined within an RLang file using Classes_.
+Object properties can be referenced within RLang using dot syntax.
+
+.. code-block:: text
+
+    Class Color:
+    	red: int
+	    green: int
+	    blue: int
+
+    Object color_from_state := Color(S[0], S[1], S[2])
+    Proposition is_red := color_from_state.red == 256
+
+
+Objects ground to :py:class:`.MDPObjectGrounding`.
+
+Classes
+^^^^^^^
+
+.. productionlist::
+   class_def: "Class" IDENTIFIER ("(" any_bound_class ")")? ":" INDENT attribute_definition_collection DEDENT;
+   attribute_definition_collection: (definitions+=attribute_definition NL *)+;
+   attribute_definition: IDENTIFIER ":" type_def;
+   simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
+
+Users can instantiate classes for abstract objects. A class definition specifies attributes and their types.
+
+.. code-block:: text
+
+    Class Color:
+    	red: int
+	    green: int
+	    blue: int
+
+    Object red := Color(256, 0, 0)
+
+You can also inherit classes defined in RLang or even from a grounding file:
+
+.. code-block:: text
+
+    Class ColorAlpha(Color):
+    	alpha: int
+
+    Object semi_red := ColorAlpha(256, 0, 0, 128)
+
+.. important:: Object attributes are only very loosely typed.
+
+Classes ground to subclasses of :py:class:`.MDPObject`.
 
 Policies
 ^^^^^^^^

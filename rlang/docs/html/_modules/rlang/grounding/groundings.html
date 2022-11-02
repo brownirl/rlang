@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../using_rlang.html">Working with RLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../language_reference.html">RLang Language Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rlang.html">RLang Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rlang.html">rlang package</a></li>
 </ul>
 
         </div>
@@ -132,7 +132,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="GroundingFunction.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.GroundingFunction.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Domain</span><span class="p">],</span> <span class="n">codomain</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Domain</span><span class="p">],</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initializes a GroundingFunction.</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a GroundingFunction.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            domain: Domain of the function.</span>
@@ -331,9 +331,7 @@
 
 
 <div class="viewcode-block" id="PrimitiveGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.PrimitiveGrounding">[docs]</a><span class="k">class</span> <span class="nc">PrimitiveGrounding</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;GroundingFunction which requires no arguments, i.e. domain=Domain.ANY</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;GroundingFunction which requires no arguments, i.e. domain=Domain.ANY&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PrimitiveGrounding.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.PrimitiveGrounding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">codomain</span><span class="p">:</span> <span class="n">Domain</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># TODO: What about lists? Should lists be cast? Only non-jagged ones?</span>
@@ -408,14 +406,18 @@
 
 
 <div class="viewcode-block" id="MDPObjectGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.MDPObjectGrounding">[docs]</a><span class="k">class</span> <span class="nc">MDPObjectGrounding</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents an object that is perhaps a function of state but not an object in the state space.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;For representing objects, which may have properties that are functions of state.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MDPObjectGrounding.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.MDPObjectGrounding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">MDPObject</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an abstract object grounding.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: the MDPObject.</span>
+<span class="sd">            name (optional): the name of the object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_obj</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calculated</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># TODO: The properties of objects should be functions of (S,A,S&#39;)! Need to augment MDPObject class</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_true_obj</span><span class="p">,</span> <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">OBJECT_VALUE</span><span class="p">,</span>
                          <span class="n">domain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">STATE_ACTION_NEXT_STATE</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
@@ -454,9 +456,15 @@
 
 
 <div class="viewcode-block" id="MDPObjectAttributeGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.MDPObjectAttributeGrounding">[docs]</a><span class="k">class</span> <span class="nc">MDPObjectAttributeGrounding</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;For grounding the attributes of abstract objects, necessary for predictions&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;For referencing attributes of abstract objects that are *not* in the state.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MDPObjectAttributeGrounding.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.MDPObjectAttributeGrounding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grounding</span><span class="p">:</span> <span class="n">GroundingFunction</span><span class="p">,</span> <span class="n">attribute_chain</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a grounding for referencing abstract object attributes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grounding: the MDPObjectGrounding whose attribute you are referencing.</span>
+<span class="sd">            attribute_chain: a list of attribute/sub-attributes (e.g. `[&quot;color&quot;, &quot;red_value&quot;]`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attribute_chain</span> <span class="o">=</span> <span class="n">attribute_chain</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grounding</span> <span class="o">=</span> <span class="n">grounding</span>
 
@@ -475,11 +483,15 @@
 
 
 <div class="viewcode-block" id="StateObjectAttributeGrounding"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.StateObjectAttributeGrounding">[docs]</a><span class="k">class</span> <span class="nc">StateObjectAttributeGrounding</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a function of state that returns an object owned by the state.</span>
-
-<span class="sd">    This is much easier if we presume the ObjectOrientedState has object attrs just like MDPObjects do.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;For referencing attributes of objects in the state when the state is object-oriented.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="StateObjectAttributeGrounding.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.StateObjectAttributeGrounding.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_chain</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">STATE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a grounding for referencing object attributes, when those objects are in the state.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attribute_chain: a list of attribute/sub-attributes (e.g. `[&quot;ball&quot;, &quot;color&quot;, &quot;red_value&quot;]`)</span>
+<span class="sd">            domain: either &quot;state&quot; or &quot;next_state&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attribute_chain</span> <span class="o">=</span> <span class="n">attribute_chain</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">Domain</span><span class="p">):</span>
@@ -699,7 +711,7 @@
 
 
 <div class="viewcode-block" id="ProbabilisticFunction"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.ProbabilisticFunction">[docs]</a><span class="k">class</span> <span class="nc">ProbabilisticFunction</span><span class="p">(</span><span class="n">GroundingFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a function which provides stochastic output.</span>
+    <span class="sd">&quot;&quot;&quot;Represents a function that provides stochastic output.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1011,71 +1023,71 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Policy [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]-&gt;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">codomain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">additional_info</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Plan"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan">[docs]</a><span class="k">class</span> <span class="nc">Plan</span><span class="p">(</span><span class="n">ProbabilisticFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;THIS DOES NOT WORK YET</span>
-
-<span class="sd">    Represents an open-loop policy</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        distribution_list: a list of ActionDistributions</span>
-
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="Plan.__init__"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.Plan.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution_list</span><span class="p">:</span> <span class="p">[</span><span class="n">ActionDistribution</span><span class="p">]):</span>
-        <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">distribution_list</span><span class="p">:</span>
-            <span class="n">domain</span> <span class="o">+=</span> <span class="n">d</span><span class="o">.</span><span class="n">domain</span>
-            <span class="k">if</span> <span class="n">length</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">!=</span> <span class="n">length</span><span class="p">:</span>
-                    <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="n">distribution_list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">ActionDistribution</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expecting </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ActionDistribution</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">distribution</span><span class="o">.</span><span class="n">domain</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution_list</span><span class="p">):</span>
-        <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ANY</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">distribution_list</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ActionDistribution</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expecting </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ActionDistribution</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">domain</span> <span class="o">+=</span> <span class="n">d</span><span class="o">.</span><span class="n">domain</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">distribution_list</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">+=</span> <span class="n">domain</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">StopIteration</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+<span class="c1"># class Plan(ProbabilisticFunction):</span>
+<span class="c1">#     &quot;&quot;&quot;THIS DOES NOT WORK YET</span>
+<span class="c1">#</span>
+<span class="c1">#     Represents an open-loop policy</span>
+<span class="c1">#</span>
+<span class="c1">#     Args:</span>
+<span class="c1">#         distribution_list: a list of ActionDistributions</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, distribution_list: [ActionDistribution]):</span>
+<span class="c1">#         domain = Domain.ANY</span>
+<span class="c1">#         length = None</span>
+<span class="c1">#         for d in distribution_list:</span>
+<span class="c1">#             domain += d.domain</span>
+<span class="c1">#             if length:</span>
+<span class="c1">#                 if len(d) != length:</span>
+<span class="c1">#                     length = 0</span>
+<span class="c1">#                     break</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 length = len(d)</span>
+<span class="c1">#</span>
+<span class="c1">#         self.i = 0</span>
+<span class="c1">#         self.plan = distribution_list</span>
+<span class="c1">#         self.length = length</span>
+<span class="c1">#         super().__init__(function=lambda *args, **kwargs: self, domain=domain)</span>
+<span class="c1">#</span>
+<span class="c1">#     def append(self, distribution):</span>
+<span class="c1">#         if not isinstance(distribution, ActionDistribution):</span>
+<span class="c1">#             raise RLangGroundingError(f&quot;Expecting {str(ActionDistribution)}, got {type(distribution)}&quot;)</span>
+<span class="c1">#         self.plan.append(distribution)</span>
+<span class="c1">#         self.domain += distribution.domain</span>
+<span class="c1">#         if self.length != 0 and len(distribution) != 0:</span>
+<span class="c1">#             self.length += len(distribution)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             self.length = 0</span>
+<span class="c1">#</span>
+<span class="c1">#     def extend(self, distribution_list):</span>
+<span class="c1">#         domain = Domain.ANY</span>
+<span class="c1">#         for d in distribution_list:</span>
+<span class="c1">#             if not isinstance(d, ActionDistribution):</span>
+<span class="c1">#                 raise RLangGroundingError(f&quot;Expecting {str(ActionDistribution)}, got {type(d)}&quot;)</span>
+<span class="c1">#             domain += d.domain</span>
+<span class="c1">#             if self.length != 0 and len(d) != 0:</span>
+<span class="c1">#                 self.length += len(d)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 self.length = 0</span>
+<span class="c1">#         self.plan.extend(distribution_list)</span>
+<span class="c1">#         self.domain += domain</span>
+<span class="c1">#</span>
+<span class="c1">#     def reset(self):</span>
+<span class="c1">#         self.i = 0</span>
+<span class="c1">#</span>
+<span class="c1">#     def __iter__(self):</span>
+<span class="c1">#         self.i = 0</span>
+<span class="c1">#         return self</span>
+<span class="c1">#</span>
+<span class="c1">#     def __next__(self):</span>
+<span class="c1">#         if self.i &gt;= len(self.plan):</span>
+<span class="c1">#             raise StopIteration</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             i = self.i</span>
+<span class="c1">#             self.i += 1</span>
+<span class="c1">#             return self.plan[i]</span>
 
 
 <div class="viewcode-block" id="OptionTermination"><a class="viewcode-back" href="../../../rlang.grounding.html#rlang.grounding.groundings.OptionTermination">[docs]</a><span class="k">class</span> <span class="nc">OptionTermination</span><span class="p">:</span>

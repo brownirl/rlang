@@ -48,7 +48,7 @@ and ``gridworld.rlang`` could look like this:
 
 .. code-block:: text
 
-    import vocab.json
+    import "vocab.json"
 
     Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
 

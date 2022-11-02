@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="rlang",
-    version="1.0.0",
-    author="Anonymous",
+    version="0.2.0",
+    author="BrownIRL",
     author_email="",
     description="For specifying partial information about MDPs.",
     long_description=long_description,
@@ -19,5 +19,5 @@ setuptools.setup(
     ],
     package_dir={"": "rlang"},
     packages=setuptools.find_packages(where="rlang"),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )

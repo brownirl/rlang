@@ -84,17 +84,17 @@ class Domain(Enum):
             raise RLangGroundingError(f"Can't compare a Domain enum to a {type(other)}")
 
 
-class OldMDPMetadata:
-    # TODO: Deprecate eventually. I don't know if this is being used
-    """Represents important parameters of the MDP like the state space and action space."""
-    def __init__(self, state_space: Space, action_space: Space):
-        self.state_space = state_space
-        self.action_space = action_space
-
-    @classmethod
-    def from_state_action(cls, state: np.ndarray, action: np.ndarray):
-        return cls(state_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=state.shape),
-                   action_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=action.shape))
+# class OldMDPMetadata:
+#     # TODO: Deprecate eventually. I don't know if this is being used
+#     """Represents important parameters of the MDP like the state space and action space."""
+#     def __init__(self, state_space: Space, action_space: Space):
+#         self.state_space = state_space
+#         self.action_space = action_space
+#
+#     @classmethod
+#     def from_state_action(cls, state: np.ndarray, action: np.ndarray):
+#         return cls(state_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=state.shape),
+#                    action_space=gym.spaces.Box(low=np.inf, high=np.inf, shape=action.shape))
 
 
 @dataclass

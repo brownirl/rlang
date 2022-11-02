@@ -1,8 +1,8 @@
-RLang Package
+rlang package
 =============
 
 
-.. contents::
+.. contents:: Table of Contents
 
 rlang.core module
 -----------------

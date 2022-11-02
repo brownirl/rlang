@@ -91,14 +91,16 @@ class Action(Primitive):
 class MDPObject:
     """Represents an object in an Object-Oriented MDP.
 
-    Args:
-        name: the name for this object.
-
     Inherit this class to create a new object class.
     """
     attr_list = ['name']
 
     def __init__(self, name: str):
+        """
+
+        Args:
+            name: the name for this object.
+        """
         self.name = name
 
     def __eq__(self, other):
@@ -125,20 +127,20 @@ class MDPObject:
 class ObjectOrientedState(State):
     """Represents a state for an object-oriented MDP.
 
+    Examples:
+        .. code-block:: python
+
+            color = MDPObject(name="color")
+            color.red = 256
+            oo_state = ObjectOrientedState(objects={color})
+            >> <ObjectOrientedState {<MDPObject {'name': 'color', 'red': 256}>}>
+    """
+    def __init__(self, objects: set):
+        """
+
         Args:
             objects: a set of objects, which should be instances of subclasses of MDPObject.
-
-        Examples:
-            .. code-block:: python
-
-                color = MDPObject(name="color")
-                color.red = 256
-                oo_state = ObjectOrientedState(objects={color})
-                >> VectorState([3])
-                s2 = VectorState([3, 4])
-                >> VectorState([3, 4])
         """
-    def __init__(self, objects: set):
         self.objects = objects
 
     def __eq__(self, other):

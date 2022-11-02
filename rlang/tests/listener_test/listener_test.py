@@ -425,7 +425,11 @@ class ListenerTests(unittest.TestCase):
         # print(sred_prediction)
         assert list(sred_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == 128
 
-        # print(oo_state2)
+        color = MDPObject(name="color")
+        color.red = 256
+        oo_state = ObjectOrientedState(objects={color})
+
+        print(oo_state)
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")

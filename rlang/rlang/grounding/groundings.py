@@ -59,7 +59,7 @@ class GroundingFunction(Grounding):
     """
 
     def __init__(self, domain: Union[str, Domain], codomain: Union[str, Domain], function: Callable, name: str = None):
-        """Initializes a GroundingFunction.
+        """Initialize a GroundingFunction.
 
         Args:
             domain: Domain of the function.
@@ -336,6 +336,12 @@ class MDPObjectGrounding(GroundingFunction):
     """For representing objects, which may have properties that are functions of state."""
 
     def __init__(self, obj: MDPObject, name: str = None):
+        """Initialize an abstract object grounding.
+
+        Args:
+            obj: the MDPObject.
+            name (optional): the name of the object.
+        """
         self.obj = obj
         self.true_obj = None
         self.calculated = False
@@ -380,6 +386,12 @@ class MDPObjectAttributeGrounding(GroundingFunction):
     """For referencing attributes of abstract objects that are *not* in the state."""
 
     def __init__(self, grounding: GroundingFunction, attribute_chain: List):
+        """Initialize a grounding for referencing abstract object attributes.
+
+        Args:
+            grounding: the MDPObjectGrounding whose attribute you are referencing.
+            attribute_chain: a list of attribute/sub-attributes (e.g. `["color", "red_value"]`)
+        """
         self.attribute_chain = attribute_chain
         self.grounding = grounding
 
@@ -401,6 +413,12 @@ class StateObjectAttributeGrounding(GroundingFunction):
     """For referencing attributes of objects in the state when the state is object-oriented."""
 
     def __init__(self, attribute_chain: List, domain: Union[str, Domain] = Domain.STATE):
+        """Initialize a grounding for referencing object attributes, when those objects are in the state.
+
+        Args:
+            attribute_chain: a list of attribute/sub-attributes (e.g. `["ball", "color", "red_value"]`)
+            domain: either "state" or "next_state".
+        """
         self.attribute_chain = attribute_chain
 
         if isinstance(domain, Domain):

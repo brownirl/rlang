@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="RLang Package" href="rlang.html" />
+    <link rel="next" title="rlang package" href="rlang.html" />
     <link rel="prev" title="Working with RLang" href="using_rlang.html" /> 
 </head>
 
@@ -56,6 +56,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#propositions">Propositions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#goals">Goals</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#markov-features">Markov Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#objects">Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#policies">Policies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#action-restrictions">Action Restrictions</a></li>
@@ -72,7 +74,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="rlang.html">RLang Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rlang.html">rlang package</a></li>
 </ul>
 
         </div>
@@ -117,19 +119,21 @@
 <li><p><a class="reference internal" href="#propositions" id="id11">Propositions</a></p></li>
 <li><p><a class="reference internal" href="#goals" id="id12">Goals</a></p></li>
 <li><p><a class="reference internal" href="#markov-features" id="id13">Markov Features</a></p></li>
-<li><p><a class="reference internal" href="#policies" id="id14">Policies</a></p></li>
-<li><p><a class="reference internal" href="#options" id="id15">Options</a></p></li>
-<li><p><a class="reference internal" href="#action-restrictions" id="id16">Action Restrictions</a></p></li>
-<li><p><a class="reference internal" href="#effects" id="id17">Effects</a></p></li>
+<li><p><a class="reference internal" href="#objects" id="id14">Objects</a></p></li>
+<li><p><a class="reference internal" href="#classes" id="id15">Classes</a></p></li>
+<li><p><a class="reference internal" href="#policies" id="id16">Policies</a></p></li>
+<li><p><a class="reference internal" href="#options" id="id17">Options</a></p></li>
+<li><p><a class="reference internal" href="#action-restrictions" id="id18">Action Restrictions</a></p></li>
+<li><p><a class="reference internal" href="#effects" id="id19">Effects</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#expressions-and-keywords" id="id18">Expressions and Keywords</a></p>
+<li><p><a class="reference internal" href="#expressions-and-keywords" id="id20">Expressions and Keywords</a></p>
 <ul>
-<li><p><a class="reference internal" href="#arithmetic-expressions" id="id19">Arithmetic Expressions</a></p></li>
-<li><p><a class="reference internal" href="#boolean-expressions" id="id20">Boolean Expressions</a></p></li>
-<li><p><a class="reference internal" href="#conditional-expressions" id="id21">Conditional Expressions</a></p></li>
-<li><p><a class="reference internal" href="#probabilistic-expressions" id="id22">Probabilistic Expressions</a></p></li>
-<li><p><a class="reference internal" href="#special-variables" id="id23">Special Variables</a></p></li>
+<li><p><a class="reference internal" href="#arithmetic-expressions" id="id21">Arithmetic Expressions</a></p></li>
+<li><p><a class="reference internal" href="#boolean-expressions" id="id22">Boolean Expressions</a></p></li>
+<li><p><a class="reference internal" href="#conditional-expressions" id="id23">Conditional Expressions</a></p></li>
+<li><p><a class="reference internal" href="#probabilistic-expressions" id="id24">Probabilistic Expressions</a></p></li>
+<li><p><a class="reference internal" href="#special-variables" id="id25">Special Variables</a></p></li>
 </ul>
 </li>
 </ul>
@@ -142,16 +146,19 @@
 <pre>
 <strong id="grammar-token-program">program</strong> ::=  import* declaration*
 </pre>
-<p>where each import statement imports a local vocabulary file (e.g. <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">vocab.json</span></code>) and each declaration is the
+<p>where each import statement imports a local vocabulary file (e.g. <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">&quot;vocab.json&quot;</span></code>) and each declaration is the
 instantiation of an RLang grounding:</p>
 <pre>
 <strong id="grammar-token-declaration">declaration</strong> ::=  constant NL+
+                 | constant NL+
                  | action NL+
                  | factor NL+
                  | proposition NL+
                  | goal NL+
                  | feature NL+
                  | markov_feature NL+
+                 | object_def NL+
+                 | class_def
                  | option
                  | policy
                  | effect
@@ -207,17 +214,22 @@ instantiation of an RLang grounding:</p>
 <td><p><span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span></p></td>
 <td><p><a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.MarkovFeature" title="rlang.grounding.groundings.MarkovFeature"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarkovFeature</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="#options">Options</a></p></th>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="#objects">Objects</a></p></th>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(O\)</span></p></td>
+<td><p><a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.MDPObjectGrounding" title="rlang.grounding.groundings.MDPObjectGrounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDPObjectGrounding</span></code></a></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="#options">Options</a></p></th>
 <td><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span></p></td>
 <td><p><span class="math notranslate nohighlight">\(\mathcal{A}\)</span></p></td>
 <td><p><a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Option" title="rlang.grounding.groundings.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">Option</span></code></a></p></td>
 </tr>
-<tr class="row-even"><th class="stub"><p><a class="reference internal" href="#policies">Policies</a></p></th>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="#policies">Policies</a></p></th>
 <td><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span></p></td>
 <td><p><span class="math notranslate nohighlight">\(\mathcal{A}\)</span></p></td>
 <td><p><a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Policy" title="rlang.grounding.groundings.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="#effects">Effects</a></p></th>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="#effects">Effects</a></p></th>
 <td><p><span class="math notranslate nohighlight">\(\mathcal{S}\times\mathcal{A}\times\mathcal{S}\)</span></p></td>
 <td><p><span class="math notranslate nohighlight">\(\{\mathcal{S}, \top, \bot, \mathbb{R}^n, R\}\)</span> <a class="footnote-reference brackets" href="#id2" id="id1">*</a></p></td>
 <td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Effects</span></code></p></td>
@@ -324,13 +336,63 @@ Proposition have_bridge_material := iron &gt;= 1 and wood &gt;= 1
 <p>Markov Features allow users to compute features on an (<span class="math notranslate nohighlight">\(s,a,s'\)</span>) experience tuple and can be then used to define
 partial specification of functions related to the task, such as action-value functions and transition functions.</p>
 <p>The prime operator (<code class="docutils literal notranslate"><span class="pre">'</span></code>) can be used to reference the value of an RLang grounding on the next state.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Markov Feature inventory_change := inventory&#39; - inventory
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MarkovFeature inventory_change := inventory&#39; - inventory
 </pre></div>
 </div>
 <p>MarkovFeatures ground to <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.MarkovFeature" title="rlang.grounding.groundings.MarkovFeature"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarkovFeature</span></code></a>.</p>
 </section>
+<section id="objects">
+<h3><a class="toc-backref" href="#id14">Objects</a><a class="headerlink" href="#objects" title="Permalink to this heading"></a></h3>
+<pre>
+<strong id="grammar-token-object_def">object_def          </strong> ::=  &quot;Object&quot; IDENTIFIER &quot;:=&quot; object_instantiation
+<strong id="grammar-token-object_instantiation">object_instantiation</strong> ::=  any_bound_class &quot;(&quot; object_constructor_arg_list &quot;)&quot;
+</pre>
+<p>Users can instantiate abstract objects which can properties that are functions of an (<span class="math notranslate nohighlight">\(s,a,s'\)</span>) experience tuple.
+Object classes can come from a grounding or be defined within an RLang file using <a class="reference internal" href="#classes">Classes</a>.
+Object properties can be referenced within RLang using dot syntax.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Class Color:
+    red: int
+        green: int
+        blue: int
+
+Object color_from_state := Color(S[0], S[1], S[2])
+Proposition is_red := color_from_state.red == 256
+</pre></div>
+</div>
+<p>Objects ground to <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.MDPObjectGrounding" title="rlang.grounding.groundings.MDPObjectGrounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDPObjectGrounding</span></code></a>.</p>
+</section>
+<section id="classes">
+<h3><a class="toc-backref" href="#id15">Classes</a><a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<pre>
+<strong id="grammar-token-class_def">class_def                      </strong> ::=  &quot;Class&quot; IDENTIFIER (&quot;(&quot; any_bound_class &quot;)&quot;)? &quot;:&quot; INDENT attribute_definition_collection DEDENT;
+<strong id="grammar-token-attribute_definition_collection">attribute_definition_collection</strong> ::=  (definitions+=attribute_definition NL *)+;
+<strong id="grammar-token-attribute_definition">attribute_definition           </strong> ::=  IDENTIFIER &quot;:&quot; type_def;
+<strong id="grammar-token-simple_type">simple_type                    </strong> ::=  INT | FLOAT | STR | BOOL | any_bound_class;
+</pre>
+<p>Users can instantiate classes for abstract objects. A class definition specifies attributes and their types.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Class Color:
+    red: int
+        green: int
+        blue: int
+
+Object red := Color(256, 0, 0)
+</pre></div>
+</div>
+<p>You can also inherit classes defined in RLang or even from a grounding file:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Class ColorAlpha(Color):
+    alpha: int
+
+Object semi_red := ColorAlpha(256, 0, 0, 128)
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Object attributes are only very loosely typed.</p>
+</div>
+<p>Classes ground to subclasses of <a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.primitives.MDPObject" title="rlang.grounding.utils.primitives.MDPObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDPObject</span></code></a>.</p>
+</section>
 <section id="policies">
-<h3><a class="toc-backref" href="#id14">Policies</a><a class="headerlink" href="#policies" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id16">Policies</a><a class="headerlink" href="#policies" title="Permalink to this heading"></a></h3>
 <pre>
 <strong id="grammar-token-policy">policy</strong> ::=  &quot;Policy&quot; IDENTIFIER &quot;:&quot; INDENT policy_statement NL* DEDENT
 </pre>
@@ -368,7 +430,7 @@ Policy random_move_syntax_sugar:
 <p>Policies ground to <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Policy" title="rlang.grounding.groundings.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a>.</p>
 </section>
 <section id="options">
-<h3><a class="toc-backref" href="#id15">Options</a><a class="headerlink" href="#options" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id17">Options</a><a class="headerlink" href="#options" title="Permalink to this heading"></a></h3>
 <pre>
 <strong id="grammar-token-option">option</strong> ::=  &quot;Option&quot; IDENTIFIER &quot;:&quot; INDENT &quot;init&quot; option_condition
              INDENT policy_statement NL* DEDENT
@@ -390,7 +452,7 @@ using <code class="docutils literal notranslate"><span class="pre">until</span><
 <p>Options ground to <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Option" title="rlang.grounding.groundings.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">Option</span></code></a>.</p>
 </section>
 <section id="action-restrictions">
-<h3><a class="toc-backref" href="#id16">Action Restrictions</a><a class="headerlink" href="#action-restrictions" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id18">Action Restrictions</a><a class="headerlink" href="#action-restrictions" title="Permalink to this heading"></a></h3>
 <p>Action Restrictions are used to specify constraints on the set of possible actions an agent can take in a given circumstance.
 The keyword <code class="docutils literal notranslate"><span class="pre">Restrict</span></code> removes an action from consideration in the given situation, <em>meaning that the action will have
 probability zero even after learning.</em></p>
@@ -401,7 +463,7 @@ probability zero even after learning.</em></p>
 </div>
 </section>
 <section id="effects">
-<h3><a class="toc-backref" href="#id17">Effects</a><a class="headerlink" href="#effects" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id19">Effects</a><a class="headerlink" href="#effects" title="Permalink to this heading"></a></h3>
 <pre>
 <strong id="grammar-token-effect">effect          </strong> ::=  &quot;Effect&quot; IDENTIFIER &quot;:&quot; INDENT effect_statement* DEDENT
 <strong id="grammar-token-effect_statement">effect_statement</strong> ::=  reward | prediction | effect_reference
@@ -430,14 +492,14 @@ and a list of <a class="reference internal" href="rlang.grounding.html#rlang.gro
 </section>
 </section>
 <section id="expressions-and-keywords">
-<h2><a class="toc-backref" href="#id18">Expressions and Keywords</a><a class="headerlink" href="#expressions-and-keywords" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id20">Expressions and Keywords</a><a class="headerlink" href="#expressions-and-keywords" title="Permalink to this heading"></a></h2>
 <p>RLang provides support for the following expression types.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Restrictions on the kinds of bound variables (i.e. <code class="docutils literal notranslate"><span class="pre">S</span></code> or <code class="docutils literal notranslate"><span class="pre">health</span></code>) usable in the following expressions depends on the domains of the groundings they are used in. E.g. <a class="reference internal" href="#factors">Factors</a> can’t contain <code class="docutils literal notranslate"><span class="pre">A</span></code> or <code class="docutils literal notranslate"><span class="pre">S'</span></code> because they have domain <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>.</p>
 </div>
 <section id="arithmetic-expressions">
-<h3><a class="toc-backref" href="#id19">Arithmetic Expressions</a><a class="headerlink" href="#arithmetic-expressions" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id21">Arithmetic Expressions</a><a class="headerlink" href="#arithmetic-expressions" title="Permalink to this heading"></a></h3>
 <p>Arithmetic expressions are the most common expression used in defining RLang groundings.</p>
 <pre>
 <strong id="grammar-token-arithmetic_exp">arithmetic_exp</strong> ::=  L_PAR arithmetic_exp R_PAR
@@ -453,7 +515,7 @@ and a list of <a class="reference internal" href="rlang.grounding.html#rlang.gro
 </div>
 </section>
 <section id="boolean-expressions">
-<h3><a class="toc-backref" href="#id20">Boolean Expressions</a><a class="headerlink" href="#boolean-expressions" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id22">Boolean Expressions</a><a class="headerlink" href="#boolean-expressions" title="Permalink to this heading"></a></h3>
 <p>Boolean expressions are also commonly used in Propositions, Goals, Effects, Options, and Policies.</p>
 <pre>
 <strong id="grammar-token-boolean_exp">boolean_exp</strong> ::=  L_PAR boolean_exp R_PAR
@@ -475,7 +537,7 @@ health * 2 == 6
 </div>
 </section>
 <section id="conditional-expressions">
-<h3><a class="toc-backref" href="#id21">Conditional Expressions</a><a class="headerlink" href="#conditional-expressions" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id23">Conditional Expressions</a><a class="headerlink" href="#conditional-expressions" title="Permalink to this heading"></a></h3>
 <p>The statements usable in a conditional expression differ between Policies and Effects.</p>
 <pre>
 <strong id="grammar-token-conditional_exp">conditional_exp</strong> ::=  IF boolean_exp COL INDENT statement NL* DEDENT
@@ -493,7 +555,7 @@ else:
 </div>
 </section>
 <section id="probabilistic-expressions">
-<h3><a class="toc-backref" href="#id22">Probabilistic Expressions</a><a class="headerlink" href="#probabilistic-expressions" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id24">Probabilistic Expressions</a><a class="headerlink" href="#probabilistic-expressions" title="Permalink to this heading"></a></h3>
 <p>Probabilistic expressions can be used inside <a class="reference internal" href="#policies">Policies</a>, <a class="reference internal" href="#options">Options</a>, and <a class="reference internal" href="#effects">Effects</a>.</p>
 <pre>
 <strong id="grammar-token-prob_statement">prob_statement</strong> ::=  prob_condition &quot;:&quot; INDENT statement NL* DEDENT
@@ -513,7 +575,7 @@ Policy up_or_down:
 </div>
 </section>
 <section id="special-variables">
-<h3><a class="toc-backref" href="#id23">Special Variables</a><a class="headerlink" href="#special-variables" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id25">Special Variables</a><a class="headerlink" href="#special-variables" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">S</span></code>, <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">S'</span></code> are reserved keywords referring to the current state, the current action, and the next state, respectively.
 Depending on the type an RLang object, one or more of these keywords can be referenced in the definition of the object.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>S   # Current state - Used in Factors and Features
@@ -530,7 +592,7 @@ S&#39;  # Next state - Used most often in MarkovFeatures
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="using_rlang.html" class="btn btn-neutral float-left" title="Working with RLang" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rlang.html" class="btn btn-neutral float-right" title="RLang Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rlang.html" class="btn btn-neutral float-right" title="rlang package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

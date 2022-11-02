@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../using_rlang.html">Working with RLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../language_reference.html">RLang Language Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rlang.html">RLang Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rlang.html">rlang package</a></li>
 </ul>
 
         </div>
@@ -73,6 +73,8 @@
   <h1>Source code for rlang.grounding.utils.primitives</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">.grounding_exceptions</span> <span class="kn">import</span> <span class="n">RLangGroundingError</span>
 
 
 <div class="viewcode-block" id="Primitive"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.Primitive">[docs]</a><span class="k">class</span> <span class="nc">Primitive</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -126,7 +128,7 @@
 
 
 <div class="viewcode-block" id="VectorState"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.VectorState">[docs]</a><span class="k">class</span> <span class="nc">VectorState</span><span class="p">(</span><span class="n">State</span><span class="p">,</span> <span class="n">Primitive</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a VectorState object.</span>
+    <span class="sd">&quot;&quot;&quot;Represents a state that is a vector.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_array: a numpy array or list representing a state or set of states.</span>
@@ -143,20 +145,35 @@
 
 
 <div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">Primitive</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents an action that is a vector.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_array: a numpy array or list representing an action or set of actions.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            s1 = Action(3)</span>
+<span class="sd">            &gt;&gt; Action([3])</span>
+<span class="sd">            s2 = Action([3, 4])</span>
+<span class="sd">            &gt;&gt; Action([3, 4])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="MDPObject"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.MDPObject">[docs]</a><span class="k">class</span> <span class="nc">MDPObject</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Represents an object in an Object-Oriented MDP</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        name: the name for this object.</span>
+    <span class="sd">&quot;&quot;&quot;Represents an object in an Object-Oriented MDP.</span>
 
 <span class="sd">    Inherit this class to create a new object class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">attr_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="MDPObject.__init__"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.MDPObject.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: the name for this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -176,12 +193,28 @@
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;MDPObject[</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
+        <span class="n">subclass_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&quot;</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;MDPObject&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;MDPObject</span><span class="si">{</span><span class="n">subclass_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
-<span class="k">class</span> <span class="nc">ObjectOrientedState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span>
+<div class="viewcode-block" id="ObjectOrientedState"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.ObjectOrientedState">[docs]</a><span class="k">class</span> <span class="nc">ObjectOrientedState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a state for an object-oriented MDP.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            color = MDPObject(name=&quot;color&quot;)</span>
+<span class="sd">            color.red = 256</span>
+<span class="sd">            oo_state = ObjectOrientedState(objects={color})</span>
+<span class="sd">            &gt;&gt; &lt;ObjectOrientedState {&lt;MDPObject {&#39;name&#39;: &#39;color&#39;, &#39;red&#39;: 256}&gt;}&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ObjectOrientedState.__init__"><a class="viewcode-back" href="../../../../rlang.grounding.utils.html#rlang.grounding.utils.primitives.ObjectOrientedState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            objects: a set of objects, which should be instances of subclasses of MDPObject.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span></div>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ObjectOrientedState</span><span class="p">):</span>
@@ -202,7 +235,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-    <span class="c1"># TODO: Adding or multiplying this kind of state does not make sense. Need to figure this out in the listener.</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;ObjectOrientedState </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="s2">&quot;An ObjectOrientedState cannot be used arithmetically&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="s2">&quot;An ObjectOrientedState cannot be used arithmetically&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="s2">&quot;An ObjectOrientedState cannot be used arithmetically&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
