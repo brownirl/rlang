@@ -1,4 +1,4 @@
-# RLang v1 (In Progress)
+# RLang v0.2
 
 ## Getting Started
 
