@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rlang"
+version = "0.2.0"
 description = "A DSL for Decision-Processes."
 readme = "README.md"
 authors = [
