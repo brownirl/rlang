@@ -1,4 +1,4 @@
-# RLang v0.2
+# RLang v0.2.1
 
 ## Getting Started
 
@@ -6,8 +6,8 @@
 - Create virtual environment (conda or venv)
 - Activate environment and Pip install dependencies 
     ```pip install -r requirements.txt```
-- Clone this [simple_rl](https://github.com/rafarodsa/simple_rl) fork and pip-install it.
-    ```pip install path/to/simple_rl/.``` (if you're developing, install it with the `-e` flag for convenience)
+- If you want to run the Gridworld experiment, clone this [simple_rl](https://github.com/rafarodsa/simple_rl) fork and pip-install it.
+    ```pip install path/to/downloaded/simple_rl/.``` (if you're developing, install it with the `-e` flag for convenience)
 
 ## Directory structure
 
@@ -38,3 +38,10 @@
 
 - You can easily generate html files by running `make clean` and `make html` from `sphinx/`
 - If you add or remove a module, delete the corresponding file in `sphinx/source/` and then within `sphinx/` run `export SPHINX_APIDOC_OPTIONS=members,show-inheritance` and then `sphinx-apidoc -t templates/ -o source/ ../rlang/rlang ../rlang/rlang/language`.
+
+## Building the PyPi package
+
+- In the `rlang/rlang/` directory run `python -m build`, which will put builds into `rlang/rlang/dist/`.
+- You can upload these to PyPi or TestPyPi:
+  - For TestPyPi: `python -m twine upload --repository testpypi dist/*`
+    - Username should be `__token__` and password should be the API key, starts with `pypi-`.

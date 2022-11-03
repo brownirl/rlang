@@ -1,5 +1,4 @@
-# RLang - A DSL for Decision-Making
+# RLang - A DSL for Decision-Processes
 
-This is the main readme that will be released with the package
+See documentation at [rlang.ai](http://rlang.ai/).
 
-Requires Python 3.7
