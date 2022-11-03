@@ -1,4 +1,4 @@
-RLang 1.0.0 Documentation
+RLang 0.2.1 Documentation
 =========================
 
 This is the official documentation for RLang, which is currently under submission to ICML 2022.

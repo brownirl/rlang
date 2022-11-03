@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RLang Language Reference &mdash; RLang 1.0.0 documentation</title>
+  <title>RLang Language Reference &mdash; RLang 0.2.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/rtd_sphinx_search.min.css" type="text/css" />
@@ -364,10 +364,10 @@ Proposition is_red := color_from_state.red == 256
 <section id="classes">
 <h3><a class="toc-backref" href="#id15">Classes</a><a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
 <pre>
-<strong id="grammar-token-class_def">class_def                      </strong> ::=  &quot;Class&quot; IDENTIFIER (&quot;(&quot; any_bound_class &quot;)&quot;)? &quot;:&quot; INDENT attribute_definition_collection DEDENT;
-<strong id="grammar-token-attribute_definition_collection">attribute_definition_collection</strong> ::=  (definitions+=attribute_definition NL *)+;
-<strong id="grammar-token-attribute_definition">attribute_definition           </strong> ::=  IDENTIFIER &quot;:&quot; type_def;
-<strong id="grammar-token-simple_type">simple_type                    </strong> ::=  INT | FLOAT | STR | BOOL | any_bound_class;
+<strong id="grammar-token-class_def">class_def  </strong> ::=  &quot;Class&quot; IDENTIFIER (&quot;(&quot; any_bound_class &quot;)&quot;)? &quot;:&quot; INDENT attrs DEDENT;
+<strong id="grammar-token-attrs">attrs      </strong> ::=  (definitions+=attribute_definition NL *)+;
+<strong id="grammar-token-attr">attr       </strong> ::=  IDENTIFIER &quot;:&quot; type_def;
+<strong id="grammar-token-simple_type">simple_type</strong> ::=  INT | FLOAT | STR | BOOL | any_bound_class;
 </pre>
 <p>Users can instantiate classes for abstract objects. A class definition specifies attributes and their types.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Class Color:
@@ -388,6 +388,10 @@ Object semi_red := ColorAlpha(256, 0, 0, 128)
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Object attributes are only very loosely typed.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Strings are not yet supported.</p>
 </div>
 <p>Classes ground to subclasses of <a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.primitives.MDPObject" title="rlang.grounding.utils.primitives.MDPObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDPObject</span></code></a>.</p>
 </section>

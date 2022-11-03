@@ -240,9 +240,9 @@ Classes
 ^^^^^^^
 
 .. productionlist::
-   class_def: "Class" IDENTIFIER ("(" any_bound_class ")")? ":" INDENT attribute_definition_collection DEDENT;
-   attribute_definition_collection: (definitions+=attribute_definition NL *)+;
-   attribute_definition: IDENTIFIER ":" type_def;
+   class_def: "Class" IDENTIFIER ("(" any_bound_class ")")? ":" INDENT attrs DEDENT;
+   attrs: (definitions+=attribute_definition NL *)+;
+   attr: IDENTIFIER ":" type_def;
    simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
 
 Users can instantiate classes for abstract objects. A class definition specifies attributes and their types.
@@ -266,6 +266,8 @@ You can also inherit classes defined in RLang or even from a grounding file:
     Object semi_red := ColorAlpha(256, 0, 0, 128)
 
 .. important:: Object attributes are only very loosely typed.
+
+.. important:: Strings are not yet supported.
 
 Classes ground to subclasses of :py:class:`.MDPObject`.
 
