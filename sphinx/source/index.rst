@@ -1,7 +1,7 @@
 RLang 0.2.1 Documentation
 =========================
 
-This is the official documentation for RLang, which is currently under submission to ICML 2022.
+This is the official documentation for RLang.
 
 Parts of the documentation:
     :doc:`tutorial`
