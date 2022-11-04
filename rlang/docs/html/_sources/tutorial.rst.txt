@@ -16,13 +16,16 @@ getting set up with RLang and writing an RLang program.
 Installing RLang
 ----------------
 
-RLang is *not* on PyPi yet. The repo is [here](https://github.com/brownirl/rlang).
+RLang is *not* on PyPi yet. The repo is `on github`_.
 
-Look [here](https://github.com/brownirl/rlang/tree/master/rlang) for the latest installation instructions, which might be the following:
+Check the readme_ for the latest installation instructions, which might be the following:
+
+.. _on github: https://github.com/brownirl/rlang/
+.. _readme: https://github.com/brownirl/rlang/tree/master/rlang
 
 .. code-block:: console
 
-    $ brew install swig
+    $ brew install swig (on mac)
     $ python -m pip install rlang/rlang/dist/rlang-0.2.1-py3-none-any.whl
 
 Full Example
