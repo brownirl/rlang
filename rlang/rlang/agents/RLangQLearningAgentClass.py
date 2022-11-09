@@ -13,13 +13,13 @@ class RLangQLearningAgent(QLearningAgent):
         """
         Args:
             actions (list): Contains strings denoting the actions.
+            states (list): A list of all possible states.
+            knowledge (list): An RLangKnowledge object.
             name (str): Denotes the name of the agent.
             alpha (float): Learning rate.
             gamma (float): Discount factor.
             epsilon (float): Exploration term.
             explore (str): One of {softmax, uniform}. Denotes explore policy.
-            custom_q_init (defaultdict{state, defaultdict{action, float}}): a dictionary of dictionaries storing the
-             initial q-values. Can be used for potential shaping (Wiewiora, 2003)
             default_q (float): the default value to initialize every entry in the q-table with [by default, set to 0.0]
         """
 

@@ -144,11 +144,12 @@ class ObjectOrientedState(State):
         self.objects = objects
 
     def __eq__(self, other):
-        if isinstance(other, ObjectOrientedState):
-            # TODO: Need to compare all objects and their attributes
-            pass
-        else:
-            return False
+        return self.__hash__() == other.__hash__()
+        # if isinstance(other, ObjectOrientedState):
+        #     # TODO: Need to compare all objects and their attributes
+        #     pass
+        # else:
+        #     return False
 
     def __getitem__(self, item):
         for obj in self.objects:
@@ -173,3 +174,7 @@ class ObjectOrientedState(State):
 
     def __sub__(self, other):
         raise RLangGroundingError("An ObjectOrientedState cannot be used arithmetically")
+
+    def __hash__(self):
+        return hash(self.__repr__())
+

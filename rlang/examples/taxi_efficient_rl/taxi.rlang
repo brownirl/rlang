@@ -1,7 +1,21 @@
 import "vocab.json"
 
+Action move_s := 0
+Action move_n := 1
+Action move_e := 2
+Action move_w := 3
 Action pick_up := 4
 Action drop_off := 5
+
+Effect movement_effect:
+    if S.taxi.touch_n and A == move_n:
+        S' -> S
+    if S.taxi.touch_s and A == move_s:
+        S' -> S
+    if S.taxi.touch_e and A == move_e:
+        S' -> S
+    if S.taxi.touch_w and A == move_w:
+        S' -> S
 
 Effect main:
     if S.taxi.on_passenger and A == pick_up:
@@ -16,3 +30,5 @@ Effect main:
         Reward -10
     else:
         Reward -1
+        -> movement_effect
+

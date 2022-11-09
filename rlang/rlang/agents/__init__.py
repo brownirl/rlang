@@ -1,2 +1,3 @@
 from .RLangQLearningAgentClass import RLangQLearningAgent
 from .RLangPolicyAgentClass import RLangPolicyAgent
+from .RLangDOORmaxAgentClass import RLangDOORmaxAgent
