@@ -74,7 +74,7 @@ agent_position = agent_state[:2]  #agent_pos
 
 # wall = Symbol()# wall
 
-passenger_in_taxi = agent_state[2] == 1 # passenger in taxi
+passenger_in_taxi = agent_state[2] == 1 # passenger in taxi_efficient_rl
 
 #-----subpolicies
 # primitive actions

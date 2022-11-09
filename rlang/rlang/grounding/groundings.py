@@ -445,6 +445,12 @@ class StateObjectAttributeGrounding(GroundingFunction):
             function=lambda *args, **kwargs: state_object_attribute_unwrap(kwargs[domain_arg], self.attribute_chain),
             codomain=Domain.OBJECT_VALUE, domain=domain, name="S." + '.'.join(self.attribute_chain))
 
+    def __hash__(self):
+        return hash(self.__repr__())
+
+    def __eq__(self, other):
+        return self.__hash__() == other.__hash__()
+
     def __repr__(self):
         return f"<StateObjectAttributeGrounding [S.{'.'.join(self.attribute_chain)}]>"
 

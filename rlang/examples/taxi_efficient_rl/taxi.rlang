@@ -1,0 +1,18 @@
+import "vocab.json"
+
+Action pick_up := 4
+Action drop_off := 5
+
+Effect main:
+    if S.taxi.on_passenger and A == pick_up:
+        S'.passenger.in_taxi -> True
+    if S.passenger.in_taxi and A == drop_off:
+        S'.passenger.in_taxi -> False
+        if S.taxi.on_destination:
+            Reward 20
+        else:
+            Reward -10
+    elif A == pick_up or A == drop_off:
+        Reward -10
+    else:
+        Reward -1

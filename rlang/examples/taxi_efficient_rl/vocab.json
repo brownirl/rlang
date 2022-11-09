@@ -1,0 +1,31 @@
+{
+  "domain": "taxi",
+  "mdp_metadata": {
+    "state_space": {
+      "size": 2,
+      "dtype": "int"
+    },
+    "action_space": {
+      "shape": 1,
+      "dtype": "int"
+    }
+  },
+  "modules": [
+    {
+      "module_name": "grounding",
+      "file_name": "grounding.py"
+    }
+  ],
+  "vocabulary": {
+    "classes": [
+      {
+        "name": "TaxiClass",
+        "grounding": "grounding.TaxiClass"
+      },
+      {
+        "name": "PassengerClass",
+        "grounding": "grounding.PassengerClass"
+      }
+    ]
+  }
+}

@@ -74,7 +74,7 @@ probabilistic_effect_statement
     | (reward | prediction | effect_reference) probabilistic_condition NL+    # probabilistic_effect_statement_sugar
     ;
 reward: REWARD arithmetic_exp;
-prediction: (S_PRIME dot_exp? | IDENTIFIER dot_exp? PRIME?) PREDICT (arithmetic_exp | object_instantiation);
+prediction: (S_PRIME dot_exp? | IDENTIFIER dot_exp? PRIME?) PREDICT (arithmetic_exp | boolean_exp | object_instantiation);
 effect_reference: PREDICT IDENTIFIER;
 
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;

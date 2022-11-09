@@ -529,6 +529,8 @@ class RLangListener(RLangParserListener):
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
             if ctx.arithmetic_exp() is not None:
                 predicted_value = ctx.arithmetic_exp().value
+            elif ctx.boolean_exp() is not None:
+                predicted_value = ctx.boolean_exp().value
             else:
                 predicted_value = ctx.object_instantiation().value
 
@@ -543,6 +545,8 @@ class RLangListener(RLangParserListener):
                 grounding_function = StateObjectAttributeGrounding(ctx.dot_exp().value, domain='next_state')
                 if ctx.arithmetic_exp() is not None:
                     predicted_value = ctx.arithmetic_exp().value
+                elif ctx.boolean_exp() is not None:
+                    predicted_value = ctx.boolean_exp().value
                 else:
                     predicted_value = ctx.object_instantiation().value
                 ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
@@ -665,7 +669,7 @@ class RLangListener(RLangParserListener):
         ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (Proposition, PrimitiveGrounding)):
+        if not isinstance(ctx.any_bound_var().value, (Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
             ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)

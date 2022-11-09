@@ -40,7 +40,7 @@ if __name__ == "__main__":
     ############ policy structure
     # passenger_0_in_dest = (passenger_0_dest == passenger_0_pos)
     # init_passenger_0_pick_up = bool_and(
-    #                                     bool_not(passenger_in_taxi), # taxi is free
+    #                                     bool_not(passenger_in_taxi), # taxi_efficient_rl is free
     #                                     bool_not(passenger_0_in_dest) # passenger 0 need to be taken to dest
     #                                     )
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # passenger_1_in_dest = (passenger_1_dest == passenger_1_pos)
     # init_passenger_1_pick_up = bool_and(
-    #                                     bool_not(passenger_in_taxi), # taxi is free
+    #                                     bool_not(passenger_in_taxi), # taxi_efficient_rl is free
     #                                     bool_not(passenger_1_in_dest) # passenger 0 need to be taken to dest
     #                                     )
 
