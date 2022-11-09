@@ -114,29 +114,36 @@ def run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_s
             print('Start Agent: ', agent_name, ' current repetition: ', i_rep + 1, '/', n_repetitions)
             agent.reset()
             rewards, step_times = agent.train(env, max_episodes=max_episodes, max_steps=max_steps,
-                                              show_intermediate=True)
+                                              show_intermediate=False)
             print('steps total: {}, avg step time: {}, sum reward: {}'.format(len(step_times), np.mean(step_times),
                                                                               sum(rewards)))
             agent.reset()
 
             all_step_times.extend(step_times)
-            all_rewards.extend(rewards)
+            all_rewards.append(rewards)
+            print(rewards)
 
         print(
             'steps total: {}, step time: {}, total time: {}, total reward: {}'.format(
                 len(all_step_times) / n_repetitions,
                 np.mean(all_step_times),
                 sum(all_step_times) / n_repetitions,
-                sum(all_rewards)))
+                sum(map(sum, all_rewards))))
         statistics[agent_name] = {'avg steps total': len(all_step_times) / n_repetitions,
                                   'avg step time': np.mean(all_step_times),
                                   'avg total time': sum(all_step_times) / n_repetitions,
-                                  'avg reward': sum(all_rewards) / n_repetitions,
+                                  'avg reward': sum(map(sum, all_rewards)) / n_repetitions,
                                   'all reward': all_rewards}
     return statistics
 
 
-def plot_results(statistics):
+def plot_results(statistics, agents, envs):
+    def calc_cum_rewards(rewards):
+        cum_rewards = list()
+        for reward in rewards:
+            cum_rewards.append(reward + cum_rewards[-1])
+        return cum_rewards
+
     print('\n Results: \n')
     table = PrettyTable(['Agent', 'avg steps total', 'avg step time', 'avg total time', 'avg reward'])
     for name_of_agent, data_agent in statistics.items():
@@ -147,16 +154,36 @@ def plot_results(statistics):
                        np.round(data_agent['avg reward'], 2)])
     print(table)
 
+    print(statistics)
+
+    # for agent, env, name_of_agent, data_agent in zip(agents, envs, *list(statistics.items()):
+    #     agent.plot_rewards(data_agent['all reward'], env)
+    # for name_of_agent, data_agent in statistics.items():
+    #     all_cum_rewards = list()
+    #     for all_rewards in data_agent['all reward']:
+    #         for run_rewards in all_rewards:
+    #             cum_rewards = calc_cum_rewards(run_rewards)
+    #             all_cum_rewards.append(cum_rewards)
+    #     print(all_cum_rewards)
+    #     print(len(all_cum_rewards))
+    #     print(len(all_cum_rewards[0]))
+
+
+
+
+
+
 
 def main():
-    n_repetitions = 5
+    n_repetitions = 2
     max_episodes = 5000
     max_steps = 200
 
     agents, envs, agent_names = create_oomdp_and_agents()
     statistics = run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_steps)
 
-    plot_results(statistics)
+    plot_results(statistics, agents, envs)
+
 
 
 def oomdp_probe():
