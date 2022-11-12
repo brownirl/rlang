@@ -1,5 +1,7 @@
 from efficient_rl.environment.oo_mdp import OOTaxi
-from efficient_rl.agents import DOORmax
+from efficient_rl.environment.classical_mdp import ClassicalTaxi
+from efficient_rl.environment.factored_mdp import FactoredTaxi
+from efficient_rl.agents import Rmax, FactoredRmax, DOORmax, QLearning
 from prettytable import PrettyTable
 import numpy as np
 import seaborn as sns
@@ -92,19 +94,28 @@ def create_oomdp_and_agents():
 
     # initialization of agents and environments
     knowledge = rlang.parse_file("taxi.rlang")
-    agent_names = ['RLangDOORmax', 'DOORmax']
-    envs = [OOTaxi(), OOTaxi()]
+    agent_names = ['RLangDOORmax', 'DOORmax', 'Rmax', 'Factored Rmax', 'Q Learning',
+               'Q Learning optimistic initalization']
+    envs = [OOTaxi(), OOTaxi(), ClassicalTaxi(), FactoredTaxi(), ClassicalTaxi(), ClassicalTaxi()]
     agents = [RLangDOORmaxAgent(actions=actions, flat_states=flat_states, base_oo_state=state,
                                 flat_state_to_oo_state=flat_state_to_oo_state,
                                 knowledge=knowledge, nS=500, nA=6, r_max=20, gamma=0.95, delta=0.01,
-                                env_name='gym-Taxi', k=5, num_atts=envs[1].num_atts,
+                                env_name='gym-Taxi', k=5, num_atts=envs[0].num_atts,
                                 eff_types=['assignment', 'addition'],
-                                oo_mdp_dict=envs[1].oo_mdp_dict),
+                                oo_mdp_dict=envs[0].oo_mdp_dict),
               DOORmax(nS=500, nA=6, r_max=20, gamma=0.95, delta=0.01,
                       env_name='gym-Taxi', k=5, num_atts=envs[0].num_atts,
                       eff_types=['assignment', 'addition'],
-                      oo_mdp_dict=envs[0].oo_mdp_dict)
-              ]  # alpha/epsilon p.33/34 Diuks Diss
+                      oo_mdp_dict=envs[1].oo_mdp_dict),
+              Rmax(M=1, nS=500, nA=6, r_max=20, gamma=0.95, delta=0.01, env_name='gym-Taxi'),
+              FactoredRmax(M=1, nS_per_var=[5, 5, 5, 4], nA=6, r_max=20, gamma=0.95,
+                           delta=0.01, DBNs=envs[3].DBNs, factored_mdp_dict=envs[3].factored_mdp_dict,
+                           env_name='gym-Taxi'),
+              QLearning(nS=500, nA=6, gamma=0.95, alpha=0.1, epsilon=0.6,
+                        optimistic_init=False, env_name='gym-Taxi'),
+              QLearning(nS=500, nA=6, gamma=0.95, alpha=1, epsilon=0, r_max=20,
+                        optimistic_init=True, env_name='gym-Taxi')
+              ]
     return agents, envs, agent_names
 
 
@@ -117,6 +128,17 @@ def calc_cum_rewards(rewards):
     return cum_rewards
 
 
+def calc_cum_disc_rewards(rewards, gamma):
+    multiplier = 1.0
+    cum_rewards = []
+    j = 0
+    for reward in rewards:
+        j += multiplier * reward
+        cum_rewards.append(j)
+        multiplier *= gamma
+    return j
+
+
 def train_agent(agent, env, max_episodes, max_steps, show_intermediate=True):
     aggregate_rewards, all_step_times, complete_rewards = [], [], []
     for i_episode in range(max_episodes):
@@ -124,11 +146,12 @@ def train_agent(agent, env, max_episodes, max_steps, show_intermediate=True):
         rewards, step_times = agent.main(env, max_steps, deterministic=False)
 
         complete_rewards.extend(rewards)
-        aggregate_rewards.append(np.sum(rewards))
+        aggregate_rewards.append(calc_cum_disc_rewards(rewards, gamma=0.95))
         all_step_times.extend(step_times)
         if i_episode % 100 == 0 and show_intermediate:
             print('Episode: {}, Reward: {}, Avg_Step: {}'.format(i_episode + 1, aggregate_rewards[-1],
                                                                  np.mean(step_times)))
+        # print(len(complete_rewards))
         # optimum_accomplished = agent.evaluate_on_probes(env, max_steps)
         # if optimum_accomplished:
         #     break
@@ -171,7 +194,7 @@ def run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_s
     return statistics
 
 
-def plot_results(statistics):
+def plot_results(statistics, discounted=True):
     print('\n Results: \n')
     table = PrettyTable(['Agent', 'avg steps total', 'avg step time', 'avg total time', 'avg reward'])
     runs = []
@@ -181,37 +204,45 @@ def plot_results(statistics):
                        np.round(data_agent['avg step time'], 5),
                        np.round(data_agent['avg total time'], 2),
                        np.round(data_agent['avg reward'], 2)])
-        all_rewards = data_agent['all reward']
-        cum_rewards = list(map(calc_cum_rewards, all_rewards))
 
-        # sns.lineplot(data=cum_rewards)
-
-        for cr in cum_rewards:
-            exp_data = dict()
-            exp_data['reward'] = np.array(cr)
-            exp_data['iteration'] = np.arange(len(exp_data['reward']))
-            exp_data['agent'] = name_of_agent
-            runs.append(pd.DataFrame(exp_data))
+        if discounted:
+            for cr in data_agent['agg reward']:
+                exp_data = dict()
+                exp_data['return'] = np.array(cr)
+                exp_data['episode'] = np.arange(len(exp_data['return']))
+                exp_data['agent'] = name_of_agent
+                runs.append(pd.DataFrame(exp_data))
+        else:
+            all_rewards = data_agent['all reward']
+            cum_rewards = list(map(calc_cum_rewards, all_rewards))
+            for cr in cum_rewards:
+                exp_data = dict()
+                exp_data['reward'] = np.array(cr)
+                exp_data['iteration'] = np.arange(len(exp_data['reward']))
+                exp_data['agent'] = name_of_agent
+                runs.append(pd.DataFrame(exp_data))
     print(table)
 
     data = pd.concat(runs)
-
-    # print(statistics['RLangDOORmax']['all reward'])
-    ax = sns.lineplot(data=data, x='iteration', y='reward', hue="agent")
-
-    ax.set(xlabel='Time Step', ylabel="Cumulative Reward", title="RLangDOORmax vs DOORmax on Taxi")
-    plt.show()
+    if discounted:
+        ax = sns.lineplot(data=data, x='episode', y='return', hue="agent", alpha=0.8)
+        ax.set(xlabel='Episode', ylabel="Return", title="Agent Performance on Taxi")
+        plt.show()
+    else:
+        ax = sns.lineplot(data=data, x='iteration', y='reward', hue="agent", alpha=0.8)
+        ax.set(xlabel='Time Step', ylabel="Cumulative Reward", title="Agent Performance on Taxi")
+        plt.show()
 
 
 def main():
     n_repetitions = 5
-    max_episodes = 300
-    max_steps = 200
+    max_episodes = 100
+    max_steps = 5000
 
     agents, envs, agent_names = create_oomdp_and_agents()
     statistics = run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_steps)
 
-    plot_results(statistics)
+    plot_results(statistics, discounted=False)
 
 
 def oomdp_probe():
