@@ -56,11 +56,11 @@ def __taxi_state(state, passengers, walls):
 
     objects.append([a_states, walls, p_states])
     for i, p in enumerate(p_states):
-        # Add state that has passenger in taxi_efficient_rl
+        # Add state that has passenger in taxi
         if agent[0]== p["x"] and agent[1] == p["y"]:
             o = [[dict(zip(agent_attributes, copy.deepcopy(agent)[:-1] + (1,)))], walls]
             p_states_2 = copy.deepcopy(p_states)
-            p_states_2[i]["in_taxi"] = 1 #dict(zip(passenger_attributes, p[:-1] + (1,))) # ith passenger in taxi_efficient_rl
+            p_states_2[i]["in_taxi"] = 1 #dict(zip(passenger_attributes, p[:-1] + (1,))) # ith passenger in taxi
             o.append(p_states_2)
             objects.append(o)
     # objects = zip(a_states, [walls, walls], [p_states, p_states_2])
@@ -89,11 +89,11 @@ def __taxi_state_tuple(state, passengers, walls):
     p_ = tuple(reduce(lambda x, y: x+y, [p for p in p_states]))
     objects.append(agent + w_ + p_)
     for i, p in enumerate(p_states):
-        # Add state that has passenger in taxi_efficient_rl
+        # Add state that has passenger in taxi
         if agent[0]== p[0] and agent[1] == p[0]:
             o = copy.deepcopy(agent)[:-1] + (1,) + w_
             p_states_2 = copy.deepcopy(p_states)
-            p_states_2[i] = p_states_2[i][:-1] + (1,0) #dict(zip(passenger_attributes, p[:-1] + (1,))) # ith passenger in taxi_efficient_rl
+            p_states_2[i] = p_states_2[i][:-1] + (1,0) #dict(zip(passenger_attributes, p[:-1] + (1,))) # ith passenger in taxi
             p_ = tuple(reduce(lambda x, y: x+y,[p for p in p_states]))
             o = o + p_
             objects.append(o)
