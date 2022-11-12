@@ -2,6 +2,9 @@ from efficient_rl.environment.oo_mdp import OOTaxi
 from efficient_rl.agents import DOORmax
 from prettytable import PrettyTable
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
 
 import context
 import rlang
@@ -105,85 +108,110 @@ def create_oomdp_and_agents():
     return agents, envs, agent_names
 
 
+def calc_cum_rewards(rewards):
+    cum_rewards = []
+    j = 0
+    for reward in rewards:
+        j += reward
+        cum_rewards.append(j)
+    return cum_rewards
+
+
+def train_agent(agent, env, max_episodes, max_steps, show_intermediate=True):
+    aggregate_rewards, all_step_times, complete_rewards = [], [], []
+    for i_episode in range(max_episodes):
+        env.reset()
+        rewards, step_times = agent.main(env, max_steps, deterministic=False)
+
+        complete_rewards.extend(rewards)
+        aggregate_rewards.append(np.sum(rewards))
+        all_step_times.extend(step_times)
+        if i_episode % 100 == 0 and show_intermediate:
+            print('Episode: {}, Reward: {}, Avg_Step: {}'.format(i_episode + 1, aggregate_rewards[-1],
+                                                                 np.mean(step_times)))
+        # optimum_accomplished = agent.evaluate_on_probes(env, max_steps)
+        # if optimum_accomplished:
+        #     break
+    return aggregate_rewards, all_step_times, complete_rewards
+
+
 def run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_steps):
     statistics = {}
     for agent, env, agent_name in zip(agents, envs, agent_names):
-        all_step_times = []
-        all_rewards = []
+        all_aggregate_rewards, all_step_times, all_complete_rewards = [], [], []
         for i_rep in range(n_repetitions):  # repeat agent training n_repetitions times
             print('Start Agent: ', agent_name, ' current repetition: ', i_rep + 1, '/', n_repetitions)
             agent.reset()
-            rewards, step_times = agent.train(env, max_episodes=max_episodes, max_steps=max_steps,
-                                              show_intermediate=False)
+            aggregate_rewards, step_times, complete_rewards = train_agent(agent, env, max_episodes=max_episodes,
+                                                                          max_steps=max_steps,
+                                                                          show_intermediate=False)
             print('steps total: {}, avg step time: {}, sum reward: {}'.format(len(step_times), np.mean(step_times),
-                                                                              sum(rewards)))
+                                                                              sum(aggregate_rewards)))
             agent.reset()
 
             all_step_times.extend(step_times)
-            all_rewards.append(rewards)
-            print(rewards)
+            all_aggregate_rewards.append(aggregate_rewards)
+            all_complete_rewards.append(complete_rewards)
+            # print(aggregate_rewards)
+            # print(complete_rewards)
 
         print(
             'steps total: {}, step time: {}, total time: {}, total reward: {}'.format(
                 len(all_step_times) / n_repetitions,
                 np.mean(all_step_times),
                 sum(all_step_times) / n_repetitions,
-                sum(map(sum, all_rewards))))
+                sum(map(sum, all_aggregate_rewards))))
+        # print(all_complete_rewards)
         statistics[agent_name] = {'avg steps total': len(all_step_times) / n_repetitions,
                                   'avg step time': np.mean(all_step_times),
                                   'avg total time': sum(all_step_times) / n_repetitions,
-                                  'avg reward': sum(map(sum, all_rewards)) / n_repetitions,
-                                  'all reward': all_rewards}
+                                  'avg reward': sum(map(sum, all_aggregate_rewards)) / n_repetitions,
+                                  'agg reward': all_aggregate_rewards,
+                                  'all reward': all_complete_rewards}
     return statistics
 
 
-def plot_results(statistics, agents, envs):
-    def calc_cum_rewards(rewards):
-        cum_rewards = list()
-        for reward in rewards:
-            cum_rewards.append(reward + cum_rewards[-1])
-        return cum_rewards
-
+def plot_results(statistics):
     print('\n Results: \n')
     table = PrettyTable(['Agent', 'avg steps total', 'avg step time', 'avg total time', 'avg reward'])
+    runs = []
     for name_of_agent, data_agent in statistics.items():
         table.add_row([name_of_agent,
                        np.round(data_agent['avg steps total'], 4),
                        np.round(data_agent['avg step time'], 5),
                        np.round(data_agent['avg total time'], 2),
                        np.round(data_agent['avg reward'], 2)])
+        all_rewards = data_agent['all reward']
+        cum_rewards = list(map(calc_cum_rewards, all_rewards))
+
+        # sns.lineplot(data=cum_rewards)
+
+        for cr in cum_rewards:
+            exp_data = dict()
+            exp_data['reward'] = np.array(cr)
+            exp_data['iteration'] = np.arange(len(exp_data['reward']))
+            exp_data['agent'] = name_of_agent
+            runs.append(pd.DataFrame(exp_data))
     print(table)
 
-    print(statistics)
+    data = pd.concat(runs)
 
-    # for agent, env, name_of_agent, data_agent in zip(agents, envs, *list(statistics.items()):
-    #     agent.plot_rewards(data_agent['all reward'], env)
-    # for name_of_agent, data_agent in statistics.items():
-    #     all_cum_rewards = list()
-    #     for all_rewards in data_agent['all reward']:
-    #         for run_rewards in all_rewards:
-    #             cum_rewards = calc_cum_rewards(run_rewards)
-    #             all_cum_rewards.append(cum_rewards)
-    #     print(all_cum_rewards)
-    #     print(len(all_cum_rewards))
-    #     print(len(all_cum_rewards[0]))
+    # print(statistics['RLangDOORmax']['all reward'])
+    ax = sns.lineplot(data=data, x='iteration', y='reward', hue="agent")
 
-
-
-
-
+    ax.set(xlabel='Time Step', ylabel="Cumulative Reward", title="RLangDOORmax vs DOORmax on Taxi")
+    plt.show()
 
 
 def main():
-    n_repetitions = 2
-    max_episodes = 5000
+    n_repetitions = 5
+    max_episodes = 300
     max_steps = 200
 
     agents, envs, agent_names = create_oomdp_and_agents()
     statistics = run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_steps)
 
-    plot_results(statistics, agents, envs)
-
+    plot_results(statistics)
 
 
 def oomdp_probe():
