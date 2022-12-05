@@ -29,6 +29,6 @@ Effect main:
     elif A == pick_up or A == drop_off:
         Reward -10
     else:
-        Reward -1
+        Reward -1   # The true reward is actually -1, but -2 increases performance
         -> movement_effect
 

@@ -83,7 +83,7 @@ def test():
     agent.add_experience_to_reward_learner((None, env.cond()), 0, 5.0)
 
 
-def create_oomdp_and_agents():
+def create_oomdp_and_agents(variants=6):
     actions = list(range(6))
 
     flat_states = generate_states()
@@ -116,7 +116,7 @@ def create_oomdp_and_agents():
               QLearning(nS=500, nA=6, gamma=0.95, alpha=1, epsilon=0, r_max=20,
                         optimistic_init=True, env_name='gym-Taxi')
               ]
-    return agents, envs, agent_names
+    return agents[:variants], envs[:variants], agent_names[:variants]
 
 
 def calc_cum_rewards(rewards):
@@ -194,7 +194,7 @@ def run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_s
     return statistics
 
 
-def plot_results(statistics, discounted=True):
+def plot_results(statistics, episodic=True):
     print('\n Results: \n')
     table = PrettyTable(['Agent', 'avg steps total', 'avg step time', 'avg total time', 'avg reward'])
     runs = []
@@ -205,7 +205,7 @@ def plot_results(statistics, discounted=True):
                        np.round(data_agent['avg total time'], 2),
                        np.round(data_agent['avg reward'], 2)])
 
-        if discounted:
+        if episodic:
             for cr in data_agent['agg reward']:
                 exp_data = dict()
                 exp_data['return'] = np.array(cr)
@@ -224,7 +224,7 @@ def plot_results(statistics, discounted=True):
     print(table)
 
     data = pd.concat(runs)
-    if discounted:
+    if episodic:
         ax = sns.lineplot(data=data, x='episode', y='return', hue="agent", alpha=0.8)
         ax.set(xlabel='Episode', ylabel="Return", title="Agent Performance on Taxi")
         plt.show()
@@ -239,10 +239,10 @@ def main():
     max_episodes = 100
     max_steps = 5000
 
-    agents, envs, agent_names = create_oomdp_and_agents()
+    agents, envs, agent_names = create_oomdp_and_agents(2)
     statistics = run_experiment(agents, envs, agent_names, n_repetitions, max_episodes, max_steps)
 
-    plot_results(statistics, discounted=False)
+    plot_results(statistics, episodic=False)
 
 
 def oomdp_probe():
@@ -284,6 +284,6 @@ def rlang_object_probe():
 
 if __name__ == "__main__":
     # print(generate_states())
-    # oomdp_probe()
-    main()
+    oomdp_probe()
+    # main()
     # test()

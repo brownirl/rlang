@@ -26,4 +26,5 @@ def dev():
 
 
 if __name__ == '__main__':
-    dev()
+    # dev()
+    baseline_test()
