@@ -1,6 +1,6 @@
 import gym
 import gym.spaces as spaces
-import craft as craft
+from craft import *
 from collections import namedtuple
 
 # import torch
@@ -12,7 +12,7 @@ Transition = namedtuple("Transition", ["s1", "m1", "a", "s2", "m2", "r"])
 ModelState = namedtuple("ModelState", ["action", "arg", "remaining", "task", "step"])
 
 
-class Craftworld(gym.Env):
+class CraftworldGYM(gym.Env):
     spec = "Craftworld"
     metadata = dict()
     metadata['render.modes'] = ['terminal']
@@ -27,6 +27,7 @@ class Craftworld(gym.Env):
         self.observation_space = spaces.Box(0, 100, shape=(
         craft.WIDTH * craft.HEIGHT * (self.world.cookbook.n_kinds + 1) + self.world.cookbook.n_kinds,))
         self.reward_range = (0, 1)
+        print(craft.WIDTH * craft.HEIGHT * (self.world.cookbook.n_kinds + 1) + self.world.cookbook.n_kinds)
         self.name = name if name is not None else f"craft-{goal}"
 
     def get_grid_params(self):
