@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>rlang.grounding.utils.primitives &mdash; RLang 1.0.0 documentation</title>
+  <title>rlang.grounding.utils.primitives &mdash; RLang 0.2.1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/rtd_sphinx_search.min.css" type="text/css" />
@@ -217,11 +217,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span></div>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ObjectOrientedState</span><span class="p">):</span>
-            <span class="c1"># TODO: Need to compare all objects and their attributes</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+        <span class="c1"># if isinstance(other, ObjectOrientedState):</span>
+        <span class="c1">#     # TODO: Need to compare all objects and their attributes</span>
+        <span class="c1">#     pass</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     return False</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span>
@@ -245,7 +246,11 @@
         <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="s2">&quot;An ObjectOrientedState cannot be used arithmetically&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="s2">&quot;An ObjectOrientedState cannot be used arithmetically&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">RLangGroundingError</span><span class="p">(</span><span class="s2">&quot;An ObjectOrientedState cannot be used arithmetically&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span></div>
+
 </pre></div>
 
            </div>

@@ -16,9 +16,9 @@ getting set up with RLang and writing an RLang program.
 Installing RLang
 ----------------
 
-RLang is *not* on PyPi yet. The repo is `on github`_.
+RLang is *not* on PyPi yet. The repo is `on github`_ (NOT ANONYMOUS).
 
-Check the readme_ for the latest installation instructions, which might be the following:
+Check the readme_ (NOT ANONYMOUS) for the latest installation instructions, which might be the following:
 
 .. _on github: https://github.com/brownirl/rlang/
 .. _readme: https://github.com/brownirl/rlang/tree/master/rlang

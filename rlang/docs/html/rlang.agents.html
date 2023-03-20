@@ -153,13 +153,13 @@ registered hooks while the latter silently ignores them.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>actions</strong> (<em>list</em>) – Contains strings denoting the actions.</p></li>
+<li><p><strong>states</strong> (<em>list</em>) – A list of all possible states.</p></li>
+<li><p><strong>knowledge</strong> (<em>list</em>) – An RLangKnowledge object.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Denotes the name of the agent.</p></li>
 <li><p><strong>alpha</strong> (<em>float</em>) – Learning rate.</p></li>
 <li><p><strong>gamma</strong> (<em>float</em>) – Discount factor.</p></li>
 <li><p><strong>epsilon</strong> (<em>float</em>) – Exploration term.</p></li>
 <li><p><strong>explore</strong> (<em>str</em>) – One of {softmax, uniform}. Denotes explore policy.</p></li>
-<li><p><strong>custom_q_init</strong> (<em>defaultdict{state</em><em>, </em><em>defaultdict{action</em><em>, </em><em>float}}</em>) – a dictionary of dictionaries storing the
-initial q-values. Can be used for potential shaping (Wiewiora, 2003)</p></li>
 <li><p><strong>default_q</strong> (<em>float</em>) – the default value to initialize every entry in the q-table with [by default, set to 0.0]</p></li>
 </ul>
 </dd>

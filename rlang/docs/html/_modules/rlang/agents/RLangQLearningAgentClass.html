@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>rlang.agents.RLangQLearningAgentClass &mdash; RLang 1.0.0 documentation</title>
+  <title>rlang.agents.RLangQLearningAgentClass &mdash; RLang 0.2.1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/rtd_sphinx_search.min.css" type="text/css" />
@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../using_rlang.html">Working with RLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../language_reference.html">RLang Language Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rlang.html">RLang Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rlang.html">rlang package</a></li>
 </ul>
 
         </div>
@@ -86,13 +86,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            actions (list): Contains strings denoting the actions.</span>
+<span class="sd">            states (list): A list of all possible states.</span>
+<span class="sd">            knowledge (list): An RLangKnowledge object.</span>
 <span class="sd">            name (str): Denotes the name of the agent.</span>
 <span class="sd">            alpha (float): Learning rate.</span>
 <span class="sd">            gamma (float): Discount factor.</span>
 <span class="sd">            epsilon (float): Exploration term.</span>
 <span class="sd">            explore (str): One of {softmax, uniform}. Denotes explore policy.</span>
-<span class="sd">            custom_q_init (defaultdict{state, defaultdict{action, float}}): a dictionary of dictionaries storing the</span>
-<span class="sd">             initial q-values. Can be used for potential shaping (Wiewiora, 2003)</span>
 <span class="sd">            default_q (float): the default value to initialize every entry in the q-table with [by default, set to 0.0]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 

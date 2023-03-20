@@ -23,7 +23,7 @@ def baseline_test():
 def dev():
     cookbook = Cookbook('craftworld_env/recipes.yaml')
     knowledge = rlang.parse_file('craftworld.rlang')
-    print(knowledge)
+    # print(knowledge.rlang_variables)
 
 
 def efficient_rl():
@@ -41,7 +41,8 @@ def efficient_rl():
     #                     optimistic_init=True, env_name='craft-gold')]  # alpha/epsilon p.33/34 Diuks Diss
 
 
+
 if __name__ == '__main__':
-    # dev()
+    dev()
     # baseline_test()
-    efficient_rl()
+    # efficient_rl()

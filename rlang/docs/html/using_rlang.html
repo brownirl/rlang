@@ -268,13 +268,13 @@ requires becoming familiar with RLang’s <a class="reference internal" href="rl
 <span class="linenos">13</span>        <span class="sd">&quot;&quot;&quot;</span>
 <span class="linenos">14</span><span class="sd">        Args:</span>
 <span class="linenos">15</span><span class="sd">            actions (list): Contains strings denoting the actions.</span>
-<span class="linenos">16</span><span class="sd">            name (str): Denotes the name of the agent.</span>
-<span class="linenos">17</span><span class="sd">            alpha (float): Learning rate.</span>
-<span class="linenos">18</span><span class="sd">            gamma (float): Discount factor.</span>
-<span class="linenos">19</span><span class="sd">            epsilon (float): Exploration term.</span>
-<span class="linenos">20</span><span class="sd">            explore (str): One of {softmax, uniform}. Denotes explore policy.</span>
-<span class="linenos">21</span><span class="sd">            custom_q_init (defaultdict{state, defaultdict{action, float}}): a dictionary of dictionaries storing the</span>
-<span class="linenos">22</span><span class="sd">             initial q-values. Can be used for potential shaping (Wiewiora, 2003)</span>
+<span class="linenos">16</span><span class="sd">            states (list): A list of all possible states.</span>
+<span class="linenos">17</span><span class="sd">            knowledge (list): An RLangKnowledge object.</span>
+<span class="linenos">18</span><span class="sd">            name (str): Denotes the name of the agent.</span>
+<span class="linenos">19</span><span class="sd">            alpha (float): Learning rate.</span>
+<span class="linenos">20</span><span class="sd">            gamma (float): Discount factor.</span>
+<span class="linenos">21</span><span class="sd">            epsilon (float): Exploration term.</span>
+<span class="linenos">22</span><span class="sd">            explore (str): One of {softmax, uniform}. Denotes explore policy.</span>
 <span class="linenos">23</span><span class="sd">            default_q (float): the default value to initialize every entry in the q-table with [by default, set to 0.0]</span>
 <span class="linenos">24</span><span class="sd">        &quot;&quot;&quot;</span>
 <span class="linenos">25</span>

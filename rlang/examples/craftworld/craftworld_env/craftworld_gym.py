@@ -1,6 +1,6 @@
 import gym
 import gym.spaces as spaces
-from craft import *
+from .craft import *
 from collections import namedtuple
 
 # import torch

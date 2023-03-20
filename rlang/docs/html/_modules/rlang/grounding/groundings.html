@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>rlang.grounding.groundings &mdash; RLang 1.0.0 documentation</title>
+  <title>rlang.grounding.groundings &mdash; RLang 0.2.1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/rtd_sphinx_search.min.css" type="text/css" />
@@ -517,6 +517,12 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">state_object_attribute_unwrap</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">domain_arg</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute_chain</span><span class="p">),</span>
             <span class="n">codomain</span><span class="o">=</span><span class="n">Domain</span><span class="o">.</span><span class="n">OBJECT_VALUE</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;S.&quot;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attribute_chain</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;StateObjectAttributeGrounding [S.</span><span class="si">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attribute_chain</span><span class="p">)</span><span class="si">}</span><span class="s2">]&gt;&quot;</span></div>

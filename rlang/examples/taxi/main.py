@@ -94,7 +94,7 @@ def create_oomdp_and_agents(variants=6):
 
     # initialization of agents and environments
     knowledge = rlang.parse_file("taxi.rlang")
-    agent_names = ['RLangDOORmax', 'DOORmax', 'Rmax', 'Factored Rmax', 'Q Learning',
+    agent_names = ['RLang', 'DOORmax (Uninformed)', 'Rmax (Uninformed)', 'Factored Rmax', 'Q Learning',
                'Q Learning optimistic initalization']
     envs = [OOTaxi(), OOTaxi(), ClassicalTaxi(), FactoredTaxi(), ClassicalTaxi(), ClassicalTaxi()]
     agents = [RLangDOORmaxAgent(actions=actions, flat_states=flat_states, base_oo_state=state,
@@ -224,13 +224,17 @@ def plot_results(statistics, episodic=True):
     print(table)
 
     data = pd.concat(runs)
+
+    # sns.set_style("darkgrid")
+    # sns.set(rc={'axes.facecolor':'#EAEAF2', 'figure.facecolor':'#EAEAF2'})
+
     if episodic:
-        ax = sns.lineplot(data=data, x='episode', y='return', hue="agent", alpha=0.8)
+        ax = sns.lineplot(data=data, x='episode', y='return', hue="agent", alpha=1.0)
         ax.set(xlabel='Episode', ylabel="Return", title="Agent Performance on Taxi")
         plt.show()
     else:
-        ax = sns.lineplot(data=data, x='iteration', y='reward', hue="agent", alpha=0.8)
-        ax.set(xlabel='Time Step', ylabel="Cumulative Reward", title="Agent Performance on Taxi")
+        ax = sns.lineplot(data=data, x='iteration', y='reward', hue="agent", alpha=1.0)
+        ax.set(xlabel='Time Step', ylabel="Cumulative Reward")#, title="Agent Performance on Taxi")
         plt.show()
 
 
@@ -284,6 +288,6 @@ def rlang_object_probe():
 
 if __name__ == "__main__":
     # print(generate_states())
-    oomdp_probe()
-    # main()
+    # oomdp_probe()
+    main()
     # test()
