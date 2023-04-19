@@ -42,10 +42,11 @@ extensions = [
     'sphinx_rtd_theme',
     'notfound.extension',
     'sphinx_search.extension',
+    'sphinx_multiversion',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -64,17 +65,25 @@ autodoc_inherit_docstrings = True
 # autodoc_default_flags = ['members']
 # autosummary_generate = True
 
+# -- Options for sphinx-multiversion -----------------------------------------
+
+smv_branch_whitelist = r'^(master|v\d+\.\d+).*$'
+smv_tag_whitelist = None
+smv_remote_whitelist = r'^.*$'
+smv_prefer_remote_refs = True
+
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_rtd_theme_versioned'
+html_theme_path = [os.path.abspath('../themes')]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 html_logo = "RLang_logo.png"
 

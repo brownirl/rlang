@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rlang package &mdash; RLang 0.2.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/rtd_sphinx_search.min.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/js/rtd_sphinx_search.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="rlang.agents package" href="rlang.agents.html" />
+    <link rel="prev" title="RLang Language Reference" href="language_reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/RLang_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Package Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_rlang.html">Working with RLang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html">RLang Language Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">rlang package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-rlang.core">rlang.core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rlang.knowledge">rlang.knowledge module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rlang.agents.html">rlang.agents package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rlang.grounding.html">rlang.grounding package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RLang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">rlang package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/rlang.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rlang-package">
+<h1><a class="toc-backref" href="#id1">rlang package</a><a class="headerlink" href="#rlang-package" title="Permalink to this heading"></a></h1>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#rlang-package" id="id1">rlang package</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-rlang.core" id="id2">rlang.core module</a></p></li>
+<li><p><a class="reference internal" href="#module-rlang.knowledge" id="id3">rlang.knowledge module</a></p></li>
+<li><p><a class="reference internal" href="#subpackages" id="id4">Subpackages</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="module-rlang.core">
+<span id="rlang-core-module"></span><h2><a class="toc-backref" href="#id2">rlang.core module</a><a class="headerlink" href="#module-rlang.core" title="Permalink to this heading"></a></h2>
+<p>This module contains simple user-facing functions for parsing RLang
+into an <a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object, which can be
+provided to an RLang-enabled agent.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="rlang.core.parse_file">
+<span class="sig-prename descclassname"><span class="pre">rlang.core.</span></span><span class="sig-name descname"><span class="pre">parse_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang_fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/core.html#parse_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.core.parse_file" title="Permalink to this definition"></a></dt>
+<dd><p>Parses an <code class="docutils literal notranslate"><span class="pre">.rlang</span></code> file into an <a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rlang_fname</strong> (<em>str</em>) – filename</p></li>
+<li><p><strong>prior_knowledge</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><em>RLangKnowledge</em></a><em>]</em>) – prior knowledge that should be retained after parsing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><em>RLangKnowledge</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rlang.core.parse">
+<span class="sig-prename descclassname"><span class="pre">rlang.core.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/core.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.core.parse" title="Permalink to this definition"></a></dt>
+<dd><p>Parses an rlang string into an <a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rlang</strong> (<em>str</em>) – string containing rlang</p></li>
+<li><p><strong>prior_knowledge</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><em>RLangKnowledge</em></a><em>]</em>) – prior knowledge that should be retained after parsing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><em>RLangKnowledge</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-rlang.knowledge">
+<span id="rlang-knowledge-module"></span><h2><a class="toc-backref" href="#id3">rlang.knowledge module</a><a class="headerlink" href="#module-rlang.knowledge" title="Permalink to this heading"></a></h2>
+<p>Every RLang program (including any vocabulary files) grounds to an <a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlang.knowledge.</span></span><span class="sig-name descname"><span class="pre">RLangKnowledge</span></span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></p>
+<p>Provides an interface for accessing stored RLang information. Behaves similarly to a Python dictionary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In typical usage, an <a class="reference internal" href="#rlang.knowledge.RLangKnowledge" title="rlang.knowledge.RLangKnowledge"><code class="xref py py-class docutils literal notranslate"><span class="pre">RLangKnowledge</span></code></a> object is not instantiated by the user
+but is instead returned from a call to <a class="reference internal" href="#rlang.core.parse_file" title="rlang.core.parse_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_file()</span></code></a> or <a class="reference internal" href="#rlang.core.parse" title="rlang.core.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a>.</p>
+</div>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">base</span> <span class="o">=</span> <span class="n">RLangKnowledge</span><span class="p">()</span>
+<span class="n">base</span><span class="p">[</span><span class="s1">&#39;x_location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Factor</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.policy">
+<span class="sig-name descname"><span class="pre">policy</span></span><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.policy" title="Permalink to this definition"></a></dt>
+<dd><p>A <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Policy" title="rlang.grounding.groundings.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a> object</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.reward_function">
+<span class="sig-name descname"><span class="pre">reward_function</span></span><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.reward_function" title="Permalink to this definition"></a></dt>
+<dd><p>A <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.RewardFunction" title="rlang.grounding.groundings.RewardFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RewardFunction</span></code></a> object</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.transition_function">
+<span class="sig-name descname"><span class="pre">transition_function</span></span><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.transition_function" title="Permalink to this definition"></a></dt>
+<dd><p>A <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.TransitionFunction" title="rlang.grounding.groundings.TransitionFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransitionFunction</span></code></a> object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlang.knowledge.RLangKnowledge.predictions">
+<span class="sig-name descname"><span class="pre">predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rlang/knowledge.html#RLangKnowledge.predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlang.knowledge.RLangKnowledge.predictions" title="Permalink to this definition"></a></dt>
+<dd><p>Get a dictionary of <a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grounding</span></code></a> objects whose value for the next state
+can be predicted using the keyword arguments provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<em>Optional</em><em>[</em><em>State</em><em>]</em>) – a given current state</p></li>
+<li><p><strong>action</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="rlang.grounding.utils.html#rlang.grounding.utils.primitives.Action" title="rlang.grounding.utils.primitives.Action"><em>Action</em></a><em>]</em>) – a given action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict[<a class="reference internal" href="rlang.grounding.html#rlang.grounding.groundings.Grounding" title="rlang.grounding.groundings.Grounding">Grounding</a>, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="subpackages">
+<h2><a class="toc-backref" href="#id4">Subpackages</a><a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rlang.agents.html">rlang.agents package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rlang.agents.html#module-rlang.agents.RLangPolicyAgentClass">rlang.agents.RLangPolicyAgentClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlang.agents.html#module-rlang.agents.RLangQLearningAgentClass">rlang.agents.RLangQLearningAgentClass module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rlang.grounding.html">rlang.grounding package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rlang.grounding.html#module-rlang.grounding.groundings">rlang.grounding.groundings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlang.grounding.html#subpackages">Subpackages</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="language_reference.html" class="btn btn-neutral float-left" title="RLang Language Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rlang.agents.html" class="btn btn-neutral float-right" title="rlang.agents package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anonymous.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: master
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="rlang.html">master</a></dd>
+      <dd><a href="../v0.2/rlang.html">v0.2</a></dd>
+    </dl>
+  </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

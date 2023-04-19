@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; RLang 0.2.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/rtd_sphinx_search.min.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/js/rtd_sphinx_search.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Working with RLang" href="using_rlang.html" />
+    <link rel="prev" title="RLang 0.2.1 Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/RLang_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Package Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-rlang">Installing RLang</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#full-example">Full Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="using_rlang.html">Working with RLang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html">RLang Language Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rlang.html">rlang package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RLang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<p>RLang is a Domain-Specific Language for communicating domain knowledge to an RL agent. Using RLang, you can specify
+information about policies, options, transition dynamics, and state factors and features. <a class="footnote-reference brackets" href="#id2" id="id1">*</a> Using the RLang Python
+package, you can parse RLang programs into algorithm-agnostic Python objects. This page provides a quick tutorial on
+getting set up with RLang and writing an RLang program.</p>
+<figure class="align-default" id="id3">
+<img alt="RLange Agent-Environment Diagram" src="_images/RLang_AEC.svg" /><figcaption>
+<p><span class="caption-text">The RLang pipeline</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="installing-rlang">
+<h2>Installing RLang<a class="headerlink" href="#installing-rlang" title="Permalink to this heading"></a></h2>
+<p>RLang is <em>not</em> on PyPi yet. The repo is <a class="reference external" href="https://github.com/brownirl/rlang/">on github</a> (NOT ANONYMOUS).</p>
+<p>Check the <a class="reference external" href="https://github.com/brownirl/rlang/tree/master/rlang">readme</a> (NOT ANONYMOUS) for the latest installation instructions, which might be the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install swig <span class="o">(</span>on mac<span class="o">)</span>
+<span class="gp">$ </span>python -m pip install rlang/rlang/dist/rlang-0.2.1-py3-none-any.whl
+</pre></div>
+</div>
+</section>
+<section id="full-example">
+<h2>Full Example<a class="headerlink" href="#full-example" title="Permalink to this heading"></a></h2>
+<p>In this example, we’ll take a look at how RLang can be used to provide domain knowledge about a gridworld environment
+that can be used to speed up the learning of an RL agent. This example is pulled directly from the RLang package:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>examples/gridworld/
+    main.py           \\ Python code for running the project
+    gridworld.rlang   \\ RLang program containing world information
+    vocab.json        \\ Holds metadata and can reference additional groundings
+</pre></div>
+</div>
+<p>The project files are included below:</p>
+<details open="true">
+<summary><code class="docutils literal notranslate"><span class="pre">main.py</span></code></summary>
+<br /><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">simple_rl.run_experiments</span> <span class="kn">import</span> <span class="n">run_agents_on_mdp</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">simple_rl.tasks</span> <span class="kn">import</span> <span class="n">GridWorldMDP</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">simple_rl.agents</span> <span class="kn">import</span> <span class="n">QLearningAgent</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="kn">import</span> <span class="nn">context</span>
+<span class="linenos"> 6</span><span class="kn">import</span> <span class="nn">rlang</span>
+<span class="linenos"> 7</span><span class="kn">from</span> <span class="nn">rlang.agents</span> <span class="kn">import</span> <span class="n">RLangQLearningAgent</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="k">def</span> <span class="nf">create_mdp</span><span class="p">():</span>
+<span class="linenos">11</span>    <span class="c1"># MDP parameters</span>
+<span class="linenos">12</span>    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="linenos">13</span>    <span class="n">lava_locs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="linenos">14</span>    <span class="n">walls</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="linenos">15</span>    <span class="n">goal_locs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span>    <span class="n">mdp</span> <span class="o">=</span> <span class="n">GridWorldMDP</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">walls</span><span class="o">=</span><span class="n">walls</span><span class="p">,</span> <span class="n">lava_locs</span><span class="o">=</span><span class="n">lava_locs</span><span class="p">,</span> <span class="n">goal_locs</span><span class="o">=</span><span class="n">goal_locs</span><span class="p">,</span> <span class="n">slip_prob</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+<span class="linenos">18</span>                       <span class="n">step_cost</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="linenos">19</span>    <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="linenos">20</span>    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">width</span><span class="p">):</span>
+<span class="linenos">21</span>        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
+<span class="linenos">22</span>            <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>    <span class="k">return</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">states</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="k">def</span> <span class="nf">simple_experiment</span><span class="p">():</span>
+<span class="linenos">28</span>    <span class="n">mdp</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">create_mdp</span><span class="p">()</span>
+<span class="linenos">29</span>    <span class="n">agent</span> <span class="o">=</span> <span class="n">QLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">())</span>
+<span class="linenos">30</span>    <span class="n">run_agents_on_mdp</span><span class="p">([</span><span class="n">agent</span><span class="p">],</span> <span class="n">mdp</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="k">def</span> <span class="nf">rlang_experiment</span><span class="p">():</span>
+<span class="linenos">34</span>    <span class="c1"># We need to know these MDP and Q Learning parameters</span>
+<span class="linenos">35</span>    <span class="n">mdp</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">create_mdp</span><span class="p">()</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span>    <span class="c1"># Parse RLang program into knowledge object</span>
+<span class="linenos">38</span>    <span class="n">knowledge</span> <span class="o">=</span> <span class="n">rlang</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">&quot;gridworld.rlang&quot;</span><span class="p">)</span>
+<span class="linenos">39</span>
+<span class="linenos">40</span>    <span class="c1"># Create a baseline Q-Learning agent</span>
+<span class="linenos">41</span>    <span class="n">agent</span> <span class="o">=</span> <span class="n">QLearningAgent</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">())</span>
+<span class="linenos">42</span>
+<span class="linenos">43</span>    <span class="c1"># Create RLang Q-Learning agent</span>
+<span class="linenos">44</span>    <span class="n">rlang_agent</span> <span class="o">=</span> <span class="n">RLangQLearningAgent</span><span class="p">(</span>
+<span class="linenos">45</span>        <span class="n">actions</span><span class="o">=</span><span class="n">mdp</span><span class="o">.</span><span class="n">get_actions</span><span class="p">(),</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">knowledge</span><span class="o">=</span><span class="n">knowledge</span><span class="p">)</span>
+<span class="linenos">46</span>
+<span class="linenos">47</span>    <span class="c1"># Compare performance of agents on mdp</span>
+<span class="linenos">48</span>    <span class="n">run_agents_on_mdp</span><span class="p">([</span><span class="n">agent</span><span class="p">,</span> <span class="n">rlang_agent</span><span class="p">],</span> <span class="n">mdp</span><span class="p">)</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span>
+<span class="linenos">51</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="linenos">52</span>    <span class="n">rlang_experiment</span><span class="p">()</span>
+</pre></div>
+</div>
+</details>
+<br /><details open="true">
+<summary><code class="docutils literal notranslate"><span class="pre">gridworld.rlang</span></code></summary>
+<br /><div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span># To start, we imported a vocabulary file contains metadata on the MDP
+<span class="linenos"> 2</span># and references to additional RLang groundings.
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>import &quot;vocab.json&quot;
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span># The position of the agent as well as its x and y coordinates are defined
+<span class="linenos"> 7</span># as Factors, each representing a portion of the state space.
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>Factor position := S[0, 1]
+<span class="linenos">10</span>Factor x := position[0]
+<span class="linenos">11</span>Factor y := position[1]
+<span class="linenos">12</span>
+<span class="linenos">13</span>Constant lava_locs := [[3, 2], [1, 4], [2, 4], [2, 5]]
+<span class="linenos">14</span>
+<span class="linenos">15</span>Proposition reached_goal := x == 5 and y == 1 
+<span class="linenos">16</span>Proposition reached_wall := x == 3 and y == 1
+<span class="linenos">17</span>Proposition in_lava := position in lava_locs
+<span class="linenos">18</span>
+<span class="linenos">19</span># The following Actions correspond to four 
+<span class="linenos">20</span># discrete actions the agent can take:
+<span class="linenos">21</span>#   0 - move up
+<span class="linenos">22</span>#   1 - move down
+<span class="linenos">23</span>#   2 - move left
+<span class="linenos">24</span>#   3 - move right
+<span class="linenos">25</span>
+<span class="linenos">26</span>Action up := 0
+<span class="linenos">27</span>Action down := 1
+<span class="linenos">28</span>Action left := 2
+<span class="linenos">29</span>Action right := 3
+<span class="linenos">30</span>
+<span class="linenos">31</span># The predicted consequence of each of these actions is 
+<span class="linenos">32</span># specified using an Effect: the position of the agent in the next state 
+<span class="linenos">33</span># and the next state itself will update accordingly.
+<span class="linenos">34</span>
+<span class="linenos">35</span>Effect action_effect:
+<span class="linenos">36</span>    if A == up:
+<span class="linenos">37</span>        position&#39; -&gt; position + [0, 1]
+<span class="linenos">38</span>        S&#39; -&gt; S + [0, 1]
+<span class="linenos">39</span>    elif A == down:
+<span class="linenos">40</span>        position&#39; -&gt; position + [0, -1]
+<span class="linenos">41</span>        S&#39; -&gt; S + [0, -1]
+<span class="linenos">42</span>    elif A == left:
+<span class="linenos">43</span>        position&#39; -&gt; position + [-1, 0]
+<span class="linenos">44</span>        S&#39; -&gt; S + [-1, 0]
+<span class="linenos">45</span>    elif A == right:
+<span class="linenos">46</span>        position&#39; -&gt; position + [1, 0]
+<span class="linenos">47</span>        S&#39; -&gt; S + [1, 0]
+<span class="linenos">48</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span># A reward of 1 is given for reaching the goal coordinates,
+<span class="linenos">51</span># and -1 for moving on lava. 
+<span class="linenos">52</span># The following Effect references the previously defined Propositions.
+<span class="linenos">53</span>
+<span class="linenos">54</span>Effect main:
+<span class="linenos">55</span>    if in_lava:
+<span class="linenos">56</span>        Reward -1
+<span class="linenos">57</span>    if reached_goal:
+<span class="linenos">58</span>        Reward 1
+<span class="linenos">59</span>    if reached_wall:
+<span class="linenos">60</span>        S&#39; -&gt; S     # state remains the same.
+<span class="linenos">61</span>    else:
+<span class="linenos">62</span>        -&gt; action_effect
+</pre></div>
+</div>
+</details>
+<br /><details open="true">
+<summary><code class="docutils literal notranslate"><span class="pre">vocab.json</span></code></summary>
+<br /><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gridworld&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;mdp_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;state_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;action_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shape&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</details>
+<br /><dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">*</a></span></dt>
+<dd><p>For a full list of groundings, see <a class="reference internal" href="language_reference.html"><span class="doc">RLang Language Reference</span></a>.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="RLang 0.2.1 Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="using_rlang.html" class="btn btn-neutral float-right" title="Working with RLang" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Anonymous.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: master
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="tutorial.html">master</a></dd>
+      <dd><a href="../v0.2/tutorial.html">v0.2</a></dd>
+    </dl>
+  </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
