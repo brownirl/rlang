@@ -474,14 +474,6 @@ class StateObjectAttributeGrounding(GroundingFunction):
     def __hash__(self):
         return hash(self.__repr__())
 
-    def __eq__(self, other):
-        if isinstance(other, GroundingFunction):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
-                               domain=self.domain + other.domain)
-        if isinstance(other, (np.ndarray, int, float)):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
-        raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
-
     def __repr__(self):
         return f"<StateObjectAttributeGrounding [S.{'.'.join(self.attribute_chain)}]>"
 
