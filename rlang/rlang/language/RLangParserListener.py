@@ -251,6 +251,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#parameterized_action.
+    def enterParameterized_action(self, ctx:RLangParser.Parameterized_actionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#parameterized_action.
+    def exitParameterized_action(self, ctx:RLangParser.Parameterized_actionContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#effect.
     def enterEffect(self, ctx:RLangParser.EffectContext):
         pass

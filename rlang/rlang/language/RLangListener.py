@@ -235,8 +235,18 @@ class RLangListener(RLangParserListener):
             if not isinstance(variable, (Policy, ActionReference)):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
-        else:
+        elif ctx.arithmetic_exp() is not None:
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
+        else:
+            ctx.value = ctx.parameterized_action().value
+
+    # ============================= Parameterized Action ===============
+
+    def exitParameterized_action(self, ctx: RLangParser.Parameterized_actionContext):
+        args = list(map(lambda x: x.value, ctx.arr))
+        parameterized_action = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        ctx.value = ParameterizedActionExecution(parameterized_action, args)
+
 
     # ============================= Effect =============================
 
@@ -351,9 +361,10 @@ class RLangListener(RLangParserListener):
 
         if len(rstats) > 0:
             domain = reduce(lambda a, b: a + b.domain, list(filter(lambda x: x is not None,
-                                                                   [if_condition.domain, if_reward, *elif_conditions,
+                                                                   [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, if_reward, *elif_conditions,
                                                                     *elif_rewards, else_reward])))
-
+            if isinstance(if_condition, bool):
+                if_condition = PrimitiveGrounding(codomain=Domain.BOOLEAN, value=if_condition)
             reward_func = RewardFunction(
                 lambda *args, **kwargs: conditional_reward_function(if_condition, if_reward, elif_conditions,
                                                                     elif_rewards, else_reward, *args, **kwargs),
@@ -372,7 +383,7 @@ class RLangListener(RLangParserListener):
         if len(tstats) > 0:
             domain2 = reduce(lambda a, b: a + b.domain,
                              list(filter(lambda x: x is not None,
-                                         [if_condition.domain, if_transition, *elif_conditions, *elif_transitions,
+                                         [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, if_transition, *elif_conditions, *elif_transitions,
                                           else_transition])))
 
             transition_function = TransitionFunction(
@@ -397,7 +408,7 @@ class RLangListener(RLangParserListener):
 
         predicted_groundings = list({pred.grounding for pred in all_predictions})
 
-        domain3 = reduce(lambda a, b: a + b.domain, [if_condition.domain, *elif_conditions])
+        domain3 = reduce(lambda a, b: a + b.domain, [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, *elif_conditions])
 
         new_predictions = list()
 
@@ -669,7 +680,8 @@ class RLangListener(RLangParserListener):
         ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
-        if not isinstance(ctx.any_bound_var().value, (Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
+        if not isinstance(ctx.any_bound_var().value, (
+        Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
             ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)

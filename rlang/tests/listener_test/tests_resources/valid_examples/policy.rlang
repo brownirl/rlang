@@ -1,3 +1,5 @@
+import "vocab.json"
+
 Action up := 2
 Action down := 3
 
@@ -55,6 +57,12 @@ Policy factor_conditional:
 Policy missing_conditional:
     if S[0] == -1:
         Execute up
+
+Policy parameterized_policy:
+    if S[0] == 0:
+        Execute go(0, 1, 2)
+    else:
+        Execute grab(block)
 
 Policy main:
     Execute factor_conditional

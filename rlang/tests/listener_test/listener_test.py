@@ -244,6 +244,11 @@ class ListenerTests(unittest.TestCase):
         missing_conditional = knowledge['missing_conditional']
         assert missing_conditional(state=s) == {}
 
+        parameterized_policy = knowledge['parameterized_policy']
+        print(parameterized_policy(state=s))
+        print(parameterized_policy(state=s2))
+
+
     def test_Option(self):
         s = VectorState([0, 1, 2, 3, 4])
         s2 = VectorState([1, 2, 2, 3, 4])
@@ -372,6 +377,7 @@ class ListenerTests(unittest.TestCase):
         color.green = 0
         color.blue = 0
         oo_state = ObjectOrientedState(objects={color})
+        print(object_effect.reward_function(state=oo_state))
         assert object_effect.reward_function(state=oo_state) == 10
 
         object_conditional_effect = knowledge['object_conditional']

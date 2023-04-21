@@ -1,0 +1,37 @@
+{
+  "domain": "testworld",
+  "mdp_metadata": {
+    "state_space": {
+      "size": 2,
+      "dtype": "int"
+    },
+    "action_space": {
+      "shape": 24,
+      "dtype": "int"
+    }
+  },
+  "modules": [
+    {
+      "module_name": "grounding",
+      "file_name": "grounding.py"
+    }
+  ],
+  "vocabulary": {
+    "parameterized_actions": [
+      {
+        "name": "go",
+        "grounding": "grounding.go"
+      },
+      {
+        "name": "grab",
+        "grounding": "grounding.grab"
+      }
+    ],
+    "objects": [
+      {
+        "name": "block",
+        "grounding": "grounding.block"
+      }
+    ]
+  }
+}
