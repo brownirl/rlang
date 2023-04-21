@@ -99,7 +99,7 @@ class MDPObject:
         """
 
         Args:
-            name: the name for this object.
+            name: the name for this object class.
         """
         self.name = name
 

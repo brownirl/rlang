@@ -287,10 +287,36 @@ class ConstantGrounding(PrimitiveGrounding):
         return f"<Constant \"{self.name}\" = {self()}>"
 
 
+class ParameterizedAction:
+    def __init__(self, function, name=None):
+        self.function = function
+        self.name = name if name else function.__name__
+
+    def __call__(self, *args, **kwargs):
+        return self.function(*args, **kwargs)
+
+
+class ParameterizedActionExecution(GroundingFunction):
+    def __init__(self, parameterized_action, arguments: List[GroundingFunction]):
+        self.parameterized_action = parameterized_action
+        self.arguments = arguments
+
+        domain = Domain.ANY
+        for arg in arguments:
+            domain = domain + arg.domain
+
+        argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
+
+        super().__init__(domain=domain, codomain=Domain.ACTION,
+                         function=lambda *args, **kwargs:
+                         parameterized_action(*[arg(*args, **kwargs) for arg in self.arguments]),
+                         name=parameterized_action.name + "(" + argnames + ")")
+
+
 class ActionReference(GroundingFunction):
     """Represents a reference to a specified action."""
 
-    def __init__(self, action: Any, name=None, *args, **kwargs):
+    def __init__(self, action: Any, name=None):
         """
         Args:
             action: the action.
@@ -305,7 +331,7 @@ class ActionReference(GroundingFunction):
             domain = action.domain
         else:
             raise RLangGroundingError(f"Actions cannot be of type {type(action)}")
-        super().__init__(domain=domain, codomain=Domain.ACTION, function=function, name=name, *args, **kwargs)
+        super().__init__(domain=domain, codomain=Domain.ACTION, function=function, name=name)
 
     def __hash__(self):
         return hash(self.function)
@@ -449,7 +475,12 @@ class StateObjectAttributeGrounding(GroundingFunction):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        return self.__hash__() == other.__hash__()
+        if isinstance(other, GroundingFunction):
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
+                               domain=self.domain + other.domain)
+        if isinstance(other, (np.ndarray, int, float)):
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
+        raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
 
     def __repr__(self):
         return f"<StateObjectAttributeGrounding [S.{'.'.join(self.attribute_chain)}]>"

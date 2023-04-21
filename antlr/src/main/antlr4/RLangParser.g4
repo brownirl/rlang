@@ -56,7 +56,9 @@ probabilistic_policy_statement
     : probabilistic_condition COL INDENT policy_statement NL* DEDENT    # probabilistic_policy_statement_no_sugar
     | execute probabilistic_condition NL+                               # probabilistic_policy_statement_sugar
     ;
-execute: EXECUTE (IDENTIFIER | arithmetic_exp);
+execute: EXECUTE (IDENTIFIER | arithmetic_exp | parameterized_action);
+
+parameterized_action: IDENTIFIER L_PAR arr+=arithmetic_exp (COM arr+=arithmetic_exp)* R_PAR;
 
 effect: EFFECT (IDENTIFIER| MAIN) COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;
