@@ -147,7 +147,7 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), obj)
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
-        bases = (MDPObjectClass,)
+        bases = (MDPObject,)
         if ctx.any_bound_class() is not None:
             bases = (ctx.any_bound_class().value,)
         self.addVariable(ctx.IDENTIFIER().getText(),

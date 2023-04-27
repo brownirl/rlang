@@ -5,7 +5,7 @@ from typing import Dict, Any
 from collections.abc import MutableMapping
 
 from .grounding.utils.utils import Domain
-from .grounding.utils.primitives import MDPObjectClass
+from .grounding.utils.primitives import MDPObject
 from .grounding import MDPObjectGrounding
 
 
@@ -107,7 +107,7 @@ class RLangKnowledge(MutableMapping):
         return self.rlang_variables_of_type(Effect)
 
     def classes(self):
-        return {k: v for (k, v) in self.rlang_variables.items() if isinstance(v, type) and issubclass(v, MDPObjectClass)}
+        return {k: v for (k, v) in self.rlang_variables.items() if isinstance(v, type) and issubclass(v, MDPObject)}
 
     def objects(self):
         return self.rlang_variables_of_type(MDPObjectGrounding)

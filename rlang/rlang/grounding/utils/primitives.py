@@ -88,7 +88,7 @@ class Action(Primitive):
     pass
 
 
-class MDPObjectClass:
+class MDPObject:
     """Represents an object in an Object-Oriented MDP.
 
     Inherit this class to create a new object class.

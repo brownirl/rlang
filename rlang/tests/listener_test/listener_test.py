@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from .context import rlang
-from rlang import Primitive, VectorState, ObjectOrientedState, Action, MDPObjectClass
+from rlang import Primitive, VectorState, ObjectOrientedState, Action, MDPObject
 
 
 class ListenerTests(unittest.TestCase):
@@ -440,10 +440,12 @@ class ListenerTests(unittest.TestCase):
 
         print(oo_state)
 
-        print(knowledge.classes())
+        all_classes = knowledge.classes()
+        print(all_classes)
         print(list(knowledge.objects().values()))
-        assert False
 
+        # print(knowledge.rlang_variables_of_type(all_classes['Color']))
+        assert False
 
 
     def test_ClassDef(self):

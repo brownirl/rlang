@@ -1,8 +1,8 @@
 import context
-from rlang.grounding import ParameterizedAction, MDPObjectClass, MDPObjectGrounding
+from rlang.grounding import ParameterizedAction, MDPObject, MDPObjectGrounding
 
 
-class Things(MDPObjectClass):
+class Things(MDPObject):
     def __init__(self, name):
         super().__init__(name)
 
