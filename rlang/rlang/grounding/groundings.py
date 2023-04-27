@@ -405,7 +405,7 @@ class MDPObjectGrounding(GroundingFunction):
         return self.obj.__hash__()
 
     def __repr__(self):
-        return f"<MDPObjectGrounding[{self.obj.__repr__()}]>"
+        return f"<MDPObjectGrounding({self.name})[{self.obj.__repr__()}]>"
 
 
 class MDPObjectAttributeGrounding(GroundingFunction):
@@ -433,6 +433,37 @@ class MDPObjectAttributeGrounding(GroundingFunction):
         super().__init__(
             function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
+
+
+# Wait, this may not work. We don't need to put the quantifier here. We just need to extract all of the objects of the class
+# We need to do the quantification higher than this, probably at the level of comparison.
+# Under the hood this will output a list of attributes at runtime!! List comparison is probably enough then afterwards
+# class MDPObjectAttributeGroundingQuantified(GroundingFunction):
+#     """For referencing attributes of all abstract objects of a certain class that are *not* in the state."""
+#
+#     def __init__(self, cls, attribute_chain: List):
+#         """Initialize a grounding for referencing abstract object attributes.
+#
+#         Args:
+#             grounding: the MDPObjectGrounding whose attribute you are referencing.
+#             attribute_chain: a list of attribute/sub-attributes (e.g. `["color", "red_value"]`)
+#         """
+#         self.attribute_chain = attribute_chain
+#         self.cls = cls
+#
+#         def object_attribute_unwrap(obj, attr_chain):
+#             if not hasattr(obj, attr_chain[0]):
+#                 raise RLangGroundingError(f"Object {obj} does not have attribute {attr_chain[0]}")
+#             one_layer_deeper = getattr(obj, attr_chain[0])
+#             if len(attr_chain) == 1:
+#                 return one_layer_deeper
+#             else:
+#                 return object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
+#
+#         # TODO: Fix this to do the quantification
+#         super().__init__(
+#             function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
+#             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
 
 
 class StateObjectAttributeGrounding(GroundingFunction):
@@ -607,6 +638,29 @@ class Proposition(GroundingFunction):
             raise RLangGroundingError(
                 f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
+
+    @classmethod
+    def from_Quantification(cls, quantifier, grounding_cls, grounding: GroundingFunction, operation, dot_exp=None):
+        # provide a function that takes a knowledge object at runtime, then instantiates a number of
+        # MDPObjectAttributeGroundings, then does quantification.
+        def unwrap_and_quantify(*args, **kwargs):
+            items = list(kwargs['knowledge'].objects_of_type(grounding_cls).values())
+            if dot_exp is not None:
+                items = [MDPObjectAttributeGrounding(g, dot_exp) for g in items]
+            if quantifier == 'all':
+                for item in items:
+                    if not operation(grounding(*args, **kwargs), item(*args, **kwargs)):
+                        return False
+                return True
+            elif quantifier == 'any':
+                for item in items:
+                    if operation(grounding(*args, **kwargs), item(*args, **kwargs)):
+                        return True
+                return False
+            else:
+                raise RLangGroundingError(f"Unknown quantifier: {quantifier}")
+
+        return cls(function=lambda *args, **kwargs: unwrap_and_quantify(*args, **kwargs), domain=Domain.STATE_KNOWLEDGE)
 
     @classmethod
     def TRUE(cls):

@@ -6,6 +6,7 @@ from collections.abc import MutableMapping
 
 from .grounding.utils.utils import Domain
 from .grounding.utils.primitives import MDPObject
+from .grounding import MDPObjectGrounding
 
 
 class RLangKnowledge(MutableMapping):
@@ -106,4 +107,11 @@ class RLangKnowledge(MutableMapping):
         return self.rlang_variables_of_type(Effect)
 
     def classes(self):
-        return {k: v for (k, v) in self.rlang_variables.items() if issubclass(v, MDPObject)}
+        return {k: v for (k, v) in self.rlang_variables.items() if isinstance(v, type) and issubclass(v, MDPObject)}
+
+    def objects(self):
+        return self.rlang_variables_of_type(MDPObjectGrounding)
+
+    def objects_of_type(self, cls):
+        objs = self.objects()
+        return {k: v for (k, v) in objs.items() if isinstance(v.obj, cls)}

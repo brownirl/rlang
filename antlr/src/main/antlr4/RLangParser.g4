@@ -113,11 +113,16 @@ boolean_exp
     | NOT boolean_exp                                           # bool_not
     | lhs=arithmetic_exp IN rhs=arithmetic_exp                  # bool_in
     | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq
+    | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=quantification_exp   # bool_arith_quant_eq
+    | lhs=quantification_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_quant_arith_eq
     | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_arith_eq
     | any_bound_var                                             # bool_bound_var
     | (TRUE | FALSE)                                            # bool_tf
     ;
 
+quantification_exp: quantifier L_PAR any_bound_class R_PAR dot_exp;
+
+quantifier: ANY_CONDITION | ALL_CONDITION;
 
 type_def: compound_type | simple_type;
 
