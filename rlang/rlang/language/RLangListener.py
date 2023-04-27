@@ -705,9 +705,9 @@ class RLangListener(RLangParserListener):
             bool_operation = lambda a, b: a > b
         elif ctx.GT() is not None:  # IMPORTANT: These are intentionally reversed
             bool_operation = lambda a, b: a < b
-        elif ctx.LT_EQ() is not None:   # IMPORTANT: These are intentionally reversed
+        elif ctx.LT_EQ() is not None:  # IMPORTANT: These are intentionally reversed
             bool_operation = lambda a, b: a >= b
-        elif ctx.GT_EQ() is not None:   # IMPORTANT: These are intentionally reversed
+        elif ctx.GT_EQ() is not None:  # IMPORTANT: These are intentionally reversed
             bool_operation = lambda a, b: a <= b
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
