@@ -9,7 +9,7 @@ from typing import Callable, Any, Union, List
 import numpy as np
 from numpy.random import default_rng
 from .utils.utils import Domain
-from .utils.primitives import MDPObject, VectorState, ObjectOrientedState, Action, Primitive
+from .utils.primitives import MDPObjectClass, VectorState, ObjectOrientedState, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
 
 
@@ -361,7 +361,7 @@ class IdentityGrounding(GroundingFunction):
 class MDPObjectGrounding(GroundingFunction):
     """For representing objects, which may have properties that are functions of state."""
 
-    def __init__(self, obj: MDPObject, name: str = None):
+    def __init__(self, obj: MDPObjectClass, name: str = None):
         """Initialize an abstract object grounding.
 
         Args:
@@ -396,7 +396,7 @@ class MDPObjectGrounding(GroundingFunction):
             return getattr(self.obj, item)
 
     def __eq__(self, other):
-        if isinstance(other, MDPObject):
+        if isinstance(other, MDPObjectClass):
             return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
         else:
             return super().__eq__(other)
@@ -929,12 +929,12 @@ class GroundingDistribution(ProbabilityDistribution):
         def update_dictionary(k_, v_):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
-                    if isinstance(k__, (Primitive, MDPObject)):
+                    if isinstance(k__, (Primitive, MDPObjectClass)):
                         update_dictionary(k__, v_ * v__)
                     else:
                         update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
-                if isinstance(k_, (Primitive, MDPObject)):
+                if isinstance(k_, (Primitive, MDPObjectClass)):
                     a = k_
                 else:
                     a = Primitive(k_)

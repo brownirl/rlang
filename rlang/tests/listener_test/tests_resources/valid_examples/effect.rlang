@@ -162,6 +162,9 @@ Effect abstract_object_property_prediction:
     if S[0] == 256:
         random_color.red' -> 128
 
+#Effect quantifier_object_reward:
+#    if S[0] == Any(Color).red:
+#        Reward 10
 
 #Effect jo:
 #    if f1 == 0:

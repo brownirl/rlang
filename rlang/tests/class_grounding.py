@@ -1,7 +1,7 @@
-from rlang import MDPObject
+from rlang import MDPObjectClass
 
 
-class Manipulator(MDPObject):
+class Manipulator(MDPObjectClass):
     attr_list = ['name', 'num_fingers']
 
     def __init__(self, name, num_fingers):

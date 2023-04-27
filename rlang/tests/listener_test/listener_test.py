@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from .context import rlang
-from rlang import Primitive, VectorState, ObjectOrientedState, Action, MDPObject
+from rlang import Primitive, VectorState, ObjectOrientedState, Action, MDPObjectClass
 
 
 class ListenerTests(unittest.TestCase):
@@ -371,8 +371,11 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
 
+        print(knowledge.classes())
+        color_class = knowledge['Color']
+
         object_effect = knowledge['object_property_conditional']
-        color = MDPObject(name="color")
+        color = color_class(name="color")
         color.red = 256
         color.green = 0
         color.blue = 0
@@ -386,18 +389,18 @@ class ListenerTests(unittest.TestCase):
         assert object_conditional_effect.reward_function(state=oo_state) == 15
 
         mixed_object_conditional_effect = knowledge['mixed_object_conditional_probabilistic']
-        color = MDPObject(name="color")
+        color = color_class(name="color")
         color.green = 256
         oo_state2 = ObjectOrientedState(objects={color, arm})
         assert mixed_object_conditional_effect.reward_function(state=oo_state2) == 256
 
-        color = MDPObject(name="color")
+        color = color_class(name="color")
         color.green = 128
         oo_state3 = ObjectOrientedState(objects={color, arm})
         assert mixed_object_conditional_effect.reward_function(state=oo_state3) == 5.4
 
         state_object_property_prediction_effect = knowledge['state_object_property_prediction']
-        color = MDPObject(name="color")
+        color = color_class(name="color")
         color.red = 256
         color.green = 0
         oo_state2 = ObjectOrientedState(objects={color, arm})
@@ -431,11 +434,17 @@ class ListenerTests(unittest.TestCase):
         # print(sred_prediction)
         assert list(sred_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == 128
 
-        color = MDPObject(name="color")
+        color = color_class(name="color")
         color.red = 256
         oo_state = ObjectOrientedState(objects={color})
 
         print(oo_state)
+
+        print(knowledge.classes())
+        print(list(knowledge.objects().values()))
+        assert False
+
+
 
     def test_ClassDef(self):
         knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/classdef.rlang")

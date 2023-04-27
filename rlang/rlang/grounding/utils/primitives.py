@@ -88,7 +88,7 @@ class Action(Primitive):
     pass
 
 
-class MDPObject:
+class MDPObjectClass:
     """Represents an object in an Object-Oriented MDP.
 
     Inherit this class to create a new object class.
@@ -121,7 +121,7 @@ class MDPObject:
 
     def __repr__(self):
         subclass_str = f"[{type(self).__name__}]" if type(self).__name__ is not "MDPObject" else ""
-        return f"<MDPObject{subclass_str} {self.__dict__}>"
+        return f"<MDPObjectClass{subclass_str} {self.__dict__}>"
 
 
 class ObjectOrientedState(State):
