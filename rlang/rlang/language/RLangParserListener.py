@@ -557,12 +557,30 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#bool_quant_arith_eq.
+    def enterBool_quant_arith_eq(self, ctx:RLangParser.Bool_quant_arith_eqContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_quant_arith_eq.
+    def exitBool_quant_arith_eq(self, ctx:RLangParser.Bool_quant_arith_eqContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#bool_bound_var.
     def enterBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
         pass
 
     # Exit a parse tree produced by RLangParser#bool_bound_var.
     def exitBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bool_arith_quant_eq.
+    def enterBool_arith_quant_eq(self, ctx:RLangParser.Bool_arith_quant_eqContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bool_arith_quant_eq.
+    def exitBool_arith_quant_eq(self, ctx:RLangParser.Bool_arith_quant_eqContext):
         pass
 
 
@@ -581,6 +599,24 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#bool_and.
     def exitBool_and(self, ctx:RLangParser.Bool_andContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#quantification_exp.
+    def enterQuantification_exp(self, ctx:RLangParser.Quantification_expContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#quantification_exp.
+    def exitQuantification_exp(self, ctx:RLangParser.Quantification_expContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#quantifier.
+    def enterQuantifier(self, ctx:RLangParser.QuantifierContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#quantifier.
+    def exitQuantifier(self, ctx:RLangParser.QuantifierContext):
         pass
 
 

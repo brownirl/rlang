@@ -441,7 +441,7 @@ class MDPObjectAttributeGrounding(GroundingFunction):
 # class MDPObjectAttributeGroundingQuantified(GroundingFunction):
 #     """For referencing attributes of all abstract objects of a certain class that are *not* in the state."""
 #
-#     def __init__(self, cls, quantifier, attribute_chain: List):
+#     def __init__(self, cls, attribute_chain: List):
 #         """Initialize a grounding for referencing abstract object attributes.
 #
 #         Args:
@@ -450,7 +450,6 @@ class MDPObjectAttributeGrounding(GroundingFunction):
 #         """
 #         self.attribute_chain = attribute_chain
 #         self.cls = cls
-#         self.quantifier = quantifier
 #
 #         def object_attribute_unwrap(obj, attr_chain):
 #             if not hasattr(obj, attr_chain[0]):
@@ -461,7 +460,7 @@ class MDPObjectAttributeGrounding(GroundingFunction):
 #             else:
 #                 return object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
 #
-#         # TODO: Fix this to do the quan
+#         # TODO: Fix this to do the quantification
 #         super().__init__(
 #             function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
 #             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
@@ -639,6 +638,9 @@ class Proposition(GroundingFunction):
             raise RLangGroundingError(
                 f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
+
+    # @classmethod
+    # def from_Quantification(cls, ):
 
     @classmethod
     def TRUE(cls):

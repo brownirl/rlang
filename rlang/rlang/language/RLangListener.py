@@ -247,7 +247,6 @@ class RLangListener(RLangParserListener):
         parameterized_action = self.retrieveVariable(ctx.IDENTIFIER().getText())
         ctx.value = ParameterizedActionExecution(parameterized_action, args)
 
-
     # ============================= Effect =============================
 
     def exitEffect(self, ctx: RLangParser.EffectContext):
@@ -361,7 +360,9 @@ class RLangListener(RLangParserListener):
 
         if len(rstats) > 0:
             domain = reduce(lambda a, b: a + b.domain, list(filter(lambda x: x is not None,
-                                                                   [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, if_reward, *elif_conditions,
+                                                                   [if_condition.domain if not isinstance(if_condition,
+                                                                                                          bool) else Domain.ANY,
+                                                                    if_reward, *elif_conditions,
                                                                     *elif_rewards, else_reward])))
             if isinstance(if_condition, bool):
                 if_condition = PrimitiveGrounding(codomain=Domain.BOOLEAN, value=if_condition)
@@ -383,7 +384,8 @@ class RLangListener(RLangParserListener):
         if len(tstats) > 0:
             domain2 = reduce(lambda a, b: a + b.domain,
                              list(filter(lambda x: x is not None,
-                                         [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, if_transition, *elif_conditions, *elif_transitions,
+                                         [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY,
+                                          if_transition, *elif_conditions, *elif_transitions,
                                           else_transition])))
 
             transition_function = TransitionFunction(
@@ -408,7 +410,8 @@ class RLangListener(RLangParserListener):
 
         predicted_groundings = list({pred.grounding for pred in all_predictions})
 
-        domain3 = reduce(lambda a, b: a + b.domain, [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, *elif_conditions])
+        domain3 = reduce(lambda a, b: a + b.domain,
+                         [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, *elif_conditions])
 
         new_predictions = list()
 
@@ -681,7 +684,7 @@ class RLangListener(RLangParserListener):
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         if not isinstance(ctx.any_bound_var().value, (
-        Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
+                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
             ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
@@ -690,9 +693,28 @@ class RLangListener(RLangParserListener):
 
     def exitBool_tf(self, ctx: RLangParser.Bool_tfContext):
         if ctx.TRUE() is not None:
-            ctx.value = Proposition(function=lambda *args, **kwargs: True, domain=Domain.ANY)
+            ctx.value = Proposition.TRUE()
         elif ctx.FALSE() is not None:
-            ctx.value = Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
+            ctx.value = Proposition.FALSE()
+
+    def exitBool_quant_arith_eq(self, ctx: RLangParser.Bool_quant_arith_eqContext):
+        print(ctx.quantification_exp().value)
+        # TODO: Implement quantification statement
+
+    def exitBool_arith_quant_eq(self, ctx: RLangParser.Bool_arith_quant_eqContext):
+        print(ctx.quantification_exp().value)
+        # TODO: Implement quantification statement
+
+    def exitQuantification_exp(self, ctx: RLangParser.Quantification_expContext):
+        val = {'class': ctx.any_bound_class().value, 'quantifier': ctx.quantifier().value,
+               'dotexp': ctx.dot_exp().value}
+        ctx.value = val
+
+    def exitQuantifier(self, ctx: RLangParser.QuantifierContext):
+        if ctx.ALL_CONDITION() is not None:
+            ctx.value = 'all'
+        else:
+            ctx.value = 'any'
 
     def exitType_def(self, ctx: RLangParser.Type_defContext):
         if ctx.compound_type() is not None:

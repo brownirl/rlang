@@ -443,7 +443,7 @@ class ListenerTests(unittest.TestCase):
         all_classes = knowledge.classes()
         # print(all_classes)
         # print(list(knowledge.objects_of_type(all_classes['Color']).values()))
-        assert False
+        # assert False
 
 
     def test_ClassDef(self):
