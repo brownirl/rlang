@@ -435,6 +435,38 @@ class MDPObjectAttributeGrounding(GroundingFunction):
             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
 
 
+# Wait, this may not work. We don't need to put the quantifier here. We just need to extract all of the objects of the class
+# We need to do the quantification higher than this, probably at the level of comparison.
+# Under the hood this will output a list of attributes at runtime!! List comparison is probably enough then afterwards
+# class MDPObjectAttributeGroundingQuantified(GroundingFunction):
+#     """For referencing attributes of all abstract objects of a certain class that are *not* in the state."""
+#
+#     def __init__(self, cls, quantifier, attribute_chain: List):
+#         """Initialize a grounding for referencing abstract object attributes.
+#
+#         Args:
+#             grounding: the MDPObjectGrounding whose attribute you are referencing.
+#             attribute_chain: a list of attribute/sub-attributes (e.g. `["color", "red_value"]`)
+#         """
+#         self.attribute_chain = attribute_chain
+#         self.cls = cls
+#         self.quantifier = quantifier
+#
+#         def object_attribute_unwrap(obj, attr_chain):
+#             if not hasattr(obj, attr_chain[0]):
+#                 raise RLangGroundingError(f"Object {obj} does not have attribute {attr_chain[0]}")
+#             one_layer_deeper = getattr(obj, attr_chain[0])
+#             if len(attr_chain) == 1:
+#                 return one_layer_deeper
+#             else:
+#                 return object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
+#
+#         # TODO: Fix this to do the quan
+#         super().__init__(
+#             function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
+#             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
+
+
 class StateObjectAttributeGrounding(GroundingFunction):
     """For referencing attributes of objects in the state when the state is object-oriented."""
 

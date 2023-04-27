@@ -440,10 +440,10 @@ class ListenerTests(unittest.TestCase):
 
         # # print(oo_state)
         #
-        # all_classes = knowledge.classes()
+        all_classes = knowledge.classes()
         # print(all_classes)
-        # print(list(knowledge.objects_of_type(all_classes['Color']).keys()))
-        # assert False
+        # print(list(knowledge.objects_of_type(all_classes['Color']).values()))
+        assert False
 
 
     def test_ClassDef(self):
