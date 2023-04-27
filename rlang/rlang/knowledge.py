@@ -111,3 +111,7 @@ class RLangKnowledge(MutableMapping):
 
     def objects(self):
         return self.rlang_variables_of_type(MDPObjectGrounding)
+
+    def objects_of_type(self, cls):
+        objs = self.objects()
+        return {k: v for (k, v) in objs.items() if isinstance(v.obj, cls)}

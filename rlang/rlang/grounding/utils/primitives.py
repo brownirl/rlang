@@ -121,7 +121,7 @@ class MDPObject:
 
     def __repr__(self):
         subclass_str = f"[{type(self).__name__}]" if type(self).__name__ is not "MDPObject" else ""
-        return f"<MDPObjectClass{subclass_str} {self.__dict__}>"
+        return f"<MDPObject{subclass_str} {self.__dict__}>"
 
 
 class ObjectOrientedState(State):

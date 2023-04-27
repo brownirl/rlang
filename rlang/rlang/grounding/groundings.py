@@ -405,7 +405,7 @@ class MDPObjectGrounding(GroundingFunction):
         return self.obj.__hash__()
 
     def __repr__(self):
-        return f"<MDPObjectGrounding[{self.obj.__repr__()}]>"
+        return f"<MDPObjectGrounding({self.name})[{self.obj.__repr__()}]>"
 
 
 class MDPObjectAttributeGrounding(GroundingFunction):

@@ -371,7 +371,7 @@ class ListenerTests(unittest.TestCase):
         assert conditional_effect_references.transition_function(state=s2) == {s2 * 3: 0.5, s2 * 2: 0.5}
         assert conditional_effect_references.transition_function(state=s3) == {s3 * 2: 0.2, s3 * 3: 0.1}
 
-        print(knowledge.classes())
+        # print(knowledge.classes())
         color_class = knowledge['Color']
 
         object_effect = knowledge['object_property_conditional']
@@ -438,14 +438,12 @@ class ListenerTests(unittest.TestCase):
         color.red = 256
         oo_state = ObjectOrientedState(objects={color})
 
-        print(oo_state)
-
-        all_classes = knowledge.classes()
-        print(all_classes)
-        print(list(knowledge.objects().values()))
-
-        # print(knowledge.rlang_variables_of_type(all_classes['Color']))
-        assert False
+        # # print(oo_state)
+        #
+        # all_classes = knowledge.classes()
+        # print(all_classes)
+        # print(list(knowledge.objects_of_type(all_classes['Color']).keys()))
+        # assert False
 
 
     def test_ClassDef(self):
