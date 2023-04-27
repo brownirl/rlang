@@ -639,8 +639,28 @@ class Proposition(GroundingFunction):
                 f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
-    # @classmethod
-    # def from_Quantification(cls, ):
+    @classmethod
+    def from_Quantification(cls, quantifier, grounding_cls, grounding: GroundingFunction, operation, dot_exp=None):
+        # provide a function that takes a knowledge object at runtime, then instantiates a number of
+        # MDPObjectAttributeGroundings, then does quantification.
+        def unwrap_and_quantify(*args, **kwargs):
+            items = list(kwargs['knowledge'].objects_of_type(grounding_cls).values())
+            if dot_exp is not None:
+                items = [MDPObjectAttributeGrounding(g, dot_exp) for g in items]
+            if quantifier == 'all':
+                for item in items:
+                    if not operation(grounding(*args, **kwargs), item(*args, **kwargs)):
+                        return False
+                return True
+            elif quantifier == 'any':
+                for item in items:
+                    if operation(grounding(*args, **kwargs), item(*args, **kwargs)):
+                        return True
+                return False
+            else:
+                raise RLangGroundingError(f"Unknown quantifier: {quantifier}")
+
+        return cls(function=lambda *args, **kwargs: unwrap_and_quantify(*args, **kwargs), domain=Domain.STATE_KNOWLEDGE)
 
     @classmethod
     def TRUE(cls):

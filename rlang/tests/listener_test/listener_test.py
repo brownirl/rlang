@@ -443,7 +443,14 @@ class ListenerTests(unittest.TestCase):
         all_classes = knowledge.classes()
         # print(all_classes)
         # print(list(knowledge.objects_of_type(all_classes['Color']).values()))
-        # assert False
+        # print one by one:
+        for obj in knowledge.objects_of_type(all_classes['Color']).values():
+            print(obj)
+
+        quantifier_object_reward = knowledge['quantifier_object_reward']
+        assert quantifier_object_reward.reward_function(state=VectorState([0, 0, 1, 256]), knowledge=knowledge) == 123
+        # print(quantifier_object_reward.reward_function(state=VectorState([0, 0, 1, 5]), knowledge=knowledge))
+        assert quantifier_object_reward.reward_function(state=VectorState([0, 0, 1, 5]), knowledge=knowledge) == 456
 
 
     def test_ClassDef(self):

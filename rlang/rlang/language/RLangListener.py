@@ -698,12 +698,48 @@ class RLangListener(RLangParserListener):
             ctx.value = Proposition.FALSE()
 
     def exitBool_quant_arith_eq(self, ctx: RLangParser.Bool_quant_arith_eqContext):
-        print(ctx.quantification_exp().value)
-        # TODO: Implement quantification statement
+        bool_operation = None
+        if ctx.EQ_TO() is not None:
+            bool_operation = lambda a, b: a == b
+        elif ctx.LT() is not None:  # IMPORTANT: These are intentionally reversed
+            bool_operation = lambda a, b: a > b
+        elif ctx.GT() is not None:  # IMPORTANT: These are intentionally reversed
+            bool_operation = lambda a, b: a < b
+        elif ctx.LT_EQ() is not None:   # IMPORTANT: These are intentionally reversed
+            bool_operation = lambda a, b: a >= b
+        elif ctx.GT_EQ() is not None:   # IMPORTANT: These are intentionally reversed
+            bool_operation = lambda a, b: a <= b
+        elif ctx.NOT_EQ() is not None:
+            bool_operation = lambda a, b: a != b
+
+        quantification_info = ctx.quantification_exp().value
+        ctx.value = Proposition.from_Quantification(quantifier=quantification_info['quantifier'],
+                                                    grounding_cls=quantification_info['class'],
+                                                    grounding=ctx.arithmetic_exp().value,
+                                                    operation=bool_operation,
+                                                    dot_exp=quantification_info['dotexp'])
 
     def exitBool_arith_quant_eq(self, ctx: RLangParser.Bool_arith_quant_eqContext):
-        print(ctx.quantification_exp().value)
-        # TODO: Implement quantification statement
+        bool_operation = None
+        if ctx.EQ_TO() is not None:
+            bool_operation = lambda a, b: a == b
+        elif ctx.LT() is not None:
+            bool_operation = lambda a, b: a < b
+        elif ctx.GT() is not None:
+            bool_operation = lambda a, b: a > b
+        elif ctx.LT_EQ() is not None:
+            bool_operation = lambda a, b: a <= b
+        elif ctx.GT_EQ() is not None:
+            bool_operation = lambda a, b: a >= b
+        elif ctx.NOT_EQ() is not None:
+            bool_operation = lambda a, b: a != b
+
+        quantification_info = ctx.quantification_exp().value
+        ctx.value = Proposition.from_Quantification(quantifier=quantification_info['quantifier'],
+                                                    grounding_cls=quantification_info['class'],
+                                                    grounding=ctx.arithmetic_exp().value,
+                                                    operation=bool_operation,
+                                                    dot_exp=quantification_info['dotexp'])
 
     def exitQuantification_exp(self, ctx: RLangParser.Quantification_expContext):
         val = {'class': ctx.any_bound_class().value, 'quantifier': ctx.quantifier().value,

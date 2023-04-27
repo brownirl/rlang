@@ -163,8 +163,10 @@ Effect abstract_object_property_prediction:
         random_color.red' -> 128
 
 Effect quantifier_object_reward:
-    if S[0] == Any(Color).red:
-        Reward 10
+    if S[3] == Any(Color).red:
+        Reward 123
+    elif All(Color).green == S[1]:
+        Reward 456
 
 #Effect jo:
 #    if f1 == 0:
