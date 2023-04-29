@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from simple_rl.agents import QLearningAgent
-import numpy as np
 
 from ..grounding.utils.primitives import VectorState
 
@@ -9,9 +8,8 @@ from ..grounding.utils.primitives import VectorState
 class RLangQLearningAgent(QLearningAgent):
     """Implementation for a Q Learning agent that utilizes RLang hints"""
 
-    def __init__(self, actions, states, knowledge, name="RLang-Q-learning", use_transition=False, use_policy=False,
-                 alpha=0.1, gamma=0.99,
-                 epsilon=0.1, explore="uniform", anneal=False, default_q=0, policy_epsilon=0.9):
+    def __init__(self, actions, states, knowledge, name="RLang-Q-learning", use_transition=False, alpha=0.1, gamma=0.99,
+                 epsilon=0.1, explore="uniform", anneal=False, default_q=0):
         """
         Args:
             actions (list): Contains strings denoting the actions.
@@ -24,11 +22,6 @@ class RLangQLearningAgent(QLearningAgent):
             explore (str): One of {softmax, uniform}. Denotes explore policy.
             default_q (float): the default value to initialize every entry in the q-table with [by default, set to 0.0]
         """
-
-        self.use_transition = use_transition
-        self.use_policy = use_policy
-        self.policy_epsilon = policy_epsilon
-        self.knowledge = knowledge
 
         def weighted_reward(r_func, state_dict):
             reward = 0
@@ -71,17 +64,3 @@ class RLangQLearningAgent(QLearningAgent):
 
         super().__init__(actions, name=name, alpha=alpha, gamma=gamma,
                          epsilon=epsilon, explore=explore, anneal=anneal, custom_q_init=q_func, default_q=default_q)
-
-    def epsilon_greedy_q_policy(self, state):
-        '''
-        Args:
-            state (State)
-
-        Returns:
-            action.
-        '''
-
-        if self.use_policy and np.random.random() < self.policy_epsilon:
-            return self.knowledge.policy(state=VectorState(state))
-        else:
-            return super().epsilon_greedy_q_policy(state)
