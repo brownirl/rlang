@@ -6,7 +6,7 @@ from collections.abc import MutableMapping
 
 from .grounding.utils.utils import Domain
 from .grounding.utils.primitives import MDPObject
-from .grounding import MDPObjectGrounding
+from .grounding import *
 
 
 class RLangKnowledge(MutableMapping):

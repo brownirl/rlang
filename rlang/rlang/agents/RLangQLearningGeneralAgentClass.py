@@ -58,13 +58,10 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             q_func = defaultdict(lambda: defaultdict(lambda: default_q))
             reward_function = knowledge.reward_function
 
-            # PROBLEM: I need to pass the unwrapped state to the knowledge object, but I need to put a hashed state into
-            # the Q function. I'm not sure how to get this working. Once you have the hash, you can't go back.
-            # I guess I could pass in a dictionary of hash states to unwrapped states.
-            # Also I just realized that I need a better method for generating possible states! The current one probably
-            # Has a bunch of extra checks to make sure the agent isn't holding anything at the start state, also probably
-            # Making sure it's not at a goal state. This is bad.
             # For now I'll assume I have good states, I'll get back to this.
+            # I'm gonna do a new solution where I periodically update the Q function with the RLang rewards and transition function when more and more states are discovered
+            # This means I'll need to keep track of new states so I can iterate over them! Yikes, could be a lot of memory.
+            # Anyway, I'll cross that bridge when I get to it.
 
             hashed_states = list(states.keys())
 
@@ -105,7 +102,12 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             state = state[0]
 
         if self.use_policy and np.random.random() < self.policy_epsilon:
-            return self.knowledge.policy(state=VectorState(self.state_unwrapper(state)))
+            action = self.knowledge.policy(state=VectorState(self.state_unwrapper(state)))
+            if action:
+                action = int(list(action.keys())[0])
+                return action
+            else:
+                return super().epsilon_greedy_q_policy(state)
         else:
             return super().epsilon_greedy_q_policy(state)
 
@@ -128,6 +130,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         if state is None:
             self.prev_state = next_state
             return
+
         
         if isinstance(state, GymState):
             state = state.data

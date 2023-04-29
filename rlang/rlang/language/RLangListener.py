@@ -68,6 +68,10 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
 
+    def enterProgram(self, ctx:RLangParser.ProgramContext):
+        if ctx.getText() == "":
+            raise RLangSemanticError("No program text. There might be some misplaced quotes.")
+
     def exitProgram(self, ctx: RLangParser.ProgramContext):
         self.rlang_knowledge.update(self.grounded_vars)
 
@@ -640,7 +644,7 @@ class RLangListener(RLangParserListener):
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
                           (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
-                           StateObjectAttributeGrounding, MDPObjectGrounding)):
+                           StateObjectAttributeGrounding, MDPObjectGrounding, MDPObjectAttributeGrounding)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -800,6 +804,17 @@ class RLangListener(RLangParserListener):
                 raise RLangSemanticError("Too much subscripting on Feature")
             new_var = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
                               domain=variable.domain)
+        elif isinstance(variable, MDPObjectGrounding):
+            # new_var = MDPObjectAttributeGrounding(variable, ctx.trailer())
+            trailers = [trailer.value for trailer in ctx.trailer()]
+            new_var = variable
+            for trailer in trailers:
+                if isinstance(trailer[0], str):
+                    new_var = MDPObjectAttributeGrounding(new_var, trailer)
+                elif isinstance(trailer[0], int):
+                    new_var = Feature(function=lambda *args, **kwargs: new_var(*args, **kwargs)[trailer[0]],
+                                      domain=new_var.domain)
+            # raise RLangSemanticError("df")
         else:
             raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
 

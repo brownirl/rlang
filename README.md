@@ -1,4 +1,4 @@
-# RLang v0.2.3
+# RLang v0.2.4
 
 ## Getting Started
 
