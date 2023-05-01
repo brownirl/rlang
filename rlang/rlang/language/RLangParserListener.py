@@ -251,12 +251,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#parameterized_action.
-    def enterParameterized_action(self, ctx:RLangParser.Parameterized_actionContext):
+    # Enter a parse tree produced by RLangParser#lifted_execution.
+    def enterLifted_execution(self, ctx:RLangParser.Lifted_executionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#parameterized_action.
-    def exitParameterized_action(self, ctx:RLangParser.Parameterized_actionContext):
+    # Exit a parse tree produced by RLangParser#lifted_execution.
+    def exitLifted_execution(self, ctx:RLangParser.Lifted_executionContext):
         pass
 
 
@@ -392,60 +392,6 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#probabilistic_condition.
     def exitProbabilistic_condition(self, ctx:RLangParser.Probabilistic_conditionContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_instantiation.
-    def enterObject_instantiation(self, ctx:RLangParser.Object_instantiationContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_instantiation.
-    def exitObject_instantiation(self, ctx:RLangParser.Object_instantiationContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_constructor_arg_list.
-    def enterObject_constructor_arg_list(self, ctx:RLangParser.Object_constructor_arg_listContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_constructor_arg_list.
-    def exitObject_constructor_arg_list(self, ctx:RLangParser.Object_constructor_arg_listContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_object.
-    def enterObject_construct_object(self, ctx:RLangParser.Object_construct_objectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_object.
-    def exitObject_construct_object(self, ctx:RLangParser.Object_construct_objectContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_arith_exp.
-    def enterObject_construct_arith_exp(self, ctx:RLangParser.Object_construct_arith_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_arith_exp.
-    def exitObject_construct_arith_exp(self, ctx:RLangParser.Object_construct_arith_expContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_bool_exp.
-    def enterObject_construct_bool_exp(self, ctx:RLangParser.Object_construct_bool_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_bool_exp.
-    def exitObject_construct_bool_exp(self, ctx:RLangParser.Object_construct_bool_expContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_object_array.
-    def enterObject_construct_object_array(self, ctx:RLangParser.Object_construct_object_arrayContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_object_array.
-    def exitObject_construct_object_array(self, ctx:RLangParser.Object_construct_object_arrayContext):
         pass
 
 
@@ -656,24 +602,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#object_array.
-    def enterObject_array(self, ctx:RLangParser.Object_arrayContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_array.
-    def exitObject_array(self, ctx:RLangParser.Object_arrayContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#an_object.
-    def enterAn_object(self, ctx:RLangParser.An_objectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#an_object.
-    def exitAn_object(self, ctx:RLangParser.An_objectContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#bound_state.
     def enterBound_state(self, ctx:RLangParser.Bound_stateContext):
         pass
@@ -707,6 +635,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#bound_action.
     def exitBound_action(self, ctx:RLangParser.Bound_actionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_lifted_execution.
+    def enterBound_lifted_execution(self, ctx:RLangParser.Bound_lifted_executionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_lifted_execution.
+    def exitBound_lifted_execution(self, ctx:RLangParser.Bound_lifted_executionContext):
         pass
 
 
@@ -779,6 +716,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#compound_array_simple.
     def exitCompound_array_simple(self, ctx:RLangParser.Compound_array_simpleContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#compound_array_arith.
+    def enterCompound_array_arith(self, ctx:RLangParser.Compound_array_arithContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#compound_array_arith.
+    def exitCompound_array_arith(self, ctx:RLangParser.Compound_array_arithContext):
         pass
 
 

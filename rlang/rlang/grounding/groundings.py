@@ -435,6 +435,32 @@ class MDPObjectAttributeGrounding(GroundingFunction):
             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
 
 
+class Predicate:
+    def __init__(self, function, name=None):
+        self.function = function
+        self.name = name if name else function.__name__
+
+    def __call__(self, *args, **kwargs):
+        return self.function(*args, **kwargs)
+
+
+class PredicateEvaluation(GroundingFunction):
+    def __init__(self, predicate, arguments: List[GroundingFunction]):
+        self.parameterized_action = predicate
+        self.arguments = arguments
+
+        domain = Domain.ANY
+        for arg in arguments:
+            domain = domain + arg.domain
+
+        argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
+
+        super().__init__(domain=domain, codomain=Domain.REAL_VALUE+Domain.BOOLEAN,
+                         function=lambda *args, **kwargs:
+                         predicate(*[arg(*args, **kwargs) for arg in self.arguments]),
+                         name=predicate.name + "(" + argnames + ")")
+
+
 # Wait, this may not work. We don't need to put the quantifier here. We just need to extract all of the objects of the class
 # We need to do the quantification higher than this, probably at the level of comparison.
 # Under the hood this will output a list of attributes at runtime!! List comparison is probably enough then afterwards

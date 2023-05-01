@@ -511,7 +511,12 @@ class ListenerTests(unittest.TestCase):
         assert red.red == 256 and red.green == 0 and red.blue == 0
 
         notebook = knowledge['notebook']
-        assert notebook.pages == 15 and notebook.title == red and isinstance(notebook.colors, list)
+        assert notebook.pages == 15
+
+        assert notebook.title == red
+        # print(type(notebook.colors))
+        # print(notebook.colors())
+        assert isinstance(notebook.colors(), list)
 
         sutton_barto = knowledge['sutton_barto']
         assert sutton_barto.pages == 15 and sutton_barto.title == red and sutton_barto.publisher_id == 67

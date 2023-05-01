@@ -146,8 +146,9 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitObject_def(self, ctx: RLangParser.Object_defContext):
-        obj = ctx.object_instantiation().value
+        obj = ctx.lifted_execution().value
         obj.name = ctx.IDENTIFIER().getText()
+        obj.obj.name = ctx.IDENTIFIER().getText()
         self.addVariable(ctx.IDENTIFIER().getText(), obj)
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
@@ -242,14 +243,32 @@ class RLangListener(RLangParserListener):
         elif ctx.arithmetic_exp() is not None:
             ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
         else:
-            ctx.value = ctx.parameterized_action().value
+            raise RLangSemanticError("Execute statement must have either an identifier or an arithmetic expression")
 
-    # ============================= Parameterized Action ===============
+    # ============================= Lifted Execution (Parameterized Action and Predicate) ===============
 
-    def exitParameterized_action(self, ctx: RLangParser.Parameterized_actionContext):
-        args = list(map(lambda x: x.value, ctx.arr))
-        parameterized_action = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        ctx.value = ParameterizedActionExecution(parameterized_action, args)
+    # def exitParameterized_action(self, ctx: RLangParser.Parameterized_actionContext):
+    #     args = list(map(lambda x: x.value, ctx.arr))
+    #     parameterized_action = self.retrieveVariable(ctx.IDENTIFIER().getText())
+    #     if isinstance(parameterized_action, ParameterizedAction):
+    #         ctx.value = ParameterizedActionExecution(parameterized_action, args)
+        # elif isinstance(parameterized_action, ActionReference):
+        #     ctx.value = ActionReference(action=parameterized_action.action(*args))
+
+    def exitLifted_execution(self, ctx:RLangParser.Lifted_executionContext):
+        lifted_execution = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if isinstance(lifted_execution, ParameterizedAction):
+            args = list(map(lambda x: x.value, ctx.arr))
+            ctx.value = ParameterizedActionExecution(lifted_execution, args)
+        elif isinstance(lifted_execution, Predicate):
+            args = list(map(lambda x: x.value, ctx.arr))
+            ctx.value = PredicateEvaluation(lifted_execution, args)
+        elif isinstance(lifted_execution, type):
+            args = list(map(lambda x: x.value, ctx.arr))
+            args = [ctx.IDENTIFIER().getText()] + args
+            ctx.value = MDPObjectGrounding(obj=lifted_execution(*args))
+        else:
+            raise RLangSemanticError(f"Cannot pass arguments to a {type(lifted_execution)}")
 
     # ============================= Effect =============================
 
@@ -550,7 +569,7 @@ class RLangListener(RLangParserListener):
             elif ctx.boolean_exp() is not None:
                 predicted_value = ctx.boolean_exp().value
             else:
-                predicted_value = ctx.object_instantiation().value
+                predicted_value = ctx.lifted_execution().value
 
             if ctx.dot_exp() is not None:
                 grounding_function = MDPObjectAttributeGrounding(grounding_function, ctx.dot_exp().value)
@@ -566,7 +585,7 @@ class RLangListener(RLangParserListener):
                 elif ctx.boolean_exp() is not None:
                     predicted_value = ctx.boolean_exp().value
                 else:
-                    predicted_value = ctx.object_instantiation().value
+                    predicted_value = ctx.lifted_execution().value
                 ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
             else:
                 if ctx.arithmetic_exp() is not None:
@@ -608,9 +627,9 @@ class RLangListener(RLangParserListener):
             elif ctx.MINUS() is not None:
                 ctx.value = ctx.lhs.value - ctx.rhs.value
 
-    def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
-        args = [ctx.any_bound_class().value.__name__] + ctx.object_constructor_arg_list().value
-        ctx.value = MDPObjectGrounding(obj=ctx.any_bound_class().value(*args))
+    # def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
+    #     args = [ctx.any_bound_class().value.__name__] + ctx.object_constructor_arg_list().value
+    #     ctx.value = MDPObjectGrounding(obj=ctx.any_bound_class().value(*args))
 
     def exitObject_constructor_arg_list(self, ctx: RLangParser.Object_constructor_arg_listContext):
         ctx.value = list(map(lambda x: x.value, ctx.arg_list))
@@ -628,12 +647,20 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.object_array().value
 
     def exitAn_object(self, ctx: RLangParser.An_objectContext):
-        if ctx.object_instantiation() is not None:
-            ctx.value = ctx.object_instantiation().value
+        if ctx.lifted_execution() is not None:
+            ctx.value = ctx.lifted_execution().value
         elif ctx.any_bound_var() is not None and isinstance(ctx.any_bound_var().value, MDPObjectGrounding):
             ctx.value = ctx.any_bound_var().value
         else:
             raise RLangSemanticError("Must be an OOMDP object")
+
+    # def exitPredicate_eval(self, ctx:RLangParser.Predicate_evalContext):
+    #     args = list(map(lambda x: x.value, ctx.arr))
+    #     predicate = self.retrieveVariable(ctx.IDENTIFIER().getText())
+    #     if isinstance(predicate, Predicate):
+    #         ctx.value = PredicateEvaluation(predicate, args)
+    #     else:
+    #         raise RLangSemanticError("Must be a predicate")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_number().value)
@@ -644,7 +671,8 @@ class RLangListener(RLangParserListener):
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
                           (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
-                           StateObjectAttributeGrounding, MDPObjectGrounding, MDPObjectAttributeGrounding)):
+                           StateObjectAttributeGrounding, MDPObjectGrounding, MDPObjectAttributeGrounding,
+                           ParameterizedActionExecution, PredicateEvaluation)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -814,7 +842,6 @@ class RLangListener(RLangParserListener):
                 elif isinstance(trailer[0], int):
                     new_var = Feature(function=lambda *args, **kwargs: new_var(*args, **kwargs)[trailer[0]],
                                       domain=new_var.domain)
-            # raise RLangSemanticError("df")
         else:
             raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
 
@@ -866,6 +893,9 @@ class RLangListener(RLangParserListener):
     def exitBound_action(self, ctx: RLangParser.Bound_actionContext):
         ctx.value = IdentityGrounding(Domain.ACTION)
 
+    def exitBound_lifted_execution(self, ctx: RLangParser.Bound_lifted_executionContext):
+        ctx.value = ctx.lifted_execution().value
+
     def exitAny_bound_class(self, ctx: RLangParser.Any_bound_classContext):
         ctx.value = self.retrieveVariable(ctx.IDENTIFIER().getText())
 
@@ -878,8 +908,8 @@ class RLangListener(RLangParserListener):
     def exitTrailer_object(self, ctx: RLangParser.Trailer_objectContext):
         ctx.value = ctx.dot_exp().value
 
-    def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
-        ctx.value = list(map(lambda x: x.value, ctx.arr))
+    # def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
+    #     ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitDot_exp(self, ctx: RLangParser.Dot_expContext):
         ctx.value = list(map(lambda x: x.getText(), ctx.IDENTIFIER()))
@@ -892,6 +922,14 @@ class RLangListener(RLangParserListener):
 
     def exitCompound_array_simple(self, ctx: RLangParser.Compound_array_simpleContext):
         ctx.value = ctx.any_num_array_exp().value
+
+    def exitCompound_array_arith(self, ctx:RLangParser.Compound_array_arithContext):
+        gds = [x.value for x in ctx.arr]
+        for i in range(len(gds)):
+            if isinstance(gds[i], PrimitiveGrounding):
+                gds[i] = gds[i]()
+
+        ctx.value = gds
 
     def exitCompound_array_compound(self, ctx: RLangParser.Compound_array_compoundContext):
         # This may be problematic
