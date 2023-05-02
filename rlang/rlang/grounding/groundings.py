@@ -373,7 +373,7 @@ class MDPObjectGrounding(GroundingFunction):
         self.calculated = False
 
         super().__init__(function=self.calculate_true_obj, codomain=Domain.OBJECT_VALUE,
-                         domain=Domain.STATE_ACTION_NEXT_STATE, name=name)
+                         domain=Domain.STATE_ACTION_NEXT_STATE, name=obj.name+"_grounding" if name is None else name)
 
     def calculate_true_obj(self, *args, **kwargs):
         def calculate_attr(attr):
@@ -420,6 +420,12 @@ class MDPObjectAttributeGrounding(GroundingFunction):
         """
         self.attribute_chain = attribute_chain
         self.grounding = grounding
+
+        # [assert isinstance(attr, str) for attr in attribute_chain]
+        # for attr in attribute_chain:
+        #     assert isinstance(attr, str)
+        # print(self.grounding)
+        # assert self.grounding.name is not None
 
         def object_attribute_unwrap(obj, attr_chain):
             if not hasattr(obj, attr_chain[0]):

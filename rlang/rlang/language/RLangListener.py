@@ -716,10 +716,12 @@ class RLangListener(RLangParserListener):
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         if not isinstance(ctx.any_bound_var().value, (
-                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
+                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding, PredicateEvaluation)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
             ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
+        elif isinstance(ctx.any_bound_var().value, (StateObjectAttributeGrounding, MDPObjectAttributeGrounding, PredicateEvaluation)):
+            ctx.value = Proposition(function=ctx.any_bound_var().value.__call__, domain=Domain.BOOLEAN)
         else:
             ctx.value = ctx.any_bound_var().value
 
