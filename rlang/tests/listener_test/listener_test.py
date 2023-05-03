@@ -539,8 +539,30 @@ class ListenerTests(unittest.TestCase):
 
         assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
         assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
         main_plan.reset()
         assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        main_plan.reset()
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        main_plan.reset()   # Verify that resetting half way through a subplan works
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+
+        print(main_plan(state=VectorState([0, 1, 2, 3, 4])))    # "I'm grabbing 4"
 
 
 if __name__ == '__main__':

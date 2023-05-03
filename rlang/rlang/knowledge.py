@@ -31,6 +31,7 @@ class RLangKnowledge(MutableMapping):
         """A :py:class:`.RewardFunction` object"""
         self.transition_function = None
         """A :py:class:`.TransitionFunction` object"""
+        self.plan = None
         self.proto_predictions = list()
         self.mdp_metadata = None
 

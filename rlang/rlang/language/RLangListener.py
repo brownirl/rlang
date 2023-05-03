@@ -63,6 +63,9 @@ class RLangListener(RLangParserListener):
         if variable_name == 'main_policy':
             self.rlang_knowledge.policy = variable
 
+        if variable_name == 'main_plan':
+            self.rlang_knowledge.plan = variable
+
         if variable_name == 'main_effect':
             self.rlang_knowledge.reward_function = variable.reward_function
             self.rlang_knowledge.transition_function = variable.transition_function
@@ -203,6 +206,8 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_policy.name, new_policy)
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
+        if isinstance(ctx.execute().value, Plan):
+            raise RLangSemanticError("Cannot execute a Plan in a Policy")
         ctx.value = ActionDistribution.from_single(ctx.execute().value)
 
     def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
@@ -237,15 +242,20 @@ class RLangListener(RLangParserListener):
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (Policy, ActionReference)):
+            if not isinstance(variable, (Policy, ActionReference, Plan)):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
+            if isinstance(variable, Plan):
+                ctx.value = PlanExecution(variable)
         elif ctx.arithmetic_exp() is not None:
-            ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
+            if isinstance(ctx.arithmetic_exp().value, PlanExecution):
+                ctx.value = ctx.arithmetic_exp().value
+            else:
+                ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
         else:
             raise RLangSemanticError("Execute statement must have either an identifier or an arithmetic expression")
 
-    # ============================= Lifted Execution (Parameterized Action and Predicate) ===============
+    # ============================= Lifted Execution (Parameterized Action, Predicate, and Plan) ===============
 
     def exitLifted_execution(self, ctx: RLangParser.Lifted_executionContext):
         lifted_execution = self.retrieveVariable(ctx.IDENTIFIER().getText())
@@ -255,6 +265,9 @@ class RLangListener(RLangParserListener):
         elif isinstance(lifted_execution, Predicate):
             args = list(map(lambda x: x.value, ctx.arr))
             ctx.value = PredicateEvaluation(lifted_execution, args)
+        elif isinstance(lifted_execution, Plan):
+            args = list(map(lambda x: x.value, ctx.arr))
+            ctx.value = PlanExecution(lifted_execution, args)
         elif isinstance(lifted_execution, type):
             args = list(map(lambda x: x.value, ctx.arr))
             args = [ctx.IDENTIFIER().getText()] + args
@@ -279,10 +292,15 @@ class RLangListener(RLangParserListener):
         # I need to make the plan object in here!
         # However, not all statements will be ActionDistributions, some will be probabilistic and some will be conditional TODO
         all_statements = [statement.value for statement in ctx.statements]
-        ctx.value = Plan(all_statements)
+        ctx.value = IteratedPlan(all_statements)
 
     def exitPlan_statement_execute(self, ctx: RLangParser.Plan_statement_executeContext):
-        ctx.value = ActionDistribution.from_single(ctx.execute().value)
+        if isinstance(ctx.execute().value, Plan):
+            ctx.value = PlanExecution(ctx.execute().value)
+        elif isinstance(ctx.execute().value, PlanExecution):
+            ctx.value = ctx.execute().value
+        else:
+            ctx.value = ActionDistribution.from_single(ctx.execute().value)
 
     def exitPlan_statement_conditional(self, ctx: RLangParser.Plan_statement_conditionalContext):
         ctx.value = ctx.conditional_plan().value
@@ -711,7 +729,7 @@ class RLangListener(RLangParserListener):
         if not isinstance(ctx.any_bound_var().value,
                           (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
                            StateObjectAttributeGrounding, MDPObjectGrounding, MDPObjectAttributeGrounding,
-                           ParameterizedActionExecution, PredicateEvaluation)):
+                           ParameterizedActionExecution, PredicateEvaluation, PlanExecution)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 

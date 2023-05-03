@@ -309,7 +309,7 @@ class ParameterizedActionExecution(GroundingFunction):
 
         super().__init__(domain=domain, codomain=Domain.ACTION,
                          function=lambda *args, **kwargs:
-                         parameterized_action(*[arg(*args, **kwargs) for arg in self.arguments]),
+                         parameterized_action(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
                          name=parameterized_action.name + "(" + argnames + ")")
 
 
@@ -463,7 +463,7 @@ class PredicateEvaluation(GroundingFunction):
 
         super().__init__(domain=domain, codomain=Domain.REAL_VALUE+Domain.BOOLEAN,
                          function=lambda *args, **kwargs:
-                         predicate(*[arg(*args, **kwargs) for arg in self.arguments]),
+                         predicate(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
                          name=predicate.name + "(" + argnames + ")")
 
 
@@ -1036,25 +1036,91 @@ class Policy(ProbabilisticFunction):
 
 class Plan(Grounding):
     """Represents an open-loop policy"""
+    def __init__(self, function: Callable = None, name: str = None):
+        self.function = function
+        super().__init__(name=name)
+
+    def reset(self):
+        pass
+
+    def __call__(self, *args, **kwargs):
+        if self.function is None:
+            raise RLangGroundingError("Plan function is not defined")
+        return self.function(*args, **kwargs)
+
+    def __repr__(self):
+        if self.name:
+            return f"<Plan \"{self.name}\">"
+        else:
+            return f"<Plan unnamed>"
+
+
+class IteratedPlan(Plan):
+    """One kind of plan implementation"""
 
     def __init__(self, plan_steps, name: str = None):
         self.plan_steps = plan_steps
-        super().__init__(name=name)
+        super().__init__(function=self.__call__, name=name)
         self.i = 0
 
     def reset(self):
         self.i = 0
+        for p in self.plan_steps:
+            if isinstance(p, PlanExecution):
+                p.plan.reset()
 
     def __call__(self, *args, **kwargs):
         if self.i >= len(self.plan_steps):
-            raise RLangGroundingError("Plan has finished")
+            return None
         action = self.plan_steps[self.i]
-        self.i += 1
-        return action(*args, **kwargs)
+        # print(action)
+        if isinstance(action, PlanExecution):
+            next_action = action(*args, **kwargs)
+            if next_action is None:
+                action.plan.reset()
+                self.i += 1
+                return self(*args, **kwargs)
+            else:
+                return next_action
+        else:
+            # print(action)
+            # print(type(action))
+            # print(self.i)
+            # print(action(*args, **kwargs))
+            self.i += 1
+            # if isinstance(action, ActionDistribution):
+            #     print("returning")
+            #     return action
+            # else:
+            return action(*args, **kwargs)
 
     def __repr__(self):
-        return f"<Plan \"{self.name}\">"
+        if self.name:
+            return f"<IteratedPlan \"{self.name}\">"
+        else:
+            return f"<IteratedPlan unnamed>"
 
+
+class PlanExecution(GroundingFunction):
+    def __init__(self, plan, arguments: List[GroundingFunction]=None):
+        self.plan = plan
+        if arguments is None:
+            arguments = []
+        self.arguments = arguments
+
+        domain = Domain.ANY
+        for arg in arguments:
+            domain = domain + arg.domain
+
+        argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
+
+        super().__init__(domain=domain, codomain=Domain.ACTION,
+                         function=lambda *args, **kwargs:
+                         self.plan(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
+                         name=plan.name + "(" + argnames + ")")
+
+    def __repr__(self):
+        return f"<PlanExecution of {self.plan} with {self.arguments}>"
 
 # class Plan(ProbabilisticFunction):
 #     """THIS DOES NOT WORK YET

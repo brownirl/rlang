@@ -10,7 +10,7 @@ from ..grounding.utils.primitives import VectorState
 class RLangQLearningGeneralAgent(QLearningAgent):
     """Implementation for a Q Learning agent that utilizes RLang hints, amenable to Minigrid"""
 
-    def __init__(self, actions, get_knowledge, name="RLang-Q-learning-general", use_transition=False, use_policy=False,
+    def __init__(self, actions, get_knowledge, name="RLang-Q-learning-general", use_transition=False, use_policy=False, use_plan=False,
                  alpha=0.1, gamma=0.99, epsilon=0.1, explore="uniform", anneal=False, default_q=0, policy_epsilon=0.9,
                  state_unwrapper=None, state_hash_func=None):
         """
@@ -28,6 +28,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
 
         self.use_transition = use_transition
         self.use_policy = use_policy
+        self.use_plan = use_plan
         self.policy_epsilon = policy_epsilon
         self.get_knowledge = get_knowledge
         self.state_unwrapper = state_unwrapper
@@ -121,10 +122,20 @@ class RLangQLearningGeneralAgent(QLearningAgent):
 
         # print(self.knowledge['goal'](state=VectorState(self.state_unwrapper(state))))
 
-        if self.use_policy and np.random.random() < self.policy_epsilon:
-            action = self.knowledge.policy(state=VectorState(self.state_unwrapper(state)))
+        if (self.use_policy or self.use_plan) and np.random.random() < self.policy_epsilon:
+            if self.use_plan:
+                action = self.knowledge.plan(state=VectorState(self.state_unwrapper(state)))
+            else:
+                action = self.knowledge.policy(state=VectorState(self.state_unwrapper(state)))
+                # plan_action = self.knowledge.plan(state=VectorState(self.state_unwrapper(state)))
             if action:
+                # print(action)
+                # print(f"{action, plan_action} at index {self.knowledge.plan.i}")
+                if isinstance(action, int):
+                    return action
                 action = int(list(action.keys())[0])
+
+                
                 # print(state)
                 # print(action)
                 return action
@@ -186,13 +197,15 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         if isinstance(state, tuple):
             state = state[0]
 
-        if not self.state_hash_func(self.state_unwrapper(state)) in self.q_func:
-            print("Not Seen")
+        # if not self.state_hash_func(self.state_unwrapper(state)) in self.q_func:
+        #     print("Not Seen")
 
         # print(self.state_hash_func(self.state_unwrapper(state)))
         return self.q_func[self.state_hash_func(self.state_unwrapper(state))][action]
 
     def reset(self):
         self.was_reset = True
+        if self.use_plan:
+            self.knowledge.plan.reset()
         super().reset()
     
