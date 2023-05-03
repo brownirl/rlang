@@ -1068,6 +1068,8 @@ class IteratedPlan(Plan):
         for p in self.plan_steps:
             if isinstance(p, PlanExecution):
                 p.plan.reset()
+            elif isinstance(p, IteratedPlan):
+                p.reset()
 
     def __call__(self, *args, **kwargs):
         if self.i >= len(self.plan_steps):

@@ -128,7 +128,10 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             else:
                 action = self.knowledge.policy(state=VectorState(self.state_unwrapper(state)))
                 # plan_action = self.knowledge.plan(state=VectorState(self.state_unwrapper(state)))
+                
             if action:
+                # print(state)
+                # print(self.knowledge.plan.i)
                 # print(action)
                 # print(f"{action, plan_action} at index {self.knowledge.plan.i}")
                 if isinstance(action, int):
@@ -140,6 +143,11 @@ class RLangQLearningGeneralAgent(QLearningAgent):
                 # print(action)
                 return action
             else:
+                # if self.use_plan:
+                #     print("No action found, reverting to epsilon greedy")
+                # print(self.knowledge.plan.i)
+                # if self.use_plan:
+                #     self.knowledge.plan.reset()
                 return super().epsilon_greedy_q_policy(state)
         else:
             return super().epsilon_greedy_q_policy(state)
@@ -209,3 +217,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             self.knowledge.plan.reset()
         super().reset()
     
+    def end_of_episode(self):
+        if self.use_plan:
+            self.knowledge.plan.reset()
+        super().end_of_episode()
