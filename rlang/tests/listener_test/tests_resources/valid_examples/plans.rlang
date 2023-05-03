@@ -1,0 +1,6 @@
+Action up := 1
+Action down := 2
+
+Plan main:
+    Execute up
+    Execute down

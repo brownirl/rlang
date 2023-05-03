@@ -34,30 +34,37 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         self.state_hash_func = state_hash_func
 
         self.was_reset = True
+        self.knowledge = None
 
-        def weighted_reward(r_func, state_dict):
-            reward = 0
-            for k, v in state_dict.items():
-                # This is going to be well-formed states, no need to modify here
-                reward += r_func(state=VectorState(k)) * v
-            return reward
+        super().__init__(actions, name=name, alpha=alpha, gamma=gamma,
+                         epsilon=epsilon, explore=explore, anneal=anneal, custom_q_init=None, default_q=default_q)
 
-        def weighted_value(q_func, state_dict):
-            reward = 0
-            for k, v in state_dict.items():
-                # TODO: verify that self.state_hash_func(k) is hashing properly! Might need to unwrap into numpy array first and then hash
-                maxx = q_func[self.state_hash_func(k)][actions[0]]
-                for a in actions:
-                    val = q_func[self.state_hash_func(k)][a]
-                    if val > maxx:
-                        maxx = val
-                reward += maxx * v
-            return reward
+    def populate_knowledge(self):
+        # Okay, so we need to keep track of the states we've seen so far. Maybe we actually want to pop knowledge in the q learning methods
 
-        q_func = None
-        # if knowledge:
-        #     q_func = defaultdict(lambda: defaultdict(lambda: default_q))
-        #     reward_function = knowledge.reward_function
+        # def weighted_reward(r_func, state_dict):
+        #     reward = 0
+        #     for k, v in state_dict.items():
+        #         # This is going to be well-formed states, no need to modify here
+        #         reward += r_func(state=VectorState(k)) * v
+        #     return reward
+
+        # def weighted_value(q_func, state_dict):
+        #     reward = 0
+        #     for k, v in state_dict.items():
+        #         # TODO: verify that self.state_hash_func(k) is hashing properly! Might need to unwrap into numpy array first and then hash
+        #         maxx = q_func[self.state_hash_func(k)][self.actions[0]]
+        #         for a in self.actions:
+        #             val = q_func[self.state_hash_func(k)][a]
+        #             if val > maxx:
+        #                 maxx = val
+        #         reward += maxx * v
+        #     return reward
+
+
+        # if self.knowledge:
+        #     q_func = defaultdict(lambda: defaultdict(lambda: self.default_q))
+        #     reward_function = self.knowledge.reward_function
 
         #     # For now I'll assume I have good states, I'll get back to this.
         #     # I'm gonna do a new solution where I periodically update the Q function with the RLang rewards and transition function when more and more states are discovered
@@ -84,11 +91,6 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         #                     r_prime = weighted_reward(reward_function, s_primei)
         #                     v_s_prime = weighted_value(q_func, s_primei)
         #                     q_func[hashed_s][a] += alpha * (r_prime + gamma * v_s_prime)
-
-        super().__init__(actions, name=name, alpha=alpha, gamma=gamma,
-                         epsilon=epsilon, explore=explore, anneal=anneal, custom_q_init=q_func, default_q=default_q)
-
-    def populate_knowledge(self):
         pass
 
     def act(self, state, reward, learning=True):
@@ -98,6 +100,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             if isinstance(init_state, tuple):
                 init_state = init_state[0]
             self.knowledge = self.get_knowledge(self.state_unwrapper(init_state))
+            self.populate_knowledge()
             self.was_reset = False
         # print(self.knowledge['goal'](state=VectorState(self.state_unwrapper(state))))
         return super().act(state, reward, learning)
@@ -182,6 +185,9 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             state = state.data
         if isinstance(state, tuple):
             state = state[0]
+
+        if not self.state_hash_func(self.state_unwrapper(state)) in self.q_func:
+            print("Not Seen")
 
         # print(self.state_hash_func(self.state_unwrapper(state)))
         return self.q_func[self.state_hash_func(self.state_unwrapper(state))][action]

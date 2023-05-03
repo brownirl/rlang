@@ -43,6 +43,7 @@ ACTION: 'Action';
 EFFECT: 'Effect';
 REWARD: 'Reward';
 POLICY: 'Policy';
+PLAN: 'Plan';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';

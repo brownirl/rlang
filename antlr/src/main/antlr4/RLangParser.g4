@@ -23,6 +23,7 @@ dec
     | class_def
     | option
     | policy
+    | plan
     | effect
     ;
 
@@ -57,10 +58,23 @@ probabilistic_policy_statement
     | execute probabilistic_condition NL+                               # probabilistic_policy_statement_sugar
     ;
 execute: EXECUTE (IDENTIFIER | arithmetic_exp);
-
 lifted_execution: IDENTIFIER L_PAR (arr+=arithmetic_exp (COM arr+=arithmetic_exp)*)? R_PAR;
 
-//parameterized_action: IDENTIFIER L_PAR arr+=arithmetic_exp (COM arr+=arithmetic_exp)* R_PAR;
+
+plan: PLAN (IDENTIFIER| MAIN) COL INDENT plan_statement_collection DEDENT;
+plan_statement_collection: (statements+=plan_statement NL*)+;
+plan_statement
+    : execute                    # plan_statement_execute
+    | conditional_plan           # plan_statement_conditional
+    | probabilistic_plan         # plan_statement_probabilistic
+    ;
+conditional_plan: IF if_condition=boolean_exp COL INDENT if_plan=plan_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_plans+=plan_statement_collection DEDENT)* (ELSE COL INDENT else_plan=plan_statement_collection DEDENT)?;
+probabilistic_plan: plans+=probabilistic_plan_statement (OR plans+=probabilistic_plan_statement)*;
+probabilistic_plan_statement
+    : probabilistic_condition COL INDENT plan_statement_collection DEDENT   # probabilistic_plan_statement_no_sugar
+    | execute probabilistic_condition NL+                                  # probabilistic_plan_statement_sugar
+    ;
+
 
 effect: EFFECT (IDENTIFIER| MAIN) COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;

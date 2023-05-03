@@ -260,6 +260,87 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#plan.
+    def enterPlan(self, ctx:RLangParser.PlanContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan.
+    def exitPlan(self, ctx:RLangParser.PlanContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_collection.
+    def enterPlan_statement_collection(self, ctx:RLangParser.Plan_statement_collectionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_collection.
+    def exitPlan_statement_collection(self, ctx:RLangParser.Plan_statement_collectionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_execute.
+    def enterPlan_statement_execute(self, ctx:RLangParser.Plan_statement_executeContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_execute.
+    def exitPlan_statement_execute(self, ctx:RLangParser.Plan_statement_executeContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_conditional.
+    def enterPlan_statement_conditional(self, ctx:RLangParser.Plan_statement_conditionalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_conditional.
+    def exitPlan_statement_conditional(self, ctx:RLangParser.Plan_statement_conditionalContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_probabilistic.
+    def enterPlan_statement_probabilistic(self, ctx:RLangParser.Plan_statement_probabilisticContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_probabilistic.
+    def exitPlan_statement_probabilistic(self, ctx:RLangParser.Plan_statement_probabilisticContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#conditional_plan.
+    def enterConditional_plan(self, ctx:RLangParser.Conditional_planContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#conditional_plan.
+    def exitConditional_plan(self, ctx:RLangParser.Conditional_planContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_plan.
+    def enterProbabilistic_plan(self, ctx:RLangParser.Probabilistic_planContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_plan.
+    def exitProbabilistic_plan(self, ctx:RLangParser.Probabilistic_planContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_plan_statement_no_sugar.
+    def enterProbabilistic_plan_statement_no_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_no_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_plan_statement_no_sugar.
+    def exitProbabilistic_plan_statement_no_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_no_sugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_plan_statement_sugar.
+    def enterProbabilistic_plan_statement_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_plan_statement_sugar.
+    def exitProbabilistic_plan_statement_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_sugarContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#effect.
     def enterEffect(self, ctx:RLangParser.EffectContext):
         pass

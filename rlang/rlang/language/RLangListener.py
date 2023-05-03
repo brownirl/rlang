@@ -68,7 +68,7 @@ class RLangListener(RLangParserListener):
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
 
-    def enterProgram(self, ctx:RLangParser.ProgramContext):
+    def enterProgram(self, ctx: RLangParser.ProgramContext):
         if ctx.getText() == "":
             raise RLangSemanticError("No program text. There might be some misplaced quotes.")
 
@@ -247,15 +247,7 @@ class RLangListener(RLangParserListener):
 
     # ============================= Lifted Execution (Parameterized Action and Predicate) ===============
 
-    # def exitParameterized_action(self, ctx: RLangParser.Parameterized_actionContext):
-    #     args = list(map(lambda x: x.value, ctx.arr))
-    #     parameterized_action = self.retrieveVariable(ctx.IDENTIFIER().getText())
-    #     if isinstance(parameterized_action, ParameterizedAction):
-    #         ctx.value = ParameterizedActionExecution(parameterized_action, args)
-        # elif isinstance(parameterized_action, ActionReference):
-        #     ctx.value = ActionReference(action=parameterized_action.action(*args))
-
-    def exitLifted_execution(self, ctx:RLangParser.Lifted_executionContext):
+    def exitLifted_execution(self, ctx: RLangParser.Lifted_executionContext):
         lifted_execution = self.retrieveVariable(ctx.IDENTIFIER().getText())
         if isinstance(lifted_execution, ParameterizedAction):
             args = list(map(lambda x: x.value, ctx.arr))
@@ -269,6 +261,53 @@ class RLangListener(RLangParserListener):
             ctx.value = MDPObjectGrounding(obj=lifted_execution(*args))
         else:
             raise RLangSemanticError(f"Cannot pass arguments to a {type(lifted_execution)}")
+
+    # ============================= Plans =============================
+
+    def exitPlan(self, ctx: RLangParser.PlanContext):
+        # ctx.plan_statement_collection().value is a list of ActionDistributions for now
+        new_plan = ctx.plan_statement_collection().value
+        if ctx.IDENTIFIER():
+            new_plan.name = ctx.IDENTIFIER().getText()
+            if new_plan.name == 'main_plan':
+                raise RLangSemanticError("'main_plan' is a reserved RLang variable name")
+        elif ctx.MAIN():
+            new_plan.name = 'main_plan'
+        self.addVariable(new_plan.name, new_plan)
+
+    def exitPlan_statement_collection(self, ctx: RLangParser.Plan_statement_collectionContext):
+        # I need to make the plan object in here!
+        # However, not all statements will be ActionDistributions, some will be probabilistic and some will be conditional TODO
+        all_statements = [statement.value for statement in ctx.statements]
+        ctx.value = Plan(all_statements)
+
+    def exitPlan_statement_execute(self, ctx: RLangParser.Plan_statement_executeContext):
+        ctx.value = ActionDistribution.from_single(ctx.execute().value)
+
+    def exitPlan_statement_conditional(self, ctx: RLangParser.Plan_statement_conditionalContext):
+        ctx.value = ctx.conditional_plan().value
+
+    def exitPlan_statement_probabilistic(self, ctx: RLangParser.Plan_statement_probabilisticContext):
+        ctx.value = ctx.probabilistic_plan().value
+
+    def exitConditional_plan(self, ctx: RLangParser.Conditional_planContext):
+        # This returns a plan given a state
+        if_condition = ctx.if_condition.value
+        elif_conditions = [s.value for s in ctx.elif_conditions]
+        elif_plans = [s.value for s in ctx.elif_plans]
+        else_plan = ctx.else_plan.value if ctx.else_plan else None
+
+        # Right now these are mixed types, I don't want to do this right now TODO
+
+    def exitProbabilistic_plan(self, ctx: RLangParser.Probabilistic_planContext):
+        raise NotImplementedError("Probabilistic plans are not yet implemented")
+        pass
+
+    def exitProbabilistic_plan_statement_no_sugar(self, ctx: RLangParser.Probabilistic_plan_statement_no_sugarContext):
+        pass
+
+    def exitProbabilistic_plan_statement_sugar(self, ctx: RLangParser.Probabilistic_plan_statement_sugarContext):
+        pass
 
     # ============================= Effect =============================
 
@@ -716,11 +755,13 @@ class RLangListener(RLangParserListener):
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         if not isinstance(ctx.any_bound_var().value, (
-                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding, PredicateEvaluation)):
+                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding,
+                PredicateEvaluation)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
             ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
-        elif isinstance(ctx.any_bound_var().value, (StateObjectAttributeGrounding, MDPObjectAttributeGrounding, PredicateEvaluation)):
+        elif isinstance(ctx.any_bound_var().value,
+                        (StateObjectAttributeGrounding, MDPObjectAttributeGrounding, PredicateEvaluation)):
             ctx.value = Proposition(function=ctx.any_bound_var().value.__call__, domain=Domain.BOOLEAN)
         else:
             ctx.value = ctx.any_bound_var().value
@@ -925,7 +966,7 @@ class RLangListener(RLangParserListener):
     def exitCompound_array_simple(self, ctx: RLangParser.Compound_array_simpleContext):
         ctx.value = ctx.any_num_array_exp().value
 
-    def exitCompound_array_arith(self, ctx:RLangParser.Compound_array_arithContext):
+    def exitCompound_array_arith(self, ctx: RLangParser.Compound_array_arithContext):
         gds = [x.value for x in ctx.arr]
         for i in range(len(gds)):
             if isinstance(gds[i], PrimitiveGrounding):
