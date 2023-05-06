@@ -97,20 +97,6 @@ effect_reference: PREDICT IDENTIFIER;
 
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
 
-
-//object_instantiation: any_bound_class L_PAR object_constructor_arg_list R_PAR;
-//
-//object_constructor_arg_list: arg_list+=object_constructor_arg? (COM arg_list+=object_constructor_arg)*;
-//
-//
-//// TODO: eventually add strings to this
-//object_constructor_arg
-//    : object_instantiation                          # object_construct_object
-//    | arithmetic_exp                                # object_construct_arith_exp
-//    | boolean_exp                                   # object_construct_bool_exp
-//    | object_array                                  # object_construct_object_array
-//    ;
-
 arithmetic_exp
     : L_PAR arithmetic_exp R_PAR                                # arith_paren
     | lhs=arithmetic_exp (TIMES | DIVIDE) rhs=arithmetic_exp    # arith_times_divide
@@ -118,6 +104,7 @@ arithmetic_exp
     | any_number                                                # arith_number
     | any_array                                                 # arith_array
     | any_bound_var                                             # arith_bound_var
+    | quantification_exp                                        # arith_quantification
     ;
 
 
@@ -128,8 +115,6 @@ boolean_exp
     | NOT boolean_exp                                           # bool_not
     | lhs=arithmetic_exp IN rhs=arithmetic_exp                  # bool_in
     | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq
-    | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=quantification_exp   # bool_arith_quant_eq
-    | lhs=quantification_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_quant_arith_eq
     | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_arith_eq
     | any_bound_var                                             # bool_bound_var
     | (TRUE | FALSE)                                            # bool_tf
@@ -147,11 +132,6 @@ compound_type
     ;
 
 simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
-
-
-//object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
-
-//an_object: any_bound_var | lifted_execution;
 
 
 any_bound_var

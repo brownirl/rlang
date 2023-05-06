@@ -106,11 +106,37 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             self.knowledge, self.state_featurizer = self.get_knowledge(self.state_unwrapper(init_state))
             self.populate_knowledge()
             self.was_reset = False
-        print(self.knowledge.reward_function(state=VectorState(self.state_unwrapper(state))))
+        # print(self.knowledge.reward_function(state=VectorState(self.state_unwrapper(state))))
         # print(self.knowledge['goal'](state=VectorState(self.state_unwrapper(state))))
         if self.state_featurizer:
             self.state_featurizer.update_objects(self.state_unwrapper(state))
-        return super().act(state, reward, learning)
+        # return super().act(state, reward, learning)
+    
+        if learning:
+            self.update(self.prev_state, self.prev_action, reward, state)
+
+        # # Before choosing an action, let's cycle through the next actions, next transtions, and update q values
+        # if self.use_effects and self.knowledge:
+        #     for a in self.actions:
+        #         print(self.knowledge.transition_function(state=VectorState(self.state_unwrapper(state)), action=a))
+
+
+        if self.explore == "softmax":
+            # Softmax exploration
+            action = self.soft_max_policy(state)
+        else:
+            # Uniform exploration
+            action = self.epsilon_greedy_q_policy(state)
+
+        self.prev_state = state
+        self.prev_action = action
+        self.step_number += 1
+
+        # Anneal params.
+        if learning and self.anneal:
+            self._anneal()
+
+        return action
 
     def epsilon_greedy_q_policy(self, state):
         '''

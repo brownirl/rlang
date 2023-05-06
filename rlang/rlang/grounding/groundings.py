@@ -625,6 +625,13 @@ class MarkovFeature(GroundingFunction):
         return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
+class QuantifierSpecification:
+    def __init__(self, cls, quantifier, dot_exp=None):
+        self.cls = cls
+        self.quantifier = quantifier
+        self.dot_exp = dot_exp
+
+
 class Proposition(GroundingFunction):
     """Represents a function which has a truth value.
 
@@ -647,26 +654,25 @@ class Proposition(GroundingFunction):
                 f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
         return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
+    # TODO: Eventually just work this logic into the Proposition class
     @classmethod
-    def from_Quantification(cls, quantifier, grounding_cls, grounding: GroundingFunction, operation, dot_exp=None):
-        # provide a function that takes a knowledge object at runtime, then instantiates a number of
-        # MDPObjectAttributeGroundings, then does quantification.
+    def from_QuantifierSpecification(cls, quantifier_specification: QuantifierSpecification, grounding: GroundingFunction, operation):
         def unwrap_and_quantify(*args, **kwargs):
-            items = list(kwargs['knowledge'].objects_of_type(grounding_cls).values())
-            if dot_exp is not None:
-                items = [MDPObjectAttributeGrounding(g, dot_exp) for g in items]
-            if quantifier == 'all':
+            items = list(kwargs['knowledge'].objects_of_type(quantifier_specification.cls).values())
+            if quantifier_specification.dot_exp is not None:
+                items = [MDPObjectAttributeGrounding(g, quantifier_specification.dot_exp) for g in items]
+            if quantifier_specification.quantifier == 'all':
                 for item in items:
                     if not operation(grounding(*args, **kwargs), item(*args, **kwargs)):
                         return False
                 return True
-            elif quantifier == 'any':
+            elif quantifier_specification.quantifier == 'any':
                 for item in items:
                     if operation(grounding(*args, **kwargs), item(*args, **kwargs)):
                         return True
                 return False
             else:
-                raise RLangGroundingError(f"Unknown quantifier: {quantifier}")
+                raise RLangGroundingError(f"Unknown quantifier: {quantifier_specification.quantifier}")
 
         return cls(function=lambda *args, **kwargs: unwrap_and_quantify(*args, **kwargs), domain=Domain.STATE_KNOWLEDGE)
 

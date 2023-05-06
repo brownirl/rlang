@@ -521,6 +521,15 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by RLangParser#arith_quantification.
+    def enterArith_quantification(self, ctx:RLangParser.Arith_quantificationContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_quantification.
+    def exitArith_quantification(self, ctx:RLangParser.Arith_quantificationContext):
+        pass
+
+
     # Enter a parse tree produced by RLangParser#arith_bound_var.
     def enterArith_bound_var(self, ctx:RLangParser.Arith_bound_varContext):
         pass
@@ -584,30 +593,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#bool_quant_arith_eq.
-    def enterBool_quant_arith_eq(self, ctx:RLangParser.Bool_quant_arith_eqContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#bool_quant_arith_eq.
-    def exitBool_quant_arith_eq(self, ctx:RLangParser.Bool_quant_arith_eqContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#bool_bound_var.
     def enterBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
         pass
 
     # Exit a parse tree produced by RLangParser#bool_bound_var.
     def exitBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#bool_arith_quant_eq.
-    def enterBool_arith_quant_eq(self, ctx:RLangParser.Bool_arith_quant_eqContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#bool_arith_quant_eq.
-    def exitBool_arith_quant_eq(self, ctx:RLangParser.Bool_arith_quant_eqContext):
         pass
 
 
