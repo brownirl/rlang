@@ -10,7 +10,7 @@ from ..grounding.utils.primitives import VectorState
 class RLangQLearningGeneralAgent(QLearningAgent):
     """Implementation for a Q Learning agent that utilizes RLang hints, amenable to Minigrid"""
 
-    def __init__(self, actions, get_knowledge, name="RLang-Q-learning-general", use_transition=False, use_policy=False, use_plan=False,
+    def __init__(self, actions, get_knowledge, name="RLang-Q-learning-general", use_transition=False, use_policy=False, use_plan=False, use_effects=False,
                  alpha=0.1, gamma=0.99, epsilon=0.1, explore="uniform", anneal=False, default_q=0, policy_epsilon=0.9,
                  state_unwrapper=None, state_hash_func=None):
         """
@@ -29,10 +29,12 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         self.use_transition = use_transition
         self.use_policy = use_policy
         self.use_plan = use_plan
+        self.use_effects = use_effects
         self.policy_epsilon = policy_epsilon
         self.get_knowledge = get_knowledge
         self.state_unwrapper = state_unwrapper
         self.state_hash_func = state_hash_func
+        self.state_featurizer = None
 
         self.was_reset = True
         self.knowledge = None
@@ -100,10 +102,14 @@ class RLangQLearningGeneralAgent(QLearningAgent):
                 init_state = state.data
             if isinstance(init_state, tuple):
                 init_state = init_state[0]
-            self.knowledge = self.get_knowledge(self.state_unwrapper(init_state))
+            # self.knowledge, self.knowledge2, self.state_featurizer = self.get_knowledge(self.state_unwrapper(init_state))
+            self.knowledge, self.state_featurizer = self.get_knowledge(self.state_unwrapper(init_state))
             self.populate_knowledge()
             self.was_reset = False
+        print(self.knowledge.reward_function(state=VectorState(self.state_unwrapper(state))))
         # print(self.knowledge['goal'](state=VectorState(self.state_unwrapper(state))))
+        if self.state_featurizer:
+            self.state_featurizer.update_objects(self.state_unwrapper(state))
         return super().act(state, reward, learning)
 
     def epsilon_greedy_q_policy(self, state):
@@ -125,24 +131,35 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         if (self.use_policy or self.use_plan) and np.random.random() < self.policy_epsilon:
             if self.use_plan:
                 action = self.knowledge.plan(state=VectorState(self.state_unwrapper(state)))
+                # action2 = self.knowledge2.plan(state=VectorState(self.state_unwrapper(state)))
             else:
                 action = self.knowledge.policy(state=VectorState(self.state_unwrapper(state)))
-                # plan_action = self.knowledge.plan(state=VectorState(self.state_unwrapper(state)))
                 
             if action:
                 # print(state)
-                # print(self.knowledge.plan.i)
-                # print(action)
-                # print(f"{action, plan_action} at index {self.knowledge.plan.i}")
+                # print(f"Action1: {action} at index {self.knowledge.plan.i}")
+                # print(f"Action2: {action2} at index {self.knowledge2.plan.i}")
+                # print(self.knowledge['yellow_door'](state=VectorState(self.state_unwrapper(state))))
+                # print(self.knowledge2['yellow_door'](state=VectorState(self.state_unwrapper(state))))
+                # print(self.knowledge['agent'](state=VectorState(self.state_unwrapper(state))))
+                # print(self.knowledge2['agent'](state=VectorState(self.state_unwrapper(state))))
+
+
                 if isinstance(action, int):
                     return action
                 action = int(list(action.keys())[0])
-
-                
-                # print(state)
-                # print(action)
                 return action
             else:
+                # if action2:
+                    # print(state)
+                    # print("Action2 found but no Action1")
+                    # print(f"Action2: {action2} at index {self.knowledge2.plan.i}")
+                    # print(self.knowledge['yellow_door'](state=VectorState(self.state_unwrapper(state))))
+                    # print(self.knowledge2['yellow_door'](state=VectorState(self.state_unwrapper(state))))
+                    # print(self.knowledge['agent'](state=VectorState(self.state_unwrapper(state))))
+                    # print(self.knowledge2['agent'](state=VectorState(self.state_unwrapper(state))))
+                    # pass
+                
                 # if self.use_plan:
                 #     print("No action found, reverting to epsilon greedy")
                 # print(self.knowledge.plan.i)
@@ -215,9 +232,11 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         self.was_reset = True
         if self.use_plan:
             self.knowledge.plan.reset()
+            # self.knowledge2.plan.reset()
         super().reset()
     
     def end_of_episode(self):
         if self.use_plan:
             self.knowledge.plan.reset()
+            # self.knowledge2.plan.reset()
         super().end_of_episode()

@@ -358,6 +358,13 @@ class IdentityGrounding(GroundingFunction):
         return f"<IdentityGrounding {self.codomain.name}>"
 
 
+class MDPClassGrounding(GroundingFunction):
+    def __init__(self, cls):
+        self.cls = cls
+        super().__init__(domain=Domain.ANY, codomain=Domain.ANY,
+                         function=lambda *args, **kwargs: self.cls, name=f"{cls.__name__}_class_grounding")
+
+
 class MDPObjectGrounding(GroundingFunction):
     """For representing objects, which may have properties that are functions of state."""
 

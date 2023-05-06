@@ -729,7 +729,7 @@ class RLangListener(RLangParserListener):
         if not isinstance(ctx.any_bound_var().value,
                           (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
                            StateObjectAttributeGrounding, MDPObjectGrounding, MDPObjectAttributeGrounding,
-                           ParameterizedActionExecution, PredicateEvaluation, PlanExecution)):
+                           ParameterizedActionExecution, PredicateEvaluation, PlanExecution, MDPClassGrounding)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -883,6 +883,8 @@ class RLangListener(RLangParserListener):
 
         if not ctx.trailer():  # Check if it's not empty
             new_var = variable
+            if isinstance(variable, type):
+                new_var = MDPClassGrounding(cls=new_var)
         elif isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
@@ -894,6 +896,7 @@ class RLangListener(RLangParserListener):
             new_var = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
                               domain=variable.domain)
         elif isinstance(variable, MDPObjectGrounding):
+
             # new_var = MDPObjectAttributeGrounding(variable, ctx.trailer())
             trailers = [trailer.value for trailer in ctx.trailer()]
             new_var = variable
