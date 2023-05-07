@@ -1,4 +1,5 @@
 from collections import defaultdict
+import time
 
 from simple_rl.agents import QLearningAgent
 from simple_rl.tasks.gym.GymMDPClass import GymState
@@ -11,7 +12,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
     """Implementation for a Q Learning agent that utilizes RLang hints, amenable to Minigrid"""
 
     def __init__(self, actions, get_knowledge, name="RLang-Q-learning-general", use_transition=False, use_policy=False, use_plan=False, use_effects=False,
-                 alpha=0.1, gamma=0.99, epsilon=0.1, explore="uniform", anneal=False, default_q=0, policy_epsilon=0.9,
+                 alpha=0.1, gamma=0.99, epsilon=0.1, explore="uniform", anneal=False, default_q=0.0, policy_epsilon=0.9,
                  state_unwrapper=None, state_hash_func=None):
         """
         Args:
@@ -97,6 +98,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         pass
 
     def act(self, state, reward, learning=True):
+        # start_time = time.perf_counter()
         if self.was_reset:
             if isinstance(state, GymState):
                 init_state = state.data
@@ -105,9 +107,11 @@ class RLangQLearningGeneralAgent(QLearningAgent):
             # self.knowledge, self.knowledge2, self.state_featurizer = self.get_knowledge(self.state_unwrapper(init_state))
             self.knowledge, self.state_featurizer = self.get_knowledge(self.state_unwrapper(init_state))
             self.populate_knowledge()
+            self.knowledge.memoized_reward_function.cache_clear()
             self.was_reset = False
         # print(self.knowledge.reward_function(state=VectorState(self.state_unwrapper(state))))
         # print(self.knowledge['goal'](state=VectorState(self.state_unwrapper(state))))
+        # print(self.knowledge['at_any_lava'](state=VectorState(self.state_unwrapper(state))))
         if self.state_featurizer:
             self.state_featurizer.update_objects(self.state_unwrapper(state))
         # return super().act(state, reward, learning)
@@ -115,10 +119,31 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         if learning:
             self.update(self.prev_state, self.prev_action, reward, state)
 
-        # # Before choosing an action, let's cycle through the next actions, next transtions, and update q values
-        # if self.use_effects and self.knowledge:
-        #     for a in self.actions:
-        #         print(self.knowledge.transition_function(state=VectorState(self.state_unwrapper(state)), action=a))
+            # Before choosing an action, let's cycle through the next actions, next transtions, and update q values
+            if self.use_effects and self.knowledge:
+                # start_time = time.perf_counter()
+                
+                rlang_state = VectorState(self.state_unwrapper(state))
+                hashed_state = self.state_hash_func(self.state_unwrapper(state))
+                for a in self.actions:
+                    # Before doing the below, check to see if a value update has already been done for this state-action pair
+                    potential_reward = int(self.knowledge.memoized_reward_function(state=rlang_state, action=a))
+                    if potential_reward != 0:
+                        partial_q = self.q_func[hashed_state]
+                        if partial_q[a] == self.default_q:
+                            # max_q_curr_state = reward
+                            partial_q[a] = (1 - self.alpha) * self.default_q + self.alpha * potential_reward#(potential_reward + self.gamma * max_q_curr_state)
+                
+
+                # partial_q = self.q_func[self.state_hash_func(self.state_unwrapper(state))]
+                # for a in self.actions:
+                #     if partial_q[a] == self.default_q:
+                #         potential_reward = int(self.knowledge.reward_function(state=rlang_state, action=a))
+                #         if potential_reward != 0:
+                #             # max_q_curr_state = reward
+                #             partial_q[a] = (1 - self.alpha) * self.default_q + self.alpha * potential_reward#(reward + self.gamma * max_q_curr_state)
+
+                # print(time.perf_counter() - start_time)
 
 
         if self.explore == "softmax":
@@ -136,6 +161,7 @@ class RLangQLearningGeneralAgent(QLearningAgent):
         if learning and self.anneal:
             self._anneal()
 
+        # print(time.perf_counter() - start_time)
         return action
 
     def epsilon_greedy_q_policy(self, state):
@@ -198,6 +224,35 @@ class RLangQLearningGeneralAgent(QLearningAgent):
     # ---------------------------------
     # ---- Q VALUES AND PARAMETERS ----
     # ---------------------------------
+
+    def rlang_q_update(self, state, action, reward):
+        '''
+        Args:
+            state (State)
+            action (str)
+            reward (float)
+
+        Summary:
+            Updates the internal Q Function according to the Bellman Equation. (Classic Q Learning update)
+        '''
+        # If this is the first state, just return.
+        if state is None:
+            self.prev_state = None
+            return
+        
+        if isinstance(state, GymState):
+            state = state.data
+        if isinstance(state, tuple):
+            state = state[0]
+
+        # Update the Q Function.
+        max_q_curr_state = reward
+        prev_q_val = self.get_q_value(state, action)
+
+        # print(self.state_hash_func(self.state_unwrapper(state)))
+        self.q_func[self.state_hash_func(self.state_unwrapper(state))][action] = \
+            (1 - self.alpha) * prev_q_val + self.alpha * (reward + self.gamma * max_q_curr_state)
+
 
     def update(self, state, action, reward, next_state):
         '''

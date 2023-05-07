@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import Dict, Any
 from collections.abc import MutableMapping
+import functools
 
 from .grounding.utils.utils import Domain
 from .grounding.utils.primitives import MDPObject
@@ -116,3 +117,10 @@ class RLangKnowledge(MutableMapping):
     def objects_of_type(self, cls):
         objs = self.objects()
         return {k: v for (k, v) in objs.items() if isinstance(v.obj, cls)}
+
+    @functools.lru_cache(maxsize=None)
+    def memoized_reward_function(self, state, action):
+        return self.reward_function(state=state, action=action)
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.rlang_variables.items())))

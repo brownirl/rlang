@@ -120,7 +120,7 @@ boolean_exp
     | (TRUE | FALSE)                                            # bool_tf
     ;
 
-quantification_exp: quantifier L_PAR any_bound_class R_PAR dot_exp;
+quantification_exp: quantifier L_PAR any_bound_class R_PAR dot_exp?;
 
 quantifier: ANY_CONDITION | ALL_CONDITION;
 

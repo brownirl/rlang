@@ -464,7 +464,8 @@ class PredicateEvaluation(GroundingFunction):
 
         domain = Domain.ANY
         for arg in arguments:
-            domain = domain + arg.domain
+            if isinstance(arg, GroundingFunction):
+                domain = domain + arg.domain
 
         argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
 
@@ -625,11 +626,12 @@ class MarkovFeature(GroundingFunction):
         return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class QuantifierSpecification:
+class QuantifierSpecification(Grounding):
     def __init__(self, cls, quantifier, dot_exp=None):
         self.cls = cls
         self.quantifier = quantifier
         self.dot_exp = dot_exp
+        super().__init__(name=f"{self.quantifier} {self.cls.__name__} {self.dot_exp.name if self.dot_exp else ''}")
 
 
 class Proposition(GroundingFunction):

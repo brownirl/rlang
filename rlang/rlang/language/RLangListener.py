@@ -807,7 +807,7 @@ class RLangListener(RLangParserListener):
 
     def exitQuantification_exp(self, ctx: RLangParser.Quantification_expContext):
         ctx.value = QuantifierSpecification(cls=ctx.any_bound_class().value, quantifier=ctx.quantifier().value,
-                                            dot_exp=ctx.dot_exp().value)
+                                            dot_exp=ctx.dot_exp().value if ctx.dot_exp() else None)
 
     def exitQuantifier(self, ctx: RLangParser.QuantifierContext):
         if ctx.ALL_CONDITION() is not None:
