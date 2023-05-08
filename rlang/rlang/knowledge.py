@@ -122,5 +122,9 @@ class RLangKnowledge(MutableMapping):
     def memoized_reward_function(self, state, action):
         return self.reward_function(state=state, action=action)
 
+    @functools.lru_cache(maxsize=None)
+    def memoized_transition_function(self, state, action):
+        return self.transition_function(state=state, action=action)
+
     def __hash__(self):
         return hash(tuple(sorted(self.rlang_variables.items())))
