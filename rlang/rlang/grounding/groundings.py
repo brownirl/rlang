@@ -368,7 +368,7 @@ class MDPClassGrounding(GroundingFunction):
 class MDPObjectGrounding(GroundingFunction):
     """For representing objects, which may have properties that are functions of state."""
 
-    def __init__(self, obj: MDPObject, name: str = None):
+    def __init__(self, obj: MDPObject, name: str = None, domain=Domain.ANY):
         """Initialize an abstract object grounding.
 
         Args:
@@ -380,7 +380,7 @@ class MDPObjectGrounding(GroundingFunction):
         self.calculated = False
 
         super().__init__(function=self.calculate_true_obj, codomain=Domain.OBJECT_VALUE,
-                         domain=Domain.STATE_ACTION_NEXT_STATE, name=obj.name+"_grounding" if name is None else name)
+                         domain=domain, name=obj.name+"_grounding" if name is None else name)
 
     def calculate_true_obj(self, *args, **kwargs):
         def calculate_attr(attr):
@@ -446,6 +446,20 @@ class MDPObjectAttributeGrounding(GroundingFunction):
         super().__init__(
             function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
             codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
+
+    def equals(self, other):
+        # print(self.grounding, other.grounding, self.attribute_chain, other.attribute_chain)
+        # print(type(other))
+        if isinstance(other, MDPObjectAttributeGrounding):
+            gdeq = self.grounding.equals(other.grounding)
+            atrseq = self.attribute_chain == other.attribute_chain
+            # print(gdeq, atrseq)
+            return gdeq and atrseq
+        else:
+            return False
+
+    def __hash__(self):
+        return hash((str(self), self.grounding, str(self.attribute_chain)))
 
 
 class Predicate:
@@ -626,12 +640,15 @@ class MarkovFeature(GroundingFunction):
         return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class QuantifierSpecification(Grounding):
+class QuantifierSpecification:
     def __init__(self, cls, quantifier, dot_exp=None):
         self.cls = cls
         self.quantifier = quantifier
         self.dot_exp = dot_exp
-        super().__init__(name=f"{self.quantifier} {self.cls.__name__} {self.dot_exp.name if self.dot_exp else ''}")
+        self.name = f"{self.quantifier} {self.cls.__name__}"
+
+    def __repr__(self):
+        return f"<QuantifierSpecification {self.name}{'.'.join(self.dot_exp) if self.dot_exp else ''}>"
 
 
 class Proposition(GroundingFunction):
@@ -988,11 +1005,12 @@ class RewardDistribution(ProbabilityDistribution):
 
 
 class GroundingDistribution(ProbabilityDistribution):
-    def __init__(self, grounding: Grounding, distribution=None):
+    def __init__(self, grounding: Grounding, distribution=None, complete=False):
         if distribution:
             pass
             # ensure that everything is a groundingfunction or something
         self.grounding = grounding
+        self.complete = complete
         super().__init__(distribution=distribution)
 
     def calculate_true_distribution(self):
@@ -1307,7 +1325,7 @@ class Prediction(ProbabilisticFunction):
     Limited to GroundingFunctions with a domain of (S) or (S, A).
     """
 
-    def __init__(self, grounding: Grounding, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args,
+    def __init__(self, grounding: Grounding, function: Callable = None, domain: Domain = Domain.STATE_ACTION, complete=False, *args,
                  **kwargs):
         """
         Args:
@@ -1317,10 +1335,11 @@ class Prediction(ProbabilisticFunction):
         if function is None:
             function = GroundingDistribution(grounding).__call__
         self.grounding = grounding
+        self.complete = complete
         super().__init__(function=function, domain=domain, codomain=Domain.REAL_VALUE, *args, **kwargs)
 
     @classmethod
-    def from_grounding_distribution(cls, grounding: Grounding, function: GroundingDistribution):
+    def from_grounding_distribution(cls, grounding: Grounding, function: GroundingDistribution, complete=False):
         """
         Args:
             grounding: The grounding that is predicted
@@ -1328,7 +1347,7 @@ class Prediction(ProbabilisticFunction):
         """
         if not isinstance(function, GroundingDistribution):
             raise RLangGroundingError(f"Expecting a GroundingDistribution, got {type(function)}")
-        return cls(grounding=grounding, function=function.__call__, domain=function.domain)
+        return cls(grounding=grounding, function=function.__call__, domain=function.domain, complete=complete)
 
     def __repr__(self):
         additional_info = ""
@@ -1380,7 +1399,8 @@ class Effect(Grounding):
         for p in self.predictions:
             new_predictions.append(
                 Prediction.from_grounding_distribution(p.grounding,
-                                                       GroundingDistribution(p.grounding, {p: probability})))
+                                                       GroundingDistribution(p.grounding, {p: probability}),
+                                                       complete=p.complete))
         self.predictions = new_predictions
 
     @property

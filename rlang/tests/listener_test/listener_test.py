@@ -430,6 +430,7 @@ class ListenerTests(unittest.TestCase):
         assert list(sobj_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == color2
 
         abstract_object_property_prediction_effect = knowledge['abstract_object_property_prediction']
+        print(abstract_object_property_prediction_effect.prediction_dict)
         sred_prediction = abstract_object_property_prediction_effect.prediction_dict['random_color.red']
         # print(sred_prediction)
         assert list(sred_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == 128

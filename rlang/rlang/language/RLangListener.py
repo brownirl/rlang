@@ -53,6 +53,8 @@ class RLangListener(RLangParserListener):
     def addVariable(self, variable_name, variable):
         if variable_name == 'main_policy' and not isinstance(variable, Policy):
             raise RLangSemanticError("'main_policy' is a reserved RLang variable name")
+        if variable_name == 'main_plan' and not isinstance(variable, Plan):
+            raise RLangSemanticError("'main_plan' is a reserved RLang variable name")
         if variable_name == 'main_effect' and not isinstance(variable, Effect):
             raise RLangSemanticError("'main_effect' is a reserved RLang variable name")
 
@@ -356,6 +358,10 @@ class RLangListener(RLangParserListener):
             if e.reward_function is not None:
                 effect_rewards.append(e.reward_function)
 
+        # print("effect predictions:", effect_predictions)
+
+        # print("effect predictions complete?", [p.complete for p in effect_predictions])
+
         # TransitionFunctions
         transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
         transition_functions.extend(effect_transitions)
@@ -387,12 +393,20 @@ class RLangListener(RLangParserListener):
         predictions.extend(effect_predictions)
         grounding_distributions = list(filter(lambda x: isinstance(x, GroundingDistribution), all_statements))
 
+        # is_complete = any([gd.complete for gd in grounding_distributions]) or any([p.complete for p in predictions])
+
         predicted_groundings = list(
             {*[p.grounding for p in predictions], *[gd.grounding for gd in grounding_distributions]})
+
+        # print([gd.complete for gd in grounding_distributions], [p.complete for p in predictions])
+        # # print(is_complete)
+        # print(predicted_groundings)
+        # print([type(pg) for pg in predicted_groundings])
 
         new_predictions = list()
         for grounding in predicted_groundings:
             predictions_g = list(filter(lambda x: x.grounding.equals(grounding), predictions))
+            # print(predictions_g)
 
             combined_gd = GroundingDistribution(grounding)
             [combined_gd.join(gd) for gd in
@@ -403,10 +417,18 @@ class RLangListener(RLangParserListener):
             prediction = Prediction.from_grounding_distribution(grounding,
                                                                 GroundingDistribution.from_list_eq(predictions_g,
                                                                                                    grounding))
+            # print(prediction.complete)
             new_predictions.append(prediction)
+
+
+        print(new_predictions)
+
+        # print("predictions complete?", [new_p.complete for new_p in new_predictions])
 
         ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
                            predictions=new_predictions)
+
+        # print(ctx.value.predictions)
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
         ctx.value = ctx.reward().value
@@ -488,11 +510,12 @@ class RLangListener(RLangParserListener):
             all_predictions.extend(preds)
         all_predictions.extend(else_predictions)
 
-        predicted_groundings = list({pred.grounding for pred in all_predictions})
+        # print("conditional complete:", [p.complete for p in all_predictions])
 
         domain3 = reduce(lambda a, b: a + b.domain,
                          [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, *elif_conditions])
 
+        predicted_groundings = list({pred.grounding for pred in all_predictions})
         new_predictions = list()
 
         for grounding in predicted_groundings:
@@ -536,12 +559,13 @@ class RLangListener(RLangParserListener):
                                             elif_preds,
                                             else_preds)
 
+
             new_prediction = Prediction(grounding, func, domain=new_domain)
             # TODO: I'm not sure this next line is necessary
-            new_prediction = Prediction.from_grounding_distribution(grounding,
-                                                                    GroundingDistribution(grounding=grounding,
-                                                                                          distribution={
-                                                                                              new_prediction: 1.0}))
+            # new_prediction = Prediction.from_grounding_distribution(grounding,
+            #                                                         GroundingDistribution(grounding=grounding,
+            #                                                                               distribution={
+            #                                                                                   new_prediction: 1.0}))
             new_predictions.append(new_prediction)
 
         ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
@@ -614,11 +638,13 @@ class RLangListener(RLangParserListener):
         ctx.value = RewardDistribution.from_single(ctx.arithmetic_exp().value)
 
     def exitPrediction(self, ctx: RLangParser.PredictionContext):
-        # TODO: implement semantics for when it's not just a variable but a property of a variable!
         # Will probably need to adjust the parser to include identifiers with trailers. Then set grounding_function
         # to perhaps a new grounding function that unwraps MDPObjectGroundings, similar to StateObjectAttributeGrounding
         if ctx.IDENTIFIER() is not None:
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
+
+            # TODO: implement semantics for when it's not just a variable but a property of a variable!
+
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
             if ctx.arithmetic_exp() is not None:
@@ -631,7 +657,10 @@ class RLangListener(RLangParserListener):
             if ctx.dot_exp() is not None:
                 grounding_function = MDPObjectAttributeGrounding(grounding_function, ctx.dot_exp().value)
 
-            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
+            # Okay, here is where I need to handle the predict_all operator. Perhaps I can simply insert it into the existing GroundingDistribution
+
+            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0},
+                                              complete=False) # ctx.PREDICT_ALL() is not None) # I scrapped this idea for now
         elif ctx.S_PRIME() is not None:
             if ctx.dot_exp() is not None:
                 # TODO: Should be a GroundingDistribution I think. May need to implement a new kind of distribution
@@ -806,6 +835,7 @@ class RLangListener(RLangParserListener):
             ctx.value = Proposition.FALSE()
 
     def exitQuantification_exp(self, ctx: RLangParser.Quantification_expContext):
+        print(ctx.any_bound_class().value)
         ctx.value = QuantifierSpecification(cls=ctx.any_bound_class().value, quantifier=ctx.quantifier().value,
                                             dot_exp=ctx.dot_exp().value if ctx.dot_exp() else None)
 

@@ -84,6 +84,7 @@ ALL_CONDITION: 'All';
 
 BIND: ':=';
 PREDICT: '->';
+PREDICT_ALL: '-*>';
 ASSIGN: '=';
 TIMES_EQ: '*=';
 DIV_EQ: '/=';

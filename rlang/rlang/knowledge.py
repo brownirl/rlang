@@ -54,12 +54,12 @@ class RLangKnowledge(MutableMapping):
             domain += Domain.ACTION
         if 'next_state' in kwargs.keys():
             domain += Domain.NEXT_STATE
-        else:
-            next_state = self.get_next_state(*args, **kwargs)
-            if next_state:
-                domain += Domain.NEXT_STATE
-                kwargs['next_state'] = next_state
-
+        # else:
+        #     next_state = self.get_next_state(*args, **kwargs)
+        #     if next_state:
+        #         domain += Domain.NEXT_STATE
+        #         kwargs['next_state'] = next_state
+        # print(domain)
         predictables = list(filter(lambda x: x.domain <= domain, self.proto_predictions))
 
         predictions = dict()
