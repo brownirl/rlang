@@ -22,11 +22,11 @@ from sphinx.locale import _
 # -- Project information -----------------------------------------------------
 
 project = 'RLang'
-copyright = '2022, Anonymous'
-author = 'Anonymous'
+copyright = '2023, Brown University Department of Computer Science'
+author = 'Benjamin Spiegel'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.3'
+release = '0.2.5'
 version = 'master'
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>rlang.knowledge &mdash; RLang 0.2.1 documentation</title>
+  <title>rlang.knowledge &mdash; RLang 0.2.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/rtd_sphinx_search.min.css" type="text/css" />
@@ -80,9 +80,11 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+<span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">from</span> <span class="nn">.grounding.utils.utils</span> <span class="kn">import</span> <span class="n">Domain</span>
 <span class="kn">from</span> <span class="nn">.grounding.utils.primitives</span> <span class="kn">import</span> <span class="n">MDPObject</span>
+<span class="kn">from</span> <span class="nn">.grounding</span> <span class="kn">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="RLangKnowledge"><a class="viewcode-back" href="../../rlang.html#rlang.knowledge.RLangKnowledge">[docs]</a><span class="k">class</span> <span class="nc">RLangKnowledge</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
@@ -107,6 +109,7 @@
         <span class="sd">&quot;&quot;&quot;A :py:class:`.RewardFunction` object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="sd">&quot;&quot;&quot;A :py:class:`.TransitionFunction` object&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">proto_predictions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mdp_metadata</span> <span class="o">=</span> <span class="kc">None</span></div>
 
@@ -128,12 +131,12 @@
             <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">ACTION</span>
         <span class="k">if</span> <span class="s1">&#39;next_state&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">NEXT_STATE</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">next_state</span><span class="p">:</span>
-                <span class="n">domain</span> <span class="o">+=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">NEXT_STATE</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;next_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">next_state</span>
-
+        <span class="c1"># else:</span>
+        <span class="c1">#     next_state = self.get_next_state(*args, **kwargs)</span>
+        <span class="c1">#     if next_state:</span>
+        <span class="c1">#         domain += Domain.NEXT_STATE</span>
+        <span class="c1">#         kwargs[&#39;next_state&#39;] = next_state</span>
+        <span class="c1"># print(domain)</span>
         <span class="n">predictables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">domain</span> <span class="o">&lt;=</span> <span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proto_predictions</span><span class="p">))</span>
 
         <span class="n">predictions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -183,7 +186,25 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">Effect</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">MDPObject</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">MDPObject</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables_of_type</span><span class="p">(</span><span class="n">MDPObjectGrounding</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">objects_of_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="n">objs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">objs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)}</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">memoized_reward_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">memoized_transition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition_function</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rlang_variables</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span></div>
 </pre></div>
 
            </div>
@@ -193,7 +214,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Anonymous.</p>
+    <p>&#169; Copyright 2023, Brown University Department of Computer Science.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
