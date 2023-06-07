@@ -421,7 +421,7 @@ class RLangListener(RLangParserListener):
             new_predictions.append(prediction)
 
 
-        print(new_predictions)
+        # print(new_predictions)
 
         # print("predictions complete?", [new_p.complete for new_p in new_predictions])
 
@@ -835,7 +835,7 @@ class RLangListener(RLangParserListener):
             ctx.value = Proposition.FALSE()
 
     def exitQuantification_exp(self, ctx: RLangParser.Quantification_expContext):
-        print(ctx.any_bound_class().value)
+        # print(ctx.any_bound_class().value)
         ctx.value = QuantifierSpecification(cls=ctx.any_bound_class().value, quantifier=ctx.quantifier().value,
                                             dot_exp=ctx.dot_exp().value if ctx.dot_exp() else None)
 
