@@ -251,12 +251,93 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#parameterized_action.
-    def enterParameterized_action(self, ctx:RLangParser.Parameterized_actionContext):
+    # Enter a parse tree produced by RLangParser#lifted_execution.
+    def enterLifted_execution(self, ctx:RLangParser.Lifted_executionContext):
         pass
 
-    # Exit a parse tree produced by RLangParser#parameterized_action.
-    def exitParameterized_action(self, ctx:RLangParser.Parameterized_actionContext):
+    # Exit a parse tree produced by RLangParser#lifted_execution.
+    def exitLifted_execution(self, ctx:RLangParser.Lifted_executionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan.
+    def enterPlan(self, ctx:RLangParser.PlanContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan.
+    def exitPlan(self, ctx:RLangParser.PlanContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_collection.
+    def enterPlan_statement_collection(self, ctx:RLangParser.Plan_statement_collectionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_collection.
+    def exitPlan_statement_collection(self, ctx:RLangParser.Plan_statement_collectionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_execute.
+    def enterPlan_statement_execute(self, ctx:RLangParser.Plan_statement_executeContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_execute.
+    def exitPlan_statement_execute(self, ctx:RLangParser.Plan_statement_executeContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_conditional.
+    def enterPlan_statement_conditional(self, ctx:RLangParser.Plan_statement_conditionalContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_conditional.
+    def exitPlan_statement_conditional(self, ctx:RLangParser.Plan_statement_conditionalContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#plan_statement_probabilistic.
+    def enterPlan_statement_probabilistic(self, ctx:RLangParser.Plan_statement_probabilisticContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#plan_statement_probabilistic.
+    def exitPlan_statement_probabilistic(self, ctx:RLangParser.Plan_statement_probabilisticContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#conditional_plan.
+    def enterConditional_plan(self, ctx:RLangParser.Conditional_planContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#conditional_plan.
+    def exitConditional_plan(self, ctx:RLangParser.Conditional_planContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_plan.
+    def enterProbabilistic_plan(self, ctx:RLangParser.Probabilistic_planContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_plan.
+    def exitProbabilistic_plan(self, ctx:RLangParser.Probabilistic_planContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_plan_statement_no_sugar.
+    def enterProbabilistic_plan_statement_no_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_no_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_plan_statement_no_sugar.
+    def exitProbabilistic_plan_statement_no_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_no_sugarContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#probabilistic_plan_statement_sugar.
+    def enterProbabilistic_plan_statement_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_sugarContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#probabilistic_plan_statement_sugar.
+    def exitProbabilistic_plan_statement_sugar(self, ctx:RLangParser.Probabilistic_plan_statement_sugarContext):
         pass
 
 
@@ -395,60 +476,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#object_instantiation.
-    def enterObject_instantiation(self, ctx:RLangParser.Object_instantiationContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_instantiation.
-    def exitObject_instantiation(self, ctx:RLangParser.Object_instantiationContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_constructor_arg_list.
-    def enterObject_constructor_arg_list(self, ctx:RLangParser.Object_constructor_arg_listContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_constructor_arg_list.
-    def exitObject_constructor_arg_list(self, ctx:RLangParser.Object_constructor_arg_listContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_object.
-    def enterObject_construct_object(self, ctx:RLangParser.Object_construct_objectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_object.
-    def exitObject_construct_object(self, ctx:RLangParser.Object_construct_objectContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_arith_exp.
-    def enterObject_construct_arith_exp(self, ctx:RLangParser.Object_construct_arith_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_arith_exp.
-    def exitObject_construct_arith_exp(self, ctx:RLangParser.Object_construct_arith_expContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_bool_exp.
-    def enterObject_construct_bool_exp(self, ctx:RLangParser.Object_construct_bool_expContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_bool_exp.
-    def exitObject_construct_bool_exp(self, ctx:RLangParser.Object_construct_bool_expContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#object_construct_object_array.
-    def enterObject_construct_object_array(self, ctx:RLangParser.Object_construct_object_arrayContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_construct_object_array.
-    def exitObject_construct_object_array(self, ctx:RLangParser.Object_construct_object_arrayContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#arith_number.
     def enterArith_number(self, ctx:RLangParser.Arith_numberContext):
         pass
@@ -491,6 +518,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#arith_times_divide.
     def exitArith_times_divide(self, ctx:RLangParser.Arith_times_divideContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#arith_quantification.
+    def enterArith_quantification(self, ctx:RLangParser.Arith_quantificationContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#arith_quantification.
+    def exitArith_quantification(self, ctx:RLangParser.Arith_quantificationContext):
         pass
 
 
@@ -557,30 +593,12 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#bool_quant_arith_eq.
-    def enterBool_quant_arith_eq(self, ctx:RLangParser.Bool_quant_arith_eqContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#bool_quant_arith_eq.
-    def exitBool_quant_arith_eq(self, ctx:RLangParser.Bool_quant_arith_eqContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#bool_bound_var.
     def enterBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
         pass
 
     # Exit a parse tree produced by RLangParser#bool_bound_var.
     def exitBool_bound_var(self, ctx:RLangParser.Bool_bound_varContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#bool_arith_quant_eq.
-    def enterBool_arith_quant_eq(self, ctx:RLangParser.Bool_arith_quant_eqContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#bool_arith_quant_eq.
-    def exitBool_arith_quant_eq(self, ctx:RLangParser.Bool_arith_quant_eqContext):
         pass
 
 
@@ -656,24 +674,6 @@ class RLangParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by RLangParser#object_array.
-    def enterObject_array(self, ctx:RLangParser.Object_arrayContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#object_array.
-    def exitObject_array(self, ctx:RLangParser.Object_arrayContext):
-        pass
-
-
-    # Enter a parse tree produced by RLangParser#an_object.
-    def enterAn_object(self, ctx:RLangParser.An_objectContext):
-        pass
-
-    # Exit a parse tree produced by RLangParser#an_object.
-    def exitAn_object(self, ctx:RLangParser.An_objectContext):
-        pass
-
-
     # Enter a parse tree produced by RLangParser#bound_state.
     def enterBound_state(self, ctx:RLangParser.Bound_stateContext):
         pass
@@ -707,6 +707,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#bound_action.
     def exitBound_action(self, ctx:RLangParser.Bound_actionContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#bound_lifted_execution.
+    def enterBound_lifted_execution(self, ctx:RLangParser.Bound_lifted_executionContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#bound_lifted_execution.
+    def exitBound_lifted_execution(self, ctx:RLangParser.Bound_lifted_executionContext):
         pass
 
 
@@ -779,6 +788,15 @@ class RLangParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by RLangParser#compound_array_simple.
     def exitCompound_array_simple(self, ctx:RLangParser.Compound_array_simpleContext):
+        pass
+
+
+    # Enter a parse tree produced by RLangParser#compound_array_arith.
+    def enterCompound_array_arith(self, ctx:RLangParser.Compound_array_arithContext):
+        pass
+
+    # Exit a parse tree produced by RLangParser#compound_array_arith.
+    def exitCompound_array_arith(self, ctx:RLangParser.Compound_array_arithContext):
         pass
 
 

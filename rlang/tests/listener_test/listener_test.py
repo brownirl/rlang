@@ -430,6 +430,7 @@ class ListenerTests(unittest.TestCase):
         assert list(sobj_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == color2
 
         abstract_object_property_prediction_effect = knowledge['abstract_object_property_prediction']
+        print(abstract_object_property_prediction_effect.prediction_dict)
         sred_prediction = abstract_object_property_prediction_effect.prediction_dict['random_color.red']
         # print(sred_prediction)
         assert list(sred_prediction[0](state=VectorState([256, 0, 1])).keys())[0] == 128
@@ -511,7 +512,12 @@ class ListenerTests(unittest.TestCase):
         assert red.red == 256 and red.green == 0 and red.blue == 0
 
         notebook = knowledge['notebook']
-        assert notebook.pages == 15 and notebook.title == red and isinstance(notebook.colors, list)
+        assert notebook.pages == 15
+
+        assert notebook.title == red
+        # print(type(notebook.colors))
+        # print(notebook.colors())
+        assert isinstance(notebook.colors(), list)
 
         sutton_barto = knowledge['sutton_barto']
         assert sutton_barto.pages == 15 and sutton_barto.title == red and sutton_barto.publisher_id == 67
@@ -526,6 +532,38 @@ class ListenerTests(unittest.TestCase):
         assert super_arm.num_fingers == 5
 
         # TODO: Test objects defined in a grounding file
+
+    def test_Plans(self):
+        knowledge = rlang.parse_file("listener_test/tests_resources/valid_examples/plans.rlang")
+        main_plan = knowledge['main_plan']
+        print(main_plan)
+
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        main_plan.reset()
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        main_plan.reset()
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        main_plan.reset()   # Verify that resetting half way through a subplan works
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(1): 1.0}
+        assert main_plan(state=VectorState([0, 1, 2, 3, 4])) == {Action(2): 1.0}
+
+        print(main_plan(state=VectorState([0, 1, 2, 3, 4])))    # "I'm grabbing 4"
 
 
 if __name__ == '__main__':

@@ -10,11 +10,11 @@ class Things(MDPObject):
 block = MDPObjectGrounding(Things('block'), name='block')
 
 
-def go_skill(x, y, z):
+def go_skill(x, y, z, **kwargs):
     print(f"I'm going to {x}, {y}, {z}")
 
 
-def grab_skill(ob):
+def grab_skill(ob, **kwargs):
     print(f"I'm grabbing {ob}")
 
 

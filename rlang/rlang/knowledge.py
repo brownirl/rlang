@@ -3,10 +3,11 @@
 from __future__ import annotations
 from typing import Dict, Any
 from collections.abc import MutableMapping
+import functools
 
 from .grounding.utils.utils import Domain
 from .grounding.utils.primitives import MDPObject
-from .grounding import MDPObjectGrounding
+from .grounding import *
 
 
 class RLangKnowledge(MutableMapping):
@@ -31,6 +32,7 @@ class RLangKnowledge(MutableMapping):
         """A :py:class:`.RewardFunction` object"""
         self.transition_function = None
         """A :py:class:`.TransitionFunction` object"""
+        self.plan = None
         self.proto_predictions = list()
         self.mdp_metadata = None
 
@@ -52,12 +54,12 @@ class RLangKnowledge(MutableMapping):
             domain += Domain.ACTION
         if 'next_state' in kwargs.keys():
             domain += Domain.NEXT_STATE
-        else:
-            next_state = self.get_next_state(*args, **kwargs)
-            if next_state:
-                domain += Domain.NEXT_STATE
-                kwargs['next_state'] = next_state
-
+        # else:
+        #     next_state = self.get_next_state(*args, **kwargs)
+        #     if next_state:
+        #         domain += Domain.NEXT_STATE
+        #         kwargs['next_state'] = next_state
+        # print(domain)
         predictables = list(filter(lambda x: x.domain <= domain, self.proto_predictions))
 
         predictions = dict()
@@ -115,3 +117,14 @@ class RLangKnowledge(MutableMapping):
     def objects_of_type(self, cls):
         objs = self.objects()
         return {k: v for (k, v) in objs.items() if isinstance(v.obj, cls)}
+
+    @functools.lru_cache(maxsize=None)
+    def memoized_reward_function(self, state, action):
+        return self.reward_function(state=state, action=action)
+
+    @functools.lru_cache(maxsize=None)
+    def memoized_transition_function(self, state, action):
+        return self.transition_function(state=state, action=action)
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.rlang_variables.items())))

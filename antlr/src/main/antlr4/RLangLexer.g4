@@ -43,6 +43,7 @@ ACTION: 'Action';
 EFFECT: 'Effect';
 REWARD: 'Reward';
 POLICY: 'Policy';
+PLAN: 'Plan';
 EXECUTE: 'Execute';
 OPTION: 'Option';
 MARKOVFEATURE: 'MarkovFeature';
@@ -83,6 +84,7 @@ ALL_CONDITION: 'All';
 
 BIND: ':=';
 PREDICT: '->';
+PREDICT_ALL: '-*>';
 ASSIGN: '=';
 TIMES_EQ: '*=';
 DIV_EQ: '/=';

@@ -53,6 +53,8 @@ class RLangListener(RLangParserListener):
     def addVariable(self, variable_name, variable):
         if variable_name == 'main_policy' and not isinstance(variable, Policy):
             raise RLangSemanticError("'main_policy' is a reserved RLang variable name")
+        if variable_name == 'main_plan' and not isinstance(variable, Plan):
+            raise RLangSemanticError("'main_plan' is a reserved RLang variable name")
         if variable_name == 'main_effect' and not isinstance(variable, Effect):
             raise RLangSemanticError("'main_effect' is a reserved RLang variable name")
 
@@ -63,10 +65,17 @@ class RLangListener(RLangParserListener):
         if variable_name == 'main_policy':
             self.rlang_knowledge.policy = variable
 
+        if variable_name == 'main_plan':
+            self.rlang_knowledge.plan = variable
+
         if variable_name == 'main_effect':
             self.rlang_knowledge.reward_function = variable.reward_function
             self.rlang_knowledge.transition_function = variable.transition_function
             self.rlang_knowledge.proto_predictions = variable.predictions
+
+    def enterProgram(self, ctx: RLangParser.ProgramContext):
+        if ctx.getText() == "":
+            raise RLangSemanticError("No program text. There might be some misplaced quotes.")
 
     def exitProgram(self, ctx: RLangParser.ProgramContext):
         self.rlang_knowledge.update(self.grounded_vars)
@@ -142,8 +151,9 @@ class RLangListener(RLangParserListener):
         self.addVariable(ctx.IDENTIFIER().getText(), new_markov_feature)
 
     def exitObject_def(self, ctx: RLangParser.Object_defContext):
-        obj = ctx.object_instantiation().value
+        obj = ctx.lifted_execution().value
         obj.name = ctx.IDENTIFIER().getText()
+        obj.obj.name = ctx.IDENTIFIER().getText()
         self.addVariable(ctx.IDENTIFIER().getText(), obj)
 
     def exitClass_def(self, ctx: RLangParser.Class_defContext):
@@ -198,6 +208,8 @@ class RLangListener(RLangParserListener):
         self.addVariable(new_policy.name, new_policy)
 
     def exitPolicy_statement_execute(self, ctx: RLangParser.Policy_statement_executeContext):
+        if isinstance(ctx.execute().value, Plan):
+            raise RLangSemanticError("Cannot execute a Plan in a Policy")
         ctx.value = ActionDistribution.from_single(ctx.execute().value)
 
     def exitPolicy_statement_conditional(self, ctx: RLangParser.Policy_statement_conditionalContext):
@@ -232,20 +244,90 @@ class RLangListener(RLangParserListener):
     def exitExecute(self, ctx: RLangParser.ExecuteContext):
         if ctx.IDENTIFIER() is not None:
             variable = self.retrieveVariable(ctx.IDENTIFIER().getText())
-            if not isinstance(variable, (Policy, ActionReference)):
+            if not isinstance(variable, (Policy, ActionReference, Plan)):
                 raise RLangSemanticError(f"Cannot execute a {type(variable)}")
             ctx.value = variable
+            if isinstance(variable, Plan):
+                ctx.value = PlanExecution(variable)
         elif ctx.arithmetic_exp() is not None:
-            ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
+            if isinstance(ctx.arithmetic_exp().value, PlanExecution):
+                ctx.value = ctx.arithmetic_exp().value
+            else:
+                ctx.value = ActionReference(action=ctx.arithmetic_exp().value)
         else:
-            ctx.value = ctx.parameterized_action().value
+            raise RLangSemanticError("Execute statement must have either an identifier or an arithmetic expression")
 
-    # ============================= Parameterized Action ===============
+    # ============================= Lifted Execution (Parameterized Action, Predicate, and Plan) ===============
 
-    def exitParameterized_action(self, ctx: RLangParser.Parameterized_actionContext):
-        args = list(map(lambda x: x.value, ctx.arr))
-        parameterized_action = self.retrieveVariable(ctx.IDENTIFIER().getText())
-        ctx.value = ParameterizedActionExecution(parameterized_action, args)
+    def exitLifted_execution(self, ctx: RLangParser.Lifted_executionContext):
+        lifted_execution = self.retrieveVariable(ctx.IDENTIFIER().getText())
+        if isinstance(lifted_execution, ParameterizedAction):
+            args = list(map(lambda x: x.value, ctx.arr))
+            ctx.value = ParameterizedActionExecution(lifted_execution, args)
+        elif isinstance(lifted_execution, Predicate):
+            args = list(map(lambda x: x.value, ctx.arr))
+            ctx.value = PredicateEvaluation(lifted_execution, args)
+        elif isinstance(lifted_execution, Plan):
+            args = list(map(lambda x: x.value, ctx.arr))
+            ctx.value = PlanExecution(lifted_execution, args)
+        elif isinstance(lifted_execution, type):
+            args = list(map(lambda x: x.value, ctx.arr))
+            args = [ctx.IDENTIFIER().getText()] + args
+            ctx.value = MDPObjectGrounding(obj=lifted_execution(*args))
+        else:
+            raise RLangSemanticError(f"Cannot pass arguments to a {type(lifted_execution)}")
+
+    # ============================= Plans =============================
+
+    def exitPlan(self, ctx: RLangParser.PlanContext):
+        # ctx.plan_statement_collection().value is a list of ActionDistributions for now
+        new_plan = ctx.plan_statement_collection().value
+        if ctx.IDENTIFIER():
+            new_plan.name = ctx.IDENTIFIER().getText()
+            if new_plan.name == 'main_plan':
+                raise RLangSemanticError("'main_plan' is a reserved RLang variable name")
+        elif ctx.MAIN():
+            new_plan.name = 'main_plan'
+        self.addVariable(new_plan.name, new_plan)
+
+    def exitPlan_statement_collection(self, ctx: RLangParser.Plan_statement_collectionContext):
+        # I need to make the plan object in here!
+        # However, not all statements will be ActionDistributions, some will be probabilistic and some will be conditional TODO
+        all_statements = [statement.value for statement in ctx.statements]
+        ctx.value = IteratedPlan(all_statements)
+
+    def exitPlan_statement_execute(self, ctx: RLangParser.Plan_statement_executeContext):
+        if isinstance(ctx.execute().value, Plan):
+            ctx.value = PlanExecution(ctx.execute().value)
+        elif isinstance(ctx.execute().value, PlanExecution):
+            ctx.value = ctx.execute().value
+        else:
+            ctx.value = ActionDistribution.from_single(ctx.execute().value)
+
+    def exitPlan_statement_conditional(self, ctx: RLangParser.Plan_statement_conditionalContext):
+        ctx.value = ctx.conditional_plan().value
+
+    def exitPlan_statement_probabilistic(self, ctx: RLangParser.Plan_statement_probabilisticContext):
+        ctx.value = ctx.probabilistic_plan().value
+
+    def exitConditional_plan(self, ctx: RLangParser.Conditional_planContext):
+        # This returns a plan given a state
+        if_condition = ctx.if_condition.value
+        elif_conditions = [s.value for s in ctx.elif_conditions]
+        elif_plans = [s.value for s in ctx.elif_plans]
+        else_plan = ctx.else_plan.value if ctx.else_plan else None
+
+        # Right now these are mixed types, I don't want to do this right now TODO
+
+    def exitProbabilistic_plan(self, ctx: RLangParser.Probabilistic_planContext):
+        raise NotImplementedError("Probabilistic plans are not yet implemented")
+        pass
+
+    def exitProbabilistic_plan_statement_no_sugar(self, ctx: RLangParser.Probabilistic_plan_statement_no_sugarContext):
+        pass
+
+    def exitProbabilistic_plan_statement_sugar(self, ctx: RLangParser.Probabilistic_plan_statement_sugarContext):
+        pass
 
     # ============================= Effect =============================
 
@@ -275,6 +357,10 @@ class RLangListener(RLangParserListener):
                 effect_predictions.extend(e.predictions)
             if e.reward_function is not None:
                 effect_rewards.append(e.reward_function)
+
+        # print("effect predictions:", effect_predictions)
+
+        # print("effect predictions complete?", [p.complete for p in effect_predictions])
 
         # TransitionFunctions
         transition_functions = list(filter(lambda x: isinstance(x, TransitionFunction), all_statements))
@@ -307,12 +393,20 @@ class RLangListener(RLangParserListener):
         predictions.extend(effect_predictions)
         grounding_distributions = list(filter(lambda x: isinstance(x, GroundingDistribution), all_statements))
 
+        # is_complete = any([gd.complete for gd in grounding_distributions]) or any([p.complete for p in predictions])
+
         predicted_groundings = list(
             {*[p.grounding for p in predictions], *[gd.grounding for gd in grounding_distributions]})
+
+        # print([gd.complete for gd in grounding_distributions], [p.complete for p in predictions])
+        # # print(is_complete)
+        # print(predicted_groundings)
+        # print([type(pg) for pg in predicted_groundings])
 
         new_predictions = list()
         for grounding in predicted_groundings:
             predictions_g = list(filter(lambda x: x.grounding.equals(grounding), predictions))
+            # print(predictions_g)
 
             combined_gd = GroundingDistribution(grounding)
             [combined_gd.join(gd) for gd in
@@ -323,10 +417,18 @@ class RLangListener(RLangParserListener):
             prediction = Prediction.from_grounding_distribution(grounding,
                                                                 GroundingDistribution.from_list_eq(predictions_g,
                                                                                                    grounding))
+            # print(prediction.complete)
             new_predictions.append(prediction)
+
+
+        # print(new_predictions)
+
+        # print("predictions complete?", [new_p.complete for new_p in new_predictions])
 
         ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
                            predictions=new_predictions)
+
+        # print(ctx.value.predictions)
 
     def exitEffect_statement_reward(self, ctx: RLangParser.Effect_statement_rewardContext):
         ctx.value = ctx.reward().value
@@ -408,11 +510,12 @@ class RLangListener(RLangParserListener):
             all_predictions.extend(preds)
         all_predictions.extend(else_predictions)
 
-        predicted_groundings = list({pred.grounding for pred in all_predictions})
+        # print("conditional complete:", [p.complete for p in all_predictions])
 
         domain3 = reduce(lambda a, b: a + b.domain,
                          [if_condition.domain if not isinstance(if_condition, bool) else Domain.ANY, *elif_conditions])
 
+        predicted_groundings = list({pred.grounding for pred in all_predictions})
         new_predictions = list()
 
         for grounding in predicted_groundings:
@@ -456,12 +559,13 @@ class RLangListener(RLangParserListener):
                                             elif_preds,
                                             else_preds)
 
+
             new_prediction = Prediction(grounding, func, domain=new_domain)
             # TODO: I'm not sure this next line is necessary
-            new_prediction = Prediction.from_grounding_distribution(grounding,
-                                                                    GroundingDistribution(grounding=grounding,
-                                                                                          distribution={
-                                                                                              new_prediction: 1.0}))
+            # new_prediction = Prediction.from_grounding_distribution(grounding,
+            #                                                         GroundingDistribution(grounding=grounding,
+            #                                                                               distribution={
+            #                                                                                   new_prediction: 1.0}))
             new_predictions.append(new_prediction)
 
         ctx.value = Effect(reward_function=reward_function, transition_function=transition_function,
@@ -534,11 +638,13 @@ class RLangListener(RLangParserListener):
         ctx.value = RewardDistribution.from_single(ctx.arithmetic_exp().value)
 
     def exitPrediction(self, ctx: RLangParser.PredictionContext):
-        # TODO: implement semantics for when it's not just a variable but a property of a variable!
         # Will probably need to adjust the parser to include identifiers with trailers. Then set grounding_function
         # to perhaps a new grounding function that unwraps MDPObjectGroundings, similar to StateObjectAttributeGrounding
         if ctx.IDENTIFIER() is not None:
             grounding_function = self.retrieveVariable(ctx.IDENTIFIER().getText())
+
+            # TODO: implement semantics for when it's not just a variable but a property of a variable!
+
             if grounding_function.domain < Domain.STATE_ACTION_NEXT_STATE and ctx.PRIME() is None:
                 raise RLangSemanticError("Use prime syntax to refer to the future state of variables")
             if ctx.arithmetic_exp() is not None:
@@ -546,12 +652,15 @@ class RLangListener(RLangParserListener):
             elif ctx.boolean_exp() is not None:
                 predicted_value = ctx.boolean_exp().value
             else:
-                predicted_value = ctx.object_instantiation().value
+                predicted_value = ctx.lifted_execution().value
 
             if ctx.dot_exp() is not None:
                 grounding_function = MDPObjectAttributeGrounding(grounding_function, ctx.dot_exp().value)
 
-            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
+            # Okay, here is where I need to handle the predict_all operator. Perhaps I can simply insert it into the existing GroundingDistribution
+
+            ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0},
+                                              complete=False) # ctx.PREDICT_ALL() is not None) # I scrapped this idea for now
         elif ctx.S_PRIME() is not None:
             if ctx.dot_exp() is not None:
                 # TODO: Should be a GroundingDistribution I think. May need to implement a new kind of distribution
@@ -562,7 +671,7 @@ class RLangListener(RLangParserListener):
                 elif ctx.boolean_exp() is not None:
                     predicted_value = ctx.boolean_exp().value
                 else:
-                    predicted_value = ctx.object_instantiation().value
+                    predicted_value = ctx.lifted_execution().value
                 ctx.value = GroundingDistribution(grounding=grounding_function, distribution={predicted_value: 1.0})
             else:
                 if ctx.arithmetic_exp() is not None:
@@ -597,6 +706,9 @@ class RLangListener(RLangParserListener):
             elif ctx.DIVIDE() is not None:
                 ctx.value = ctx.lhs.value / ctx.rhs.value
 
+    def exitArith_quantification(self, ctx: RLangParser.Arith_quantificationContext):
+        ctx.value = ctx.quantification_exp().value
+
     def exitArith_plus_minus(self, ctx: RLangParser.Arith_plus_minusContext):
         if isinstance(ctx.lhs.value, GroundingFunction) or isinstance(ctx.rhs.value, GroundingFunction):
             if ctx.PLUS() is not None:
@@ -604,9 +716,9 @@ class RLangListener(RLangParserListener):
             elif ctx.MINUS() is not None:
                 ctx.value = ctx.lhs.value - ctx.rhs.value
 
-    def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
-        args = [ctx.any_bound_class().value.__name__] + ctx.object_constructor_arg_list().value
-        ctx.value = MDPObjectGrounding(obj=ctx.any_bound_class().value(*args))
+    # def exitObject_instantiation(self, ctx: RLangParser.Object_instantiationContext):
+    #     args = [ctx.any_bound_class().value.__name__] + ctx.object_constructor_arg_list().value
+    #     ctx.value = MDPObjectGrounding(obj=ctx.any_bound_class().value(*args))
 
     def exitObject_constructor_arg_list(self, ctx: RLangParser.Object_constructor_arg_listContext):
         ctx.value = list(map(lambda x: x.value, ctx.arg_list))
@@ -624,12 +736,20 @@ class RLangListener(RLangParserListener):
         ctx.value = ctx.object_array().value
 
     def exitAn_object(self, ctx: RLangParser.An_objectContext):
-        if ctx.object_instantiation() is not None:
-            ctx.value = ctx.object_instantiation().value
+        if ctx.lifted_execution() is not None:
+            ctx.value = ctx.lifted_execution().value
         elif ctx.any_bound_var() is not None and isinstance(ctx.any_bound_var().value, MDPObjectGrounding):
             ctx.value = ctx.any_bound_var().value
         else:
             raise RLangSemanticError("Must be an OOMDP object")
+
+    # def exitPredicate_eval(self, ctx:RLangParser.Predicate_evalContext):
+    #     args = list(map(lambda x: x.value, ctx.arr))
+    #     predicate = self.retrieveVariable(ctx.IDENTIFIER().getText())
+    #     if isinstance(predicate, Predicate):
+    #         ctx.value = PredicateEvaluation(predicate, args)
+    #     else:
+    #         raise RLangSemanticError("Must be a predicate")
 
     def exitArith_number(self, ctx: RLangParser.Arith_numberContext):
         ctx.value = PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=ctx.any_number().value)
@@ -640,7 +760,8 @@ class RLangListener(RLangParserListener):
     def exitArith_bound_var(self, ctx: RLangParser.Arith_bound_varContext):
         if not isinstance(ctx.any_bound_var().value,
                           (IdentityGrounding, ConstantGrounding, Factor, Feature, ActionReference,
-                           StateObjectAttributeGrounding, MDPObjectGrounding)):
+                           StateObjectAttributeGrounding, MDPObjectGrounding, MDPObjectAttributeGrounding,
+                           ParameterizedActionExecution, PredicateEvaluation, PlanExecution, MDPClassGrounding)):
             raise RLangSemanticError(f"{type(ctx.any_bound_var().value)} is not numerical")
         ctx.value = ctx.any_bound_var().value
 
@@ -666,6 +787,13 @@ class RLangListener(RLangParserListener):
             ctx.value = ctx.lhs.value == ctx.rhs.value
 
     def exitBool_arith_eq(self, ctx: RLangParser.Bool_arith_eqContext):
+        if isinstance(ctx.rhs.value, QuantifierSpecification):
+            lhs = ctx.rhs.value
+            rhs = ctx.lhs.value
+        else:
+            lhs = ctx.lhs.value
+            rhs = ctx.rhs.value
+
         bool_operation = None
         if ctx.EQ_TO() is not None:
             bool_operation = lambda a, b: a == b
@@ -680,14 +808,23 @@ class RLangListener(RLangParserListener):
         elif ctx.NOT_EQ() is not None:
             bool_operation = lambda a, b: a != b
 
-        ctx.value = bool_operation(ctx.lhs.value, ctx.rhs.value)
+        # if lhs is a quantifier specification, construct a proposition from quantifier specification
+        if isinstance(lhs, QuantifierSpecification):    # TODO: Eventually just work this logic into the Proposition class
+            ctx.value = Proposition.from_QuantifierSpecification(quantifier_specification=lhs, grounding=rhs,
+                                                           operation=bool_operation)
+        else:
+            ctx.value = bool_operation(lhs, rhs)
 
     def exitBool_bound_var(self, ctx: RLangParser.Bool_bound_varContext):
         if not isinstance(ctx.any_bound_var().value, (
-                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding)):
+                Proposition, PrimitiveGrounding, StateObjectAttributeGrounding, MDPObjectAttributeGrounding,
+                PredicateEvaluation)):
             raise RLangSemanticError(f"This {type(ctx.any_bound_var().value)} does not have a truth value")
         if isinstance(ctx.any_bound_var().value, PrimitiveGrounding):
             ctx.value = Proposition.from_PrimitiveGrounding(primitive_grounding=ctx.any_bound_var().value)
+        elif isinstance(ctx.any_bound_var().value,
+                        (StateObjectAttributeGrounding, MDPObjectAttributeGrounding, PredicateEvaluation)):
+            ctx.value = Proposition(function=ctx.any_bound_var().value.__call__, domain=Domain.BOOLEAN)
         else:
             ctx.value = ctx.any_bound_var().value
 
@@ -697,54 +834,10 @@ class RLangListener(RLangParserListener):
         elif ctx.FALSE() is not None:
             ctx.value = Proposition.FALSE()
 
-    def exitBool_quant_arith_eq(self, ctx: RLangParser.Bool_quant_arith_eqContext):
-        bool_operation = None
-        if ctx.EQ_TO() is not None:
-            bool_operation = lambda a, b: a == b
-        elif ctx.LT() is not None:  # IMPORTANT: These are intentionally reversed
-            bool_operation = lambda a, b: a > b
-        elif ctx.GT() is not None:  # IMPORTANT: These are intentionally reversed
-            bool_operation = lambda a, b: a < b
-        elif ctx.LT_EQ() is not None:  # IMPORTANT: These are intentionally reversed
-            bool_operation = lambda a, b: a >= b
-        elif ctx.GT_EQ() is not None:  # IMPORTANT: These are intentionally reversed
-            bool_operation = lambda a, b: a <= b
-        elif ctx.NOT_EQ() is not None:
-            bool_operation = lambda a, b: a != b
-
-        quantification_info = ctx.quantification_exp().value
-        ctx.value = Proposition.from_Quantification(quantifier=quantification_info['quantifier'],
-                                                    grounding_cls=quantification_info['class'],
-                                                    grounding=ctx.arithmetic_exp().value,
-                                                    operation=bool_operation,
-                                                    dot_exp=quantification_info['dotexp'])
-
-    def exitBool_arith_quant_eq(self, ctx: RLangParser.Bool_arith_quant_eqContext):
-        bool_operation = None
-        if ctx.EQ_TO() is not None:
-            bool_operation = lambda a, b: a == b
-        elif ctx.LT() is not None:
-            bool_operation = lambda a, b: a < b
-        elif ctx.GT() is not None:
-            bool_operation = lambda a, b: a > b
-        elif ctx.LT_EQ() is not None:
-            bool_operation = lambda a, b: a <= b
-        elif ctx.GT_EQ() is not None:
-            bool_operation = lambda a, b: a >= b
-        elif ctx.NOT_EQ() is not None:
-            bool_operation = lambda a, b: a != b
-
-        quantification_info = ctx.quantification_exp().value
-        ctx.value = Proposition.from_Quantification(quantifier=quantification_info['quantifier'],
-                                                    grounding_cls=quantification_info['class'],
-                                                    grounding=ctx.arithmetic_exp().value,
-                                                    operation=bool_operation,
-                                                    dot_exp=quantification_info['dotexp'])
-
     def exitQuantification_exp(self, ctx: RLangParser.Quantification_expContext):
-        val = {'class': ctx.any_bound_class().value, 'quantifier': ctx.quantifier().value,
-               'dotexp': ctx.dot_exp().value}
-        ctx.value = val
+        # print(ctx.any_bound_class().value)
+        ctx.value = QuantifierSpecification(cls=ctx.any_bound_class().value, quantifier=ctx.quantifier().value,
+                                            dot_exp=ctx.dot_exp().value if ctx.dot_exp() else None)
 
     def exitQuantifier(self, ctx: RLangParser.QuantifierContext):
         if ctx.ALL_CONDITION() is not None:
@@ -790,6 +883,8 @@ class RLangListener(RLangParserListener):
 
         if not ctx.trailer():  # Check if it's not empty
             new_var = variable
+            if isinstance(variable, type):
+                new_var = MDPClassGrounding(cls=new_var)
         elif isinstance(variable, Factor):
             if len(ctx.trailer()) > 1:
                 raise RLangSemanticError("Too much subscripting on Factor")
@@ -800,6 +895,17 @@ class RLangListener(RLangParserListener):
                 raise RLangSemanticError("Too much subscripting on Feature")
             new_var = Feature(function=lambda *args, **kwargs: variable(*args, **kwargs)[ctx.trailer()[0].value],
                               domain=variable.domain)
+        elif isinstance(variable, MDPObjectGrounding):
+
+            # new_var = MDPObjectAttributeGrounding(variable, ctx.trailer())
+            trailers = [trailer.value for trailer in ctx.trailer()]
+            new_var = variable
+            for trailer in trailers:
+                if isinstance(trailer[0], str):
+                    new_var = MDPObjectAttributeGrounding(new_var, trailer)
+                elif isinstance(trailer[0], int):
+                    new_var = Feature(function=lambda *args, **kwargs: new_var(*args, **kwargs)[trailer[0]],
+                                      domain=new_var.domain)
         else:
             raise RLangSemanticError(f"Subscripting a {type(variable)} is not yet supported")
 
@@ -812,7 +918,7 @@ class RLangListener(RLangParserListener):
                                         domain=Domain.NEXT_STATE)
             else:
                 raise RLangSemanticError(
-                    f"Cannot use the ' operator on a {type(ctx.value)} with domain {ctx.value.domain.name}")
+                    f"Cannot use the ' operator on a {type(new_var)} with domain {new_var.domain.name}")
         else:
             ctx.value = new_var
 
@@ -851,6 +957,9 @@ class RLangListener(RLangParserListener):
     def exitBound_action(self, ctx: RLangParser.Bound_actionContext):
         ctx.value = IdentityGrounding(Domain.ACTION)
 
+    def exitBound_lifted_execution(self, ctx: RLangParser.Bound_lifted_executionContext):
+        ctx.value = ctx.lifted_execution().value
+
     def exitAny_bound_class(self, ctx: RLangParser.Any_bound_classContext):
         ctx.value = self.retrieveVariable(ctx.IDENTIFIER().getText())
 
@@ -863,8 +972,8 @@ class RLangListener(RLangParserListener):
     def exitTrailer_object(self, ctx: RLangParser.Trailer_objectContext):
         ctx.value = ctx.dot_exp().value
 
-    def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
-        ctx.value = list(map(lambda x: x.value, ctx.arr))
+    # def exitObject_array(self, ctx: RLangParser.Object_arrayContext):
+    #     ctx.value = list(map(lambda x: x.value, ctx.arr))
 
     def exitDot_exp(self, ctx: RLangParser.Dot_expContext):
         ctx.value = list(map(lambda x: x.getText(), ctx.IDENTIFIER()))
@@ -877,6 +986,14 @@ class RLangListener(RLangParserListener):
 
     def exitCompound_array_simple(self, ctx: RLangParser.Compound_array_simpleContext):
         ctx.value = ctx.any_num_array_exp().value
+
+    def exitCompound_array_arith(self, ctx: RLangParser.Compound_array_arithContext):
+        gds = [x.value for x in ctx.arr]
+        for i in range(len(gds)):
+            if isinstance(gds[i], PrimitiveGrounding):
+                gds[i] = gds[i]()
+
+        ctx.value = gds
 
     def exitCompound_array_compound(self, ctx: RLangParser.Compound_array_compoundContext):
         # This may be problematic

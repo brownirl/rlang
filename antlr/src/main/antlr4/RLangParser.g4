@@ -23,6 +23,7 @@ dec
     | class_def
     | option
     | policy
+    | plan
     | effect
     ;
 
@@ -34,7 +35,7 @@ proposition: PROPOSITION IDENTIFIER BIND boolean_exp;
 goal: GOAL IDENTIFIER BIND boolean_exp;
 feature: FEATURE IDENTIFIER BIND arithmetic_exp;
 markov_feature: MARKOVFEATURE IDENTIFIER BIND arithmetic_exp;
-object_def: OBJECT IDENTIFIER BIND object_instantiation;
+object_def: OBJECT IDENTIFIER BIND lifted_execution;
 
 class_def: CLASS IDENTIFIER (L_PAR any_bound_class R_PAR)? COL INDENT attribute_definition_collection DEDENT;
 
@@ -56,9 +57,24 @@ probabilistic_policy_statement
     : probabilistic_condition COL INDENT policy_statement NL* DEDENT    # probabilistic_policy_statement_no_sugar
     | execute probabilistic_condition NL+                               # probabilistic_policy_statement_sugar
     ;
-execute: EXECUTE (IDENTIFIER | arithmetic_exp | parameterized_action);
+execute: EXECUTE (IDENTIFIER | arithmetic_exp);
+lifted_execution: IDENTIFIER L_PAR (arr+=arithmetic_exp (COM arr+=arithmetic_exp)*)? R_PAR;
 
-parameterized_action: IDENTIFIER L_PAR arr+=arithmetic_exp (COM arr+=arithmetic_exp)* R_PAR;
+
+plan: PLAN (IDENTIFIER| MAIN) COL INDENT plan_statement_collection DEDENT;
+plan_statement_collection: (statements+=plan_statement NL*)+;
+plan_statement
+    : execute                    # plan_statement_execute
+    | conditional_plan           # plan_statement_conditional
+    | probabilistic_plan         # plan_statement_probabilistic
+    ;
+conditional_plan: IF if_condition=boolean_exp COL INDENT if_plan=plan_statement_collection DEDENT (ELIF elif_conditions+=boolean_exp COL INDENT elif_plans+=plan_statement_collection DEDENT)* (ELSE COL INDENT else_plan=plan_statement_collection DEDENT)?;
+probabilistic_plan: plans+=probabilistic_plan_statement (OR plans+=probabilistic_plan_statement)*;
+probabilistic_plan_statement
+    : probabilistic_condition COL INDENT plan_statement_collection DEDENT   # probabilistic_plan_statement_no_sugar
+    | execute probabilistic_condition NL+                                  # probabilistic_plan_statement_sugar
+    ;
+
 
 effect: EFFECT (IDENTIFIER| MAIN) COL INDENT effect_statement_collection DEDENT;
 effect_statement_collection: (statements+=effect_statement NL*)+;
@@ -76,25 +92,10 @@ probabilistic_effect_statement
     | (reward | prediction | effect_reference) probabilistic_condition NL+    # probabilistic_effect_statement_sugar
     ;
 reward: REWARD arithmetic_exp;
-prediction: (S_PRIME dot_exp? | IDENTIFIER dot_exp? PRIME?) PREDICT (arithmetic_exp | boolean_exp | object_instantiation);
+prediction: (S_PRIME dot_exp? | IDENTIFIER dot_exp? PRIME?) (PREDICT | PREDICT_ALL) (arithmetic_exp | boolean_exp | lifted_execution);
 effect_reference: PREDICT IDENTIFIER;
 
 probabilistic_condition: WITH P L_PAR (any_number | integer_fraction) R_PAR;
-
-
-object_instantiation: any_bound_class L_PAR object_constructor_arg_list R_PAR;
-
-object_constructor_arg_list: arg_list+=object_constructor_arg? (COM arg_list+=object_constructor_arg)*;
-
-
-// TODO: eventually add strings to this
-object_constructor_arg
-    : object_instantiation                          # object_construct_object
-    | arithmetic_exp                                # object_construct_arith_exp
-    | boolean_exp                                   # object_construct_bool_exp
-    | object_array                                  # object_construct_object_array
-    ;
-
 
 arithmetic_exp
     : L_PAR arithmetic_exp R_PAR                                # arith_paren
@@ -103,6 +104,7 @@ arithmetic_exp
     | any_number                                                # arith_number
     | any_array                                                 # arith_array
     | any_bound_var                                             # arith_bound_var
+    | quantification_exp                                        # arith_quantification
     ;
 
 
@@ -113,14 +115,12 @@ boolean_exp
     | NOT boolean_exp                                           # bool_not
     | lhs=arithmetic_exp IN rhs=arithmetic_exp                  # bool_in
     | lhs=boolean_exp (EQ_TO | NOT_EQ) rhs=boolean_exp          # bool_bool_eq
-    | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=quantification_exp   # bool_arith_quant_eq
-    | lhs=quantification_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_quant_arith_eq
     | lhs=arithmetic_exp (EQ_TO | LT | GT | LT_EQ | GT_EQ | NOT_EQ) rhs=arithmetic_exp   # bool_arith_eq
     | any_bound_var                                             # bool_bound_var
     | (TRUE | FALSE)                                            # bool_tf
     ;
 
-quantification_exp: quantifier L_PAR any_bound_class R_PAR dot_exp;
+quantification_exp: quantifier L_PAR any_bound_class R_PAR dot_exp?;
 
 quantifier: ANY_CONDITION | ALL_CONDITION;
 
@@ -134,16 +134,12 @@ compound_type
 simple_type: INT | FLOAT | STR | BOOL | any_bound_class;
 
 
-object_array: L_BRK arr+=an_object (COM arr+=an_object)* R_BRK;
-
-an_object: any_bound_var | object_instantiation;
-
-
 any_bound_var
     : S trailer?                    # bound_state
     | S_PRIME trailer?              # bound_next_state
     | IDENTIFIER PRIME? trailer*    # bound_identifier
     | A			                    # bound_action
+    | lifted_execution              # bound_lifted_execution
     ;
 
 any_bound_class: IDENTIFIER;
@@ -165,6 +161,7 @@ any_array
 
 compound_array_exp
     : any_num_array_exp     # compound_array_simple
+    | L_BRK arr+=arithmetic_exp (COM arr+=arithmetic_exp)* R_BRK    # compound_array_arith
     | L_BRK arr+=compound_array_exp (COM arr+=compound_array_exp)* R_BRK    # compound_array_compound
     ;
 

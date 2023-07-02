@@ -1,0 +1,16 @@
+import "vocab.json"
+
+Action up := 1
+Action down := 2
+
+Plan run:
+    Execute up
+    Execute up
+    Execute up
+
+Plan main:
+    Execute up
+    Execute down
+    Execute run
+    Execute down
+    Execute grab(4)
