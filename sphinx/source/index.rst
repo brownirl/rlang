@@ -1,9 +1,9 @@
 RLang 0.2.5 Documentation
 =========================
 
-This is the official documentation for the RLang Python package. RLang is a formal language for specifying prior knowledge to reinforcement learning agents. RLang was published at ICML 2023, the full paper can be found [here](https://benjaminaspiegel.com/files/RLang_ICML2023__With_Objects_.pdf).
+This is the official documentation for the RLang Python package. RLang is a formal language for specifying prior knowledge to reinforcement learning agents. RLang was published at ICML 2023, the full paper can be found `here <https://benjaminaspiegel.com/files/RLang_ICML2023__With_Objects_.pdf>`_.
 
-Read the release post here!
+Read the release post: :ref:`release_icml`
 
 Parts of the documentation:
     :doc:`tutorial`
