@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>rlang.grounding.utils.utils &mdash; RLang 0.2.3 documentation</title>
+  <title>rlang.grounding.utils.utils &mdash; RLang 0.2.5 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/rtd_sphinx_search.min.css" type="text/css" />
@@ -108,6 +108,9 @@
     <span class="n">STATE_ACTION_NEXT_STATE</span> <span class="o">=</span> <span class="mi">30</span>
     <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="mi">7</span>
     <span class="n">REAL_VALUE</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">BOOLEAN_REAL_VALUE</span> <span class="o">=</span> <span class="mi">77</span>
+    <span class="n">ACTION_BOOLEAN</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="n">STATE_ACTION_BOOLEAN</span> <span class="o">=</span> <span class="mi">42</span>
     <span class="n">STATE_VALUE</span> <span class="o">=</span> <span class="mi">13</span>
     <span class="n">FACTOR_STATE</span> <span class="o">=</span> <span class="mi">17</span>
     <span class="n">REWARD</span> <span class="o">=</span> <span class="mi">19</span>
@@ -133,6 +136,8 @@
                 <span class="k">return</span> <span class="n">larger</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">enum_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">if</span> <span class="n">enum_value</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># TODO: This is a hack, need to make sure that enum_value is composed only of primes</span>
+                    <span class="n">enum_value</span> <span class="o">/=</span> <span class="mi">2</span>
                 <span class="k">if</span> <span class="n">enum_value</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Domain</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">Domain</span><span class="p">(</span><span class="n">enum_value</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>

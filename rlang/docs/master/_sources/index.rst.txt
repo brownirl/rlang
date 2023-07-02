@@ -1,4 +1,4 @@
-RLang 0.2.1 Documentation
+RLang 0.2.5 Documentation
 =========================
 
 This is the official documentation for RLang.
