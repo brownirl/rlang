@@ -13,4 +13,4 @@ We believe that RLang will be a powerful tool for researchers, data scientists, 
 
 Stay tuned for future updates as we continue to enhance and expand the capabilities of RLang!
 
--Benjamin Spiegel
+-`Benjamin A. Spiegel <https://benjaminaspiegel.com/>`_, `Rafael Rodriguez-Sanchez <https://rafarodsa.github.io/>`_, and the RLang team
