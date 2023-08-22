@@ -70,6 +70,18 @@ class VectorState(State, Primitive):
     """
     pass
 
+    def __eq__(self, other):
+        if isinstance(other, VectorState):
+            eq = True
+            for i in range(self.shape[0]):
+                eq = eq and self[i] == other[i]
+            return eq
+        else:
+            return super().__eq__(other).all().view(Primitive)
+    
+    def __hash__(self):
+        return super().__hash__()
+
 
 class Action(Primitive):
     """Represents an action that is a vector.
