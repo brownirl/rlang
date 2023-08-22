@@ -10,8 +10,8 @@ class Primitive(np.ndarray):
     States and Actions should be easily batchable. This takes care of that.
     """
 
-    def __new__(cls, input_array: Any):
-        obj_arr = np.array(input_array, ndmin=1)
+    def __new__(cls, input_array: Any, **kwargs):
+        obj_arr = np.array(input_array, ndmin=1, **kwargs)
         obj = obj_arr.view(cls)
         return obj
 
