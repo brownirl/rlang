@@ -120,6 +120,8 @@ class RLangKnowledge(MutableMapping):
 
     @functools.lru_cache(maxsize=None)
     def memoized_reward_function(self, state, action):
+        if self.reward_function is None:
+            return 0
         return self.reward_function(state=state, action=action)
 
     @functools.lru_cache(maxsize=None)
