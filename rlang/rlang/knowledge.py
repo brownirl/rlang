@@ -120,12 +120,20 @@ class RLangKnowledge(MutableMapping):
 
     @functools.lru_cache(maxsize=None)
     def memoized_reward_function(self, state, action):
-        if self.reward_function is None:
-            return 0
+        if self.reward_function is None and 'main_effect' in self.keys():
+            if self['main_effect'].reward_function is not None:
+                return self['main_effect'].reward_function(state=state, action=action)
+            else:
+                return 0
         return self.reward_function(state=state, action=action)
 
     @functools.lru_cache(maxsize=None)
     def memoized_transition_function(self, state, action):
+        if self.transition_function is None and 'main_effect' in self.keys():
+            if self['main_effect'].transition_function is not None:
+                return self['main_effect'].transition_function(state=state, action=action)
+            else:
+                return {}
         return self.transition_function(state=state, action=action)
 
     def __hash__(self):
