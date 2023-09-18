@@ -124,7 +124,7 @@ class RLangKnowledge(MutableMapping):
             if self['main_effect'].reward_function is not None:
                 return self['main_effect'].reward_function(state=state, action=action)
             else:
-                return 0
+                return None
         return self.reward_function(state=state, action=action)
 
     @functools.lru_cache(maxsize=None)
