@@ -23,6 +23,7 @@ class Grounding(object):
     def __init__(self, name=None):
         self._name = name
 
+    # TODO: I'm not sure if these are necessary
     @property
     def name(self):
         return self._name
@@ -31,20 +32,20 @@ class Grounding(object):
     def name(self, name: str):
         self._name = name
 
-    def equals(self, other):
+    def equals(self, other):    # TODO: This is bad, should actually check for some kind of equality.
         return self.name == other.name
 
-    def __hash__(self):
+    def __hash__(self):         # TODO: This is not great.
         return self._name.__hash__()
 
-    def __repr__(self):
+    def __repr__(self):         # TODO: This could be better.
         return self._name
 
 
 class GroundingFunction(Grounding):
-    """Parent class for groundings that are callable. In general, only the children of this class should be used.
+    """Parent class for groundings that are functions from MDP components. In general, only the children of this class should be used.
 
-    All GroundingFunctions have a specified domain and codomain.
+    All instances of GroundingFunction have a specified domain and codomain.
     They are invoked using keyword arguments that correspond to their domain::
 
         from rlang import Domain
@@ -117,29 +118,6 @@ class GroundingFunction(Grounding):
             return item(*args, **kwargs) in self(*args, **kwargs)
 
         return Proposition(function=contains, domain=self.domain + item.domain)
-
-    # TODO: Contains should really only be used in sets. We should make a formal distinction between lists and sets in RLang
-    # def contains(self, item):
-    #     # TODO: ALERT: This is not actually being used right now. Hopefully we can discard it eventually
-    #     # Cannot override __contains__ and return a non-boolean
-    #     list_cast = lambda x: x.tolist() if isinstance(x, np.ndarray) else x
-    #     # TODO: Fix this! 'in' only works for singleton batch items!
-    #     unbatch_cast = lambda x, j: np.asarray(x)[j] if isinstance(x, Primitive) else x
-    #     unbatch_size = lambda x: len(x) if isinstance(x, Primitive) else 1
-    #     if isinstance(item, GroundingFunction):
-    #         return Proposition(function=lambda *args, **kwargs: [
-    #             [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
-    #             range(unbatch_size(item))],
-    #                            domain=self.domain + item.domain)
-    #     elif isinstance(item, Primitive):
-    #         return Proposition(function=lambda *args, **kwargs: [
-    #             [list_cast(unbatch_cast(item(*args, **kwargs), i)) in list_cast(self(*args, **kwargs))] for i in
-    #             range(unbatch_size(item))],
-    #                            domain=self.domain)
-    #     if isinstance(item, (int, float, np.ndarray)):
-    #         return Proposition(function=lambda *args, **kwargs: [list_cast(item) in list_cast(self(*args, **kwargs))],
-    #                            domain=self.domain)
-    #     raise RLangGroundingError(message=f"Object of type {type(item)} cannot be in a GroundingFunction")
 
     def __call__(self, *args, **kwargs):
         if 'state' in kwargs.keys():
