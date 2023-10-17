@@ -20,32 +20,28 @@ class Grounding(object):
 
     """
 
-    def __init__(self, name=None):
-        self._name = name
+    def __init__(self, name: str = None):
+        self.name = name
 
-    # TODO: I'm not sure if these are necessary
-    @property
-    def name(self):
-        return self._name
+    def equals(self, other: Grounding):
+        return self.__hash__() == other.__hash__()
 
-    @name.setter
-    def name(self, name: str):
-        self._name = name
+    def __hash__(self):
+        return self.name.__hash__()
 
-    def equals(self, other):    # TODO: This is bad, should actually check for some kind of equality.
-        return self.name == other.name
-
-    def __hash__(self):         # TODO: This is not great.
-        return self._name.__hash__()
-
-    def __repr__(self):         # TODO: This could be better.
-        return self._name
+    def __repr__(self):
+        return f"<Grounding name={self.name}>"
+    
+    def __str__(self):
+        return self.__repr__()
 
 
 class GroundingFunction(Grounding):
     """Parent class for groundings that are functions from MDP components. In general, only the children of this class should be used.
 
     All instances of GroundingFunction have a specified domain and codomain.
+
+    TODO: Re-do the following documentation.
     They are invoked using keyword arguments that correspond to their domain::
 
         from rlang import Domain
@@ -59,7 +55,7 @@ class GroundingFunction(Grounding):
 
     """
 
-    def __init__(self, domain: Union[str, Domain], codomain: Union[str, Domain], function: Callable, name: str = None):
+    def __init__(self, domain: str, codomain: str, function: Callable, name: str = None):
         """Initialize a GroundingFunction.
 
         Args:
@@ -439,6 +435,8 @@ class MDPObjectAttributeGrounding(GroundingFunction):
     def __hash__(self):
         return hash((str(self), self.grounding, str(self.attribute_chain)))
 
+##########################################
+
 
 class Predicate:
     def __init__(self, function, name=None):
@@ -511,44 +509,53 @@ class StateObjectAttributeGrounding(GroundingFunction):
 
 
 class Factor(GroundingFunction):
-    """Represents a factor of the state space."""
+    """Represents a factor of the state space. The state is assumed to be a vector."""
 
-    def __init__(self, state_indexer: Any, name: str = None, domain: Union[str, Domain] = Domain.STATE):
+    def __init__(self, state_indexer: Union[int, tuple, list], name: str = None):
         """
-
         Args:
-            state_indexer: the indices or slice of the state space.
-            name (optional): the name of the grounding.
+            state_indexer (optional [int, tuple, list]): the index, tuple, or indices of the *state space*. Must be non-negative. If a tuple, the first element is the start index and the second element is the end index (exclusive).
             domain (optional [str]): the domain of the Factor.
+            name: the name of the grounding.
         """
-        if isinstance(domain, Domain):
-            domain_arg = domain.name.lower()
-        elif isinstance(domain, str):
-            domain_arg = domain
-            domain = Domain.from_name(domain)
-        else:
-            raise RLangGroundingError(f"Invalid domain argument for Factor: {type(domain)}")
 
-        if domain is not Domain.STATE and domain is not Domain.NEXT_STATE:
-            raise RLangGroundingError(f"Factor cannot have domain of type {domain.name}")
-
+        # Check whether the state_indexer is valid.
         if isinstance(state_indexer, int):
-            state_indexer = [state_indexer]
-        self.state_indexer = state_indexer
-        super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),
-                         codomain=Domain.REAL_VALUE, domain=domain, name=name)
+            if state_indexer < 0:
+                raise RLangGroundingError("Factor state_indexer must be non-negative")
+        elif isinstance(state_indexer, tuple):
+            if len(state_indexer) != 2:
+                raise RLangGroundingError("Factor state_indexer must be a tuple of length 2")
+            elif state_indexer[0] < 0 or state_indexer[1] < 0:
+                raise RLangGroundingError("Factor state_indexer must be non-negative")
+            elif state_indexer[0] > state_indexer[1]:
+                raise RLangGroundingError("Factor state_indexer must be increasing")
+        elif isinstance(state_indexer, list):
+            if len(state_indexer) == 0:
+                raise RLangGroundingError("Factor state_indexer must have length > 0")
+            elif any([i < 0 for i in state_indexer]):
+                raise RLangGroundingError("Factor state_indexer must be non-negative")
+        else:
+            raise RLangGroundingError(f"Invalid state_indexer for Factor (expecting int, tuple, or list): {type(state_indexer)}")
+        
 
-    @property
-    def indexer(self):
-        return self.state_indexer
+        # Convert the state_indexer into a list of indices
+        if isinstance(state_indexer, int):
+            self.indices = [state_indexer]
+        elif isinstance(state_indexer, tuple):
+            self.indices = list(range(state_indexer[0], state_indexer[1]))
+        else:
+            self.indices = state_indexer
+    
+        # TODO: Come back to this!
+        # super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),
+        #                  codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
-    @indexer.setter
-    def indexer(self, new_indexer):
-        self.state_indexer = new_indexer
 
+    # TODO: Get rid of this:
     def __getitem__(self, item):
         if isinstance(item, int):
-            item = [item]
+            return Factor(state_indexer=self.indices[item])
         if isinstance(self.state_indexer, slice):
             if self.state_indexer.stop is None:
                 raise RLangGroundingError("We don't know enough about the state space")
@@ -562,6 +569,8 @@ class Factor(GroundingFunction):
             elif isinstance(item, slice):
                 new_indexer = self.state_indexer[item]
                 return Factor(state_indexer=new_indexer, domain=self.domain)
+            
+    # TODO: Implement get_factor_from_indexer() method
 
     def __hash__(self):
         return hash((str(self), str(self.state_indexer), self.name))
