@@ -572,6 +572,22 @@ class Factor(GroundingFunction):
             
     # TODO: Implement get_factor_from_indexer() method
 
+    def get_factor_from_indexer(self, item):
+        if isinstance(item, int):
+            if item >= len(self.indices) or item < 0:
+                raise RLangGroundingError("Indexing outside the state space for the given factor")
+            return Factor(state_indexer=self.indices[item]) #Double-check that item is relative to the factor
+        elif isinstance(item, tuple):
+            if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0:
+                raise RLangGroundingError("Indexing outside the state space for the given factor")
+            return Factor(state_indexer=[self.indices[i] for i in range(item[0], item[1])])
+        elif isinstance(item, list):
+            if len(item) > len(self.indices) or any([state not in self.indices for state in item]):
+                raise RLangGroundingError("Indexing outside the state space for the given factor")
+            return Factor(state_indexer=[self.indices[i] for i in item])
+        else:
+            raise RLangGroundingError("Cannot index factor with given input type")
+
     def __hash__(self):
         return hash((str(self), str(self.state_indexer), self.name))
 
