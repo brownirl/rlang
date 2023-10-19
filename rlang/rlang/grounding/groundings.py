@@ -568,7 +568,7 @@ class Factor(GroundingFunction):
             raise RLangGroundingError(f"Cannot index factor with given object: {type(item).__name__}")
 
     def __hash__(self):
-        return hash("Factor", self.indices) # Factors referencing the same indices will be hashed the same
+        return hash(("Factor", self.indices)) # Factors referencing the same indices will be hashed together
 
     def __repr__(self):
         additional_info = ""
@@ -578,26 +578,23 @@ class Factor(GroundingFunction):
 
 
 class Feature(GroundingFunction):
-    """Represents a feature of the state space.
+    """Represents a feature of the state space, i.e. any function of the state."""
 
-    Can represent any function of the state space.
-    """
-
-    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
+    def __init__(self, function: Callable, name: str = None):
         """
         Args:
             function: a function of state.
             name (optional): the name of the grounding.
-            domain (optional [str]): the domain of the Feature.
         """
-        super().__init__(function=function, codomain=Domain.REAL_VALUE, domain=domain, name=name)
+        # TODO: Come back to this!
+        # super().__init__(function=function, codomain=Domain.REAL_VALUE, domain=domain, name=name)
 
     @classmethod
     def from_Factor(cls, factor: Factor, name: str = None):
-        return cls(function=factor.__call__, name=name, domain=factor.domain)
+        return cls(function=factor.__call__, name=name)
 
     def __hash__(self):
-        return hash((str(self), self.function, self.domain, self.codomain))
+        return hash(str(self))
 
     def __repr__(self):
         return f"<Feature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
