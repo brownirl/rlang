@@ -551,32 +551,30 @@ class Factor(GroundingFunction):
         # super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),
         #                  codomain=Domain.REAL_VALUE, domain=domain, name=name)
             
-    # TODO: Implement get_factor_from_indexer() method
-
     def get_factor_from_indexer(self, item):
         if isinstance(item, int):
             if item >= len(self.indices) or item < 0:
-                raise RLangGroundingError(f"Indexing {item} element of factor with state space length {len(self.indices)}")
+                raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index {item}")
             return Factor(state_indexer=self.indices[item])
         elif isinstance(item, tuple):
             if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0 or len(item) != 2:
-                raise RLangGroundingError(f"Tuple {item} is not well-formed")
+                raise RLangGroundingError(f"Indexing factor with ill-formed Tuple, got {item}")
             return Factor(state_indexer=[self.indices[i] for i in range(item[0], item[1])])
         elif isinstance(item, list):
             if len(item) > len(self.indices) or any([i > len(self.indices) or i < 0 for i in item]):
-                raise RLangGroundingError(f"Index in {item} is not in range of state space of the given factor")
+                raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index in list {[i for i in item if i > len(self.indices) or i < 0]}")
             return Factor(state_indexer=[self.indices[i] for i in item])
         else:
-            raise RLangGroundingError("Cannot index factor with given input type")
+            raise RLangGroundingError(f"Cannot index factor with given object: {type(item).__name__}")
 
     def __hash__(self):
-        return hash((str(self), str(self.state_indexer), self.name))
+        return hash("Factor", self.indices) # Factors referencing the same indices will be hashed the same
 
     def __repr__(self):
         additional_info = ""
         if self.name:
-            additional_info += f" \"{self.name}\" ="
-        return f"<Factor [{self.domain.name}]->[{self.codomain.name}]:{additional_info} S[{str(self.state_indexer)[1:-1] if isinstance(self.state_indexer, list) else str(self.state_indexer)}]>"
+            additional_info += f" (\"{self.name}\")"
+        return f"<Factor{additional_info}: S[{self.indices}]>"
 
 
 class Feature(GroundingFunction):
