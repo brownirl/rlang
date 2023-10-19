@@ -522,21 +522,21 @@ class Factor(GroundingFunction):
         # Check whether the state_indexer is valid.
         if isinstance(state_indexer, int):
             if state_indexer < 0:
-                raise RLangGroundingError("Factor state_indexer must be non-negative")
+                raise RLangGroundingError(f"Factor state_indexer must be non-negative, got {state_indexer}")
         elif isinstance(state_indexer, tuple):
             if len(state_indexer) != 2:
-                raise RLangGroundingError("Factor state_indexer must be a tuple of length 2")
+                raise RLangGroundingError(f"Factor state_indexer must be a tuple of length 2, got length {len(state_indexer)}")
             elif state_indexer[0] < 0 or state_indexer[1] < 0:
-                raise RLangGroundingError("Factor state_indexer must be non-negative")
+                raise RLangGroundingError(f"Factor state_indexer must be non-negative, got {state_indexer}")
             elif state_indexer[0] > state_indexer[1]:
-                raise RLangGroundingError("Factor state_indexer must be increasing")
+                raise RLangGroundingError(f"Factor state_indexer must be in increasing order, got {state_indexer}")
         elif isinstance(state_indexer, list):
             if len(state_indexer) == 0:
-                raise RLangGroundingError("Factor state_indexer must have length > 0")
+                raise RLangGroundingError("Factor state_indexer must have length > 0, got empty list")
             elif any([i < 0 for i in state_indexer]):
-                raise RLangGroundingError("Factor state_indexer must be non-negative")
+                raise RLangGroundingError(f"Factor state_indexer must be non-negative, got {state_indexer}")
         else:
-            raise RLangGroundingError(f"Invalid state_indexer for Factor (expecting int, tuple, or list): {type(state_indexer)}")
+            raise RLangGroundingError(f"Invalid state_indexer for Factor (expecting int, tuple, or list): {type(state_indexer).__name__}")
         
 
         # Convert the state_indexer into a list of indices
@@ -550,25 +550,6 @@ class Factor(GroundingFunction):
         # TODO: Come back to this!
         # super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),
         #                  codomain=Domain.REAL_VALUE, domain=domain, name=name)
-
-
-    # TODO: Get rid of this:
-    def __getitem__(self, item):
-        if isinstance(item, int):
-            return Factor(state_indexer=self.indices[item])
-        if isinstance(self.state_indexer, slice):
-            if self.state_indexer.stop is None:
-                raise RLangGroundingError("We don't know enough about the state space")
-            else:
-                old_indexer = list(range(*self.state_indexer.indices(self.state_indexer.stop)))
-                new_indexer = [old_indexer[i] for i in item]
-                return Factor(state_indexer=new_indexer, domain=self.domain)
-        if isinstance(self.state_indexer, list):
-            if isinstance(item, list):
-                return Factor([self.state_indexer[i] for i in item], domain=self.domain)
-            elif isinstance(item, slice):
-                new_indexer = self.state_indexer[item]
-                return Factor(state_indexer=new_indexer, domain=self.domain)
             
     # TODO: Implement get_factor_from_indexer() method
 
