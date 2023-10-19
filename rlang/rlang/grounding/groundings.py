@@ -575,15 +575,15 @@ class Factor(GroundingFunction):
     def get_factor_from_indexer(self, item):
         if isinstance(item, int):
             if item >= len(self.indices) or item < 0:
-                raise RLangGroundingError("Indexing outside the state space for the given factor")
-            return Factor(state_indexer=self.indices[item]) #Double-check that item is relative to the factor
+                raise RLangGroundingError(f"Indexing {item} element of factor with state space length {len(self.indices)}")
+            return Factor(state_indexer=self.indices[item])
         elif isinstance(item, tuple):
-            if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0:
-                raise RLangGroundingError("Indexing outside the state space for the given factor")
+            if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0 or len(item) != 2:
+                raise RLangGroundingError(f"Tuple {item} is not well-formed")
             return Factor(state_indexer=[self.indices[i] for i in range(item[0], item[1])])
         elif isinstance(item, list):
-            if len(item) > len(self.indices) or any([state not in self.indices for state in item]):
-                raise RLangGroundingError("Indexing outside the state space for the given factor")
+            if len(item) > len(self.indices) or any([i > len(self.indices) or i < 0 for i in item]):
+                raise RLangGroundingError(f"Index in {item} is not in range of state space of the given factor")
             return Factor(state_indexer=[self.indices[i] for i in item])
         else:
             raise RLangGroundingError("Cannot index factor with given input type")
