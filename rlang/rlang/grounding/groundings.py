@@ -55,25 +55,16 @@ class GroundingFunction(Grounding):
 
     """
 
-    def __init__(self, domain: str, codomain: str, function: Callable, name: str = None):
+    def __init__(self, function: Callable, name: str = None):
         """Initialize a GroundingFunction.
 
         Args:
-            domain: Domain of the function.
-            codomain: Codomain of the function.
             function: the function.
             name: the name of the Grounding.
         """
-        if isinstance(domain, str):
-            domain = Domain.from_name(domain)
-
-        if isinstance(codomain, str):
-            codomain = Domain.from_name(codomain)
 
         super().__init__(name)
-        self._domain = domain
-        self._codomain = codomain
-        self._function = function
+        self.function = function
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         if ufunc == np.multiply:
@@ -85,30 +76,6 @@ class GroundingFunction(Grounding):
         if ufunc == np.subtract:
             return self.__rsub__(inputs[0])
 
-    @property
-    def domain(self):
-        return self._domain
-
-    @domain.setter
-    def domain(self, domain: Domain):
-        self._domain = domain
-
-    @property
-    def codomain(self):
-        return self._codomain
-
-    @codomain.setter
-    def codomain(self, codomain: Domain):
-        self._codomain = codomain
-
-    @property
-    def function(self):
-        return self._function
-
-    @function.setter
-    def function(self, function: Callable):
-        self._function = function
-
     def __contains__(self, item):
         def contains(*args, **kwargs):
             return item(*args, **kwargs) in self(*args, **kwargs)
@@ -116,18 +83,9 @@ class GroundingFunction(Grounding):
         return Proposition(function=contains, domain=self.domain + item.domain)
 
     def __call__(self, *args, **kwargs):
-        if 'state' in kwargs.keys():
-            if not isinstance(kwargs['state'], (VectorState, ObjectOrientedState)):
-                kwargs.update({'state': VectorState(kwargs['state'])})
-        if 'action' in kwargs.keys():
-            if not isinstance(kwargs['action'], Action):
-                kwargs.update({'action': Action(kwargs['action'])})
-        if 'next_state' in kwargs.keys():
-            if not isinstance(kwargs['next_state'], (VectorState, ObjectOrientedState)):
-                kwargs.update({'next_state': VectorState(kwargs['next_state'])})
-        return self._function(*args, **kwargs)
-
-    # TODO: write leq/geq
+        
+        
+        return self.function()
 
     def __lt__(self, other):
         if isinstance(other, GroundingFunction):
@@ -566,6 +524,10 @@ class Factor(GroundingFunction):
             return Factor(state_indexer=[self.indices[i] for i in item])
         else:
             raise RLangGroundingError(f"Cannot index factor with given object: {type(item).__name__}")
+
+    def __getitem__(self, item):
+        # TODO: Arjan: Reject the item if it's a slice that has negative values in it (i.e. referencing the end of the State array)
+        return self.get_factor_from_indexer(item)
 
     def __hash__(self):
         return hash(("Factor", self.indices)) # Factors referencing the same indices will be hashed together
