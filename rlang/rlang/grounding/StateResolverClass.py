@@ -20,16 +20,21 @@ class StateResolver:
         # TODO: Arjan, make a note of the places we'll need to come back to in the case that we have predictions instead of values.
         for key, value in info_dict.items():
             if isinstance(key, Factor):
-                if len(key.indices) != len(value):
+                if len(key.indices) != len(value): #Prediction object may not have length property?
                     raise RLangGroundingError(f"Factor length and value length do not match, got {len(key.indices)} and {len(value)}")
                 
                 for index, index_value in enumerate(key.indices):
+                    #Double check this? self.state_guess[index] = index_value?
                     self.state_guess[key.indices[index]] = index_value
-                    self.state_mask[key.indices[index]] = True
+                    self.state_mask[key.indices[index]] = True #
 
-            elif isinstance(key, (list, tuple)):    # TODO: Implement this, Arjan. Write good error messages.
-                for index in key:
-                    self.state_guess[index] = value
-                    self.state_mask[index] = 1
+            elif isinstance(key, list):    # TODO: Implement this, Arjan. Write good error messages.
+                #Realized that this may not be possible since lists are not hashable
+                if len(key) != len(value):
+                    raise RLangGroundingError(f"Length of provided states and value length do not match, got {len(key)} and {len(value)}")
+
+                for index, index_value in key:
+                    self.state_guess[index] = index_value
+                    self.state_mask[index] = True
             else:
-                raise ValueError("Invalid key type. Expected Factor or list/tuple of indices.")
+                raise ValueError("Invalid key type. Expected Factor or list of indices.")
