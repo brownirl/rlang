@@ -1,14 +1,16 @@
 from __future__ import annotations
 from collections import defaultdict
+import numpy as np
 from .groundings import Factor
 from .utils.grounding_exceptions import RLangGroundingError
 
 class StateResolver:
     """For reconstructing a state given partial information (e.g. a list of Factors)"""
 
-    def __init__(self, info_dict: dict = None) -> None:
+    def __init__(self, info_dict: dict = None, state_type: object = np.ndarray) -> None:
         self.state_guess = {}
         self.state_mask = defaultdict(lambda: False)
+        self.state_type = state_type
         if info_dict:
             self.add_info(info_dict)
     
@@ -33,3 +35,8 @@ class StateResolver:
                     self.state_guess[index_value] = val
             else:
                 raise ValueError("Invalid key type when trying to reconstruct state. Expected Factor or tuple of indices.")
+    
+    def get_state(self):
+        """Get the reconstructed state"""
+        # Arjan, please implement this for the np.ndarray case, and also the list case
+        return self.state_guess
