@@ -15,26 +15,21 @@ class StateResolver:
     def add_info(self, info_dict: dict) -> None:
         """Add information to the state guess.
             Args:
-                info_dict: A dictionary of {Factors: values} or {indices: values}
+                info_dict: A dictionary of {Factors: values} or {indices (tuple): values}
         """
-        # TODO: Arjan, make a note of the places we'll need to come back to in the case that we have predictions instead of values.
         for key, value in info_dict.items():
             if isinstance(key, Factor):
                 if len(key.indices) != len(value): #Prediction object may not have length property?
-                    raise RLangGroundingError(f"Factor length and value length do not match, got {len(key.indices)} and {len(value)}")
+                    raise RLangGroundingError(f"Factor length and value length do not match when trying to reconstruct state, got {len(key.indices)} and {len(value)}")
                 
-                for index, index_value in enumerate(key.indices):
-                    #Double check this? self.state_guess[index] = index_value?
-                    self.state_guess[key.indices[index]] = index_value
-                    self.state_mask[key.indices[index]] = True #
+                for index_value, val in zip(key.indices, value):
+                    self.state_guess[index_value] = val # Prediction object will need some unwrapping
 
-            elif isinstance(key, list):    # TODO: Implement this, Arjan. Write good error messages.
-                #Realized that this may not be possible since lists are not hashable
+            elif isinstance(key, tuple):
                 if len(key) != len(value):
-                    raise RLangGroundingError(f"Length of provided states and value length do not match, got {len(key)} and {len(value)}")
-
-                for index, index_value in key:
-                    self.state_guess[index] = index_value
-                    self.state_mask[index] = True
+                    raise RLangGroundingError(f"Indices tuple length and value length do not match when trying to reconstruct state, got {len(key)} and {len(value)}")
+                
+                for index_value, val in zip(key, value):
+                    self.state_guess[index_value] = val
             else:
-                raise ValueError("Invalid key type. Expected Factor or list of indices.")
+                raise ValueError("Invalid key type when trying to reconstruct state. Expected Factor or tuple of indices.")
