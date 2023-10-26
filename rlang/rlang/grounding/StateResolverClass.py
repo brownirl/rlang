@@ -39,4 +39,6 @@ class StateResolver:
     def get_state(self):
         """Get the reconstructed state"""
         # Arjan, please implement this for the np.ndarray case, and also the list case
-        return self.state_guess
+        for index, value in state_guess.items():
+            self.state_type[index] = value
+        return self.state_type

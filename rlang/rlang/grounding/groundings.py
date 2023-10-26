@@ -527,6 +527,14 @@ class Factor(GroundingFunction):
 
     def __getitem__(self, item):
         # TODO: Arjan: Reject the item if it's a slice that has negative values in it (i.e. referencing the end of the State array)
+        if isinstance(item, slice):
+            if item.start < 0 or item.end < 0 or (item.step and item.step < 0):
+                raise RLangGroundingError(f"Cannot use slice object with negative parameter, {item.start}, {item.end}")
+            else:
+                if item.step:
+                    return self.get_factor_from_indexer([i for i in range(item.start, item.end, item.step)])
+                else:
+                    return self.get_factor_from_indexer((item.start, item.end))
         return self.get_factor_from_indexer(item)
 
     def __hash__(self):
