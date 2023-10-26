@@ -510,6 +510,12 @@ class Factor(GroundingFunction):
         #                  codomain=Domain.REAL_VALUE, domain=domain, name=name)
             
     def get_factor_from_indexer(self, item):
+        """Helper function for indexing a Factor.
+        Args:
+            item: the index, tuple, or list to index the Factor with.
+        Returns:
+            A new Factor with the appropriate indices.
+        """
         if isinstance(item, int):
             if item >= len(self.indices) or item < 0:
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index {item}")

@@ -1,21 +1,52 @@
 import unittest
 import numpy as np
+from context import rlang
 
-# from .context import rlang
-import rlang
-# from rlang import Factor
+from rlang.grounding import Factor
+
+class FactorTest(unittest.TestCase):
+
+    def test_instantiation(self):
+        """Test that factors can be instantiated with different types of indices, and verifies that they work on example states"""
+        # TODO: Arjan, figure out all the things that should be tested and make some comment sections.
+        x = Factor(0, "x")
+        y = Factor([0, 1], "y")
+        z = Factor([0, 2, 3], "z")
+
+        z(state=np.array([4, 5, 6, 7]))
+
+        # s1 = State([4, 5, 6, 7])
+
+        # self.assertTrue(np.array_equal(z(state=s1), State([4, 6, 7])))
+        # self.assertTrue(np.array_equal(x(state=s1), State(4)))
+    
+    def test_indexing(self):
+        """Test that factors can be indexed using [] syntax and get_factor_from_indexer"""
+        # TODO: Arjan, figure out all the things that should be tested and make some comment sections.
+        
+
+        # Test that indexed factors have the proper indices
+        x = Factor([0, 1], "x")
+        y = x[0]
+
+        self.assertEqual(y.indices, [0])
+
+        # Test that indexed factors function properly
+        self.assertEqual(y(state=np.array([4, 5, 6, 7])), 4)
+
+    def test_domain_resolver(self):
+        """"""
+
+        x = Factor([2, 3], "x")
+        y = x[0]
+
+        # Predict y from x
+        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=[6, 7]))
+        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=np.array([6, 7])))
+        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(kwargs={(2, 3)=[6, 7]}))   # This is supposed to be indices, but idek how to do this in Python
+        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(stateresolver))
 
 
-# class FactorTest(unittest.TestCase):
-#     def test_instantiation(self):
-#         x = Factor(0, "x")
-#         y = Factor([0, 1], "y")
-#         z = Factor([0, 2, 3], "z")
-
-#         s1 = State([4, 5, 6, 7])
-
-#         self.assertTrue(np.array_equal(z(state=s1), State([4, 6, 7])))
-#         self.assertTrue(np.array_equal(x(state=s1), State(4)))
 
 #     def test_arithmetic_op(self):
 #         state1 = State(np.array([2, 3]))
@@ -114,4 +145,4 @@ import rlang
 
 
 if __name__ == '__main__':
-    pass
+    unittest.main()
