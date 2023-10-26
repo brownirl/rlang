@@ -36,9 +36,24 @@ class StateResolver:
             else:
                 raise ValueError("Invalid key type when trying to reconstruct state. Expected Factor or tuple of indices.")
     
-    def get_state(self):
-        """Get the reconstructed state"""
+    def get_state(self, default_value_for_unknown_indices: object = 0):
+        """Get the reconstructed state
+            Args:
+                default_value_for_unknown_indices: The value to use for indices that are not in the state guess
+            Returns:
+                The reconstructed state
+        """
         # Arjan, please implement this for the np.ndarray case, and also the list case
-        for index, value in state_guess.items():
+        
+        if self.state_type == np.ndarray:
+            # Construct a numpy array based on the state_guess
+            pass
+        elif self.state_type == list:
+            # Construct a list based on the state_guess using self.statetype to instantiate
+            pass
+        else:
+            raise ValueError("Invalid state type when trying to reconstruct state. Expected np.ndarray or list.")
+
+        for index, value in self.state_guess.items():
             self.state_type[index] = value
         return self.state_type
