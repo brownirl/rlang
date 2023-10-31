@@ -19,6 +19,38 @@ class FactorTest(unittest.TestCase):
 
         # self.assertTrue(np.array_equal(z(state=s1), State([4, 6, 7])))
         # self.assertTrue(np.array_equal(x(state=s1), State(4)))
+
+        #Test instantiation of factor with int
+
+        #Test instantiation of factor with tuple
+
+        #Test instantiation of factor with tuple where start and end are the same
+
+        #Test instantiation of factor with list
+
+        #Test instantiation of factor with list all indices same
+
+        #Test instantiation of factor with list in non-ascending order
+
+        #Test instantiation of factor with list with size greater than state space
+
+        #TESTS THAT SHOULD THROW ERRORS
+        #Test instantiation of factor int: negative
+
+        #Test instantiation of factor int: indexing out of state space
+
+        #Test instantiation of factor with tuple: negative start or end
+
+        #Test instantiation of factor with tuple: start greater than end
+
+        #Test instantiation of factor with tuple: more than two parameters
+
+        #Test instantiation of factor with list: empty
+
+        #Test instantiation of factor with list: negative number included
+
+        #Test instantiation of factor with non int, tuple, list data structure
+
     
     def test_indexing(self):
         """Test that factors can be indexed using [] syntax and get_factor_from_indexer"""
@@ -33,6 +65,45 @@ class FactorTest(unittest.TestCase):
 
         # Test that indexed factors function properly
         self.assertEqual(y(state=np.array([4, 5, 6, 7])), 4)
+
+        #USING [] syntax
+        #Test indexing using slice without step
+
+        #Test indexing using slice with step
+
+        #Test indexing where slice start is greater than slice end
+
+        #Test indexing where slice start, end, or step is negative
+
+        #Test indexing where slice start equals slice end
+
+        #Test indexing where slice start equals slice end with larger step
+
+        #Test slicing factors of factors of factors
+
+        #Test with int, negative int, and int out of bounds
+
+        #Test using non-slice, int data structure
+
+        #USING get_factor_from_indexer
+        #Test using int, out of range int (check when indexing at length of factor), and negative int
+
+        #Test using list regular
+
+        #Test using list with repeated indices
+
+        #Test using list with indices greater than factor indices but smaller than state space
+
+        #Test using list with index less than 0
+
+        #Test using malformed tuple (more than 2 indices)
+
+        #Test using tuple with negative start, end, greater start than end, or out of bounds start, end
+
+        #Test using regular tuple
+
+        #Test with neither int, tuple, list
+
 
     def test_domain_resolver(self):
         """"""

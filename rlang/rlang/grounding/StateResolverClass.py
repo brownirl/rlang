@@ -36,24 +36,35 @@ class StateResolver:
             else:
                 raise ValueError("Invalid key type when trying to reconstruct state. Expected Factor or tuple of indices.")
     
-    def get_state(self, default_value_for_unknown_indices: object = 0):
+    def get_state(self, default_value_for_unknown_indices: object = 0, state_length: int = None):
         """Get the reconstructed state
             Args:
                 default_value_for_unknown_indices: The value to use for indices that are not in the state guess
             Returns:
                 The reconstructed state
         """
-        # Arjan, please implement this for the np.ndarray case, and also the list case
-        
+        #Not really sure how to get the correct state_length, maybe this is correct(?)
+        if not(state_length):
+            min_index = 0
+            max_index = 0
+            for key in self.state_guess:
+                max_index = max(max_index, max(key))
+                min_index = min(min_index, min(key))
+            state_length = max_index-min_index+1
+
         if self.state_type == np.ndarray:
             # Construct a numpy array based on the state_guess
-            pass
+            reconstructed_state = np.full((state_length), default_value_for_unknown_indices)
+            for index, value in self.state_guess.items():
+                reconstructed_state[index] = value
+            return reconstructed_state
+
         elif self.state_type == list:
             # Construct a list based on the state_guess using self.statetype to instantiate
-            pass
+            reconstructed_state = [default_value_for_unknown_indices]*state_length
+            for index, value in self.state_guess.items():
+                reconstructed_state[index] = value
+            return reconstructed_state
         else:
             raise ValueError("Invalid state type when trying to reconstruct state. Expected np.ndarray or list.")
 
-        for index, value in self.state_guess.items():
-            self.state_type[index] = value
-        return self.state_type
