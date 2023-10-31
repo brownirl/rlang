@@ -33,6 +33,7 @@ class StateResolver:
                 
                 for index_value, val in zip(key, value):
                     self.state_guess[index_value] = val
+            
             else:
                 raise ValueError("Invalid key type when trying to reconstruct state. Expected Factor or tuple of indices.")
     
@@ -43,14 +44,9 @@ class StateResolver:
             Returns:
                 The reconstructed state
         """
-        #Not really sure how to get the correct state_length, maybe this is correct(?)
+        # If state_length is not provided, use the max index+1 in state_guess keys
         if not(state_length):
-            min_index = 0
-            max_index = 0
-            for key in self.state_guess:
-                max_index = max(max_index, max(key))
-                min_index = min(min_index, min(key))
-            state_length = max_index-min_index+1
+            state_length = max(self.state_guess.keys())+1
 
         if self.state_type == np.ndarray:
             # Construct a numpy array based on the state_guess
@@ -60,11 +56,12 @@ class StateResolver:
             return reconstructed_state
 
         elif self.state_type == list:
-            # Construct a list based on the state_guess using self.statetype to instantiate
+            # Construct a list based on the state_guess
             reconstructed_state = [default_value_for_unknown_indices]*state_length
             for index, value in self.state_guess.items():
                 reconstructed_state[index] = value
             return reconstructed_state
+        
         else:
-            raise ValueError("Invalid state type when trying to reconstruct state. Expected np.ndarray or list.")
+            raise ValueError(f"Invalid state type when trying to reconstruct state. Expected np.ndarray or list. Got {self.state_type}")
 
