@@ -11,6 +11,10 @@ from numpy.random import default_rng
 from .utils.utils import Domain
 from .utils.primitives import MDPObject, VectorState, ObjectOrientedState, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
+from .StateResolverClass import StateResolver
+
+
+DEFAULT_STATE_TYPE = np.ndarray
 
 
 class Grounding(object):
@@ -83,9 +87,13 @@ class GroundingFunction(Grounding):
         return Proposition(function=contains, domain=self.domain + item.domain)
 
     def __call__(self, *args, **kwargs):
+        # __call__ can take State, Action, NextState, StateResolver, or pretty much anything else (e.g. factors, features, etc.)
+
+        # We get a dictionary of indices and values {1: 9, 4: 10}
+        # We reconstruct a state
+        # We call the function on the state
         
-        
-        return self.function()
+        return self.function(*args, **kwargs)
 
     def __lt__(self, other):
         if isinstance(other, GroundingFunction):
@@ -469,7 +477,7 @@ class StateObjectAttributeGrounding(GroundingFunction):
 class Factor(GroundingFunction):
     """Represents a factor of the state space. The state is assumed to be a vector."""
 
-    def __init__(self, state_indexer: Union[int, tuple, list], name: str = None):
+    def __init__(self, state_indexer: Union[int, tuple, list], name: str, function_b: Callable = None, function_b_argnames: list = []):
         """
         Args:
             state_indexer (optional [int, tuple, list]): the index, tuple, or indices of the *state space*. Must be non-negative. If a tuple, the first element is the start index and the second element is the end index (exclusive).
@@ -504,10 +512,34 @@ class Factor(GroundingFunction):
             self.indices = list(range(state_indexer[0], state_indexer[1]))
         else:
             self.indices = state_indexer
+
+        self.function_b = function_b
+        self.function_b_argnames = function_b_argnames
     
-        # TODO: Come back to this!
-        # super().__init__(function=lambda *args, **kwargs: kwargs[domain_arg].__getitem__(self.state_indexer),
-        #                  codomain=Domain.REAL_VALUE, domain=domain, name=name)
+        super().__init__(function=self.internal_function, name=name)
+
+    def internal_function(self, *args, **kwargs):
+        print(self)
+        print(kwargs)
+        if "state" in kwargs:
+            state = kwargs["state"]
+        
+        # Check if every string in self.function_b_argnames is in kwargs
+        elif all([argname in kwargs for argname in self.function_b_argnames]):
+            # If so, we can call function_b with the appropriate arguments
+            return self.function_b(*args, **kwargs)
+        else:
+            # Instantiate a StateResolver to resolve kwargs
+            state_resolver = StateResolver(info_dict=kwargs, state_type=DEFAULT_STATE_TYPE)
+            state = state_resolver.get_state()
+        
+        # Create a numpy array or list (based on the type of state) from state given a list of indices
+        if isinstance(state, np.ndarray):
+            return state[self.indices]
+        elif isinstance(state, list):
+            return [state[i] for i in self.indices]
+        
+        # Sometimes kwargs contains another factor
             
     def get_factor_from_indexer(self, item):
         """Helper function for indexing a Factor.
@@ -519,14 +551,19 @@ class Factor(GroundingFunction):
         if isinstance(item, int):
             if item >= len(self.indices) or item < 0:
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index {item}")
-            return Factor(state_indexer=self.indices[item])
+            # Probably at this point we pass in another function to the Factor constructor that is a function of its variable names.
+            # We want to get the item index of the name of this function
+            # TODO: Give this factor a name
+            return Factor(state_indexer=self.indices[item], function_b=lambda *args, **kwargs: kwargs[self.name][item], function_b_argnames=self.function_b_argnames+[self.name])
         elif isinstance(item, tuple):
             if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0 or len(item) != 2:
                 raise RLangGroundingError(f"Indexing factor with ill-formed Tuple, got {item}")
+            # TODO: Write a function_b for this
             return Factor(state_indexer=[self.indices[i] for i in range(item[0], item[1])])
         elif isinstance(item, list):
             if len(item) > len(self.indices) or any([i > len(self.indices) or i < 0 for i in item]):
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index in list {[i for i in item if i > len(self.indices) or i < 0]}")
+            # TODO: Write a function_b for this
             return Factor(state_indexer=[self.indices[i] for i in item])
         else:
             raise RLangGroundingError(f"Cannot index factor with given object: {type(item).__name__}")

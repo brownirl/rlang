@@ -1,7 +1,6 @@
 from __future__ import annotations
 from collections import defaultdict
 import numpy as np
-from .groundings import Factor
 from .utils.grounding_exceptions import RLangGroundingError
 
 class StateResolver:
@@ -20,6 +19,7 @@ class StateResolver:
                 info_dict: A dictionary of {Factors: values} or {indices (tuple): values}
         """
         for key, value in info_dict.items():
+            from .groundings import Factor
             if isinstance(key, Factor):
                 if len(key.indices) != len(value): #Prediction object may not have length property?
                     raise RLangGroundingError(f"Factor length and value length do not match when trying to reconstruct state, got {len(key.indices)} and {len(value)}")

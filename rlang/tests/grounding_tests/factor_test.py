@@ -106,16 +106,17 @@ class FactorTest(unittest.TestCase):
 
 
     def test_domain_resolver(self):
-        """"""
 
-        x = Factor([2, 3], "x")
+        x = Factor([2, 3], name='x')
         y = x[0]
+
+        print(x.name)
 
         # Predict y from x
         self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=[6, 7]))
         self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=np.array([6, 7])))
-        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(kwargs={(2, 3)=[6, 7]}))   # This is supposed to be indices, but idek how to do this in Python
-        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(stateresolver))
+        # self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(kwargs={(2, 3)=[6, 7]}))   # This is supposed to be indices, but idek how to do this in Python
+        # self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(stateresolver))
 
 
 
