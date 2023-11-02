@@ -70,6 +70,12 @@ class GroundingFunction(Grounding):
         super().__init__(name)
         self.function = function
 
+    def nameit(self, name: str):
+        if not isinstance(name, str):
+            raise RLangGroundingError(f"Grounding name must be a string, got {type(name)}")
+        self.name = name
+        return self
+
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         if ufunc == np.multiply:
             return self.__rmul__(inputs[0])
@@ -532,6 +538,8 @@ class Factor(GroundingFunction):
             # Instantiate a StateResolver to resolve kwargs
             state_resolver = StateResolver(info_dict=kwargs, state_type=DEFAULT_STATE_TYPE)
             state = state_resolver.get_state()
+
+        # Else we actually call the function
         
         # Create a numpy array or list (based on the type of state) from state given a list of indices
         if isinstance(state, np.ndarray):
@@ -553,8 +561,8 @@ class Factor(GroundingFunction):
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index {item}")
             # Probably at this point we pass in another function to the Factor constructor that is a function of its variable names.
             # We want to get the item index of the name of this function
-            # TODO: Give this factor a name
-            return Factor(state_indexer=self.indices[item], function_b=lambda *args, **kwargs: kwargs[self.name][item], function_b_argnames=self.function_b_argnames+[self.name])
+            # TODO: Arjan, implement a randome name generator for this
+            return Factor(state_indexer=self.indices[item], function_b=lambda *args, **kwargs: kwargs[self.name][item], function_b_argnames=self.function_b_argnames+[self.name], name=f"factor_{'b'}")
         elif isinstance(item, tuple):
             if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0 or len(item) != 2:
                 raise RLangGroundingError(f"Indexing factor with ill-formed Tuple, got {item}")
@@ -583,36 +591,65 @@ class Factor(GroundingFunction):
         return self.get_factor_from_indexer(item)
 
     def __hash__(self):
-        return hash(("Factor", self.indices)) # Factors referencing the same indices will be hashed together
+        return hash(("Factor", self.name, self.indices)) # Factors referencing the same indices will be hashed together
 
     def __repr__(self):
-        additional_info = ""
-        if self.name:
-            additional_info += f" (\"{self.name}\")"
-        return f"<Factor{additional_info}: S[{self.indices}]>"
+        return f"<Factor (\"{self.name}\"): S{self.indices}>"
 
 
 class Feature(GroundingFunction):
     """Represents a feature of the state space, i.e. any function of the state."""
 
-    def __init__(self, function: Callable, name: str = None):
+    def __init__(self, function: Callable, name: str):
         """
         Args:
             function: a function of state.
-            name (optional): the name of the grounding.
+            name: the name of the feature.
         """
         # TODO: Come back to this!
-        # super().__init__(function=function, codomain=Domain.REAL_VALUE, domain=domain, name=name)
+        self.main_function = function
+        super().__init__(function=self.main_function, name=name)
 
-    @classmethod
-    def from_Factor(cls, factor: Factor, name: str = None):
-        return cls(function=factor.__call__, name=name)
+    def internal_function(self, *args, **kwargs):
+
+        if self.name in kwargs:
+            return kwargs[self.name]
+        
+        return self.main_function(*args, **kwargs)
+        
+        print(self)
+        print(kwargs)
+        if "state" in kwargs:
+            state = kwargs["state"]
+
+        
+        
+        # Check if every string in self.function_b_argnames is in kwargs
+        elif self.name in kwargs:
+            # If so, we can call function_b with the appropriate arguments
+            return kwargs[self.name]
+        else:
+            # Instantiate a StateResolver to resolve kwargs
+            state_resolver = StateResolver(info_dict=kwargs, state_type=DEFAULT_STATE_TYPE)
+            state = state_resolver.get_state()
+            return self.main_function(state= state)
+        
+    # @classmethod
+    # def from_Factor(cls, factor: Factor, name: str = None):
+    #     return cls(function=factor.__call__, name=name)
+
+    def __mul__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Feature(function=lambda *args, **kwargs: self.internal_function(*args, **kwargs) * other.internal_function(*args, **kwargs), name="unnamed")
+        if isinstance(other, (np.ndarray, int, float)):
+            return Feature(function=lambda *args, **kwargs: self.internal_function(*args, **kwargs) * other, name="unnamed")
+        raise RLangGroundingError(message=f"Cannot '*' a {type(self)} and a {type(other)}")
 
     def __hash__(self):
-        return hash(str(self))
+        return hash(("Feature", self.name))
 
     def __repr__(self):
-        return f"<Feature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        return f"<Feature \"{self.name}\">"
 
 
 class MarkovFeature(GroundingFunction):
