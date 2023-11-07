@@ -35,7 +35,7 @@ class StateResolver:
                     self.state_guess[index_value] = val
             
             else:
-                raise ValueError("Invalid key type when trying to reconstruct state. Expected Factor or tuple of indices.")
+                raise RLangGroundingError(f"Invalid key type ({type(key)}) when trying to reconstruct state. Expected Factor or tuple of indices.")
     
     def get_state(self, default_value_for_unknown_indices: object = 0, state_length: int = None):
         """Get the reconstructed state
@@ -63,5 +63,5 @@ class StateResolver:
             return reconstructed_state
         
         else:
-            raise ValueError(f"Invalid state type when trying to reconstruct state. Expected np.ndarray or list. Got {self.state_type}")
+            raise RLangGroundingError(f"Invalid state type when trying to reconstruct state. Expected np.ndarray or list. Got {self.state_type}")
 

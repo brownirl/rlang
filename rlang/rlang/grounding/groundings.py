@@ -13,10 +13,13 @@ from numpy.random import default_rng
 from .utils.utils import Domain
 from .utils.primitives import MDPObject, VectorState, ObjectOrientedState, Action, Primitive
 from .utils.grounding_exceptions import RLangGroundingError
-from .StateResolverClass import StateResolver
+from .StateResolverClass import StateResolver   # Unsure if this is ever used
 
 
-DEFAULT_STATE_TYPE = np.ndarray
+DEFAULT_STATE_TYPE = np.ndarray # Unsure if this is ever used
+
+def fast_uuid(length: int = 4):
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
 
 class Grounding(object):
@@ -69,84 +72,73 @@ class GroundingFunction(Grounding):
             name: the name of the Grounding.
         """
 
-        super().__init__(name)
+        super().__init__(name if name else f"groundingfunction_{fast_uuid()}")
         self.function = function
 
     def nameit(self, name: str):
         if not isinstance(name, str):
-            raise RLangGroundingError(f"Grounding name must be a string, got {type(name)}")
+            raise RLangGroundingError(f"Grounding name must be a string, got {type(name)}") # It's also possible we could extract the name of the variable here I think.
         self.name = name
         return self
+    
+    def namewrapped_function(self, *args, **kwargs):
+        """Some docstring"""
+        if self.name in kwargs:
+            return kwargs[self.name]
+        return self.function(*args, **kwargs)
 
-    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
-        if ufunc == np.multiply:
-            return self.__rmul__(inputs[0])
-        if ufunc == np.true_divide:
-            return self.__rtruediv__(inputs[0])
-        if ufunc == np.add:
-            return self.__radd__(inputs[0])
-        if ufunc == np.subtract:
-            return self.__rsub__(inputs[0])
+    # def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+    #     if ufunc == np.multiply:
+    #         return self.__rmul__(inputs[0])
+    #     if ufunc == np.true_divide:
+    #         return self.__rtruediv__(inputs[0])
+    #     if ufunc == np.add:
+    #         return self.__radd__(inputs[0])
+    #     if ufunc == np.subtract:
+    #         return self.__rsub__(inputs[0])
 
-    def __contains__(self, item):
-        def contains(*args, **kwargs):
-            return item(*args, **kwargs) in self(*args, **kwargs)
+    # def __contains__(self, item):
+    #     def contains(*args, **kwargs):
+    #         return item(*args, **kwargs) in self(*args, **kwargs)
 
-        return Proposition(function=contains, domain=self.domain + item.domain)
+    #     return Proposition(function=contains, domain=self.domain + item.domain)
 
     def __call__(self, *args, **kwargs):
-        # __call__ can take State, Action, NextState, StateResolver, or pretty much anything else (e.g. factors, features, etc.)
-
-        # We get a dictionary of indices and values {1: 9, 4: 10}
-        # We reconstruct a state
-        # We call the function on the state
-        
-        return self.function(*args, **kwargs)
+        return self.namewrapped_function(*args, **kwargs)
 
     def __lt__(self, other):
         if isinstance(other, GroundingFunction):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs),
-                               domain=self.domain + other.domain)
-        # if isinstance(other, Callable):
-        #     return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) < other(*args, **kwargs))
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) < other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) < other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) < other)
         raise RLangGroundingError(message=f"Cannot '<' a {type(self)} and a {type(other)}")
 
     def __le__(self, other):
         if isinstance(other, GroundingFunction):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other(*args, **kwargs),
-                               domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) <= other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) <= other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) <= other)
         raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
 
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other(*args, **kwargs),
-                               domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) == other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) == other)
         raise RLangGroundingError(message=f"Cannot '==' a {type(self)} and a {type(other)}")
 
     def __ne__(self, other):
         if isinstance(other, GroundingFunction):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other(*args, **kwargs),
-                               domain=self.domain + other.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) != other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) != other, domain=self.domain)
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) != other)
         raise RLangGroundingError(message=f"Cannot '!=' a {type(self)} and a {type(other)}")
-
+    
     def __mul__(self, other):
         if isinstance(other, GroundingFunction):
-            new_domain = self.domain + other.domain
-            if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() * other())
-            else:
-                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other(*args, **kwargs),
-                               domain=new_domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) * other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) * other, domain=self.domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) * other)
         raise RLangGroundingError(message=f"Cannot '*' a {type(self)} and a {type(other)}")
 
     def __rmul__(self, other):
@@ -154,49 +146,36 @@ class GroundingFunction(Grounding):
 
     def __truediv__(self, other):
         if isinstance(other, GroundingFunction):
-            new_domain = self.domain + other.domain
-            if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() / other())
-            else:
-                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other(*args, **kwargs),
-                               domain=new_domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) / other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) / other, domain=self.domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) / other)
         raise RLangGroundingError(message=f"Cannot '/' a {type(self)} and a {type(other)}")
 
     def __rtruediv__(self, other):
         if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: other / self(*args, **kwargs), domain=self.domain)
+            return Feature(function=lambda *args, **kwargs: other / self.namewrapped_function(*args, **kwargs))
         raise RLangGroundingError(message=f"Cannot '/' a {type(other)} and a {type(self)}")
 
     def __sub__(self, other):
         if isinstance(other, GroundingFunction):
-            new_domain = self.domain + other.domain
-            if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() - other())
-            else:
-                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other(*args, **kwargs),
-                               domain=new_domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) - other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) - other, domain=self.domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) - other)
         raise RLangGroundingError(message=f"Cannot '-' a {type(self)} and a {type(other)}")
 
     def __rsub__(self, other):
         if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: other - self(*args, **kwargs), domain=self.domain)
+            return Feature(function=lambda *args, **kwargs: other - self.namewrapped_function(*args, **kwargs))
         raise RLangGroundingError(message=f"Cannot '-' a {type(other)} and a {type(self)}")
 
     def __add__(self, other):
         if isinstance(other, GroundingFunction):
-            new_domain = self.domain + other.domain
-            if new_domain.value == Domain.ANY:
-                return PrimitiveGrounding(codomain=Domain.REAL_VALUE, value=self() + other())
-            else:
-                return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other(*args, **kwargs),
-                               domain=self.domain + other.domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) + other.namewrapped_function(*args, **kwargs))
         if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: self(*args, **kwargs) + other, domain=self.domain)
+            return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) + other)
         raise RLangGroundingError(message=f"Cannot '+' a {type(self)} and a {type(other)}")
+    
+    # TODO: Arjan, try to implement __getitem__ for GroundingFunction
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -485,7 +464,7 @@ class StateObjectAttributeGrounding(GroundingFunction):
 class Factor(GroundingFunction):
     """Represents a factor of the state space. The state is assumed to be a vector."""
 
-    def __init__(self, state_indexer: Union[int, tuple, list], name: str, function_b: Callable = None, function_b_argnames: list = []):
+    def __init__(self, state_indexer: Union[int, tuple, list], name: str = None):
         """
         Args:
             state_indexer (optional [int, tuple, list]): the index, tuple, or indices of the *state space*. Must be non-negative. If a tuple, the first element is the start index and the second element is the end index (exclusive).
@@ -520,37 +499,23 @@ class Factor(GroundingFunction):
             self.indices = list(range(state_indexer[0], state_indexer[1]))
         else:
             self.indices = state_indexer
-
-        self.function_b = function_b
-        self.function_b_argnames = function_b_argnames
     
-        super().__init__(function=self.internal_function, name=name)
+        super().__init__(function=self.internal_function, name=name if name else f"factor_{fast_uuid()}")
+                   
 
     def internal_function(self, *args, **kwargs):
-        print(self)
-        print(kwargs)
         if "state" in kwargs:
             state = kwargs["state"]
-        
-        # Check if every string in self.function_b_argnames is in kwargs
-        elif all([argname in kwargs for argname in self.function_b_argnames]):
-            # If so, we can call function_b with the appropriate arguments
-            return self.function_b(*args, **kwargs)
         else:
-            # Instantiate a StateResolver to resolve kwargs
-            state_resolver = StateResolver(info_dict=kwargs, state_type=DEFAULT_STATE_TYPE)
-            state = state_resolver.get_state()
-
-        # Else we actually call the function
-        
+            raise RLangGroundingError(f"Factor {self.name} requires a state argument.")
+                
         # Create a numpy array or list (based on the type of state) from state given a list of indices
+        # This is the meat of the function!
         if isinstance(state, np.ndarray):
             return state[self.indices]
         elif isinstance(state, list):
             return [state[i] for i in self.indices]
-        
-        # Sometimes kwargs contains another factor
-            
+                    
     def get_factor_from_indexer(self, item):
         """Helper function for indexing a Factor.
         Args:
@@ -563,17 +528,14 @@ class Factor(GroundingFunction):
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index {item}")
             # Probably at this point we pass in another function to the Factor constructor that is a function of its variable names.
             # We want to get the item index of the name of this function
-            uuid = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4)) # We should probably make this a helper function eventually.
-            return Factor(state_indexer=self.indices[item], function_b=lambda *args, **kwargs: kwargs[self.name][item], function_b_argnames=self.function_b_argnames+[self.name], name=f"factor_{uuid}")
+            return Factor(state_indexer=self.indices[item])
         elif isinstance(item, tuple):
             if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0 or len(item) != 2:
                 raise RLangGroundingError(f"Indexing factor with ill-formed Tuple, got {item}")
-            # TODO: Write a function_b for this
             return Factor(state_indexer=[self.indices[i] for i in range(item[0], item[1])])
         elif isinstance(item, list):
             if len(item) > len(self.indices) or any([i > len(self.indices) or i < 0 for i in item]):
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index in list {[i for i in item if i > len(self.indices) or i < 0]}")
-            # TODO: Write a function_b for this
             return Factor(state_indexer=[self.indices[i] for i in item])
         else:
             raise RLangGroundingError(f"Cannot index factor with given object: {type(item).__name__}")
@@ -602,50 +564,17 @@ class Factor(GroundingFunction):
 class Feature(GroundingFunction):
     """Represents a feature of the state space, i.e. any function of the state."""
 
-    def __init__(self, function: Callable, name: str):
+    def __init__(self, function: Callable, name: str = None):
         """
         Args:
             function: a function of state.
             name: the name of the feature.
         """
-        # TODO: Come back to this!
-        self.main_function = function
-        super().__init__(function=self.main_function, name=name)
-
-    def internal_function(self, *args, **kwargs):
-
-        if self.name in kwargs:
-            return kwargs[self.name]
-        
-        return self.main_function(*args, **kwargs)
-        
-        print(self)
-        print(kwargs)
-        if "state" in kwargs:
-            state = kwargs["state"]
-
-        
-        
-        # Check if every string in self.function_b_argnames is in kwargs
-        elif self.name in kwargs:
-            # If so, we can call function_b with the appropriate arguments
-            return kwargs[self.name]
-        else:
-            # Instantiate a StateResolver to resolve kwargs
-            state_resolver = StateResolver(info_dict=kwargs, state_type=DEFAULT_STATE_TYPE)
-            state = state_resolver.get_state()
-            return self.main_function(state= state)
+        super().__init__(function=function, name=name if name else f"feature_{fast_uuid()}")
         
     # @classmethod
     # def from_Factor(cls, factor: Factor, name: str = None):
     #     return cls(function=factor.__call__, name=name)
-
-    def __mul__(self, other):
-        if isinstance(other, GroundingFunction):
-            return Feature(function=lambda *args, **kwargs: self.internal_function(*args, **kwargs) * other.internal_function(*args, **kwargs), name="unnamed")
-        if isinstance(other, (np.ndarray, int, float)):
-            return Feature(function=lambda *args, **kwargs: self.internal_function(*args, **kwargs) * other, name="unnamed")
-        raise RLangGroundingError(message=f"Cannot '*' a {type(self)} and a {type(other)}")
 
     def __hash__(self):
         return hash(("Feature", self.name))

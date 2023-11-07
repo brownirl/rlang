@@ -1,12 +1,12 @@
 import unittest
 import numpy as np
-from rlang.src.grounding import Factor, Feature, State
+from rlang.src.grounding import GroundingFunction
 
-class FeatureTest(unittest.TestCase): 
+class GroundingFunctionTest(unittest.TestCase): 
 
     def test_instantiation(self):
-        state1 = State(np.array([2, 3]))
-        pos = Factor([0, 1], "position")
+        state1 = np.array([2, 3])
+        pos = GroundingFunction(lambda s: s[0:2], "position")
         x = Feature(pos[0], 1)
         y = Factor(1, "y")
         self.assertEqual(x(state=state1), 2)

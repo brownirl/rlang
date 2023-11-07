@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from context import rlang
 
-from rlang.grounding import Factor, Feature
+from rlang.grounding import Factor, Feature, StateResolver
 
 class FactorTest(unittest.TestCase):
 
@@ -116,11 +116,21 @@ class FactorTest(unittest.TestCase):
         print(y.name)   # We want this to be y
 
         # Predict y from x
-        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=[6, 7]))
-        self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=np.array([6, 7])))
+        # self.assertEqual(y(state=np.array([4, 5, 6, 7])), y(x=np.array([6, 7])))
 
+        
+        
+        # We need to explicitly instantiate a stateresolver here
+        
+        # self.assertEqual(y(state=np.array([4, 5, 6, 7])), ))
+    
         # Predict z from y
         self.assertEqual(z(state=np.array([4, 5, 6, 7])), z(y=[6], x=[6, 7]))
+
+        # We want to test a factor that is S[0,1,2,3] by giving two factors: S[0,1] and S[2,3]
+        sr = StateResolver({x: [6, 7], y: [8, 9]})   # This is basically what we want the syntax to look like
+        state = sr.get_state()
+        y(state=state)
 
 
     def test_feature(self):
