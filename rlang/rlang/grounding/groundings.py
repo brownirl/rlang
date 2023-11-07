@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Callable, Any, Union, List
 
 import numpy as np
+import string
 import random
 from numpy.random import default_rng
 from .utils.utils import Domain
@@ -562,9 +563,8 @@ class Factor(GroundingFunction):
                 raise RLangGroundingError(f"Indexing factor of length {len(self.indices)} with out-of-range index {item}")
             # Probably at this point we pass in another function to the Factor constructor that is a function of its variable names.
             # We want to get the item index of the name of this function
-            # TODO: Arjan, implement a randome name generator for this
-            random_num = random.randrange(0, 1000)
-            return Factor(state_indexer=self.indices[item], function_b=lambda *args, **kwargs: kwargs[self.name][item], function_b_argnames=self.function_b_argnames+[self.name], name=f"factor_{str(random_num)}")
+            uuid = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4)) # We should probably make this a helper function eventually.
+            return Factor(state_indexer=self.indices[item], function_b=lambda *args, **kwargs: kwargs[self.name][item], function_b_argnames=self.function_b_argnames+[self.name], name=f"factor_{uuid}")
         elif isinstance(item, tuple):
             if item[0] > item[1] or item[1] > len(self.indices) or item[0] < 0 or len(item) != 2:
                 raise RLangGroundingError(f"Indexing factor with ill-formed Tuple, got {item}")
