@@ -16,6 +16,17 @@ class FeatureTest(unittest.TestCase):
         self.assertEqual(test(state1), 3)
         self.assertEqual(test2(state1), 5)
 
+        #Test that feature can be instantiated based on other features
+
+        #Test that feature can be instantiated base a factor and a feature
+
+        #Test that feature is instantiated with operation on existing feature
+
+        #Test different operations on feature instantiation (addition, multiplication, etc.)
+
+        #Test that feature instantiation generates name if name is not provided
+
+
     def test_arithmetic(self):
         s1 = State(np.array([2, 3]))
         pos = Factor([0, 1], "position")

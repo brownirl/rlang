@@ -176,6 +176,26 @@ class GroundingFunction(Grounding):
         raise RLangGroundingError(message=f"Cannot '+' a {type(self)} and a {type(other)}")
     
     # TODO: Arjan, try to implement __getitem__ for GroundingFunction
+    def __getitem__(self, item):
+        # If item is a slice, we convert it to a list or tuple, otherwise we just pass it through to get_factor_from_indexer
+        if isinstance(item, slice):
+            # Error checking if the slice has negative values
+            if item.start < 0 or item.end < 0 or (item.step and item.step < 0):
+                raise RLangGroundingError(f"Cannot slice factor with negative parameter, {item}")
+
+            if item.step: # slice case with step, we need to return a list of factors
+                return Factor(list(range(item.start, item.end, item.step)))
+            else: # slice case without step, we return a start and end index
+                return Factor((item.start, item.end))
+       
+        elif isinstance(item, int):
+            return Factor(item)
+
+        else:
+            #Maybe not a ValueError
+            raise ValueError(f"Cannot slice GroundingFunction with given type {type(item)}") 
+
+
 
     def __radd__(self, other):
         return self.__add__(other)
