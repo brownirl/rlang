@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 from context import rlang
-
 from rlang.grounding import Factor, Feature, StateResolver
 
 class FactorTest(unittest.TestCase):

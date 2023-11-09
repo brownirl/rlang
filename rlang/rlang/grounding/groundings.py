@@ -72,7 +72,7 @@ class GroundingFunction(Grounding):
             name: the name of the Grounding.
         """
 
-        super().__init__(name if name else f"groundingfunction_{fast_uuid()}")
+        super().__init__(name if name else f"grounding-function_{fast_uuid()}")
         self.function = function
 
     def nameit(self, name: str):
@@ -177,12 +177,48 @@ class GroundingFunction(Grounding):
     
     def __getitem__(self, item):
         if not isinstance(item, (int, slice)):
-            raise RLangGroundingError(f"Cannot index GroundingFunction with type {type(item)}")
+            raise RLangGroundingError(f"Cannot index {type(self)} with type {type(item)}")
         
         return Feature(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs)[item])
 
     def __radd__(self, other):
         return self.__add__(other)
+    
+    # We may need to test this empirically to see if we should be using 'and' or '&' (bitwise)
+    def __and__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) and other.namewrapped_function(*args, **kwargs))
+        if isinstance(other, bool):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs)) if other else Proposition.FALSE
+        raise RLangGroundingError(message=f"Cannot 'and' a {type(self)} with a {type(other)}")
+
+    def __rand__(self, other):
+        return self.__and__(other)
+
+    # We may need to test this empirically to see if we should be using 'or' or '|' (bitwise)
+    def __or__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) or other.namewrapped_function(*args, **kwargs))
+        if isinstance(other, bool):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs)) if not other else Proposition.TRUE
+        raise RLangGroundingError(message=f"Cannot 'or' a {type(self)} with a {type(other)}")
+
+    def __ror__(self, other):
+        return self.__or__(other)
+    
+    # We may need to test this empirically to see if we should be using '!=' or '^' (bitwise)
+    def __xor__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) != other.namewrapped_function(*args, **kwargs))
+        if isinstance(other, bool):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) != other)
+        raise RLangGroundingError(message=f"Cannot '^' a {type(self)} with a {type(other)}")
+
+    def __rxor__(self, other):
+        return self.__xor__(other)
+
+    def __invert__(self):
+        return Proposition(function=lambda *args, **kwargs: not self(*args, **kwargs))
 
     def __hash__(self):
         return hash((str(self), self.function, self.domain, self.codomain))
@@ -472,8 +508,7 @@ class Factor(GroundingFunction):
         """
         Args:
             state_indexer (optional [int, tuple, list]): the index, tuple, or indices of the *state space*. Must be non-negative. If a tuple, the first element is the start index and the second element is the end index (exclusive).
-            domain (optional [str]): the domain of the Factor.
-            name: the name of the grounding.
+            name (optional): the name of the grounding.
         """
 
         # Check whether the state_indexer is valid.
@@ -572,7 +607,7 @@ class Feature(GroundingFunction):
         """
         Args:
             function: a function of state.
-            name: the name of the feature.
+            name (optional): the name of the feature.
         """
         super().__init__(function=function, name=name if name else f"feature_{fast_uuid()}")
         
@@ -620,96 +655,64 @@ class QuantifierSpecification:
 class Proposition(GroundingFunction):
     """Represents a function which has a truth value.
 
-    A Proposition is a feature with a codomain restricted to True or False.
+    A Proposition is a feature with a codomain of True or False.
     """
 
-    def __init__(self, function: Callable, name: str = None, domain: Union[str, Domain] = Domain.STATE):
+    def __init__(self, function: Callable, name: str = None):
         """
         Args:
             function: a function of state that evaluates to a bool.
             name (optional): the name of the grounding.
-            domain (optional [str]): the domain of the Proposition.
         """
-        super().__init__(function=function, codomain=Domain.BOOLEAN, domain=domain, name=name)
+        super().__init__(function=function, name=name if name else f"proposition_{fast_uuid()}")
 
-    @classmethod
-    def from_PrimitiveGrounding(cls, primitive_grounding: PrimitiveGrounding):
-        if primitive_grounding.codomain != Domain.BOOLEAN:
-            raise RLangGroundingError(
-                f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
-        return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
+    # @classmethod
+    # def from_PrimitiveGrounding(cls, primitive_grounding: PrimitiveGrounding):
+    #     if primitive_grounding.codomain != Domain.BOOLEAN:
+    #         raise RLangGroundingError(
+    #             f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
+    #     return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
 
-    # TODO: Eventually just work this logic into the Proposition class
-    @classmethod
-    def from_QuantifierSpecification(cls, quantifier_specification: QuantifierSpecification, grounding: GroundingFunction, operation):
-        def unwrap_and_quantify(*args, **kwargs):
-            items = list(kwargs['knowledge'].objects_of_type(quantifier_specification.cls).values())
-            if quantifier_specification.dot_exp is not None:
-                items = [MDPObjectAttributeGrounding(g, quantifier_specification.dot_exp) for g in items]
-            if quantifier_specification.quantifier == 'all':
-                for item in items:
-                    if not operation(grounding(*args, **kwargs), item(*args, **kwargs)):
-                        return False
-                return True
-            elif quantifier_specification.quantifier == 'any':
-                for item in items:
-                    if operation(grounding(*args, **kwargs), item(*args, **kwargs)):
-                        return True
-                return False
-            else:
-                raise RLangGroundingError(f"Unknown quantifier: {quantifier_specification.quantifier}")
+    # @classmethod
+    # def from_QuantifierSpecification(cls, quantifier_specification: QuantifierSpecification, grounding: GroundingFunction, operation):
+    #     def unwrap_and_quantify(*args, **kwargs):
+    #         items = list(kwargs['knowledge'].objects_of_type(quantifier_specification.cls).values())
+    #         if quantifier_specification.dot_exp is not None:
+    #             items = [MDPObjectAttributeGrounding(g, quantifier_specification.dot_exp) for g in items]
+    #         if quantifier_specification.quantifier == 'all':
+    #             for item in items:
+    #                 if not operation(grounding(*args, **kwargs), item(*args, **kwargs)):
+    #                     return False
+    #             return True
+    #         elif quantifier_specification.quantifier == 'any':
+    #             for item in items:
+    #                 if operation(grounding(*args, **kwargs), item(*args, **kwargs)):
+    #                     return True
+    #             return False
+    #         else:
+    #             raise RLangGroundingError(f"Unknown quantifier: {quantifier_specification.quantifier}")
 
-        return cls(function=lambda *args, **kwargs: unwrap_and_quantify(*args, **kwargs), domain=Domain.STATE_KNOWLEDGE)
+    #     return cls(function=lambda *args, **kwargs: unwrap_and_quantify(*args, **kwargs), domain=Domain.STATE_KNOWLEDGE)
 
     @classmethod
     def TRUE(cls):
-        return cls(function=lambda *args, **kwargs: True, domain=Domain.ANY)
+        return cls(function=lambda *args, **kwargs: True)
 
     @classmethod
     def FALSE(cls):
-        return cls(function=lambda *args, **kwargs: False, domain=Domain.ANY)
-
-    def __and__(self, other) -> Proposition:
-        if isinstance(other, Proposition):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs),
-                               domain=self.domain + other.domain)
-        if isinstance(other, Callable):
-            # TODO: We must know the domain of Callable to properly track the domain
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) & other(*args, **kwargs))
-        if isinstance(other, bool):
-            return self if other else Proposition(function=lambda *args, **kwargs: False, domain=Domain.ANY)
-        raise RLangGroundingError(message=f"Cannot & a Proposition with a {type(other)}")
-
-    def __rand__(self, other):
-        return self.__and__(other)
-
-    def __or__(self, other) -> Proposition:
-        if isinstance(other, Proposition):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs),
-                               domain=self.domain + other.domain)
-        if isinstance(other, (Proposition, Callable)):
-            # TODO: We must know the domain of Callable to properly track the domain
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) | other(*args, **kwargs))
-        if isinstance(other, bool):
-            return self if not other else Proposition(function=lambda *args, **kwargs: True, domain=Domain.ANY)
-        raise RLangGroundingError(message=f"Cannot | a Proposition with a {type(other)}")
-
-    def __ror__(self, other):
-        return self.__or__(other)
-
-    def __invert__(self) -> Proposition:
-        return Proposition(function=lambda *args, **kwargs: bool(not self(*args, **kwargs)), domain=self.domain)
+        return cls(function=lambda *args, **kwargs: False)
+    
 
     def __hash__(self):
         return hash((str(self), self.function))
 
     def __repr__(self):
-        return f"<Proposition [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        return f"<Proposition \"{self.name}\">"
 
 
 class Goal(Proposition):
     def __repr__(self):
-        return f"<Goal [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
+        return f"<Goal \"{self.name}\">"
 
 
 class ValueFunction(GroundingFunction):

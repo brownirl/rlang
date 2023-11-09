@@ -1,11 +1,12 @@
 import unittest
 import numpy as np
-from rlang.src.grounding import Factor, Feature, State
+from context import rlang
+from rlang.grounding import StateResolver, Factor, Feature
 
 class FeatureTest(unittest.TestCase): 
 
     def test_instantiation(self):
-        state1 = State(np.array([2, 3]))
+        state1 = np.array([2, 3])
         pos = Factor([0, 1], "position")
         x = Feature(pos[0], 1)
         y = Factor(1, "y")
@@ -22,9 +23,9 @@ class FeatureTest(unittest.TestCase):
 
         #Test that feature is instantiated with operation on existing feature
 
-        #Test different operations on feature instantiation (addition, multiplication, etc.)
-
         #Test that feature instantiation generates name if name is not provided
+
+# All python operations should have their own testing function
 
 
     def test_arithmetic(self):
