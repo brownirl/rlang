@@ -9,7 +9,7 @@ class StateResolver:
     def __init__(self, info_dict: dict = None, state_type: object = np.ndarray) -> None:
         self.state_guess = {}
         self.state_mask = defaultdict(lambda: False)
-        self.state_type = state_type
+        self.state_type = state_type #Just realized, we should probably make a setter method for this variable
         if info_dict:
             self.add_info(info_dict)
     
@@ -18,7 +18,7 @@ class StateResolver:
             Args:
                 info_dict: A dictionary of {Factors: values} or {indices (tuple): values}
         """
-        for key, value in info_dict.items():
+        for key, value in info_dict.items(): #Should we reset state_guess when an error is thrown?
             from .groundings import Factor
             if isinstance(key, Factor):
                 if len(key.indices) != len(value): #Prediction object may not have length property?
