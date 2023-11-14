@@ -568,6 +568,8 @@ class Factor(GroundingFunction):
                 
         # Create a numpy array or list (based on the type of state) from state given a list of indices
         # This is the meat of the function!
+        if any([i >= len(state) for i in self.indices]):
+            raise RLangGroundingError(f"Factor {self.name} cannot index state of length {len(state)} with out-of-range indices {self.indices}")
         if isinstance(state, np.ndarray):
             return state[self.indices]
         elif isinstance(state, list):
@@ -612,7 +614,7 @@ class Factor(GroundingFunction):
         return self.get_factor_from_indexer(item)
 
     def __hash__(self):
-        return hash(("Factor", self.name, self.indices)) # Factors referencing the same indices will be hashed together
+        return hash(("Factor", self.name, tuple(self.indices))) # Factors referencing the same indices will be hashed together
 
     def __repr__(self):
         return f"<Factor (\"{self.name}\"): S{self.indices}>"

@@ -26,6 +26,9 @@ class StateResolver:
 
         for key, value in info_dict.items(): #Should we reset state_guess when an error is thrown?
             from .groundings import Factor
+            # Convert value to a list if it's an int
+            if isinstance(value, int):
+                value = [value]
             if isinstance(key, Factor):
                 if len(key.indices) != len(value): #Prediction object may not have length property?
                     error_messages_from_bad_input.append(f"Factor length and value length do not match when trying to reconstruct state, got {len(key.indices)} and {len(value)}")
@@ -70,7 +73,9 @@ class StateResolver:
                 The reconstructed state
         """
         # If state_length is not provided, use the max index+1 in state_guess keys
-        if not(state_length):
+        if len(self.state_guess) == 0:
+            state_length = 0
+        elif not(state_length):
             state_length = max(self.state_guess.keys())+1
 
         if self.state_type == np.ndarray:

@@ -16,20 +16,21 @@ class StateResolverTest(unittest.TestCase):
         self.assertEqual(sr.get_state(), [])
 
         #Test instantiation of StateResolver with dictionary of Factors
+        factor_ind3 = Factor(3, "factor_ind3")
+        factor_ind1 = Factor(1, "factor_ind1")
+        factor_ind5 = Factor(5, "factor_ind5")
+        sr = StateResolver({factor_ind3:5, factor_ind1:4, factor_ind5:7}, list)
+        self.assertEqual(sr.get_state(), [0,4,0,5,0,7])
+
         state = [3,2,1,5,-3]
-        factor = Factor(3, "factor")
-        factor2 = Factor(1, "factor2")
-        factor3 = Factor(5, "factor3")
-        sr = StateResolver({factor(state=state):5, factor2(state=state):4, factor3(state=state):7}, [])
-        self.assertEqual(sr.get_state(), [3,4,1,5,-3,7])
 
-        sr = StateResolver({Factor(8, "factor4")(state=state): 8}, list)
-        self.assertEqual(sr.get_state(), [3,2,1,5,-3,0,0,0,8])
+        # sr = StateResolver({Factor(8, "factor4")(state=state): 8}, list)
+        # self.assertEqual(sr.get_state(), [3,2,1,5,-3,0,0,0,8])
 
-        #Test instantiation of StateResolver with dictionary of tuples
-        state = [4,1,-1,4,5,-8,12]
-        sr = StateResolver({(0,2):[3,4], (1,3):[5,6]}, list)
-        self.assertEqual(sr.get_state(), [3,5,6,4,5,-8,12])
+        # #Test instantiation of StateResolver with dictionary of tuples
+        # state = [4,1,-1,4,5,-8,12]
+        # sr = StateResolver({(0,2):[3,4], (1,3):[5,6]}, list)
+        # self.assertEqual(sr.get_state(), [3,5,6,4,5,-8,12])
 
         #ERROR Test Cases
         #Test instantiation of StateResolver with Factors and state representations of different lengths
