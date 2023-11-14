@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from context import rlang
-from rlang.grounding import Factor, Feature, State
+from rlang.grounding import StateResolver, Factor, Feature
 
 class FeatureTest(unittest.TestCase): 
 
@@ -12,6 +12,11 @@ class FeatureTest(unittest.TestCase):
        # x = Feature(pos[0], "feature")
        # y = Factor(1, "y")
        # self.assertEqual(x(state=state1), [2])
+        state1 = np.array([2, 3])
+        pos = Factor([0, 1], "position")
+        x = Feature(pos[0], 1)
+        y = Factor(1, "y")
+        self.assertEqual(x(state=state1), 2)
 
        # test = Feature(lambda s: x(state=s) + 1, "test")
        # test2 = Feature(lambda s: x(state=s) + y(state=s), "test2")
@@ -41,7 +46,6 @@ class FeatureTest(unittest.TestCase):
         feature2.nameit("feature2")
         #self.assertEqual(feature2(state=np.array([1,2,3,4,5,6])), 16)
         
-
         #Test different operations on feature instantiation (addition, multiplication, etc.)
         state = np.array([2,3,1,0,-4,5])
         feature = Feature(lambda state: state[0]*3, "feature")
@@ -63,6 +67,8 @@ class FeatureTest(unittest.TestCase):
         feature = Feature(lambda state: state[3])
         self.assertEqual(feature.name[:8], "feature_")
         self.assertTrue(len(feature.name[8:]) > 0)
+
+# All python operations should have their own testing function
 
 
     def test_arithmetic(self):

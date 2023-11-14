@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 from context import rlang
-
 from rlang.grounding import Factor, Feature, StateResolver
 from rlang.grounding.utils.primitives import State
 from rlang.grounding.utils.grounding_exceptions import RLangGroundingError as RLangGroundingError
