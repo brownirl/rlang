@@ -1037,8 +1037,53 @@ class GroundingDistribution(ProbabilityDistribution):
         return cls(args[0], sd_dict)
 
 
+class Option(Grounding):
+    """Grounding object for an option."""
 
+    def __init__(self, initiation: GroundingFunction, policy: Policy, termination: GroundingFunction, name: str = None):
+        # TODO: Re-write documentation here
+        """
+        Args:
+            initiation: A GroundingFunction capturing the initiation set of the option. E.g. Proposition, Goal.
+            policy: A Policy capturing the policy of the option.
+            termination: A GroundingFunction capturing the termination set of the option. E.g. Proposition, Goal.
+            name (optional): the name of the option.
+        """
+        self.initiation = initiation
+        self.termination = termination
+        self.policy = policy
+        super().__init__(name=name if name else f"option_{fast_uuid()}")
 
+    def __call__(self, *args, **kwargs):
+        """Executes the option. It is up to the user to determine whether the option should be terminated."""
+        return self.policy(*args, **kwargs)
+
+    def can_initiate(self, *args, **kwargs):
+        """Determines whether the option can be executed in a given state.
+        Args:
+            state: The state.
+
+        Returns:
+            bool: True iff the option can be executed in the given state.
+        """
+        return self.initiation(*args, **kwargs)
+    
+    def will_terminate(self, *args, **kwargs):
+        """Determines whether the option will terminate in a given state.
+        Args:
+            state: The state.
+
+        Returns:
+            bool: True iff the option will terminate in the given state.
+        """
+        return self.termination(*args, **kwargs)
+
+    def __hash__(self):
+        return hash((self.name, self.initiation, self.policy, self.termination))
+
+    def __repr__(self):
+        return f"<Option \"{self.name}\" (i:{self.initiation}, pi:{self.policy}, b:{self.termination})>"
+    
 
 class Plan(Grounding):
     """Represents an open-loop policy"""
@@ -1195,54 +1240,6 @@ class PlanExecution(GroundingFunction):
 #             i = self.i
 #             self.i += 1
 #             return self.plan[i]
-
-
-class Option(Grounding):
-    """Grounding object for an option."""
-
-    def __init__(self, initiation: GroundingFunction, policy: Policy, termination: GroundingFunction, name: str = None):
-        # TODO: Re-write documentation here
-        """
-        Args:
-            initiation: A GroundingFunction capturing the initiation set of the option. E.g. Proposition, Goal.
-            policy: A Policy capturing the policy of the option.
-            termination: A GroundingFunction capturing the termination set of the option. E.g. Proposition, Goal.
-            name (optional): the name of the option.
-        """
-        self.initiation = initiation
-        self.termination = termination
-        self.policy = policy
-        super().__init__(name=name if name else f"option_{fast_uuid()}")
-
-    def __call__(self, *args, **kwargs):
-        """Executes the option. It is up to the user to determine whether the option should be terminated."""
-        return self.policy(*args, **kwargs)
-
-    def can_initiate(self, *args, **kwargs):
-        """Determines whether the option can be executed in a given state.
-        Args:
-            state: The state.
-
-        Returns:
-            bool: True iff the option can be executed in the given state.
-        """
-        return self.initiation(*args, **kwargs)
-    
-    def will_terminate(self, *args, **kwargs):
-        """Determines whether the option will terminate in a given state.
-        Args:
-            state: The state.
-
-        Returns:
-            bool: True iff the option will terminate in the given state.
-        """
-        return self.termination(*args, **kwargs)
-
-    def __hash__(self):
-        return hash((self.name, self.initiation, self.policy, self.termination))
-
-    def __repr__(self):
-        return f"<Option \"{self.name}\" (i:{self.initiation}, pi:{self.policy}, b:{self.termination})>"
 
 
 class TransitionFunction(ProbabilisticFunction):
