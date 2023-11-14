@@ -640,9 +640,11 @@ class Feature(GroundingFunction):
 
     def __repr__(self):
         return f"<Feature \"{self.name}\">"
+    
 
 
 class MarkovFeature(GroundingFunction):
+    # TODO: Implement this
     """Represents a Grounding that is a function of (state, action, next_state)"""
 
     def __init__(self, function: Callable, name: str):
@@ -661,15 +663,15 @@ class MarkovFeature(GroundingFunction):
         return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
 
 
-class QuantifierSpecification:
-    def __init__(self, cls, quantifier, dot_exp=None):
-        self.cls = cls
-        self.quantifier = quantifier
-        self.dot_exp = dot_exp
-        self.name = f"{self.quantifier} {self.cls.__name__}"
+# class QuantifierSpecification:
+#     def __init__(self, cls, quantifier, dot_exp=None):
+#         self.cls = cls
+#         self.quantifier = quantifier
+#         self.dot_exp = dot_exp
+#         self.name = f"{self.quantifier} {self.cls.__name__}"
 
-    def __repr__(self):
-        return f"<QuantifierSpecification {self.name}{'.'.join(self.dot_exp) if self.dot_exp else ''}>"
+#     def __repr__(self):
+#         return f"<QuantifierSpecification {self.name}{'.'.join(self.dot_exp) if self.dot_exp else ''}>"
 
 
 class Proposition(GroundingFunction):
@@ -682,37 +684,9 @@ class Proposition(GroundingFunction):
         """
         Args:
             function: a function of state that evaluates to a bool.
-            name (optional): the name of the grounding.
+            name (optional): the name of the proposition.
         """
         super().__init__(function=function, name=name if name else f"proposition_{fast_uuid()}")
-
-    # @classmethod
-    # def from_PrimitiveGrounding(cls, primitive_grounding: PrimitiveGrounding):
-    #     if primitive_grounding.codomain != Domain.BOOLEAN:
-    #         raise RLangGroundingError(
-    #             f"Cannot cast PrimitiveGrounding with codomain {primitive_grounding.codomain} to Proposition")
-    #     return cls(function=lambda *args, **kwargs: primitive_grounding(), domain=Domain.ANY)
-
-    # @classmethod
-    # def from_QuantifierSpecification(cls, quantifier_specification: QuantifierSpecification, grounding: GroundingFunction, operation):
-    #     def unwrap_and_quantify(*args, **kwargs):
-    #         items = list(kwargs['knowledge'].objects_of_type(quantifier_specification.cls).values())
-    #         if quantifier_specification.dot_exp is not None:
-    #             items = [MDPObjectAttributeGrounding(g, quantifier_specification.dot_exp) for g in items]
-    #         if quantifier_specification.quantifier == 'all':
-    #             for item in items:
-    #                 if not operation(grounding(*args, **kwargs), item(*args, **kwargs)):
-    #                     return False
-    #             return True
-    #         elif quantifier_specification.quantifier == 'any':
-    #             for item in items:
-    #                 if operation(grounding(*args, **kwargs), item(*args, **kwargs)):
-    #                     return True
-    #             return False
-    #         else:
-    #             raise RLangGroundingError(f"Unknown quantifier: {quantifier_specification.quantifier}")
-
-    #     return cls(function=lambda *args, **kwargs: unwrap_and_quantify(*args, **kwargs), domain=Domain.STATE_KNOWLEDGE)
 
     @classmethod
     def TRUE(cls):
@@ -721,18 +695,48 @@ class Proposition(GroundingFunction):
     @classmethod
     def FALSE(cls):
         return cls(function=lambda *args, **kwargs: False)
-    
 
     def __hash__(self):
         return hash((str(self), self.function))
 
     def __repr__(self):
         return f"<Proposition \"{self.name}\">"
+    
 
+class Goal(GroundingFunction):
+    """Represents a Goal."""
 
-class Goal(Proposition):
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state that evaluates to a bool, i.e. whether the goal is reached.
+            name (optional): the name of the goal.
+        """
+        super().__init__(function=function, name=name if name else f"goal_{fast_uuid()}")
+
+    def __hash__(self):
+        return hash((str(self), self.function))
+
     def __repr__(self):
         return f"<Goal \"{self.name}\">"
+    
+
+class Policy(GroundingFunction):
+    """Represents a closed-loop policy function"""
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function from states to action distributions.
+            name (optional): the name of the policy.
+        """
+        super().__init__(function=function, name=name if name else f"policy_{fast_uuid()}")
+
+    def __hash__(self):
+        return super().__hash__()
+
+    def __repr__(self):
+        return f"<Policy \"{self.name}\">"
 
 
 class ValueFunction(GroundingFunction):
@@ -1033,27 +1037,7 @@ class GroundingDistribution(ProbabilityDistribution):
         return cls(args[0], sd_dict)
 
 
-class Policy(ProbabilisticFunction):
-    """Represents a closed-loop policy function"""
 
-    def __init__(self, function: Callable, domain: Domain = Domain.STATE, *args, **kwargs):
-        """
-        Args:
-            function: a function from states to action distributions.
-        """
-        super().__init__(function=function, domain=domain, codomain=Domain.ACTION, *args, **kwargs)
-
-    @classmethod
-    def from_action_distribution(cls, k):
-        if not isinstance(k, ActionDistribution):
-            raise RLangGroundingError(f"Expecting an ActionDistribution, got {type(k)}")
-        return cls(function=k.__call__, domain=k.domain)
-
-    def __repr__(self):
-        additional_info = ""
-        if self.name:
-            additional_info += f" \"{self.name}\""
-        return f"<Policy [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
 
 
 class Plan(Grounding):
@@ -1213,56 +1197,52 @@ class PlanExecution(GroundingFunction):
 #             return self.plan[i]
 
 
-class OptionTermination:
-    """
-    
-    """
-
-    def __repr__(self):
-        return "<OptionTermination>"
-
-    def __eq__(self, other):
-        return isinstance(other, OptionTermination)
-
-
 class Option(Grounding):
     """Grounding object for an option."""
 
-    def __init__(self, initiation: Proposition, policy: Policy, termination: Proposition, name: str = None):
+    def __init__(self, initiation: GroundingFunction, policy: Policy, termination: GroundingFunction, name: str = None):
+        # TODO: Re-write documentation here
         """
         Args:
-            initiation: A Proposition capturing the initiation set of the option.
-            policy: A PolicyOld capturing the policy of the option.
-            termination: A Proposition capturing the termination set of the option.
-            name (optional): the name of the grounding.
+            initiation: A GroundingFunction capturing the initiation set of the option. E.g. Proposition, Goal.
+            policy: A Policy capturing the policy of the option.
+            termination: A GroundingFunction capturing the termination set of the option. E.g. Proposition, Goal.
+            name (optional): the name of the option.
         """
         self.initiation = initiation
         self.termination = termination
         self.policy = policy
-        super().__init__(name)
+        super().__init__(name=name if name else f"option_{fast_uuid()}")
 
     def __call__(self, *args, **kwargs):
-        if self.termination(*args, **kwargs):
-            return OptionTermination()
-        else:
-            return self.policy(*args, **kwargs)
+        """Executes the option. It is up to the user to determine whether the option should be terminated."""
+        return self.policy(*args, **kwargs)
 
-    def can_initiate(self, *args, **kwargs) -> bool:
+    def can_initiate(self, *args, **kwargs):
         """Determines whether the option can be executed in a given state.
-
         Args:
-            state: A State object.
+            state: The state.
 
         Returns:
             bool: True iff the option can be executed in the given state.
         """
         return self.initiation(*args, **kwargs)
+    
+    def will_terminate(self, *args, **kwargs):
+        """Determines whether the option will terminate in a given state.
+        Args:
+            state: The state.
+
+        Returns:
+            bool: True iff the option will terminate in the given state.
+        """
+        return self.termination(*args, **kwargs)
 
     def __hash__(self):
-        return hash((self.initiation, self.policy, self.termination))
+        return hash((self.name, self.initiation, self.policy, self.termination))
 
     def __repr__(self):
-        return f"<Option \"{self.name}\">"
+        return f"<Option \"{self.name}\" (i:{self.initiation}, pi:{self.policy}, b:{self.termination})>"
 
 
 class TransitionFunction(ProbabilisticFunction):
