@@ -4,11 +4,11 @@ from dataclasses import dataclass
 from functools import total_ordering
 from typing import Type
 
-import gym.spaces
+# import gym.spaces
 import numpy as np
 from .grounding_exceptions import RLangGroundingError
 from .primitives import State
-from gym.spaces import Space
+# from gym.spaces import Space
 
 
 @total_ordering
