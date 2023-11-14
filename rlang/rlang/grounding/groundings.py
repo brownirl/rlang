@@ -180,13 +180,13 @@ class GroundingFunction(Grounding):
         # If item is a slice, we convert it to a list or tuple, otherwise we just pass it through to get_factor_from_indexer
         if isinstance(item, slice):
             # Error checking if the slice has negative values
-            if item.start < 0 or item.end < 0 or (item.step and item.step < 0):
+            if item.start < 0 or item.stop < 0 or (item.step and item.step < 0):
                 raise RLangGroundingError(f"Cannot slice factor with negative parameter, {item}")
 
             if item.step: # slice case with step, we need to return a list of factors
-                return Factor(list(range(item.start, item.end, item.step)))
+                return Factor(list(range(item.start, item.stop, item.step)))
             else: # slice case without step, we return a start and end index
-                return Factor((item.start, item.end))
+                return Factor((item.start, item.stop))
        
         elif isinstance(item, int):
             return Factor(item)
@@ -201,7 +201,7 @@ class GroundingFunction(Grounding):
         return self.__add__(other)
 
     def __hash__(self):
-        return hash((str(self), self.function, self.domain, self.codomain))
+        return hash((str(self), self.function))
 
 
 class PrimitiveGrounding(GroundingFunction):
@@ -564,13 +564,13 @@ class Factor(GroundingFunction):
         # If item is a slice, we convert it to a list or tuple, otherwise we just pass it through to get_factor_from_indexer
         if isinstance(item, slice):
             # Error checking if the slice has negative values
-            if item.start < 0 or item.end < 0 or (item.step and item.step < 0):
+            if item.start < 0 or item.stop < 0 or (item.step and item.step < 0):
                 raise RLangGroundingError(f"Cannot slice factor with negative parameter, {item}")
 
             if item.step: # slice case with step, we need to return a list of factors
-                return self.get_factor_from_indexer(list(range(item.start, item.end, item.step)))
+                return self.get_factor_from_indexer(list(range(item.start, item.stop, item.step)))
             else: # slice case without step, we return a start and end index
-                return self.get_factor_from_indexer((item.start, item.end))
+                return self.get_factor_from_indexer((item.start, item.stop))
         
         return self.get_factor_from_indexer(item)
 

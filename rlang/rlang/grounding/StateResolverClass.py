@@ -9,7 +9,7 @@ class StateResolver:
     def __init__(self, info_dict: dict = None, state_type: object = np.ndarray) -> None:
         self.state_guess = {}
         self.state_mask = defaultdict(lambda: False)
-        self.state_type = state_type #Just realized, we should probably make a setter method for this variable
+        self.state_type = state_type
         if info_dict:
             self.add_info(info_dict)
     
