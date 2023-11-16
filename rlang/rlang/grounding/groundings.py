@@ -732,9 +732,6 @@ class Policy(GroundingFunction):
         """
         super().__init__(function=function, name=name if name else f"policy_{fast_uuid()}")
 
-    def __hash__(self):
-        return super().__hash__()
-
     def __repr__(self):
         return f"<Policy \"{self.name}\">"
 
@@ -1242,140 +1239,122 @@ class PlanExecution(GroundingFunction):
 #             return self.plan[i]
 
 
-class TransitionFunction(ProbabilisticFunction):
+class TransitionFunction(GroundingFunction):
     """Represents a transition function."""
 
-    def __init__(self, function: Callable = None, domain: Domain = Domain.STATE_ACTION, *args, **kwargs):
-        if function is None:
-            function = StateDistribution().__call__
-        super().__init__(function=function, domain=domain, codomain=Domain.STATE, *args, **kwargs)
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state and action that returns a (distribution over) next states.
+            name (optional): the name of the transition function.
+        """
+        super().__init__(function=function, name=name if name else f"transition-function_{fast_uuid()}")
 
-    @classmethod
-    def from_state_distribution(cls, k):
-        if not isinstance(k, StateDistribution):
-            raise RLangGroundingError(f"Expecting a StateDistribution, got {type(k)}")
-        return cls(function=k.__call__, domain=k.domain)
-
-    def __repr__(self):
-        additional_info = ""
-        if self.name:
-            additional_info += f" \"{self.name}\""
-        return f"<TransitionFunction [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
-
-
-class RewardFunction(ProbabilisticFunction):
-    """Represents function of expected reward."""
-
-    def __init__(self, function: Callable = None, domain: Domain = Domain.ANY, *args, **kwargs):
-        if function is None:
-            function = RewardDistribution().__call__
-        super().__init__(function=function, domain=domain, codomain=Domain.REWARD, *args, **kwargs)
-
-    @classmethod
-    def from_reward_distribution(cls, k):
-        if not isinstance(k, RewardDistribution):
-            raise RLangGroundingError(f"Expecting a RewardDistribution, got {type(k)}")
-        return cls(function=k.__call__, domain=k.domain)
+    # @classmethod
+    # def from_state_distribution(cls, k):
+    #     if not isinstance(k, StateDistribution):
+    #         raise RLangGroundingError(f"Expecting a StateDistribution, got {type(k)}")
+    #     return cls(function=k.__call__, domain=k.domain
 
     def __repr__(self):
-        additional_info = ""
-        if self.name:
-            additional_info += f" \"{self.name}\""
-        return f"<RewardFunction [{self.domain.name}]->[{self.codomain.name}]{additional_info}>"
+        return f"<TransitionFunction \"{self.name}\">"
+    
+
+class RewardFunction(GroundingFunction):
+    """Represents a reward function."""
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state and action that returns a (distribution over) rewards.
+            name (optional): the name of the reward function.
+        """
+        super().__init__(function=function, name=name if name else f"reward-function_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<RewardFunction \"{self.name}\">"
 
 
-class Prediction(ProbabilisticFunction):
-    """GroundingFunction for an RLang Prediction object.
+class Prediction(GroundingFunction):
+    """Represents a prediction of the value of another GroundingFunction.
 
     Used to express the predicted value of another RLang object.
     Limited to GroundingFunctions with a domain of (S) or (S, A).
     """
 
-    def __init__(self, grounding: Grounding, function: Callable = None, domain: Domain = Domain.STATE_ACTION, complete=False, *args,
-                 **kwargs):
+    def __init__(self, grounding: GroundingFunction, function: Callable, name: str = None):
         """
         Args:
-            grounding (Grounding): the grounding whom's value we are predicting
-            function (:obj:`Callable`, optional): a function that predicts the value of grounding; can use a GroundingFunction
+            grounding (GroundingFunction): the grounding whom's value we are predicting
+            function: a function that predicts the value of grounding
+            name (Optional[str]): the name of the prediction
         """
-        if function is None:
-            function = GroundingDistribution(grounding).__call__
         self.grounding = grounding
-        self.complete = complete
-        super().__init__(function=function, domain=domain, codomain=Domain.REAL_VALUE, *args, **kwargs)
+        super().__init__(function=function, name=name if name else f"prediction_{fast_uuid()}")
 
-    @classmethod
-    def from_grounding_distribution(cls, grounding: Grounding, function: GroundingDistribution, complete=False):
-        """
-        Args:
-            grounding: The grounding that is predicted
-            function: The prediction function
-        """
-        if not isinstance(function, GroundingDistribution):
-            raise RLangGroundingError(f"Expecting a GroundingDistribution, got {type(function)}")
-        return cls(grounding=grounding, function=function.__call__, domain=function.domain, complete=complete)
+    # @classmethod
+    # def from_grounding_distribution(cls, grounding: Grounding, function: GroundingDistribution, complete=False):
+    #     """
+    #     Args:
+    #         grounding: The grounding that is predicted
+    #         function: The prediction function
+    #     """
+    #     if not isinstance(function, GroundingDistribution):
+    #         raise RLangGroundingError(f"Expecting a GroundingDistribution, got {type(function)}")
+    #     return cls(grounding=grounding, function=function.__call__, domain=function.domain, complete=complete)
 
     def __repr__(self):
-        additional_info = ""
-        if self.name:
-            additional_info += f" \"{self.name}\""
-        return f"<Prediction [{self.domain.name}]->[{self.codomain.name}]{additional_info} for Grounding: {self.grounding.name}>"
+        return f"<Prediction \"{self.name}\" for Grounding \"{self.grounding.name}\">"
 
 
 class Effect(Grounding):
-    """GroundingFunction for an RLang Effect object.
+    """Represents an effect of an action.
 
-    Contains an optional RewardFunction, TransitionFunction,
-    and list of Predictions.
+    Contains an optional list of RewardFunctions, TransitionFunctions, and Predictions.
     """
 
-    def __init__(self, reward_function: RewardFunction = None, transition_function: TransitionFunction = None,
-                 predictions: List[Prediction] = None, name: str = None, probability: float = 1.0):
+    def __init__(self, reward_functions: List[RewardFunction] = [], transition_functions: List[TransitionFunction] = [],
+                 predictions: List[Prediction] = [], name: str = None):
         """
         Args:
-            reward_function: a RewardFunction
-            transition_function: a TransitionFunction
-            predictions: a list of Predictions
-            name: name of the Effect
-            probability (Optional[float]): probability of this effect occurring; default: 1
-
+            reward_functions: a list of RewardFunctions.
+            transition_functions: a list of TransitionFunctions.
+            predictions: a list of Predictions.
+            name (optional): the name of the effect.
         """
-        if predictions is None:
-            predictions = list()
-        self.reward_function = reward_function
-        self.transition_function = transition_function
+        self.reward_functions = reward_functions
+        self.transition_functions = transition_functions
         self.predictions = predictions
-        self.probability = probability
-        super().__init__(name=name)
+        super().__init__(name=name if name else f"effect_{fast_uuid()}")
 
-    def shallow_copy(self):
-        """"""
-        return Effect(reward_function=self.reward_function, predictions=self.predictions,
-                      transition_function=self.transition_function)
+    # def shallow_copy(self):
+    #     """"""
+    #     return Effect(reward_function=self.reward_function, predictions=self.predictions,
+    #                   transition_function=self.transition_function)
 
-    def compose_probabilities(self, probability: float):
-        self.probability = self.probability * probability
-        if self.reward_function:
-            self.reward_function = RewardFunction.from_reward_distribution(
-                RewardDistribution({self.reward_function: probability}))
-        if self.transition_function:
-            self.transition_function = TransitionFunction.from_state_distribution(
-                StateDistribution({self.transition_function: probability}))
-        new_predictions = list()
-        for p in self.predictions:
-            new_predictions.append(
-                Prediction.from_grounding_distribution(p.grounding,
-                                                       GroundingDistribution(p.grounding, {p: probability}),
-                                                       complete=p.complete))
-        self.predictions = new_predictions
+    # def compose_probabilities(self, probability: float):
+    #     self.probability = self.probability * probability
+    #     if self.reward_function:
+    #         self.reward_function = RewardFunction.from_reward_distribution(
+    #             RewardDistribution({self.reward_function: probability}))
+        # if self.transition_function:
+        #     self.transition_function = TransitionFunction.from_state_distribution(
+        #         StateDistribution({self.transition_function: probability}))
+    #     new_predictions = list()
+    #     for p in self.predictions:
+    #         new_predictions.append(
+    #             Prediction.from_grounding_distribution(p.grounding,
+    #                                                    GroundingDistribution(p.grounding, {p: probability}),
+    #                                                    complete=p.complete))
+    #     self.predictions = new_predictions
 
-    @property
-    def prediction_dict(self):
-        prediction_dict = defaultdict(list)
-        for p in self.predictions:
-            # print(prediction_dict[p.grounding.name])
-            prediction_dict[p.grounding.name].append(p)
-        return dict(prediction_dict)
+    # @property
+    # def prediction_dict(self):
+    #     prediction_dict = defaultdict(list)
+    #     for p in self.predictions:
+    #         # print(prediction_dict[p.grounding.name])
+    #         prediction_dict[p.grounding.name].append(p)
+    #     return dict(prediction_dict)
 
     def __repr__(self):
         if self.name:
