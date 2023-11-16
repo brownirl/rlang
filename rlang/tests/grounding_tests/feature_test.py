@@ -69,6 +69,48 @@ class FeatureTest(unittest.TestCase):
         self.assertTrue(len(feature.name[8:]) > 0)
 
 # All python operations should have their own testing function
+    def test_numpy_operations(self):
+        state = np.array([2,4,1,-2,4,4,1])
+        feature = Feature(lambda state: np.dot(state[0], state[2]), "feature")
+        self.assertEqual(feature(state=state), 2)
+
+        new_state = np.array([1,2,3,4,5,6,7])
+        feature = Feature(lambda state: np.dot(state, new_state), "feature")
+        self.assertEqual(feature(state=state), 56)
+
+        feature = Feature(lambda state: np.mean(state), "feature")
+        self.assertEqual(feature(state=state), 2)
+
+        feature = Feature(lambda state: np.max(state), "feature")
+        self.assertEqual(feature(state=state), 4)
+
+        feature = Feature(lambda state: np.min(state), "feature")
+        self.assertEqual(feature(state=state), -2)
+
+        feature = Feature(lambda state: np.sum(state), "feature")
+        self.assertEqual(feature(state=state), 14)
+
+        feature = Feature(lambda state: np.exp(state[2]), "feature")
+        self.assertEqual(feature(state=state), np.exp(1))
+
+        feature = Feature(lambda state: np.median(state))
+        self.assertEqual(feature(state=state), 2)
+
+        two_dimen_state = np.array([[3,4,5], [6,7,8]])
+        feature = Feature(lambda state: np.transpose(state))
+        self.assertEqual(feature(state=two_dimen_state).shape[0], 3)
+        self.assertEqual(feature(state=two_dimen_state).shape[1], 2)
+
+        feature = Feature(lambda state: np.sqrt(state[1]))
+        self.assertEqual(feature(state=state), 2)
+
+        state_mul1 = np.array([[2,2],[3,3]])
+        state_mul2 = np.array([[1,1],[3,2]])
+        feature = Feature(lambda state: np.matmul(state,state_mul2), "feature")
+        self.assertTrue(np.array_equal(feature(state=state_mul1), np.array([[8,6], [12,9]])))
+
+
+
 
 
     def test_arithmetic(self):
