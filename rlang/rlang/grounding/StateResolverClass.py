@@ -13,12 +13,11 @@ class StateResolver:
         if info_dict:
             self.add_info(info_dict)
     
-    def add_info(self, info_dict: dict, no_regrets: bool = True, ignore_invalid_indices: bool = True) -> None:
+    def add_info(self, info_dict: dict, no_regrets: bool = False) -> None:
         """Add information to the state guess.
             Args:
                 info_dict: A dictionary of {Factors: values} or {indices (tuple): values}
                 no_regrets: If True, the state guess will be updated with any indices retrieved from the input, regardless of any malformed inputs, which will be ignored. If False, the state guess will not be updated if there are any errors.
-                ignore_invalid_indices: If True, indices that are negative or out of bounds will be ignored. If False, an error will be thrown if any indices are negative or out of bounds.
         """
 
         partial_state_guess = {}
@@ -52,7 +51,7 @@ class StateResolver:
                 if key < 0:
                     error_messages_from_bad_input.append(f"Invalid index ({key}) when trying to reconstruct state. Index must be greater than or equal to 0.")
                     continue
-                partial_state_guess[key] = value
+                partial_state_guess[key] = value[0]
             
             else:
                 error_messages_from_bad_input.append(f"Invalid key type ({type(key)}) when trying to reconstruct state. Expected Factor or tuple of indices.")
@@ -62,7 +61,7 @@ class StateResolver:
             # Merge partial_state_guess into state_guess
             self.state_guess.update(partial_state_guess)
         
-        elif len(error_messages_from_bad_input) > 0 and not ignore_invalid_indices:
+        elif len(error_messages_from_bad_input) > 0:
             raise RLangGroundingError("\n".join(error_messages_from_bad_input))
     
     def get_state(self, default_value_for_unknown_indices: object = 0, state_length: int = None):
