@@ -213,11 +213,24 @@ class GroundingFunction(Grounding):
     def __rand__(self, other):
         return self.__and__(other)
 
-    # We may need to test this empirically to see if we should be using 'or' or '|' (bitwise)
     def __or__(self, other):
         if isinstance(other, GroundingFunction):
-            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) or other.namewrapped_function(*args, **kwargs))
+            print("This is called", self, other)
+            def smart_or_function(*args, **kwargs):
+                try:
+                    r1 = self.namewrapped_function(*args, **kwargs)
+                    if r1:
+                        return True
+                except TypeError as e:
+                    try:
+                        return other.namewrapped_function(*args, **kwargs)
+                    except TypeError:
+                        raise e
+                if not r1:
+                    return other.namewrapped_function(*args, **kwargs)
+            return Proposition(function=lambda *args, **kwargs: smart_or_function(*args, **kwargs))
         if isinstance(other, bool):
+            print("This other is called", self, other)
             return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs)) if not other else Proposition.TRUE
         raise RLangGroundingError(message=f"Cannot 'or' a {type(self)} with a {type(other)}")
 

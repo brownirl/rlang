@@ -13,7 +13,6 @@ class PropositionTest(unittest.TestCase):
         factor_ind4 = Factor(4, "factor_ind4")
 
         #Initialize Proposition with a valid function
-        # proposition_factors = Proposition(factor_ind3(state=state) < factor_ind4(state=state))
         proposition_factors = factor_ind3 < factor_ind4
         self.assertEqual(factor_ind3(state=state) < factor_ind4(state=state), proposition_factors)
 
@@ -41,10 +40,21 @@ class PropositionTest(unittest.TestCase):
         some_prop = factor_ind3 >= factor_ind4
         self.assertFalse(some_prop(state=state))
         
-    # def test_namewrapped(self):
-    #     state = [4,2,5,1,6,3,7]
+    def test_namewrapped(self):
+        state = [2,2,5,2,2,3,7]
 
-    #     factor_ind3 = Factor(3, "factor_ind3")
-    #     factor_ind4 = Factor(4, "factor_ind4")
+        factor_ind3 = Factor(3, "factor_ind3")
+        factor_ind4 = Factor(4, "factor_ind4")
 
-    #     proposition1 = Propositin
+        proposition1 = Proposition(lambda state: state[0] == 1, name="proposition1")
+
+        proposition2 = proposition1 | (factor_ind3 == factor_ind4)
+
+        self.assertEqual(proposition2(state=state), True)
+
+        self.assertEqual(proposition2(state=state), proposition2(proposition1=False, factor_ind3=5, factor_ind4=5))
+        self.assertEqual(proposition2(state=state), proposition2(proposition1=True))
+        self.assertEqual(proposition2(state=state), proposition2(factor_ind3=5, factor_ind4=5))
+
+if __name__ == '__main__':
+    unittest.main()
