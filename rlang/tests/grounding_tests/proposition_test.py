@@ -13,7 +13,8 @@ class PropositionTest(unittest.TestCase):
         factor_ind4 = Factor(4, "factor_ind4")
 
         #Initialize Proposition with a valid function
-        proposition_factors = Proposition(factor_ind3(state=state) < factor_ind4(state=state))
+        # proposition_factors = Proposition(factor_ind3(state=state) < factor_ind4(state=state))
+        proposition_factors = factor_ind3 < factor_ind4
         self.assertEqual(factor_ind3(state=state) < factor_ind4(state=state), proposition_factors)
 
         #Initialize Proposition with custom name
@@ -40,3 +41,10 @@ class PropositionTest(unittest.TestCase):
         some_prop = factor_ind3 >= factor_ind4
         self.assertFalse(some_prop(state=state))
         
+    # def test_namewrapped(self):
+    #     state = [4,2,5,1,6,3,7]
+
+    #     factor_ind3 = Factor(3, "factor_ind3")
+    #     factor_ind4 = Factor(4, "factor_ind4")
+
+    #     proposition1 = Propositin

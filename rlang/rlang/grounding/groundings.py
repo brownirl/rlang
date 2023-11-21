@@ -82,7 +82,7 @@ class GroundingFunction(Grounding):
         return self
     
     def namewrapped_function(self, *args, **kwargs):
-        """Some docstring"""
+        """TODO: Some docstring"""
         if self.name in kwargs:
             return kwargs[self.name]
         return self.function(*args, **kwargs)
@@ -242,283 +242,6 @@ class GroundingFunction(Grounding):
         return hash((str(self), self.function))
 
 
-class PrimitiveGrounding(GroundingFunction):
-    """GroundingFunction which requires no arguments, i.e. domain=Domain.ANY"""
-
-    def __init__(self, codomain: Domain, value: Any, name: str = None):
-        # TODO: What about lists? Should lists be cast? Only non-jagged ones?
-        # TODO: Probably need to cast `value` to a Primitive
-        if isinstance(value, (int, float)):
-            value = np.array(value)
-        self.value = value
-        super().__init__(domain=Domain.ANY, codomain=codomain,
-                         function=lambda *args, **kwargs: self.value, name=name)
-
-    def __repr__(self):
-        if self.name:
-            return f"<PrimitiveGrounding \"{self.name}\": {self()}>"
-        else:
-            return f"<PrimitiveGrounding: {self()}>"
-
-    def __hash__(self):
-        return hash((str(self), str(self.value)))
-
-
-class ConstantGrounding(PrimitiveGrounding):
-    """GroundingFunction for defined RLang Constants
-    """
-
-    def __repr__(self):
-        return f"<Constant \"{self.name}\" = {self()}>"
-
-
-class ParameterizedAction:
-    def __init__(self, function, name=None):
-        self.function = function
-        self.name = name if name else function.__name__
-
-    def __call__(self, *args, **kwargs):
-        return self.function(*args, **kwargs)
-
-
-class ParameterizedActionExecution(GroundingFunction):
-    def __init__(self, parameterized_action, arguments: List[GroundingFunction]):
-        self.parameterized_action = parameterized_action
-        self.arguments = arguments
-
-        domain = Domain.ANY
-        for arg in arguments:
-            domain = domain + arg.domain
-
-        argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
-
-        super().__init__(domain=domain, codomain=Domain.ACTION,
-                         function=lambda *args, **kwargs:
-                         parameterized_action(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
-                         name=parameterized_action.name + "(" + argnames + ")")
-
-
-class ActionReference(GroundingFunction):
-    """Represents a reference to a specified action."""
-
-    def __init__(self, action: Any, name=None):
-        """
-        Args:
-            action: the action.
-            name (optional): name of the action.
-
-        """
-        if isinstance(action, (int, float, list)):
-            function = lambda *sargs, **skwargs: Action(np.array(action))
-            domain = Domain.ANY
-        elif isinstance(action, GroundingFunction):
-            function = action.__call__
-            domain = action.domain
-        else:
-            raise RLangGroundingError(f"Actions cannot be of type {type(action)}")
-        super().__init__(domain=domain, codomain=Domain.ACTION, function=function, name=name)
-
-    def __hash__(self):
-        return hash(self.function)
-
-    def __repr__(self):
-        if self.name:
-            return f"<ActionReference \"{self.name}\">"
-        else:
-            return f"<ActionReference>"
-
-
-class IdentityGrounding(GroundingFunction):
-    """Grounding for representing S, A, and S'."""
-
-    def __init__(self, domain: Union[str, Domain]):
-        """Initialize a new IdentityGrounding."""
-        if not isinstance(domain, str):
-            domain = domain.name.lower()
-        # Does this work properly?
-        super().__init__(domain=domain, codomain=domain,
-                         function=lambda *args, **kwargs: kwargs[domain])
-
-    def __repr__(self):
-        return f"<IdentityGrounding {self.codomain.name}>"
-
-
-class MDPClassGrounding(GroundingFunction):
-    def __init__(self, cls):
-        self.cls = cls
-        super().__init__(domain=Domain.ANY, codomain=Domain.ANY,
-                         function=lambda *args, **kwargs: self.cls, name=f"{cls.__name__}_class_grounding")
-
-
-class MDPObjectGrounding(GroundingFunction):
-    """For representing objects, which may have properties that are functions of state."""
-
-    def __init__(self, obj: MDPObject, name: str = None, domain=Domain.ANY):
-        """Initialize an abstract object grounding.
-
-        Args:
-            obj: the MDPObject.
-            name (optional): the name of the object.
-        """
-        self.obj = obj
-        self.true_obj = None
-        self.calculated = False
-
-        super().__init__(function=self.calculate_true_obj, codomain=Domain.OBJECT_VALUE,
-                         domain=domain, name=obj.name+"_grounding" if name is None else name)
-
-    def calculate_true_obj(self, *args, **kwargs):
-        def calculate_attr(attr):
-            if isinstance(attr, GroundingFunction):
-                return attr(*args, **kwargs)
-            else:
-                return attr
-
-        attrs = list(map(lambda x: getattr(self.obj, x), self.obj.attr_list))
-        calculated_attrs = list(map(calculate_attr, attrs))
-
-        self.true_obj = type(self.obj)(*calculated_attrs)
-        self.calculated = True
-        return self.true_obj
-
-    def __getattr__(self, item):
-        if self.calculated:
-            return getattr(self.true_obj, item)
-        else:
-            return getattr(self.obj, item)
-
-    def __eq__(self, other):
-        if isinstance(other, MDPObject):
-            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
-        else:
-            return super().__eq__(other)
-
-    def __hash__(self):
-        return self.obj.__hash__()
-
-    def __repr__(self):
-        return f"<MDPObjectGrounding({self.name})[{self.obj.__repr__()}]>"
-
-
-class MDPObjectAttributeGrounding(GroundingFunction):
-    """For referencing attributes of abstract objects that are *not* in the state."""
-
-    def __init__(self, grounding: GroundingFunction, attribute_chain: List):
-        """Initialize a grounding for referencing abstract object attributes.
-
-        Args:
-            grounding: the MDPObjectGrounding whose attribute you are referencing.
-            attribute_chain: a list of attribute/sub-attributes (e.g. `["color", "red_value"]`)
-        """
-        self.attribute_chain = attribute_chain
-        self.grounding = grounding
-
-        # [assert isinstance(attr, str) for attr in attribute_chain]
-        # for attr in attribute_chain:
-        #     assert isinstance(attr, str)
-        # print(self.grounding)
-        # assert self.grounding.name is not None
-
-        def object_attribute_unwrap(obj, attr_chain):
-            if not hasattr(obj, attr_chain[0]):
-                raise RLangGroundingError(f"Object {obj} does not have attribute {attr_chain[0]}")
-            one_layer_deeper = getattr(obj, attr_chain[0])
-            if len(attr_chain) == 1:
-                return one_layer_deeper
-            else:
-                return object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
-
-        super().__init__(
-            function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
-            codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
-
-    def equals(self, other):
-        # print(self.grounding, other.grounding, self.attribute_chain, other.attribute_chain)
-        # print(type(other))
-        if isinstance(other, MDPObjectAttributeGrounding):
-            gdeq = self.grounding.equals(other.grounding)
-            atrseq = self.attribute_chain == other.attribute_chain
-            # print(gdeq, atrseq)
-            return gdeq and atrseq
-        else:
-            return False
-
-    def __hash__(self):
-        return hash((str(self), self.grounding, str(self.attribute_chain)))
-
-##########################################
-
-
-class Predicate:
-    def __init__(self, function, name=None):
-        self.function = function
-        self.name = name if name else function.__name__
-
-    def __call__(self, *args, **kwargs):
-        return self.function(*args, **kwargs)
-
-
-class PredicateEvaluation(GroundingFunction):
-    def __init__(self, predicate, arguments: List[GroundingFunction]):
-        self.parameterized_action = predicate
-        self.arguments = arguments
-
-        domain = Domain.ANY
-        for arg in arguments:
-            if isinstance(arg, GroundingFunction):
-                domain = domain + arg.domain
-
-        argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
-
-        super().__init__(domain=domain, codomain=Domain.REAL_VALUE+Domain.BOOLEAN,
-                         function=lambda *args, **kwargs:
-                         predicate(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
-                         name=predicate.name + "(" + argnames + ")")
-
-
-class StateObjectAttributeGrounding(GroundingFunction):
-    """For referencing attributes of objects in the state when the state is object-oriented."""
-
-    def __init__(self, attribute_chain: List, domain: Union[str, Domain] = Domain.STATE):
-        """Initialize a grounding for referencing object attributes, when those objects are in the state.
-
-        Args:
-            attribute_chain: a list of attribute/sub-attributes (e.g. `["ball", "color", "red_value"]`)
-            domain: either "state" or "next_state".
-        """
-        self.attribute_chain = attribute_chain
-
-        if isinstance(domain, Domain):
-            domain_arg = domain.name.lower()
-        elif isinstance(domain, str):
-            domain_arg = domain
-            domain = Domain.from_name(domain)
-        else:
-            raise RLangGroundingError(f"Invalid domain argument for StateObjectAttributeGrounding: {type(domain)}")
-
-        if domain is not Domain.STATE and domain is not Domain.NEXT_STATE:
-            raise RLangGroundingError(f"StateObjectAttributeGrounding cannot have domain of type {domain.name}")
-
-        def state_object_attribute_unwrap(state_or_obj, attr_chain):
-            if not hasattr(state_or_obj, attr_chain[0]):
-                raise RLangGroundingError(f"Object {state_or_obj} does not have attribute {attr_chain[0]}")
-            one_layer_deeper = getattr(state_or_obj, attr_chain[0])
-            if len(attr_chain) == 1:
-                return one_layer_deeper
-            else:
-                return state_object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
-
-        super().__init__(
-            function=lambda *args, **kwargs: state_object_attribute_unwrap(kwargs[domain_arg], self.attribute_chain),
-            codomain=Domain.OBJECT_VALUE, domain=domain, name="S." + '.'.join(self.attribute_chain))
-
-    def __hash__(self):
-        return hash(self.__repr__())
-
-    def __repr__(self):
-        return f"<StateObjectAttributeGrounding [S.{'.'.join(self.attribute_chain)}]>"
-
-
 class Factor(GroundingFunction):
     """Represents a factor of the state space. The state is assumed to be a vector."""
 
@@ -630,10 +353,6 @@ class Feature(GroundingFunction):
             name (optional): the name of the feature.
         """
         super().__init__(function=function, name=name if name else f"feature_{fast_uuid()}")
-        
-    # @classmethod
-    # def from_Factor(cls, factor: Factor, name: str = None):
-    #     return cls(function=factor.__call__, name=name)
 
     def __hash__(self):
         return hash(("Feature", self.name))
@@ -642,36 +361,19 @@ class Feature(GroundingFunction):
         return f"<Feature \"{self.name}\">"
     
 
-
 class MarkovFeature(GroundingFunction):
-    # TODO: Implement this
     """Represents a Grounding that is a function of (state, action, next_state)"""
 
     def __init__(self, function: Callable, name: str):
         """
         Args:
             function: a function of (state, action, next_state)
+            name (optional): the name of the feature.
         """
-        super().__init__(domain=Domain.STATE_ACTION_NEXT_STATE, function=function, codomain=Domain.REAL_VALUE,
-                         name=name)
-
-    @classmethod
-    def from_Factor(cls, factor: Factor, name: str = None):
-        return cls(function=factor.__call__, name=name)
-
+        super().__init__(function=function, name=name if name else f"markov_feature_{fast_uuid()}")
+    
     def __repr__(self):
-        return f"<MarkovFeature [{self.domain.name}]->[{self.codomain.name}] \"{self.name}\">"
-
-
-# class QuantifierSpecification:
-#     def __init__(self, cls, quantifier, dot_exp=None):
-#         self.cls = cls
-#         self.quantifier = quantifier
-#         self.dot_exp = dot_exp
-#         self.name = f"{self.quantifier} {self.cls.__name__}"
-
-#     def __repr__(self):
-#         return f"<QuantifierSpecification {self.name}{'.'.join(self.dot_exp) if self.dot_exp else ''}>"
+        return f"<MarkovFeature \"{self.name}\">"
 
 
 class Proposition(GroundingFunction):
@@ -721,6 +423,33 @@ class Goal(GroundingFunction):
         return f"<Goal \"{self.name}\">"
     
 
+class Predicate(GroundingFunction):
+    """Represents a boolean-valued function of an argument (and state [optionally])."""
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state and an argument that evaluates to a bool.
+            name (optional): the name of the predicate.
+        """
+        super().__init__(function=function, name=name if name else f"predicate_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<Predicate \"{self.name}\">"
+    
+
+class ParameterizedSkill(GroundingFunction):
+    """Represents a parameterized skill.
+    The input would be some task parameter, and the output would be a policy parameter or a primitive action.
+    """
+
+    def __init__(self, function: Callable, name: str = None):
+        super().__init__(function, name=name if name else f"parameterized-skill_{fast_uuid()}")
+    
+    def __repr__(self):
+        return f"<ParameterizedSkill \"{self.name}\">"
+    
+
 class Policy(GroundingFunction):
     """Represents a closed-loop policy function"""
 
@@ -734,304 +463,6 @@ class Policy(GroundingFunction):
 
     def __repr__(self):
         return f"<Policy \"{self.name}\">"
-
-
-class ValueFunction(GroundingFunction):
-    """Represents a value function."""
-
-    def __init__(self, function: Callable):
-        super().__init__(domain=Domain.STATE, codomain=Domain.STATE_VALUE, function=function)
-
-
-class ProbabilisticFunction(GroundingFunction):
-    """Represents a function that provides stochastic output.
-
-    """
-
-    def __init__(self, probability: float = 1.0, *args, **kwargs):
-        self._probability = probability
-        super().__init__(*args, **kwargs)
-
-    @property
-    def probability(self):
-        return self._probability
-
-    @probability.setter
-    def probability(self, probability: float):
-        self._probability = probability
-
-    def compose_probability(self, probability: float):
-        self._probability = self._probability * probability
-
-
-class ProbabilityDistribution(MutableMapping):
-    """
-    
-    """
-
-    def __init__(self, distribution=None):
-        if distribution is None:
-            distribution = dict()
-        # for function, v in distribution.items():
-        #     if v < 0.0 or v > 1.0:
-        #         raise RLangGroundingError(f"Must be bounded between 0.0 and 1.0, got {v}")
-
-        self.domain = Domain.ANY
-        self.distribution = distribution
-        self.rng = default_rng()
-        self.update_metadata()
-        self.arg_store = list()
-        self.kwarg_store = dict()
-        self.true_distribution = dict()
-        self.calculated = False
-
-    def calculate_true_distribution(self):
-        pass
-
-    @classmethod
-    def from_single(cls, k, *args, **kwargs):
-        return cls({k: 1.0})
-
-    @classmethod
-    def from_list_eq(cls, ks, *args, **kwargs):
-        sd_dict = dict()
-        for k in ks:
-            sd_dict[k] = 1.0
-        return cls(sd_dict)
-
-    def update_metadata(self):
-        self.calculate_domain()
-
-    def calculate_domain(self):
-        self.domain = Domain.ANY
-        for k, v in self.distribution.items():
-            self.domain += k.domain
-
-    def sample(self):
-        random_variable = self.rng.uniform()
-        offset = 0.0
-        for k, v in self.true_distribution.items():
-            offset += v
-            if random_variable < offset:
-                return k
-
-    def join(self, new_distribution):
-        for k, v in new_distribution.items():
-            if k in self.distribution:
-                self.distribution[k] += v
-            else:
-                self.distribution[k] = v
-                self.domain += k.domain
-
-    def compose_probabilities(self, probability):
-        for k, v in self.distribution.items():
-            self.distribution[k] = v * probability
-
-    def __call__(self, *args, **kwargs):
-        self.arg_store = args
-        self.kwarg_store = kwargs
-        self.calculate_true_distribution()
-        return self
-
-    def __getitem__(self, key: Grounding):
-        if self.calculated:
-            return self.true_distribution[key]
-        else:
-            return self.distribution[key]
-
-    def __setitem__(self, key: Grounding, value: float):
-        self.distribution[key] = value
-        self.update_metadata()
-
-    def __delitem__(self, key: Grounding):
-        del self.distribution[key]
-        self.update_metadata()
-
-    def __iter__(self):
-        if self.calculated:
-            return iter(self.true_distribution)
-        else:
-            return iter(self.distribution)
-
-    def __repr__(self):
-        if self.calculated:
-            return str(self.true_distribution)
-        else:
-            return str(self.distribution)
-
-    def __len__(self):
-        if self.calculated:
-            return len(self.true_distribution)
-        else:
-            return len(self.distribution)
-
-    def __hash__(self):
-        return hash(frozenset(self))
-
-
-class ActionDistribution(ProbabilityDistribution):
-    """Represents a distribution of possible next actions, options, or policies
-
-    Args:
-        distribution: a dictionary of the form {Action/Option/Policy: probability,}
-
-    
-    """
-
-    def calculate_true_distribution(self):
-        # TODO: Might be able to change all isinstance(k__, Action) calls to isinstance(k__, PrimitiveGrounding)
-        def update_dictionary(k_, v_):
-            if isinstance(k_, (dict, ProbabilityDistribution)):
-                for k__, v__ in k_.items():
-                    if isinstance(k__, Action):
-                        update_dictionary(k__, v_ * v__)
-                    else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
-            elif k_ is not None:
-                if isinstance(k_, Action):
-                    a = k_
-                else:
-                    a = Action(k_)
-                if a in true_distribution:
-                    true_distribution[a] += v_
-                else:
-                    true_distribution[a] = v_
-
-        true_distribution = dict()
-        update_dictionary(self.distribution, 1.0)
-        self.true_distribution = true_distribution
-        self.calculated = True
-
-
-class StateDistribution(ProbabilityDistribution):
-    def __init__(self, distribution=None):
-        if distribution:
-            pass
-            # ensure that everything is a State or function of state or something
-        super().__init__(distribution=distribution)
-
-    def calculate_true_distribution(self):
-        def update_dictionary(k_, v_):
-            if isinstance(k_, (dict, ProbabilityDistribution)):
-                for k__, v__ in k_.items():
-                    if isinstance(k__, (VectorState, ObjectOrientedState)):
-                        update_dictionary(k__, v_ * v__)
-                    else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
-            elif k_ is not None:
-                if isinstance(k_, (VectorState, ObjectOrientedState)):
-                    a = k_
-                else:
-                    a = VectorState(k_)
-                if a in true_distribution:
-                    true_distribution[a] += v_
-                else:
-                    true_distribution[a] = v_
-
-        true_distribution = dict()
-        update_dictionary(self.distribution, 1.0)
-        self.true_distribution = true_distribution
-        self.calculated = True
-
-
-class RewardDistribution(ProbabilityDistribution):
-    def __init__(self, distribution=None):
-        if distribution:
-            pass
-            # ensure that everything is a Reward or something
-        super().__init__(distribution=distribution)
-
-    def calculate_true_distribution(self):
-        def update_dictionary(k_, v_):
-            if isinstance(k_, (dict, ProbabilityDistribution)):
-                for k__, v__ in k_.items():
-                    if isinstance(k__, Primitive):
-                        update_dictionary(k__, v_ * v__)
-                    else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
-            elif k_ is not None:
-                if isinstance(k_, Primitive):
-                    a = k_
-                else:
-                    a = Primitive(k_)
-                if a in true_distribution:
-                    true_distribution[a] += v_
-                else:
-                    true_distribution[a] = v_
-
-        true_distribution = dict()
-        update_dictionary(self.distribution, 1.0)
-
-        # print(true_distribution.keys())
-
-        self.true_distribution = true_distribution
-        self.calculated = True
-
-    def expected(self):
-        expected_reward = 0.0
-        for k, v in self.true_distribution.items():
-            expected_reward += k * v
-
-        return expected_reward
-
-    @classmethod
-    def from_list_eq(cls, ks, *args, **kwargs):
-        numeric_reward = 0.0
-        sd_dict = dict()
-        for k in ks:
-            if isinstance(k, int):
-                numeric_reward += k
-            else:
-                if k in sd_dict:
-                    sd_dict[k] += 1.0
-                else:
-                    sd_dict[k] = 1.0
-        # sd_dict[RewardFunction(lambda *args, **kwargs: numeric_reward, domain=Domain.ANY)] = 1.0
-        return cls(sd_dict)
-
-    def __call__(self, *args, **kwargs):
-        super().__call__(*args, **kwargs)
-        return self.expected()
-
-
-class GroundingDistribution(ProbabilityDistribution):
-    def __init__(self, grounding: Grounding, distribution=None, complete=False):
-        if distribution:
-            pass
-            # ensure that everything is a groundingfunction or something
-        self.grounding = grounding
-        self.complete = complete
-        super().__init__(distribution=distribution)
-
-    def calculate_true_distribution(self):
-        def update_dictionary(k_, v_):
-            if isinstance(k_, (dict, ProbabilityDistribution)):
-                for k__, v__ in k_.items():
-                    if isinstance(k__, (Primitive, MDPObject)):
-                        update_dictionary(k__, v_ * v__)
-                    else:
-                        update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
-            elif k_ is not None:
-                if isinstance(k_, (Primitive, MDPObject)):
-                    a = k_
-                else:
-                    a = Primitive(k_)
-                if a in true_distribution:
-                    true_distribution[a] += v_
-                else:
-                    true_distribution[a] = v_
-
-        true_distribution = dict()
-        update_dictionary(self.distribution, 1.0)
-        self.true_distribution = true_distribution
-        self.calculated = True
-
-    @classmethod
-    def from_list_eq(cls, ks, *args, **kwargs):
-        sd_dict = dict()
-        for k in ks:
-            sd_dict[k] = 1.0
-        return cls(args[0], sd_dict)
 
 
 class Option(Grounding):
@@ -1082,95 +513,95 @@ class Option(Grounding):
         return f"<Option \"{self.name}\" (i:{self.initiation}, pi:{self.policy}, b:{self.termination})>"
     
 
-class Plan(Grounding):
-    """Represents an open-loop policy"""
-    def __init__(self, function: Callable = None, name: str = None):
-        self.function = function
-        super().__init__(name=name)
+# class Plan(Grounding):
+#     """Represents an open-loop policy"""
+#     def __init__(self, function: Callable = None, name: str = None):
+#         self.function = function
+#         super().__init__(name=name)
 
-    def reset(self):
-        pass
+#     def reset(self):
+#         pass
 
-    def __call__(self, *args, **kwargs):
-        if self.function is None:
-            raise RLangGroundingError("Plan function is not defined")
-        return self.function(*args, **kwargs)
+#     def __call__(self, *args, **kwargs):
+#         if self.function is None:
+#             raise RLangGroundingError("Plan function is not defined")
+#         return self.function(*args, **kwargs)
 
-    def __repr__(self):
-        if self.name:
-            return f"<Plan \"{self.name}\">"
-        else:
-            return f"<Plan unnamed>"
-
-
-class IteratedPlan(Plan):
-    """One kind of plan implementation"""
-
-    def __init__(self, plan_steps, name: str = None):
-        self.plan_steps = plan_steps
-        super().__init__(function=self.__call__, name=name)
-        self.i = 0
-
-    def reset(self):
-        self.i = 0
-        for p in self.plan_steps:
-            if isinstance(p, PlanExecution):
-                p.plan.reset()
-            elif isinstance(p, IteratedPlan):
-                p.reset()
-
-    def __call__(self, *args, **kwargs):
-        if self.i >= len(self.plan_steps):
-            return None
-        action = self.plan_steps[self.i]
-        # print(action)
-        if isinstance(action, PlanExecution):
-            next_action = action(*args, **kwargs)
-            if next_action is None:
-                action.plan.reset()
-                self.i += 1
-                return self(*args, **kwargs)
-            else:
-                return next_action
-        else:
-            # print(action)
-            # print(type(action))
-            # print(self.i)
-            # print(action(*args, **kwargs))
-            self.i += 1
-            # if isinstance(action, ActionDistribution):
-            #     print("returning")
-            #     return action
-            # else:
-            return action(*args, **kwargs)
-
-    def __repr__(self):
-        if self.name:
-            return f"<IteratedPlan \"{self.name}\">"
-        else:
-            return f"<IteratedPlan unnamed>"
+#     def __repr__(self):
+#         if self.name:
+#             return f"<Plan \"{self.name}\">"
+#         else:
+#             return f"<Plan unnamed>"
 
 
-class PlanExecution(GroundingFunction):
-    def __init__(self, plan, arguments: List[GroundingFunction]=None):
-        self.plan = plan
-        if arguments is None:
-            arguments = []
-        self.arguments = arguments
+# class IteratedPlan(Plan):
+#     """One kind of plan implementation"""
 
-        domain = Domain.ANY
-        for arg in arguments:
-            domain = domain + arg.domain
+#     def __init__(self, plan_steps, name: str = None):
+#         self.plan_steps = plan_steps
+#         super().__init__(function=self.__call__, name=name)
+#         self.i = 0
 
-        argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
+#     def reset(self):
+#         self.i = 0
+#         for p in self.plan_steps:
+#             if isinstance(p, PlanExecution):
+#                 p.plan.reset()
+#             elif isinstance(p, IteratedPlan):
+#                 p.reset()
 
-        super().__init__(domain=domain, codomain=Domain.ACTION,
-                         function=lambda *args, **kwargs:
-                         self.plan(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
-                         name=plan.name + "(" + argnames + ")")
+#     def __call__(self, *args, **kwargs):
+#         if self.i >= len(self.plan_steps):
+#             return None
+#         action = self.plan_steps[self.i]
+#         # print(action)
+#         if isinstance(action, PlanExecution):
+#             next_action = action(*args, **kwargs)
+#             if next_action is None:
+#                 action.plan.reset()
+#                 self.i += 1
+#                 return self(*args, **kwargs)
+#             else:
+#                 return next_action
+#         else:
+#             # print(action)
+#             # print(type(action))
+#             # print(self.i)
+#             # print(action(*args, **kwargs))
+#             self.i += 1
+#             # if isinstance(action, ActionDistribution):
+#             #     print("returning")
+#             #     return action
+#             # else:
+#             return action(*args, **kwargs)
 
-    def __repr__(self):
-        return f"<PlanExecution of {self.plan} with {self.arguments}>"
+#     def __repr__(self):
+#         if self.name:
+#             return f"<IteratedPlan \"{self.name}\">"
+#         else:
+#             return f"<IteratedPlan unnamed>"
+
+
+# class PlanExecution(GroundingFunction):
+#     def __init__(self, plan, arguments: List[GroundingFunction]=None):
+#         self.plan = plan
+#         if arguments is None:
+#             arguments = []
+#         self.arguments = arguments
+
+#         domain = Domain.ANY
+#         for arg in arguments:
+#             domain = domain + arg.domain
+
+#         argnames = ", ".join([arg.name if arg.name is not None else "unk" for arg in arguments])
+
+#         super().__init__(domain=domain, codomain=Domain.ACTION,
+#                          function=lambda *args, **kwargs:
+#                          self.plan(*[arg(*args, **kwargs) for arg in self.arguments], **kwargs),
+#                          name=plan.name + "(" + argnames + ")")
+
+#     def __repr__(self):
+#         return f"<PlanExecution of {self.plan} with {self.arguments}>"
 
 # class Plan(ProbabilisticFunction):
 #     """THIS DOES NOT WORK YET
@@ -1250,12 +681,6 @@ class TransitionFunction(GroundingFunction):
         """
         super().__init__(function=function, name=name if name else f"transition-function_{fast_uuid()}")
 
-    # @classmethod
-    # def from_state_distribution(cls, k):
-    #     if not isinstance(k, StateDistribution):
-    #         raise RLangGroundingError(f"Expecting a StateDistribution, got {type(k)}")
-    #     return cls(function=k.__call__, domain=k.domain
-
     def __repr__(self):
         return f"<TransitionFunction \"{self.name}\">"
     
@@ -1273,6 +698,21 @@ class RewardFunction(GroundingFunction):
 
     def __repr__(self):
         return f"<RewardFunction \"{self.name}\">"
+    
+class ValueFunction(GroundingFunction):
+    """Represents a value function."""
+    # TODO: We may want to include a marker to indicate whether the value function is a state value function or a state-action value function
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state (and action [optionally]) that returns a (distribution over) values.
+            name (optional): the name of the value function.
+        """
+        super().__init__(function=function, name=name if name else f"value-function_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<ValueFunction \"{self.name}\">"
 
 
 class Prediction(GroundingFunction):
@@ -1292,45 +732,31 @@ class Prediction(GroundingFunction):
         self.grounding = grounding
         super().__init__(function=function, name=name if name else f"prediction_{fast_uuid()}")
 
-    # @classmethod
-    # def from_grounding_distribution(cls, grounding: Grounding, function: GroundingDistribution, complete=False):
-    #     """
-    #     Args:
-    #         grounding: The grounding that is predicted
-    #         function: The prediction function
-    #     """
-    #     if not isinstance(function, GroundingDistribution):
-    #         raise RLangGroundingError(f"Expecting a GroundingDistribution, got {type(function)}")
-    #     return cls(grounding=grounding, function=function.__call__, domain=function.domain, complete=complete)
-
     def __repr__(self):
         return f"<Prediction \"{self.name}\" for Grounding \"{self.grounding.name}\">"
 
 
 class Effect(Grounding):
-    """Represents an effect of an action.
+    """Represents the effect of an action.
 
-    Contains an optional list of RewardFunctions, TransitionFunctions, and Predictions.
+    Contains an optional list of RewardFunctions, ValueFunctions, TransitionFunctions, and Predictions.
     """
 
-    def __init__(self, reward_functions: List[RewardFunction] = [], transition_functions: List[TransitionFunction] = [],
+    def __init__(self, reward_functions: List[RewardFunction] = [], value_functions: List[ValueFunction] = [], transition_functions: List[TransitionFunction] = [],
                  predictions: List[Prediction] = [], name: str = None):
         """
         Args:
             reward_functions: a list of RewardFunctions.
+            value_functions: a list of ValueFunctions.
             transition_functions: a list of TransitionFunctions.
             predictions: a list of Predictions.
             name (optional): the name of the effect.
         """
         self.reward_functions = reward_functions
+        self.value_functions = value_functions
         self.transition_functions = transition_functions
         self.predictions = predictions
         super().__init__(name=name if name else f"effect_{fast_uuid()}")
-
-    # def shallow_copy(self):
-    #     """"""
-    #     return Effect(reward_function=self.reward_function, predictions=self.predictions,
-    #                   transition_function=self.transition_function)
 
     # def compose_probabilities(self, probability: float):
     #     self.probability = self.probability * probability
@@ -1357,7 +783,166 @@ class Effect(Grounding):
     #     return dict(prediction_dict)
 
     def __repr__(self):
-        if self.name:
-            return f"<Effect \"{self.name}\" with P({self.probability})>"
+        return f"<Effect \"{self.name}\">"
+
+
+
+class StateObjectAttributeGrounding(GroundingFunction):
+    """For referencing attributes of objects in the state when the state is object-oriented."""
+
+    def __init__(self, attribute_chain: List, domain: Union[str, Domain] = Domain.STATE):
+        """Initialize a grounding for referencing object attributes, when those objects are in the state.
+
+        Args:
+            attribute_chain: a list of attribute/sub-attributes (e.g. `["ball", "color", "red_value"]`)
+            domain: either "state" or "next_state".
+        """
+        self.attribute_chain = attribute_chain
+
+        if isinstance(domain, Domain):
+            domain_arg = domain.name.lower()
+        elif isinstance(domain, str):
+            domain_arg = domain
+            domain = Domain.from_name(domain)
         else:
-            return f"<Effect with P({self.probability})>"
+            raise RLangGroundingError(f"Invalid domain argument for StateObjectAttributeGrounding: {type(domain)}")
+
+        if domain is not Domain.STATE and domain is not Domain.NEXT_STATE:
+            raise RLangGroundingError(f"StateObjectAttributeGrounding cannot have domain of type {domain.name}")
+
+        def state_object_attribute_unwrap(state_or_obj, attr_chain):
+            if not hasattr(state_or_obj, attr_chain[0]):
+                raise RLangGroundingError(f"Object {state_or_obj} does not have attribute {attr_chain[0]}")
+            one_layer_deeper = getattr(state_or_obj, attr_chain[0])
+            if len(attr_chain) == 1:
+                return one_layer_deeper
+            else:
+                return state_object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
+
+        super().__init__(
+            function=lambda *args, **kwargs: state_object_attribute_unwrap(kwargs[domain_arg], self.attribute_chain),
+            codomain=Domain.OBJECT_VALUE, domain=domain, name="S." + '.'.join(self.attribute_chain))
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+    def __repr__(self):
+        return f"<StateObjectAttributeGrounding [S.{'.'.join(self.attribute_chain)}]>"
+    
+class MDPClassGrounding(GroundingFunction):
+    def __init__(self, cls):
+        self.cls = cls
+        super().__init__(domain=Domain.ANY, codomain=Domain.ANY,
+                         function=lambda *args, **kwargs: self.cls, name=f"{cls.__name__}_class_grounding")
+
+
+class MDPObjectGrounding(GroundingFunction):
+    """For representing objects, which may have properties that are functions of state."""
+
+    def __init__(self, obj: MDPObject, name: str = None, domain=Domain.ANY):
+        """Initialize an abstract object grounding.
+
+        Args:
+            obj: the MDPObject.
+            name (optional): the name of the object.
+        """
+        self.obj = obj
+        self.true_obj = None
+        self.calculated = False
+
+        super().__init__(function=self.calculate_true_obj, codomain=Domain.OBJECT_VALUE,
+                         domain=domain, name=obj.name+"_grounding" if name is None else name)
+
+    def calculate_true_obj(self, *args, **kwargs):
+        def calculate_attr(attr):
+            if isinstance(attr, GroundingFunction):
+                return attr(*args, **kwargs)
+            else:
+                return attr
+
+        attrs = list(map(lambda x: getattr(self.obj, x), self.obj.attr_list))
+        calculated_attrs = list(map(calculate_attr, attrs))
+
+        self.true_obj = type(self.obj)(*calculated_attrs)
+        self.calculated = True
+        return self.true_obj
+
+    def __getattr__(self, item):
+        if self.calculated:
+            return getattr(self.true_obj, item)
+        else:
+            return getattr(self.obj, item)
+
+    def __eq__(self, other):
+        if isinstance(other, MDPObject):
+            return Proposition(function=lambda *args, **kwargs: self(*args, **kwargs) == other, domain=self.domain)
+        else:
+            return super().__eq__(other)
+
+    def __hash__(self):
+        return self.obj.__hash__()
+
+    def __repr__(self):
+        return f"<MDPObjectGrounding({self.name})[{self.obj.__repr__()}]>"
+
+
+class MDPObjectAttributeGrounding(GroundingFunction):
+    """For referencing attributes of abstract objects that are *not* in the state."""
+
+    def __init__(self, grounding: GroundingFunction, attribute_chain: List):
+        """Initialize a grounding for referencing abstract object attributes.
+
+        Args:
+            grounding: the MDPObjectGrounding whose attribute you are referencing.
+            attribute_chain: a list of attribute/sub-attributes (e.g. `["color", "red_value"]`)
+        """
+        self.attribute_chain = attribute_chain
+        self.grounding = grounding
+
+        # [assert isinstance(attr, str) for attr in attribute_chain]
+        # for attr in attribute_chain:
+        #     assert isinstance(attr, str)
+        # print(self.grounding)
+        # assert self.grounding.name is not None
+
+        def object_attribute_unwrap(obj, attr_chain):
+            if not hasattr(obj, attr_chain[0]):
+                raise RLangGroundingError(f"Object {obj} does not have attribute {attr_chain[0]}")
+            one_layer_deeper = getattr(obj, attr_chain[0])
+            if len(attr_chain) == 1:
+                return one_layer_deeper
+            else:
+                return object_attribute_unwrap(one_layer_deeper, attr_chain[1:])
+
+        super().__init__(
+            function=lambda *args, **kwargs: object_attribute_unwrap(grounding(*args, **kwargs), self.attribute_chain),
+            codomain=Domain.OBJECT_VALUE, domain=grounding.domain, name=self.grounding.name + '.' + '.'.join(self.attribute_chain))
+
+    def equals(self, other):
+        # print(self.grounding, other.grounding, self.attribute_chain, other.attribute_chain)
+        # print(type(other))
+        if isinstance(other, MDPObjectAttributeGrounding):
+            gdeq = self.grounding.equals(other.grounding)
+            atrseq = self.attribute_chain == other.attribute_chain
+            # print(gdeq, atrseq)
+            return gdeq and atrseq
+        else:
+            return False
+
+    def __hash__(self):
+        return hash((str(self), self.grounding, str(self.attribute_chain)))
+
+
+class IdentityGrounding(GroundingFunction):
+    """Grounding for representing S, A, and S'."""
+
+    def __init__(self, domain: Union[str, Domain]):
+        """Initialize a new IdentityGrounding."""
+        if not isinstance(domain, str):
+            domain = domain.name.lower()
+        # Does this work properly?
+        super().__init__(domain=domain, codomain=domain,
+                         function=lambda *args, **kwargs: kwargs[domain])
+
+    def __repr__(self):
+        return f"<IdentityGrounding {self.codomain.name}>"
