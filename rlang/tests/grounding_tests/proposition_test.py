@@ -35,5 +35,8 @@ class PropositionTest(unittest.TestCase):
 
 
         # I'm not really sure what this means
-        self.assertEqual(type(factor_ind3 <= factor_ind4), Proposition)
+        self.assertEqual(type(factor_ind3 >= factor_ind4), Proposition)
         # self.assertEqual(type(x >= y), Proposition)
+        some_prop = factor_ind3 >= factor_ind4
+        self.assertFalse(some_prop(state=state))
+        
