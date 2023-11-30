@@ -46,19 +46,15 @@ class Grounding(object):
 
 
 class GroundingFunction(Grounding):
-    """Parent class for groundings that are functions from MDP components. In general, only the children of this class should be used.
+    """Parent class for groundings that are functions representing MDP components.
+    In general, only the children of this class should be used.
 
-    All instances of GroundingFunction have a specified domain and codomain.
-
-    TODO: Re-do the following documentation.
     They are invoked using keyword arguments that correspond to their domain::
-
-        from rlang import Domain
 
         def can_move_fun(*args, **kwargs):
             return not kwargs['state'] in pit_states and kwargs['action'] in move_actions
 
-        can_move = GroundingFunction(domain=Domain.STATE_ACTION, codomain=Domain.BOOLEAN, function=can_move_fun)
+        can_move = GroundingFunction(function=can_move_fun, name="can_move")
         can_move(state=0, action=1)
         >> True
 
@@ -82,7 +78,9 @@ class GroundingFunction(Grounding):
         return self
     
     def namewrapped_function(self, *args, **kwargs):
-        """TODO: Some docstring"""
+        """Wrapper function for self.function that returns the value of an argument
+        if the current function is in the arguments. Otherwise, it evaluates the current
+        object's function with the given arguments."""
         if self.name in kwargs:
             return kwargs[self.name]
         return self.function(*args, **kwargs)
