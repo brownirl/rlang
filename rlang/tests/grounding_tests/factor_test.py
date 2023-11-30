@@ -12,7 +12,7 @@ class FactorTest(unittest.TestCase):
 
         # Test instantiation of factor with int
         factor_ind0 = Factor(0, "factor")
-        self.assertEqual([-1], factor_ind0(state=state))
+        self.assertEqual(-1, factor_ind0(state=state))
 
         # Test instantiation of factor with tuple
         factor_ind2to5 = Factor((2,5), "factor")

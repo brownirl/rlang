@@ -49,13 +49,20 @@ class GroundingFunction(Grounding):
     """Parent class for groundings that are functions representing MDP components.
     In general, only the children of this class should be used.
 
-    They are invoked using keyword arguments that correspond to their domain::
+    All GroundingFunctions are invoked using keyword arguments that correspond to their domain::
 
         def can_move_fun(*args, **kwargs):
             return not kwargs['state'] in pit_states and kwargs['action'] in move_actions
 
-        can_move = GroundingFunction(function=can_move_fun, name="can_move")
+        can_move = Proposition(function=can_move_fun, name="can_move")
         can_move(state=0, action=1)
+        >> True
+    
+    They may also be invoked using arguments from the constituency tree that generated the grounding (namewrapped functionality)::
+
+        can_move = Proposition(function=can_move_fun, name="can_move")
+        can_move_without_dying = can_move & ~is_pit
+        can_move_without_dying(can_move=True, is_pit=False)
         >> True
 
     """
@@ -78,9 +85,9 @@ class GroundingFunction(Grounding):
         return self
     
     def namewrapped_function(self, *args, **kwargs):
-        """Wrapper function for self.function that returns the value of an argument
-        if the current function is in the arguments. Otherwise, it evaluates the current
-        object's function with the given arguments."""
+        """This is a wrapper function for each GroundingFunction that checks whether
+        the user has already specified the value for this function in the arguments.
+        It enables the namewrapped functionality of GroundingFunctions."""
         if self.name in kwargs:
             return kwargs[self.name]
         return self.function(*args, **kwargs)
@@ -117,6 +124,20 @@ class GroundingFunction(Grounding):
         if isinstance(other, (np.ndarray, int, float)):
             return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) <= other)
         raise RLangGroundingError(message=f"Cannot '<=' a {type(self)} and a {type(other)}")
+        
+    def __gt__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) > other.namewrapped_function(*args, **kwargs))
+        if isinstance(other, (np.ndarray, int, float)):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) > other)
+        raise RLangGroundingError(message=f"Cannot '>' a {type(self)} and a {type(other)}")
+
+    def __ge__(self, other):
+        if isinstance(other, GroundingFunction):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) >= other.namewrapped_function(*args, **kwargs))
+        if isinstance(other, (np.ndarray, int, float)):
+            return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) >= other)
+        raise RLangGroundingError(message=f"Cannot '>=' a {type(self)} and a {type(other)}")
 
     def __eq__(self, other):
         if isinstance(other, GroundingFunction):
@@ -305,9 +326,17 @@ class Factor(GroundingFunction):
         if any([i >= len(state) for i in self.indices]):
             raise RLangGroundingError(f"Factor {self.name} cannot index state of length {len(state)} with out-of-range indices {self.indices}")
         if isinstance(state, np.ndarray):
-            return state[self.indices]
+            factor_values = state[self.indices]
+            if len(factor_values) == 1:
+                return factor_values[0]
+            else:
+                return factor_values
         elif isinstance(state, list):
-            return [state[i] for i in self.indices]
+            factor_values = [state[i] for i in self.indices]
+            if len(factor_values) == 1:
+                return factor_values[0]
+            else:
+                return factor_values
                     
     def get_factor_from_indexer(self, item):
         """Helper function for indexing a Factor.

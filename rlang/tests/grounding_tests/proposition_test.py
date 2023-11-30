@@ -68,17 +68,17 @@ class PropositionTest(unittest.TestCase):
 
 
         # Tests the name wrapping functionality of Proposition with '<' operator
-        # feature_ind0 = Feature(lambda state: state[0]*3, "feature_ind0")
-        # factor_ind7 = Factor(7, "factor_ind7")
+        feature_ind0 = Feature(lambda state: state[0]*3, "feature_ind0")
+        factor_ind7 = Factor(7, "factor_ind7")
 
-        # proposition = feature_ind0 < factor_ind7
-        # self.assertTrue(proposition(state=state))
+        proposition = feature_ind0 < factor_ind7
+        self.assertTrue(proposition(state=state))
 
         # Tests the name wrapping functionality of Proposition with '>' operator
-        # feature_ind0 = Feature(lambda state: state[2]*4, "feature_ind0")
+        feature_ind0 = Feature(lambda state: state[2]*4, "feature_ind0")
         
-        # proposition = feature_ind0 > 12
-        # self.assertTrue(proposition(state=state))
+        proposition = feature_ind0 > 12
+        self.assertTrue(proposition(state=state))
 
         # Tests the name wrapping functionality of Proposition with '<=' operator
         factor_ind4 = Factor(4, "factor_ind4")
@@ -97,12 +97,12 @@ class PropositionTest(unittest.TestCase):
         self.assertTrue(proposition(state=state))
 
         # Tests the name wrapping functionality of Proposition with '>=' operator
-        # factor_ind7 = Factor(7, "factor_ind7")
-        # factor_ind8 = Factor(8, "factor_ind8")
-        # feature_ind0mul = Feature(lambda state: state[0]*8, "feature_ind0mul")
+        factor_ind7 = Factor(7, "factor_ind7")
+        factor_ind8 = Factor(8, "factor_ind8")
+        feature_ind0mul = Feature(lambda state: state[0]*8, "feature_ind0mul")
 
-        # proposition = feature_ind0mul >= factor_ind7 & feature_ind0mul >= factor_ind8
-        # self.assertTrue(proposition(state=state))
+        proposition = feature_ind0mul >= factor_ind7 & feature_ind0mul >= factor_ind8
+        self.assertTrue(proposition(state=state))
 
         # Tests the name wrapping functionality of Proposition with '!=' operator
         factor_ind2 = Factor(2, "factor_ind2")
