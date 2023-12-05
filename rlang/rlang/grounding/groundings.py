@@ -275,7 +275,25 @@ class GroundingFunction(Grounding):
 
 
 class Factor(GroundingFunction):
-    """Represents a factor of the state space. The state is assumed to be a vector."""
+    """
+    Represents a factor of the state space. The state is assumed to be a vector::
+
+        import numpy as np
+
+        state = np.array([3,2,5,1,9])
+        factor_ind3 = Factor(3, "factor_ind3")
+        factor_ind_indices = Factor([0,2,4], "factor_ind_indices")
+        factor_ind_tuple = Factor((2,4), "factor_ind_tuple")
+
+        factor_ind3(state=state)
+        >> [5]
+
+        factor_ind_indices(state=state)
+        >> [3,5,9]
+
+        factor_ind_tuple(state=state)
+        >> [5,1]
+    """
 
     def __init__(self, state_indexer: Union[int, tuple, list], name: str = None):
         """
@@ -384,7 +402,28 @@ class Factor(GroundingFunction):
 
 
 class Feature(GroundingFunction):
-    """Represents a feature of the state space, i.e. any function of the state."""
+    """
+    Represents a feature of the state space, i.e. any function of the state::
+
+        import numpy as np
+
+        state = np.array([3,2,5,1,9])
+        feature_mul = Feature(lambda state: state[0]*3, "feature_mul")
+        feature_add = Feature(lambda state: state[2]+state[3], "feature_add")
+        feature_add_mul = feature_mul-feature_add
+        feature_add_mul.nameit("feature_add_mul")
+
+        feature_mul(state=state)
+        >> 9
+
+        feature_add(state=state)
+        >> 7
+
+        feature_add_mul(state=state)
+        >> 2
+
+    """
+    
 
     def __init__(self, function: Callable, name: str = None):
         """
@@ -419,7 +458,24 @@ class MarkovFeature(GroundingFunction):
 class Proposition(GroundingFunction):
     """Represents a function which has a truth value.
 
-    A Proposition is a feature with a codomain of True or False.
+    A Proposition is a feature with a codomain of True or False.::
+
+        import numpy as np
+
+        state = np.array([3,2,5,1,9])
+        feature_ind0 = Feature(lambda state:state[0]*2, "feature_ind0")
+        feature_ind1 = Feature(lambda state:state[1]*3, "feature_iond1")
+
+        proposition1 = Proposition(lambda state: state[0]+state[1] == state[2])
+
+        proposition2 = proposition1 & feature_ind0 == feature_ind1
+
+        proposition2(state=state)
+        >> True
+
+        proposition(proposition1=False, feature_ind0=6, feature_ind1=6)
+        >> False
+
     """
 
     def __init__(self, function: Callable, name: str = None):
@@ -552,6 +608,80 @@ class Option(Grounding):
     def __repr__(self):
         return f"<Option \"{self.name}\" (i:{self.initiation}, pi:{self.policy}, b:{self.termination})>"
     
+
+
+class TransitionFunction(GroundingFunction):
+    """Represents a transition function."""
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state and action that returns a (distribution over) next states.
+            name (optional): the name of the transition function.
+        """
+        super().__init__(function=function, name=name if name else f"transition-function_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<TransitionFunction \"{self.name}\">"
+    
+
+class RewardFunction(GroundingFunction):
+    """Represents a reward function."""
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state and action that returns a (distribution over) rewards.
+            name (optional): the name of the reward function.
+        """
+        super().__init__(function=function, name=name if name else f"reward-function_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<RewardFunction \"{self.name}\">"
+    
+class ValueFunction(GroundingFunction):
+    """Represents a value function."""
+    # TODO: We may want to include a marker to indicate whether the value function is a state value function or a state-action value function
+
+    def __init__(self, function: Callable, name: str = None):
+        """
+        Args:
+            function: a function of state (and action [optionally]) that returns a (distribution over) values.
+            name (optional): the name of the value function.
+        """
+        super().__init__(function=function, name=name if name else f"value-function_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<ValueFunction \"{self.name}\">"
+
+
+class Prediction(GroundingFunction):
+    """Represents a prediction of the value of another GroundingFunction.
+
+    Used to express the predicted value of another RLang object.
+    Limited to GroundingFunctions with a domain of (S) or (S, A).
+    """
+
+    def __init__(self, grounding: GroundingFunction, function: Callable, name: str = None):
+        """
+        Args:
+            grounding (GroundingFunction): the grounding whom's value we are predicting
+            function: a function that predicts the value of grounding
+            name (Optional[str]): the name of the prediction
+        """
+        self.grounding = grounding
+        super().__init__(function=function, name=name if name else f"prediction_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<Prediction \"{self.name}\" for Grounding \"{self.grounding.name}\">"
+
+
+
+
+
+
+
+#FUNCTIONS THAT NEED TO BE REVIEWED
 
 # class Plan(Grounding):
 #     """Represents an open-loop policy"""
@@ -710,71 +840,6 @@ class Option(Grounding):
 #             return self.plan[i]
 
 
-class TransitionFunction(GroundingFunction):
-    """Represents a transition function."""
-
-    def __init__(self, function: Callable, name: str = None):
-        """
-        Args:
-            function: a function of state and action that returns a (distribution over) next states.
-            name (optional): the name of the transition function.
-        """
-        super().__init__(function=function, name=name if name else f"transition-function_{fast_uuid()}")
-
-    def __repr__(self):
-        return f"<TransitionFunction \"{self.name}\">"
-    
-
-class RewardFunction(GroundingFunction):
-    """Represents a reward function."""
-
-    def __init__(self, function: Callable, name: str = None):
-        """
-        Args:
-            function: a function of state and action that returns a (distribution over) rewards.
-            name (optional): the name of the reward function.
-        """
-        super().__init__(function=function, name=name if name else f"reward-function_{fast_uuid()}")
-
-    def __repr__(self):
-        return f"<RewardFunction \"{self.name}\">"
-    
-class ValueFunction(GroundingFunction):
-    """Represents a value function."""
-    # TODO: We may want to include a marker to indicate whether the value function is a state value function or a state-action value function
-
-    def __init__(self, function: Callable, name: str = None):
-        """
-        Args:
-            function: a function of state (and action [optionally]) that returns a (distribution over) values.
-            name (optional): the name of the value function.
-        """
-        super().__init__(function=function, name=name if name else f"value-function_{fast_uuid()}")
-
-    def __repr__(self):
-        return f"<ValueFunction \"{self.name}\">"
-
-
-class Prediction(GroundingFunction):
-    """Represents a prediction of the value of another GroundingFunction.
-
-    Used to express the predicted value of another RLang object.
-    Limited to GroundingFunctions with a domain of (S) or (S, A).
-    """
-
-    def __init__(self, grounding: GroundingFunction, function: Callable, name: str = None):
-        """
-        Args:
-            grounding (GroundingFunction): the grounding whom's value we are predicting
-            function: a function that predicts the value of grounding
-            name (Optional[str]): the name of the prediction
-        """
-        self.grounding = grounding
-        super().__init__(function=function, name=name if name else f"prediction_{fast_uuid()}")
-
-    def __repr__(self):
-        return f"<Prediction \"{self.name}\" for Grounding \"{self.grounding.name}\">"
-
 
 class Effect(Grounding):
     """Represents the effect of an action.
@@ -824,7 +889,6 @@ class Effect(Grounding):
 
     def __repr__(self):
         return f"<Effect \"{self.name}\">"
-
 
 
 class StateObjectAttributeGrounding(GroundingFunction):
@@ -986,3 +1050,4 @@ class IdentityGrounding(GroundingFunction):
 
     def __repr__(self):
         return f"<IdentityGrounding {self.codomain.name}>"
+
