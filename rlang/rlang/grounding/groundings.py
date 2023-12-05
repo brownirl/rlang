@@ -676,7 +676,30 @@ class Prediction(GroundingFunction):
         return f"<Prediction \"{self.name}\" for Grounding \"{self.grounding.name}\">"
 
 
+class Effect(Grounding):
+    """Represents the effect of an action.
 
+    Contains an optional list of RewardFunctions, ValueFunctions, TransitionFunctions, and Predictions.
+    """
+
+    def __init__(self, reward_functions: List[RewardFunction] = [], value_functions: List[ValueFunction] = [], transition_functions: List[TransitionFunction] = [],
+                 predictions: List[Prediction] = [], name: str = None):
+        """
+        Args:
+            reward_functions: a list of RewardFunctions.
+            value_functions: a list of ValueFunctions.
+            transition_functions: a list of TransitionFunctions.
+            predictions: a list of Predictions.
+            name (optional): the name of the effect.
+        """
+        self.reward_functions = reward_functions
+        self.value_functions = value_functions
+        self.transition_functions = transition_functions
+        self.predictions = predictions
+        super().__init__(name=name if name else f"effect_{fast_uuid()}")
+
+    def __repr__(self):
+        return f"<Effect \"{self.name}\">"
 
 
 
@@ -841,56 +864,6 @@ class Prediction(GroundingFunction):
 
 
 
-class Effect(Grounding):
-    """Represents the effect of an action.
-
-    Contains an optional list of RewardFunctions, ValueFunctions, TransitionFunctions, and Predictions.
-    """
-
-    def __init__(self, reward_functions: List[RewardFunction] = [], value_functions: List[ValueFunction] = [], transition_functions: List[TransitionFunction] = [],
-                 predictions: List[Prediction] = [], name: str = None):
-        """
-        Args:
-            reward_functions: a list of RewardFunctions.
-            value_functions: a list of ValueFunctions.
-            transition_functions: a list of TransitionFunctions.
-            predictions: a list of Predictions.
-            name (optional): the name of the effect.
-        """
-        self.reward_functions = reward_functions
-        self.value_functions = value_functions
-        self.transition_functions = transition_functions
-        self.predictions = predictions
-        super().__init__(name=name if name else f"effect_{fast_uuid()}")
-
-    # def compose_probabilities(self, probability: float):
-    #     self.probability = self.probability * probability
-    #     if self.reward_function:
-    #         self.reward_function = RewardFunction.from_reward_distribution(
-    #             RewardDistribution({self.reward_function: probability}))
-        # if self.transition_function:
-        #     self.transition_function = TransitionFunction.from_state_distribution(
-        #         StateDistribution({self.transition_function: probability}))
-    #     new_predictions = list()
-    #     for p in self.predictions:
-    #         new_predictions.append(
-    #             Prediction.from_grounding_distribution(p.grounding,
-    #                                                    GroundingDistribution(p.grounding, {p: probability}),
-    #                                                    complete=p.complete))
-    #     self.predictions = new_predictions
-
-    # @property
-    # def prediction_dict(self):
-    #     prediction_dict = defaultdict(list)
-    #     for p in self.predictions:
-    #         # print(prediction_dict[p.grounding.name])
-    #         prediction_dict[p.grounding.name].append(p)
-    #     return dict(prediction_dict)
-
-    def __repr__(self):
-        return f"<Effect \"{self.name}\">"
-
-
 class StateObjectAttributeGrounding(GroundingFunction):
     """For referencing attributes of objects in the state when the state is object-oriented."""
 
@@ -1035,19 +1008,3 @@ class MDPObjectAttributeGrounding(GroundingFunction):
 
     def __hash__(self):
         return hash((str(self), self.grounding, str(self.attribute_chain)))
-
-
-class IdentityGrounding(GroundingFunction):
-    """Grounding for representing S, A, and S'."""
-
-    def __init__(self, domain: Union[str, Domain]):
-        """Initialize a new IdentityGrounding."""
-        if not isinstance(domain, str):
-            domain = domain.name.lower()
-        # Does this work properly?
-        super().__init__(domain=domain, codomain=domain,
-                         function=lambda *args, **kwargs: kwargs[domain])
-
-    def __repr__(self):
-        return f"<IdentityGrounding {self.codomain.name}>"
-
