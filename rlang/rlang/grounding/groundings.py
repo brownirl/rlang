@@ -227,14 +227,14 @@ class GroundingFunction(Grounding):
             return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs) and other.namewrapped_function(*args, **kwargs))
         if isinstance(other, bool):
             return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs)) if other else Proposition.FALSE
-        raise RLangGroundingError(message=f"Cannot 'and' a {type(self)} with a {type(other)}")
+        raise RLangGroundingError(message=f"Cannot '&' a {type(self)} with a {type(other)}")
 
     def __rand__(self, other):
         return self.__and__(other)
 
     def __or__(self, other):
         if isinstance(other, GroundingFunction):
-            print("This is called", self, other)
+            # print("This is called", self, other)
             def smart_or_function(*args, **kwargs):
                 try:
                     r1 = self.namewrapped_function(*args, **kwargs)
@@ -249,9 +249,9 @@ class GroundingFunction(Grounding):
                     return other.namewrapped_function(*args, **kwargs)
             return Proposition(function=lambda *args, **kwargs: smart_or_function(*args, **kwargs))
         if isinstance(other, bool):
-            print("This other is called", self, other)
+            # print("This other is called", self, other)
             return Proposition(function=lambda *args, **kwargs: self.namewrapped_function(*args, **kwargs)) if not other else Proposition.TRUE
-        raise RLangGroundingError(message=f"Cannot 'or' a {type(self)} with a {type(other)}")
+        raise RLangGroundingError(message=f"Cannot '|' a {type(self)} with a {type(other)}")
 
     def __ror__(self, other):
         return self.__or__(other)
