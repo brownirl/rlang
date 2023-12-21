@@ -4,11 +4,11 @@ from dataclasses import dataclass
 from functools import total_ordering
 from typing import Type
 
-import gym.spaces
+# import gym.spaces
 import numpy as np
 from .grounding_exceptions import RLangGroundingError
 from .primitives import State
-from gym.spaces import Space
+# from gym.spaces import Space
 
 
 @total_ordering
@@ -34,6 +34,7 @@ class Domain(Enum):
     BOOLEAN_REAL_VALUE = 77
     ACTION_BOOLEAN = 14
     STATE_ACTION_BOOLEAN = 42
+    STATE_BOOLEAN = 21
     STATE_VALUE = 13
     FACTOR_STATE = 17
     REWARD = 19
