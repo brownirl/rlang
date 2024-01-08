@@ -190,3 +190,8 @@ class ObjectOrientedState(State):
     def __hash__(self):
         return hash(self.__repr__())
 
+
+class DictState(State):
+
+    def __init__(self, dict_state):
+        self.dict_state = dict_state

@@ -9,7 +9,7 @@ from typing import Callable, Any, Union, List
 import numpy as np
 from numpy.random import default_rng
 from .utils.utils import Domain
-from .utils.primitives import MDPObject, VectorState, ObjectOrientedState, Action, Primitive
+from .utils.primitives import MDPObject, VectorState, ObjectOrientedState, Action, Primitive, DictState
 from .utils.grounding_exceptions import RLangGroundingError
 
 
@@ -143,13 +143,13 @@ class GroundingFunction(Grounding):
 
     def __call__(self, *args, **kwargs):
         if 'state' in kwargs.keys():
-            if not isinstance(kwargs['state'], (VectorState, ObjectOrientedState)):
+            if not isinstance(kwargs['state'], (VectorState, ObjectOrientedState, DictState)):
                 kwargs.update({'state': VectorState(kwargs['state'])})
         if 'action' in kwargs.keys():
             if not isinstance(kwargs['action'], Action):
                 kwargs.update({'action': Action(kwargs['action'])})
         if 'next_state' in kwargs.keys():
-            if not isinstance(kwargs['next_state'], (VectorState, ObjectOrientedState)):
+            if not isinstance(kwargs['next_state'], (VectorState, ObjectOrientedState, DictState)):
                 kwargs.update({'next_state': VectorState(kwargs['next_state'])})
         return self._function(*args, **kwargs)
 
@@ -391,6 +391,7 @@ class MDPObjectGrounding(GroundingFunction):
 
         attrs = list(map(lambda x: getattr(self.obj, x), self.obj.attr_list))
         calculated_attrs = list(map(calculate_attr, attrs))
+        # print(calculated_attrs)
 
         self.true_obj = type(self.obj)(*calculated_attrs)
         self.calculated = True
