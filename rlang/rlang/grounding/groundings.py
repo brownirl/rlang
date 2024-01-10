@@ -894,12 +894,14 @@ class ActionDistribution(ProbabilityDistribution):
         def update_dictionary(k_, v_):
             if isinstance(k_, (dict, ProbabilityDistribution)):
                 for k__, v__ in k_.items():
-                    if isinstance(k__, Action):
+                    if isinstance(k__, (Action, str)):
                         update_dictionary(k__, v_ * v__)
                     else:
                         update_dictionary(k__(*self.arg_store, **self.kwarg_store), v_ * v__)
             elif k_ is not None:
                 if isinstance(k_, Action):
+                    a = k_
+                elif isinstance(k_, str):
                     a = k_
                 else:
                     a = Action(k_)
