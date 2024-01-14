@@ -195,3 +195,9 @@ class DictState(State):
 
     def __init__(self, dict_state):
         self.dict_state = dict_state
+    
+    def __str__(self) -> str:
+        return f"<RLangDictState: {str(self.dict_state)}>"
+    
+    def __hash__(self) -> int:
+        return hash(str(self))
