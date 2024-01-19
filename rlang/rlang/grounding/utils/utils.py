@@ -60,8 +60,13 @@ class Domain(Enum):
                 return larger
             else:
                 enum_value = self.value * other.value
-                if enum_value % 4 == 0: # TODO: This is a hack, need to make sure that enum_value is composed only of primes
-                    enum_value /= 2
+                # if enum_value % 4 == 0: # TODO: This is a hack, need to make sure that enum_value is composed only of primes
+                #     enum_value /= 2
+
+                for item in Domain:
+                    if enum_value % item.value == 0:
+                        enum_value = enum_value / item.value
+
                 if enum_value in set(item.value for item in Domain):
                     return Domain(enum_value)
                 else:
